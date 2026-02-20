@@ -140,7 +140,7 @@ function AppRoutes() {
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route
-                        path="/public/profile-submission/:token"
+                        path="/public/experience-update/:token"
                         element={<PublicProfileSubmissionPage />}
                     />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
@@ -206,7 +206,7 @@ function PublicAppRoutes() {
                 <div className="mt-3 mb-3">
                     <Routes>
                         <Route
-                            path="/public/profile-submission/:token"
+                            path="/public/experience-update/:token"
                             element={<PublicProfileSubmissionPage />}
                         />
                     </Routes>
@@ -217,7 +217,7 @@ function PublicAppRoutes() {
 }
 
 function matchesPublicProfileSubmissionRoute(hash: string): boolean {
-    return /^#\/public\/profile-submission\/[^/?#]+\/?$/.test(hash);
+    return /^#\/public\/experience-update\/[^/?#]+\/?$/.test(hash);
 }
 
 export async function renderApp() {

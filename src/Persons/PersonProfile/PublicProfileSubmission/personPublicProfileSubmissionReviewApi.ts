@@ -11,10 +11,17 @@ export interface SubmissionSearchResultDto {
     personId: number;
     email?: string;
     status: string; // DRAFT, SUBMITTED, CLOSED
-    lastLinkRecipientEmail?: string | null;
-    lastLinkEventAt?: string | null;
-    lastLinkEventType?: "LINK_GENERATED" | "LINK_SENT" | "LINK_SEND_FAILED" | null;
-    lastLinkEventByPersonId?: number | null;
+    copyLink?: {
+        url: string;
+        expiresAt: string;
+    };
+    lastDispatch?: {
+        recipientEmail?: string | null;
+        status?: "LINK_GENERATED" | "LINK_SENT" | "LINK_SEND_FAILED" | null;
+        eventAt?: string | null;
+        eventByPersonId?: number | null;
+        sendNowRequested?: boolean;
+    };
     submittedAt?: string | null;
     closedAt?: string | null;
     createdAt?: string;
@@ -29,6 +36,7 @@ export interface SubmissionItemDto {
     acceptedTargetId?: number | null;
     reviewedByPersonId?: number | null;
     reviewedAt?: string | null;
+    reviewComment?: string | null;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -39,14 +47,16 @@ export interface SubmissionDetailsDto extends SubmissionSearchResultDto {
 
 export interface CreateLinkResponseDto {
     personId: number;
-    token: string;
-    url: string;
-    expiresAt: string;
     submissionId: number;
-    dispatch?: {
+    copyLink?: {
+        url: string;
+        expiresAt: string;
+    };
+    lastDispatch?: {
         recipientEmail?: string | null;
         status: "LINK_GENERATED" | "LINK_SENT" | "LINK_SEND_FAILED";
         eventAt?: string | null;
+        eventByPersonId?: number | null;
         sendNowRequested?: boolean;
     };
 }
@@ -61,6 +71,7 @@ export interface ReviewItemResponseDto {
     itemId: number;
     decision: "ACCEPT" | "REJECT";
     acceptedTargetId?: number;
+    reviewComment?: string;
     autoClosed: boolean;
 }
 
@@ -148,7 +159,7 @@ interface OfficeApiErrorDto {
 }
 
 function staffBaseUrl(personId: number): string {
-    return `${MainSetup.serverUrl}v2/persons/${personId}/public-profile-submissions`;
+    return `${MainSetup.serverUrl}v2/persons/${personId}/experience-updates`;
 }
 
 async function requestJson<T>(
@@ -234,7 +245,7 @@ export async function createSubmissionLink(
     personId: number,
     request?: CreateLinkRequestDto,
 ): Promise<CreateLinkResponseDto> {
-    const validId = validatePersonId(personId, "POST public-profile-submissions/link");
+    const validId = validatePersonId(personId, "POST experience-updates/link");
     const url = `${staffBaseUrl(validId)}/link`;
     return requestJson<CreateLinkResponseDto>(url, "POST", request);
 }
@@ -247,7 +258,7 @@ export async function searchSubmissions(
     personId: number,
     status?: string,
 ): Promise<SubmissionSearchResultDto[]> {
-    const validId = validatePersonId(personId, "POST public-profile-submissions/search");
+    const validId = validatePersonId(personId, "POST experience-updates/search");
     const url = `${staffBaseUrl(validId)}/search`;
     const body: Record<string, unknown> = {};
     if (status) body.status = status;
@@ -261,7 +272,7 @@ export async function getSubmissionDetails(
     personId: number,
     submissionId: number,
 ): Promise<SubmissionDetailsDto> {
-    const validId = validatePersonId(personId, "GET public-profile-submissions/:submissionId");
+    const validId = validatePersonId(personId, "GET experience-updates/:submissionId");
     const url = `${staffBaseUrl(validId)}/${submissionId}`;
     return requestJson<SubmissionDetailsDto>(url, "GET");
 }
@@ -275,10 +286,11 @@ export async function reviewItem(
     submissionId: number,
     itemId: number,
     decision: "ACCEPT" | "REJECT",
+    comment?: string,
 ): Promise<ReviewItemResponseDto> {
     const validId = validatePersonId(personId, "POST review item");
     const url = `${staffBaseUrl(validId)}/${submissionId}/items/${itemId}/review`;
-    return requestJson<ReviewItemResponseDto>(url, "POST", { decision });
+    return requestJson<ReviewItemResponseDto>(url, "POST", { decision, comment });
 }
 
 /**

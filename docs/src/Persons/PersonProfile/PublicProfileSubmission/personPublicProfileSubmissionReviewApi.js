@@ -47,7 +47,7 @@ function mapDomainErrorCode(rawCode, status) {
     return "UNKNOWN";
 }
 function staffBaseUrl(personId) {
-    return `${MainSetupReact_1.default.serverUrl}v2/persons/${personId}/public-profile-submissions`;
+    return `${MainSetupReact_1.default.serverUrl}v2/persons/${personId}/experience-updates`;
 }
 async function requestJson(url, method, body) {
     let response;
@@ -121,7 +121,7 @@ async function readOfficeErrorPayload(response) {
  * Revokuje poprzedni aktywny link.
  */
 async function createSubmissionLink(personId, request) {
-    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST public-profile-submissions/link");
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST experience-updates/link");
     const url = `${staffBaseUrl(validId)}/link`;
     return requestJson(url, "POST", request);
 }
@@ -130,7 +130,7 @@ async function createSubmissionLink(personId, request) {
  * Opcjonalny filtr po statusie (DRAFT | SUBMITTED | CLOSED).
  */
 async function searchSubmissions(personId, status) {
-    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST public-profile-submissions/search");
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST experience-updates/search");
     const url = `${staffBaseUrl(validId)}/search`;
     const body = {};
     if (status)
@@ -141,7 +141,7 @@ async function searchSubmissions(personId, status) {
  * GET /:submissionId -- pelne dane submission z items.
  */
 async function getSubmissionDetails(personId, submissionId) {
-    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "GET public-profile-submissions/:submissionId");
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "GET experience-updates/:submissionId");
     const url = `${staffBaseUrl(validId)}/${submissionId}`;
     return requestJson(url, "GET");
 }
@@ -149,10 +149,10 @@ async function getSubmissionDetails(personId, submissionId) {
  * POST /:submissionId/items/:itemId/review -- akceptuje lub odrzuca pojedynczy item.
  * Jesli po review nie ma juz PENDING items, submission zamykany automatycznie (autoClosed=true).
  */
-async function reviewItem(personId, submissionId, itemId, decision) {
+async function reviewItem(personId, submissionId, itemId, decision, comment) {
     const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST review item");
     const url = `${staffBaseUrl(validId)}/${submissionId}/items/${itemId}/review`;
-    return requestJson(url, "POST", { decision });
+    return requestJson(url, "POST", { decision, comment });
 }
 /**
  * POST /:submissionId/close -- reczne zamkniecie submission.

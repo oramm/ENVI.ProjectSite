@@ -37,7 +37,7 @@ import {
 } from "./PublicProfileSubmission/personPublicProfileSubmissionReviewApi";
 
 type PublicSubmissionProcessUiState = "PRE_START" | "ACTIVE" | "SUBMITTED" | "CLOSED";
-type LinkDispatchStatus = NonNullable<CreateLinkResponseDto["dispatch"]>["status"];
+type LinkDispatchStatus = NonNullable<CreateLinkResponseDto["lastDispatch"]>["status"];
 
 function derivePublicSubmissionProcessUiState(
     submissions: SubmissionSearchResultDto[],
@@ -94,7 +94,7 @@ function renderItemPayloadSummary(item: SubmissionItemDto): string {
     return [p.name, p.levelCode].filter(Boolean).join(" — ") || "Umiejetnosc";
 }
 
-function linkEventTypeLabel(eventType?: SubmissionSearchResultDto["lastLinkEventType"]): string {
+function linkEventTypeLabel(eventType?: string | null): string {
     if (eventType === "LINK_SENT") return "Wyslano";
     if (eventType === "LINK_SEND_FAILED") return "Blad wysylki";
     return "Wygenerowano";
@@ -134,7 +134,7 @@ export default function PersonProfilePage() {
     const [createdLinkUrl, setCreatedLinkUrl] = useState<string | null>(null);
     const [linkRecipientEmail, setLinkRecipientEmail] = useState("");
     const [linkSendNow, setLinkSendNow] = useState(false);
-    const [linkDispatch, setLinkDispatch] = useState<CreateLinkResponseDto["dispatch"] | null>(null);
+    const [linkDispatch, setLinkDispatch] = useState<CreateLinkResponseDto["lastDispatch"] | null>(null);
     const [reviewingItemId, setReviewingItemId] = useState<number | null>(null);
     const [tableExternalUpdate, setTableExternalUpdate] = useState(0);
 
@@ -199,7 +199,7 @@ export default function PersonProfilePage() {
             if (isPersonPublicProfileSubmissionOfficeApiError(error)) {
                 setPublicReviewError(`Nie udalo sie pobrac stanu procesu: ${error.message}`);
             } else {
-                setPublicReviewError("Nie udalo sie pobrac stanu procesu public submission.");
+                setPublicReviewError("Nie udalo sie pobrac stanu procesu aktualizacji doswiadczenia.");
             }
             setSubmissions([]);
             setActiveSubmission(null);
@@ -219,15 +219,8 @@ export default function PersonProfilePage() {
     const [showImportModal, setShowImportModal] = useState(false);
     const processState = derivePublicSubmissionProcessUiState(submissions);
     const latestSubmissionLinkMeta = useMemo(() => {
-        const metaCandidates = submissions.filter(
-            sub => sub.lastLinkEventType || sub.lastLinkEventAt || sub.lastLinkRecipientEmail,
-        );
-        if (metaCandidates.length === 0) return null;
-        return [...metaCandidates].sort((a, b) => {
-            const aTs = a.lastLinkEventAt ? Date.parse(a.lastLinkEventAt) : 0;
-            const bTs = b.lastLinkEventAt ? Date.parse(b.lastLinkEventAt) : 0;
-            return bTs - aTs;
-        })[0];
+        if (submissions.length === 0) return null;
+        return submissions[0] || null;
     }, [submissions]);
 
     const handleCreateLink = useCallback(async () => {
@@ -241,14 +234,14 @@ export default function PersonProfilePage() {
                 recipientEmail: normalizedRecipientEmail ? normalizedRecipientEmail : undefined,
                 sendNow: linkSendNow,
             });
-            setCreatedLinkUrl(linkResponse.url);
-            setLinkDispatch(linkResponse.dispatch || null);
+            setCreatedLinkUrl(linkResponse.copyLink?.url || null);
+            setLinkDispatch(linkResponse.lastDispatch || null);
             await loadSubmissions();
         } catch (error) {
             if (isPersonPublicProfileSubmissionOfficeApiError(error)) {
                 setPublicSubmissionInitError(`Nie udalo sie wygenerowac linku: ${error.message}`);
             } else {
-                setPublicSubmissionInitError("Nie udalo sie wygenerowac linku public submission.");
+                setPublicSubmissionInitError("Nie udalo sie wygenerowac linku aktualizacji doswiadczenia.");
             }
         } finally {
             setPublicSubmissionInitLoading(false);
@@ -257,9 +250,17 @@ export default function PersonProfilePage() {
 
     const handleReviewItem = useCallback(async (itemId: number, decision: "ACCEPT" | "REJECT") => {
         if (!activeSubmission) return;
+        const rejectComment =
+            decision === "REJECT"
+                ? (window.prompt("Podaj komentarz dla odrzucenia (wymagany):", "") || "").trim()
+                : undefined;
+        if (decision === "REJECT" && !rejectComment) {
+            setPublicReviewError("Komentarz jest wymagany dla decyzji Odrzuc.");
+            return;
+        }
         setReviewingItemId(itemId);
         try {
-            const result = await reviewItem(personId, activeSubmission.id, itemId, decision);
+            const result = await reviewItem(personId, activeSubmission.id, itemId, decision, rejectComment);
 
             if (result.autoClosed) {
                 // Submission closed — reload full list, clear review panel
@@ -343,7 +344,7 @@ export default function PersonProfilePage() {
             <Card className="mb-4">
                 <Card.Body>
                     <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h5 className="mb-0">Recenzja zgloszenia publicznego</h5>
+                        <h5 className="mb-0">Aktualizacja doswiadczenia</h5>
                         <div className="d-flex gap-2">
                             {processState !== "SUBMITTED" && (
                                 <Button
@@ -419,16 +420,12 @@ export default function PersonProfilePage() {
                                 <Badge bg={mapPublicSubmissionStateToBadgeVariant(processState)}>
                                     {mapPublicSubmissionStateToLabel(processState)}
                                 </Badge>
-                                {submissions.length > 0 && (
-                                    <span className="text-muted small ms-2">
-                                        ({submissions.length} {submissions.length === 1 ? "zgloszenie" : "zgloszen"})
-                                    </span>
-                                )}
+                                {submissions.length > 0 && <span className="text-muted small ms-2">(aktywny proces)</span>}
                             </div>
 
                             {processState === "PRE_START" && (
                                 <Alert variant="secondary" className="mb-0">
-                                    Proces public submission nie zostal jeszcze zainicjowany. Uzyj przycisku
+                                    Proces aktualizacji doswiadczenia nie zostal jeszcze zainicjowany. Uzyj przycisku
                                     "Inicjuj proces", aby wygenerowac link i token dla kandydata.
                                 </Alert>
                             )}
@@ -463,48 +460,36 @@ export default function PersonProfilePage() {
 
                             {processState === "CLOSED" && submissions.length > 0 && (
                                 <div className="small text-muted mt-2">
-                                    Wszystkie zgloszenia zamkniete. Mozesz wygenerowac nowy link.
+                                    Proces zamkniety. Mozesz wygenerowac nowy link.
                                 </div>
                             )}
                             {latestSubmissionLinkMeta && (
                                 <Card className="mt-2">
                                     <Card.Body className="py-2">
-                                        <div className="small fw-bold mb-1">Ostatnie metadata linku</div>
-                                        {latestSubmissionLinkMeta.lastLinkRecipientEmail && (
+                                        <div className="small fw-bold mb-1">Stan ostatniej wysylki i linku</div>
+                                        {latestSubmissionLinkMeta.copyLink?.url && (
                                             <div className="small">
-                                                lastLinkRecipientEmail: {latestSubmissionLinkMeta.lastLinkRecipientEmail}
+                                                copyLink: {latestSubmissionLinkMeta.copyLink.url}
                                             </div>
                                         )}
-                                        {latestSubmissionLinkMeta.lastLinkEventAt && (
-                                            <div className="small">lastLinkEventAt: {latestSubmissionLinkMeta.lastLinkEventAt}</div>
+                                        {latestSubmissionLinkMeta.copyLink?.expiresAt && (
+                                            <div className="small">expiresAt: {latestSubmissionLinkMeta.copyLink.expiresAt}</div>
                                         )}
-                                        {latestSubmissionLinkMeta.lastLinkEventType && (
+                                        {latestSubmissionLinkMeta.lastDispatch?.recipientEmail && (
                                             <div className="small">
-                                                lastLinkEventType: {latestSubmissionLinkMeta.lastLinkEventType} ({linkEventTypeLabel(latestSubmissionLinkMeta.lastLinkEventType)})
+                                                recipientEmail: {latestSubmissionLinkMeta.lastDispatch.recipientEmail}
+                                            </div>
+                                        )}
+                                        {latestSubmissionLinkMeta.lastDispatch?.eventAt && (
+                                            <div className="small">eventAt: {latestSubmissionLinkMeta.lastDispatch.eventAt}</div>
+                                        )}
+                                        {latestSubmissionLinkMeta.lastDispatch?.status && (
+                                            <div className="small">
+                                                status: {latestSubmissionLinkMeta.lastDispatch.status} ({linkEventTypeLabel(latestSubmissionLinkMeta.lastDispatch.status)})
                                             </div>
                                         )}
                                     </Card.Body>
                                 </Card>
-                            )}
-
-                            {submissions.length > 0 && (
-                                <div className="small mt-2">
-                                    {submissions.map(sub => (
-                                        <div key={sub.id} className="d-flex align-items-center gap-2 py-1 border-bottom">
-                                            <Badge bg={
-                                                sub.status === "SUBMITTED" ? "success"
-                                                : sub.status === "DRAFT" ? "primary"
-                                                : "secondary"
-                                            }>
-                                                {sub.status}
-                                            </Badge>
-                                            <span>#{sub.id}</span>
-                                            {sub.email && <span className="text-muted">{sub.email}</span>}
-                                            {sub.submittedAt && <span>Wyslano: {sub.submittedAt}</span>}
-                                            {sub.closedAt && <span>Zamknieto: {sub.closedAt}</span>}
-                                        </div>
-                                    ))}
-                                </div>
                             )}
 
                             {activeSubmission && activeSubmission.items.length > 0 && (

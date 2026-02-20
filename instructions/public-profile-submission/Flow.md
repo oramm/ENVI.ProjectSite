@@ -1,28 +1,40 @@
+# Flow - Aktualizacja doswiadczenia
+
 LEGENDA OKIEN
-W1 PersonProfilePage (wewnętrzny, zalogowany)
-W2 Modal "Generuj link aktualizacji profilu"
-W3 Public Landing (niezalogowany, z tokenem w URL)
-W4 Public "Weryfikacja e-mail"
-W5 Public "Edycja danych profilu" (Experience/Education/Skills)
-W6 Public "Import CV" (analyze + preview + selekcja)
-W7 Public "Podsumowanie i Wyślij do recenzji"
-W8 Wewnętrzna sekcja "Zgłoszenia zewnętrzne" na PersonProfilePage
-W9 Wewnętrzny "Panel recenzji per rekord"
-W10 Public "Poprawki po uwagach" - OUT OF SCOPE (V1)
 
-W1 PersonProfilePage (biuro)
--> W2 "Generuj link"
--> [System] link publiczny 30 dni
--> [Osoba zewn.] W3 Landing
--> W4 Weryfikacja e-mail
--> W5 Edycja danych (manualnie)
--> opcjonalnie W6 Import CV (REUSE istniejącego okna importu)
--> W7 "Wyślij"
+- W1 PersonProfilePage (wewnetrzny, zalogowany)
+- W2 Modal `Wyslij link aktualizacji doswiadczenia`
+- W3 Public Landing (token w URL)
+- W4 Public `Weryfikacja e-mail`
+- W5 Public `Edycja danych`
+- W6 Public `Import CV` (opcjonalnie)
+- W7 Public `Wyslij do recenzji`
+- W8 Sekcja staff `Aktualizacja doswiadczenia`
+- W9 Panel recenzji per rekord + komentarz
 
-[System] status zgłoszenia: SUBMITTED_FOR_REVIEW
+## Przeplyw
 
-[Biuro] W8 "Zgłoszenia zewnętrzne" (na profilu osoby)
--> W9 Recenzja per rekord: - ACCEPT -> od razu gotowe do użycia - BRAK AKCEPTU -> rekord pomijany/usuwany (bez historii)
+W1 -> W2 -> [System] generuje nowy aktywny link
 
-[System] do profilu trafiają tylko rekordy ACCEPT (w momencie decyzji ACCEPT)
-[System] zgłoszenie zamyka się automatycznie po rozstrzygnieciu wszystkich rekordow
+- poprzedni aktywny link zostaje uniewazniony,
+- w UI staff widoczny jest `copyLink` wazny do `expiresAt`.
+
+[Osoba zewnetrzna]
+
+- W3 Landing
+- W4 Verify email
+- W5 Edycja
+- (opcjonalnie) W6 Import CV
+- W7 Submit
+
+[Biuro]
+
+- W8 widzi pojedynczy stan procesu + last dispatch metadata
+- W9 review:
+  - `ACCEPT` -> natychmiastowy zapis
+  - `REJECT` -> komentarz wymagany i zwracany kandydatowi
+
+[System]
+
+- Kandydat poprawia tylko odrzucone/brakujace elementy.
+- Proces zamyka sie po rozstrzygnieciu wszystkich elementow.

@@ -160,7 +160,7 @@ function AppRoutes() {
         react_1.default.createElement("div", { className: "mt-3 mb-3" },
             react_1.default.createElement(react_router_dom_1.Routes, null,
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/public/profile-submission/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/public/experience-update/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }),
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
                 react_1.default.createElement(react_router_dom_1.Route, { element: react_1.default.createElement(ProtectedRoute_1.default, { allowedRoles: ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"] }) },
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
@@ -195,10 +195,10 @@ function PublicAppRoutes() {
         react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0 bg-white" },
             react_1.default.createElement("div", { className: "mt-3 mb-3" },
                 react_1.default.createElement(react_router_dom_1.Routes, null,
-                    react_1.default.createElement(react_router_dom_1.Route, { path: "/public/profile-submission/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }))))));
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/public/experience-update/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }))))));
 }
 function matchesPublicProfileSubmissionRoute(hash) {
-    return /^#\/public\/profile-submission\/[^/?#]+\/?$/.test(hash);
+    return /^#\/public\/experience-update\/[^/?#]+\/?$/.test(hash);
 }
 async function renderApp() {
     const root = document.getElementById("root");

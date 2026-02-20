@@ -65,7 +65,7 @@ function createPublicProfileSubmissionApi(linkToken) {
     const token = linkToken.trim();
     if (!token)
         throw new Error("linkToken is required");
-    const baseUrl = `${MainSetupReact_1.default.serverUrl}v2/public/profile-submission/${encodeURIComponent(token)}`;
+    const baseUrl = `${MainSetupReact_1.default.serverUrl}v2/public/experience-update/${encodeURIComponent(token)}`;
     let sessionToken = null;
     // -- internal helpers ---------------------------------------------------
     async function fetchJson(endpoint, options = {}, requireSession = false) {

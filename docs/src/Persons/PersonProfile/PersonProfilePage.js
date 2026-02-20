@@ -213,7 +213,7 @@ function PersonProfilePage() {
                 setPublicReviewError(`Nie udalo sie pobrac stanu procesu: ${error.message}`);
             }
             else {
-                setPublicReviewError("Nie udalo sie pobrac stanu procesu public submission.");
+                setPublicReviewError("Nie udalo sie pobrac stanu procesu aktualizacji doswiadczenia.");
             }
             setSubmissions([]);
             setActiveSubmission(null);
@@ -231,14 +231,9 @@ function PersonProfilePage() {
     const [showImportModal, setShowImportModal] = (0, react_1.useState)(false);
     const processState = derivePublicSubmissionProcessUiState(submissions);
     const latestSubmissionLinkMeta = (0, react_1.useMemo)(() => {
-        const metaCandidates = submissions.filter(sub => sub.lastLinkEventType || sub.lastLinkEventAt || sub.lastLinkRecipientEmail);
-        if (metaCandidates.length === 0)
+        if (submissions.length === 0)
             return null;
-        return [...metaCandidates].sort((a, b) => {
-            const aTs = a.lastLinkEventAt ? Date.parse(a.lastLinkEventAt) : 0;
-            const bTs = b.lastLinkEventAt ? Date.parse(b.lastLinkEventAt) : 0;
-            return bTs - aTs;
-        })[0];
+        return submissions[0] || null;
     }, [submissions]);
     const handleCreateLink = (0, react_1.useCallback)(async () => {
         setPublicSubmissionInitError(null);
@@ -251,8 +246,8 @@ function PersonProfilePage() {
                 recipientEmail: normalizedRecipientEmail ? normalizedRecipientEmail : undefined,
                 sendNow: linkSendNow,
             });
-            setCreatedLinkUrl(linkResponse.url);
-            setLinkDispatch(linkResponse.dispatch || null);
+            setCreatedLinkUrl(linkResponse.copyLink?.url || null);
+            setLinkDispatch(linkResponse.lastDispatch || null);
             await loadSubmissions();
         }
         catch (error) {
@@ -260,7 +255,7 @@ function PersonProfilePage() {
                 setPublicSubmissionInitError(`Nie udalo sie wygenerowac linku: ${error.message}`);
             }
             else {
-                setPublicSubmissionInitError("Nie udalo sie wygenerowac linku public submission.");
+                setPublicSubmissionInitError("Nie udalo sie wygenerowac linku aktualizacji doswiadczenia.");
             }
         }
         finally {
@@ -270,9 +265,16 @@ function PersonProfilePage() {
     const handleReviewItem = (0, react_1.useCallback)(async (itemId, decision) => {
         if (!activeSubmission)
             return;
+        const rejectComment = decision === "REJECT"
+            ? (window.prompt("Podaj komentarz dla odrzucenia (wymagany):", "") || "").trim()
+            : undefined;
+        if (decision === "REJECT" && !rejectComment) {
+            setPublicReviewError("Komentarz jest wymagany dla decyzji Odrzuc.");
+            return;
+        }
         setReviewingItemId(itemId);
         try {
-            const result = await (0, personPublicProfileSubmissionReviewApi_1.reviewItem)(personId, activeSubmission.id, itemId, decision);
+            const result = await (0, personPublicProfileSubmissionReviewApi_1.reviewItem)(personId, activeSubmission.id, itemId, decision, rejectComment);
             if (result.autoClosed) {
                 // Submission closed — reload full list, clear review panel
                 await loadSubmissions();
@@ -343,7 +345,7 @@ function PersonProfilePage() {
         react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-4" },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-2" },
-                    react_1.default.createElement("h5", { className: "mb-0" }, "Recenzja zgloszenia publicznego"),
+                    react_1.default.createElement("h5", { className: "mb-0" }, "Aktualizacja doswiadczenia"),
                     react_1.default.createElement("div", { className: "d-flex gap-2" },
                         processState !== "SUBMITTED" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: processState === "CLOSED" ? "outline-primary" : "primary", size: "sm", onClick: handleCreateLink, disabled: publicSubmissionInitLoading }, publicSubmissionInitLoading
                             ? "Generowanie..."
@@ -365,13 +367,8 @@ function PersonProfilePage() {
                 publicReviewLoading ? (react_1.default.createElement("div", { className: "text-muted small" }, "Ladowanie stanu procesu...")) : (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("div", { className: "mb-2" },
                         react_1.default.createElement(react_bootstrap_1.Badge, { bg: mapPublicSubmissionStateToBadgeVariant(processState) }, mapPublicSubmissionStateToLabel(processState)),
-                        submissions.length > 0 && (react_1.default.createElement("span", { className: "text-muted small ms-2" },
-                            "(",
-                            submissions.length,
-                            " ",
-                            submissions.length === 1 ? "zgloszenie" : "zgloszen",
-                            ")"))),
-                    processState === "PRE_START" && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "secondary", className: "mb-0" }, "Proces public submission nie zostal jeszcze zainicjowany. Uzyj przycisku \"Inicjuj proces\", aby wygenerowac link i token dla kandydata.")),
+                        submissions.length > 0 && react_1.default.createElement("span", { className: "text-muted small ms-2" }, "(aktywny proces)")),
+                    processState === "PRE_START" && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "secondary", className: "mb-0" }, "Proces aktualizacji doswiadczenia nie zostal jeszcze zainicjowany. Uzyj przycisku \"Inicjuj proces\", aby wygenerowac link i token dla kandydata.")),
                     createdLinkUrl && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mt-2", dismissible: true, onClose: () => setCreatedLinkUrl(null) },
                         react_1.default.createElement("div", { className: "fw-bold mb-1" }, "Link wygenerowany:"),
                         react_1.default.createElement("a", { href: createdLinkUrl, target: "_blank", rel: "noreferrer", className: "text-break" }, createdLinkUrl))),
@@ -387,36 +384,28 @@ function PersonProfilePage() {
                             "Czas zdarzenia: ",
                             linkDispatch.eventAt))),
                     processState === "ACTIVE" && (react_1.default.createElement("div", { className: "small text-muted mt-2" }, "Kolejny krok: kandydat wypelnia publiczny formularz i wysyla profil do recenzji.")),
-                    processState === "CLOSED" && submissions.length > 0 && (react_1.default.createElement("div", { className: "small text-muted mt-2" }, "Wszystkie zgloszenia zamkniete. Mozesz wygenerowac nowy link.")),
+                    processState === "CLOSED" && submissions.length > 0 && (react_1.default.createElement("div", { className: "small text-muted mt-2" }, "Proces zamkniety. Mozesz wygenerowac nowy link.")),
                     latestSubmissionLinkMeta && (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2" },
                         react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
-                            react_1.default.createElement("div", { className: "small fw-bold mb-1" }, "Ostatnie metadata linku"),
-                            latestSubmissionLinkMeta.lastLinkRecipientEmail && (react_1.default.createElement("div", { className: "small" },
-                                "lastLinkRecipientEmail: ",
-                                latestSubmissionLinkMeta.lastLinkRecipientEmail)),
-                            latestSubmissionLinkMeta.lastLinkEventAt && (react_1.default.createElement("div", { className: "small" },
-                                "lastLinkEventAt: ",
-                                latestSubmissionLinkMeta.lastLinkEventAt)),
-                            latestSubmissionLinkMeta.lastLinkEventType && (react_1.default.createElement("div", { className: "small" },
-                                "lastLinkEventType: ",
-                                latestSubmissionLinkMeta.lastLinkEventType,
+                            react_1.default.createElement("div", { className: "small fw-bold mb-1" }, "Stan ostatniej wysylki i linku"),
+                            latestSubmissionLinkMeta.copyLink?.url && (react_1.default.createElement("div", { className: "small" },
+                                "copyLink: ",
+                                latestSubmissionLinkMeta.copyLink.url)),
+                            latestSubmissionLinkMeta.copyLink?.expiresAt && (react_1.default.createElement("div", { className: "small" },
+                                "expiresAt: ",
+                                latestSubmissionLinkMeta.copyLink.expiresAt)),
+                            latestSubmissionLinkMeta.lastDispatch?.recipientEmail && (react_1.default.createElement("div", { className: "small" },
+                                "recipientEmail: ",
+                                latestSubmissionLinkMeta.lastDispatch.recipientEmail)),
+                            latestSubmissionLinkMeta.lastDispatch?.eventAt && (react_1.default.createElement("div", { className: "small" },
+                                "eventAt: ",
+                                latestSubmissionLinkMeta.lastDispatch.eventAt)),
+                            latestSubmissionLinkMeta.lastDispatch?.status && (react_1.default.createElement("div", { className: "small" },
+                                "status: ",
+                                latestSubmissionLinkMeta.lastDispatch.status,
                                 " (",
-                                linkEventTypeLabel(latestSubmissionLinkMeta.lastLinkEventType),
+                                linkEventTypeLabel(latestSubmissionLinkMeta.lastDispatch.status),
                                 ")"))))),
-                    submissions.length > 0 && (react_1.default.createElement("div", { className: "small mt-2" }, submissions.map(sub => (react_1.default.createElement("div", { key: sub.id, className: "d-flex align-items-center gap-2 py-1 border-bottom" },
-                        react_1.default.createElement(react_bootstrap_1.Badge, { bg: sub.status === "SUBMITTED" ? "success"
-                                : sub.status === "DRAFT" ? "primary"
-                                    : "secondary" }, sub.status),
-                        react_1.default.createElement("span", null,
-                            "#",
-                            sub.id),
-                        sub.email && react_1.default.createElement("span", { className: "text-muted" }, sub.email),
-                        sub.submittedAt && react_1.default.createElement("span", null,
-                            "Wyslano: ",
-                            sub.submittedAt),
-                        sub.closedAt && react_1.default.createElement("span", null,
-                            "Zamknieto: ",
-                            sub.closedAt)))))),
                     activeSubmission && activeSubmission.items.length > 0 && (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
                         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                             react_1.default.createElement("h6", null,

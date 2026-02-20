@@ -1,23 +1,27 @@
-# Public Profile Submission V1 - Post-change Checklist
+# Experience Update - Post-change Checklist
 
-Data: 2026-02-19
-Sesja: BASELINE_RESET
+Data: 2026-02-20
+Sesja: IMPLEMENTATION-1
+
+## Doc-first Gate
+
+- [x] Plan/progress/activity (client) zaktualizowane
+- [x] Flow i API contract zaktualizowane
+- [x] Synchronizacja zakresu i daty z dokumentacja server
 
 ## Impact DB/env/deploy
 
-- [ ] Zmiany DB wymagane: tak/nie
-- [ ] Zmiany `.env` wymagane: tak/nie
-- [ ] Zmiany deployment/config hosting wymagane: tak/nie
+- [x] Zmiany DB wymagane (F1)
+- [x] Zmiany `.env` wymagane (`PUBLIC_PROFILE_SUBMISSION_BASE_URL` sample path)
+- [x] Zmiany deployment/config wymagane (hard-cut release)
 
 ## Validation
 
-- [ ] Testy celowane API/flow (wpisz komendy)
-- [ ] `yarn tsc --noEmit`
-- [ ] `yarn build` (jesli wykonywane w danej sesji)
+- [x] `yarn tsc --noEmit`
+- [x] `yarn build`
 
 ## Notes
 
-- [ ] Zakres sesji ograniczony do pierwszego OPEN checkpointu.
-- [ ] HashRouter bez regresji.
-- [ ] Reuse importu CV bez duplikacji komponentow.
-- [ ] Dokumenty plan/progress/activity-log zaktualizowane po sesji.
+- [x] Start implementacji byl zablokowany do czasu doc-sync.
+- [x] Hard cut endpointow i brak aliasow wdrozone.
+- [x] Model `1 profil = 1 aktywny link` wdrozony.

@@ -81,7 +81,7 @@ export function createPublicProfileSubmissionApi(linkToken: string) {
     const token = linkToken.trim();
     if (!token) throw new Error("linkToken is required");
 
-    const baseUrl = `${MainSetup.serverUrl}v2/public/profile-submission/${encodeURIComponent(token)}`;
+    const baseUrl = `${MainSetup.serverUrl}v2/public/experience-update/${encodeURIComponent(token)}`;
     let sessionToken: string | null = null;
 
     // -- internal helpers ---------------------------------------------------
