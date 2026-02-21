@@ -28,7 +28,7 @@ yarn install
 
 # 4. Uruchom dev server
 yarn start
-# Frontend będzie dostępny na http://localhost:9000
+# Frontend b�dzie dost�pny na http://localhost:9000/docs/
 ```
 
 ---
@@ -71,7 +71,7 @@ Zdefiniowane w `package.json`:
 ### Development
 
 ```bash
-# Uruchom webpack-dev-server (port 9000)
+# Uruchom webpack-dev-server (port 9000) pod URL /docs/
 yarn start
 
 # Alternatywny dev server
@@ -116,7 +116,8 @@ node scripts/screenshot.js http://localhost:9000/docs/#/contracts test-results/s
 ### Workflow
 
 ```
-yarn build = clean → TypeScript compilation → webpack → copy files
+yarn start = codzienny development (HMR, bez recznego yarn build po zmianach UI)
+yarn build = clean -> TypeScript compilation -> webpack -> copy files (walidacja/publikacja)
 ```
 
 ---
@@ -196,7 +197,7 @@ static async loginHandler(req: Request, res: Response) {
 
 ```bash
 # Otwórz aplikację
-open http://localhost:9000/docs
+open http://localhost:9000/docs/
 
 # Kliknij pomarańczowy przycisk: "🔧 DEV: Mock Login (Playwright)"
 # Gotowe! Jesteś zalogowany jako Playwright Test User
@@ -321,7 +322,7 @@ Skrypt znajduje się w `scripts/screenshot.js` i wspiera parametry:
 npm init playwright@latest
 
 # Uruchom codegen (interaktywny recording)
-npx playwright codegen http://localhost:9000/docs
+npx playwright codegen http://localhost:9000/docs/
 ```
 
 ### Przykładowy test E2E
@@ -331,7 +332,7 @@ npx playwright codegen http://localhost:9000/docs
 import { test, expect } from "@playwright/test";
 
 test("dev login works", async ({ page }) => {
-    await page.goto("http://localhost:9000/docs");
+    await page.goto("http://localhost:9000/docs/");
 
     // Kliknij dev login button
     await page.click('button:has-text("DEV: Mock Login")');
@@ -377,7 +378,7 @@ await page.goto('url', { waitUntil: 'networkidle0', timeout: 30000 });
 -   [ ] Skopiuj `.env.example` → `.env`
 -   [ ] Przeczytaj sekcję [Security Guidelines](#-security-guidelines)
 -   [ ] Uruchom `yarn install`
--   [ ] Uruchom `yarn start` i sprawdź http://localhost:9000
+-   [ ] Uruchom `yarn start` i sprawd� http://localhost:9000/docs/
 -   [ ] Przeczytaj [AI_GUIDELINES.md](./AI_GUIDELINES.md) jeśli pracujesz z AI
 -   [ ] Przeczytaj [README.md](./README.md) - mapę dokumentacji
 

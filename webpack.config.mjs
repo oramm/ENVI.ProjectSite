@@ -10,10 +10,11 @@ if (os.platform() === 'win32') {
 }
 
 export default {
-    entry: '/src/React/MainWindow/index.tsx',
+    entry: './src/React/MainWindow/index.tsx',
     output: {
         path: path.resolve(__dirname, 'docs'),
         filename: 'bundle.js',
+        publicPath: '/docs/',
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
@@ -51,10 +52,14 @@ export default {
         historyApiFallback: true,
         headers: {
                 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-        },  
+        },
         static: {
-            directory: path.join(__dirname, '/')
-        }
+            directory: path.resolve(__dirname, 'src'),
+            publicPath: '/docs/',
+        },
+        devMiddleware: {
+            publicPath: '/docs/',
+        },
     },
     devtool: 'source-map',
     mode: 'development',
