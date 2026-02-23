@@ -58,119 +58,57 @@ src/
 Typings/             - Shared TypeScript types (bussinesTypes.d.ts)
 ```
 
-### Critical Pattern: RepositoryReact State Management
+### RepositoryReact — Core Rules
 
-**MOST IMPORTANT:** The app uses a custom `RepositoryReact<T>` class (not Redux/Context) for ALL data management.
+The app uses `RepositoryReact<T>` (not Redux/Context) for ALL data management.
 
-**Core Principle - Single Source of Truth:**
-```typescript
-// ✅ ALWAYS sync component state FROM repository.items
-setObjects([...repository.items]);
+**Single Source of Truth:** Always sync component state FROM `repository.items`:
+- `setObjects([...repository.items])` after every CRUD operation
+- Never mutate component state directly (`objects.push()`, `setObjects([...objects, newItem])`)
+- Global repos in `MainSetup` (sessionStorage-backed); local repos (`_temp` suffix) for selectors
 
-// ❌ NEVER mutate component state directly
-setObjects([...objects, newItem]);  // Creates desync with repository!
-objects.push(newItem);               // Mutation breaks reactivity!
-```
+**CRUD flow:** User action → `repository.addNewItem(data)` → callback → `setObjects([...repository.items])` → `updateSnapshot()`
 
-**Data Flow (CRUD operations):**
-```
-User Action (Modal form submit)
-  ↓
-repository.addNewItem(data)  // Updates backend + repository.items + sessionStorage
-  ↓
-Callback fires (onAddNew prop)
-  ↓
-Component: setObjects([...repository.items])  // Re-sync from source of truth
-  ↓
-updateSnapshot()  // Persist FilterableTable state to sessionStorage
-```
-
-**Global vs Local Repositories:**
-- **Global:** Initialized in `MainControllerReact.setRepositories()`, stored in `MainSetup` static properties
-  - Examples: `MainSetup.personsEnviRepository`, `MainSetup.contractTypesRepository`
-  - Used by main views and shared across components
-  - Backed by sessionStorage with repository name as key
-
-- **Local:** Created in `useMemo` for isolated components (selectors, autocomplete)
-  ```typescript
-  const localRepo = useMemo(() => new RepositoryReact({
-    name: "contractSelector_temp",  // _temp suffix prevents global collisions
-    actionRoutes: { getRoute: "contracts", ... }
-  }), []);
-  ```
-  - Prevents state pollution in dropdowns/selectors
+Full details: [`instructions/AI_GUIDELINES.md`](instructions/AI_GUIDELINES.md)
 
 ### Key Components
 
-**FilterableTable** (`src/View/Resultsets/FilterableTable/FilterableTable.tsx`):
-- Standard list view component used throughout the app
-- Manages filtering, sorting, pagination
-- Handles CRUD via callbacks: `handleAddObject`, `handleEditObject`, `handleDeleteObject`
-- Persists state to sessionStorage via snapshots (`filtersableTableSnapshot_${id}`)
-- Active row tracking: `activeRowId` updates `repository.currentItems[0]`
-
-**Business Object Selectors** (`src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx`):
-- Reusable dropdown components: `ProjectSelector`, `ContractSelector`, `PersonSelector`
-- Built on `MyAsyncTypeahead` with `ensureLabelKey` validation
-- Each selector uses LOCAL repository to avoid state pollution
-- Backend must provide computed label fields (e.g., `_ourIdOrNumber_Name`)
-
-**MainSetup** (`src/React/MainSetupReact.ts`):
-- Static service registry with:
-  - `currentUser` (session data)
-  - `serverUrl` (auto-detects localhost vs production)
-  - Global repositories (`personsEnviRepository`, `contractTypesRepository`, etc.)
-  - Business enums (`ProjectStatuses`, `TaskStatus`, `InvoiceStatuses`, etc.)
-
-**MainController** (`src/React/MainControllerReact.ts`):
-- Application bootstrap:
-  - `isSessionSet()` - Checks auth session
-  - `setRepositories()` - Initializes global data with filters
-  - `logout()` - Clears session
+- **FilterableTable** — Standard list view with filtering, sorting, pagination, CRUD callbacks, sessionStorage snapshots
+- **Business Object Selectors** — `ProjectSelector`, `ContractSelector`, `PersonSelector` with local repositories
+- **MainSetup** — Static service registry (currentUser, serverUrl, global repositories, enums)
+- **MainController** — Bootstrap: `isSessionSet()`, `setRepositories()`, `logout()`
 
 ### Routing
 
-Uses React Router's `HashRouter`:
-- URLs: `http://localhost:9000/#/persons`, `#/contracts/123`, etc.
-- No server-side routing needed (SPA)
-- Router params accessed via `useParams()` hook
+HashRouter: `#/persons`, `#/contracts/123`. No server-side routing (SPA). Params via `useParams()`.
 
 ## Development Guidelines
 
-### State Management Rules (CRITICAL)
+**State rules:** Always use repository methods for CRUD. Sync from `repository.items`. Call `updateSnapshot()`. Create local repos for selectors. Never mutate state directly, never reuse global repos in selectors.
 
-**DO:**
-- Always sync component state from `repository.items`: `setObjects([...repository.items])`
-- Use repository methods for CRUD: `repository.addNewItem()`, `repository.editItem()`, `repository.deleteItem()`
-- Call `updateSnapshot()` after state changes in FilterableTable
-- Create local repositories for selectors/autocomplete components
+**Backend-First:** Console warnings like `Brak wymaganego pola` → fix in backend, not frontend workarounds.
 
-**DON'T:**
-- Never mutate `objects` state directly: `objects.push()`, `objects[i] = ...`
-- Never sync from component state: `repository.items = objects`
-- Never update component state independently: `setObjects([...objects, newItem])`
-- Never reuse global repositories in multiple selectors (causes state pollution)
+**TypeScript:** Types in `Typings/bussinesTypes.d.ts`, all extend `RepositoryDataItem` (requires `id: number`). Strict mode, avoid `any`.
 
-### Backend-First Principle
+Full guidelines: [`instructions/AI_GUIDELINES.md`](instructions/AI_GUIDELINES.md)
 
-When console shows warnings like `⚠️ Brak wymaganego pola "_ourIdOrNumber_Name"`:
-- **Fix in backend** - Add computed field in Node.js controller
-- **DON'T add frontend workarounds** - Frontend validates, backend provides
+## Common Patterns
 
-See `instructions/backend-computed-fields.md` for examples.
+**New CRUD module:** Full guide with templates: [`instructions/crud-module-guide.md`](instructions/crud-module-guide.md). Skill: `/new-crud-module NazwaEncji`.
 
-### TypeScript Conventions
+**Form modal:** react-hook-form + yup → `repository.addNewItem(data)` → `setObjects([...repository.items])` → `updateSnapshot()`.
 
-- Business types in `Typings/bussinesTypes.d.ts`: `PersonData`, `Contract`, `ProjectData`, etc.
-- All types extend `RepositoryDataItem` (requires `id: number`)
-- Strict mode enabled - avoid `any`, use explicit types
-- Generic repositories: `RepositoryReact<PersonData>`, `RepositoryReact<Contract>`, etc.
+**Selectors:** Local `RepositoryReact` with `_temp` suffix to avoid state pollution.
 
-### SessionStorage Schema
+## Environment Variables
 
-- Repositories: `sessionStorage.getItem("personsEnvi")`, `sessionStorage.getItem("Contracts repository")`
-- User session: `sessionStorage.getItem("Current User")`
-- FilterableTable snapshots: `filtersableTableSnapshot_${tableId}` (stores criteria + optional objects)
+Create `.env` in project root:
+```bash
+MODE=development
+ENABLE_DEV_LOGIN=true  # Mock auth for local dev
+```
+
+**Security:** Never commit `.env` to git (already in `.gitignore`).
 
 ## Extended Documentation
 
@@ -192,70 +130,12 @@ Detailed guides in `instructions/` directory:
 
 All docs indexed in `instructions/README.md`.
 
-## Common Patterns
-
-### Adding a New Domain Module
-
-**Pełny przewodnik z szablonami kodu:** [`instructions/crud-module-guide.md`](instructions/crud-module-guide.md)
-
-**Skill generatywny:** `/new-crud-module NazwaEncji` — generuje kompletny moduł CRUD krok po kroku.
-Przy realizacji planów, gdy checkpoint wymaga nowego modułu CRUD — użyj skilla `/new-crud-module` z pełnymi argumentami.
-
-Skrócona checklist:
-1. Typ w `Typings/bussinesTypes.d.ts`
-2. Controller — repozytorium (factory lub globalne)
-3. ValidationSchema — `makeXxxValidationSchema(isEditing)`
-4. ModalBody — formularz z `useFormContext()`
-5. ModalButtons — AddNew + Edit
-6. Search/Page — FilterableTable z auto-load
-7. Route w MainWindow (jeśli nowa strona)
-8. Weryfikacja: `npx tsc --noEmit`
-
-### Creating a Form Modal
-
-Use react-hook-form + yup:
-```typescript
-const schema = yup.object({ name: yup.string().required() });
-const { register, handleSubmit } = useForm({ resolver: yupResolver(schema) });
-
-const onSubmit = async (data) => {
-  await repository.addNewItem(data);
-  setObjects([...repository.items]);  // ✅ Sync from repository
-  updateSnapshot();
-};
-```
-
-### Working with Selectors
-
-Use business object selectors with local repositories:
-```typescript
-const localRepo = useMemo(() => new RepositoryReact({
-  name: "myComponent_contracts_temp",
-  actionRoutes: { getRoute: "contracts", ... }
-}), []);
-
-<ContractSelector
-  repository={localRepo}
-  onChange={(selected) => setValue("contractId", selected[0]?.id)}
-/>
-```
-
-## Environment Variables
-
-Create `.env` in project root:
-```bash
-MODE=development
-ENABLE_DEV_LOGIN=true  # Mock auth for local dev
-```
-
-**Security:** Never commit `.env` to git (already in `.gitignore`).
-
 ## Definition of Done
 
 Before marking work complete:
-1. ✅ TypeScript compiles: `yarn build` passes
-2. ✅ App renders: `yarn start` → verify in browser
-3. ✅ State sync correct: Component state matches `repository.items`
-4. ✅ SessionStorage updated: `updateSnapshot()` called after changes
-5. ✅ No console errors/warnings (except legacy code)
-6. ✅ Existing features work (manual regression)
+1. TypeScript compiles: `yarn build` passes
+2. App renders: `yarn start` → verify in browser
+3. State sync correct: Component state matches `repository.items`
+4. SessionStorage updated: `updateSnapshot()` called after changes
+5. No console errors/warnings (except legacy code)
+6. Existing features work (manual regression)

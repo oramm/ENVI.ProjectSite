@@ -1,3 +1,6 @@
+<!-- canonical: instructions/AI_GUIDELINES.md -->
+<!-- sync: przy edycji ZAWSZE edytuj canonical (instructions/AI_GUIDELINES.md), potem skopiuj tutaj -->
+
 # ENVI.ProjectSite AI Developer Instructions
 
 You are an expert developer working on the "ENVI.ProjectSite" codebase, a React 18 + TypeScript application for business process management (projects, contracts, entities, financial aid programmes).

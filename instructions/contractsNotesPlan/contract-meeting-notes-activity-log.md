@@ -1,7 +1,3 @@
-# Contract Meeting Notes Activity Log (Pointer)
+# REDIRECT
 
-Canonical source is maintained in PS-nodeJS:
-
-- `C:/Apache24/htdocs/PS-nodeJS/docs/team/operations/contract-meeting-notes/activity-log.md`
-
-This file is a pointer only and must not be used for active updates.
+This file has moved to: `documentation/operations/contract-meeting-notes/activity-log.md`
