@@ -18,6 +18,15 @@ export default class MainSetup {
     static contractTypesRepository: RepositoryReact<ContractType>;
     static contractRangesRepository: RepositoryReact<ContractRangeData>;
 
+    static readonly ANONYMOUS_USER: User = {
+        googleId: "",
+        picture: "",
+        systemEmail: "",
+        systemRoleId: 5,
+        systemRoleName: "EXTERNAL_USER",
+        userName: "Gość",
+    };
+
     static CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
 
     static serverUrl = window.location.href.includes("localhost")
@@ -29,7 +38,26 @@ export default class MainSetup {
     }
 
     static get currentUser() {
-        return JSON.parse(<string>sessionStorage.getItem("Current User")) as User;
+        const rawCurrentUser = sessionStorage.getItem("Current User");
+
+        if (!rawCurrentUser) {
+            return this.ANONYMOUS_USER;
+        }
+
+        try {
+            const parsedUser = JSON.parse(rawCurrentUser) as Partial<User>;
+
+            if (!parsedUser.systemRoleName) {
+                return this.ANONYMOUS_USER;
+            }
+
+            return {
+                ...this.ANONYMOUS_USER,
+                ...parsedUser,
+            } as User;
+        } catch {
+            return this.ANONYMOUS_USER;
+        }
     }
 
     static set currentUser(data) {

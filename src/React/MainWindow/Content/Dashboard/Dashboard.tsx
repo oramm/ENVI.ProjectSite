@@ -9,11 +9,13 @@ import ApplicationCallsCard from "./ApplicationCallsCard";
 import MilestonesCard from "./MilestonesCard";
 
 export default function Dashboard() {
+    const systemRoleName = MainSetup.currentUser.systemRoleName;
+
     return (
         <Row className="mx-3">
             <Col md={3} className="mb-3">
                 <OffersCard className="mb-3 bg-white" />
-                {["ADMIN", "ENVI_MANAGER"].includes(MainSetup.currentUser.systemRoleName) && (
+                {["ADMIN", "ENVI_MANAGER"].includes(systemRoleName) && (
                     <InvoicesCard className="mb-3 bg-white" />
                 )}
                 <ApplicationCallsCard className="mb-3 bg-white" />

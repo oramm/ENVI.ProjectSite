@@ -8,6 +8,9 @@ import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function MainMenu() {
     const location = useLocation();
+    const currentUser = MainSetup.currentUser;
+    const systemRoleName = currentUser.systemRoleName;
+    const userName = currentUser.userName;
 
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
@@ -24,7 +27,7 @@ export default function MainMenu() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                MainSetup.currentUser.systemRoleName
+                                systemRoleName
                             ) && (
                                 <NavDropdown
                                     title="Kontrakty"
@@ -74,10 +77,10 @@ export default function MainMenu() {
                             </Nav.Link>
                             {(() => {
                                 const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                    MainSetup.currentUser.systemRoleName
+                                    systemRoleName
                                 );
                                 const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(
-                                    MainSetup.currentUser.systemRoleName
+                                    systemRoleName
                                 );
 
                                 if (!canViewInvoices) return null;
@@ -107,7 +110,7 @@ export default function MainMenu() {
                                 );
                             })()}
                             {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                MainSetup.currentUser.systemRoleName
+                                systemRoleName
                             ) && (
                                 <>
                                     <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
@@ -167,7 +170,7 @@ export default function MainMenu() {
                                 title={
                                     <>
                                         <FontAwesomeIcon icon={faCircleUser} className="me-2" />
-                                        {MainSetup.currentUser.userName}
+                                        {userName}
                                     </>
                                 }
                                 id="user-nav-dropdown"
@@ -181,7 +184,7 @@ export default function MainMenu() {
                                     Wyloguj się
                                 </NavDropdown.Item>
                                 {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                MainSetup.currentUser.systemRoleName
+                                systemRoleName
                                 ) && (
                                     <>
                                         <NavDropdown.Item as={Link} to="/admin/systemUsers">
