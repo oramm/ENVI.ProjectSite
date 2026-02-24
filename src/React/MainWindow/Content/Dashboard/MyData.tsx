@@ -11,7 +11,22 @@ interface MyDataProps {
 }
 
 export default function MyData({ title = "Moje Dane", className, style, renderExtraContent }: MyDataProps) {
-    const { userName, systemEmail, systemRoleName } = MainSetup.currentUser;
+    const currentUser = MainSetup.currentUserOrNull;
+
+    if (!currentUser) {
+        return (
+            <Card className={className} style={style}>
+                <Card.Body>
+                    <Card.Title className="mb-2" style={{ fontWeight: 600, fontSize: 18 }}>
+                        {title}
+                    </Card.Title>
+                    <div className="text-muted small">Trwa synchronizacja danych użytkownika...</div>
+                </Card.Body>
+            </Card>
+        );
+    }
+
+    const { userName, systemEmail, systemRoleName } = currentUser;
 
     return (
         <Card className={className} style={style}>

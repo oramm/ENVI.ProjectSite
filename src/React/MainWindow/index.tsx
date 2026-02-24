@@ -51,6 +51,7 @@ function App() {
     const [isReady, setIsReady] = useState(false);
     const [isPublicProfileSubmissionRoute, setIsPublicProfileSubmissionRoute] = useState(false);
     const [errorMessage, setErrorMessage] = useState("" as string | null);
+    const currentUser = MainSetup.currentUserOrNull;
 
     useEffect(() => {
         async function fetchData() {
@@ -61,10 +62,17 @@ function App() {
             }
 
             try {
-                const isLoggedIn = await MainController.isSessionSet();
-                setIsLoggedIn(isLoggedIn);
-                if (isLoggedIn) await MainController.main();
+                const hasSession = await MainController.isSessionSet();
+
+                if (!hasSession) {
+                    setIsLoggedIn(false);
+                    return;
+                }
+
+                await MainController.main();
+                setIsLoggedIn(true);
             } catch (error) {
+                setIsLoggedIn(false);
                 if (error instanceof Error) {
                     console.error(error);
                     setErrorMessage(`${error.message}`);
@@ -122,6 +130,17 @@ function App() {
         );
     }
 
+    if (!currentUser) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center min-vh-100 flex-column">
+                <SpinnerBootstrap />
+                <Alert variant="info" className="mt-3 mb-0">
+                    Trwa pobieranie danych użytkownika po zalogowaniu...
+                </Alert>
+            </Container>
+        );
+    }
+
     // zalogowany użytkownik
     return (
         <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white">
@@ -139,10 +158,7 @@ function AppRoutes() {
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route
-                        path="/public/experience-update/:token"
-                        element={<PublicProfileSubmissionPage />}
-                    />
+                    <Route path="/public/experience-update/:token" element={<PublicProfileSubmissionPage />} />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
                     <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"]} />}>
                         <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
@@ -160,7 +176,10 @@ function AppRoutes() {
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
-                        <Route path="/admin/skills" element={<SkillsDictionarySearch title="Słownik specjalizacji" />} />
+                        <Route
+                            path="/admin/skills"
+                            element={<SkillsDictionarySearch title="Słownik specjalizacji" />}
+                        />
                         <Route
                             path="/admin/contractRanges"
                             element={<ContractRangesSearch title="Zakresy kontratków" />}
@@ -205,10 +224,7 @@ function PublicAppRoutes() {
             <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white">
                 <div className="mt-3 mb-3">
                     <Routes>
-                        <Route
-                            path="/public/experience-update/:token"
-                            element={<PublicProfileSubmissionPage />}
-                        />
+                        <Route path="/public/experience-update/:token" element={<PublicProfileSubmissionPage />} />
                     </Routes>
                 </div>
             </Container>

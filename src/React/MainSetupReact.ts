@@ -18,15 +18,6 @@ export default class MainSetup {
     static contractTypesRepository: RepositoryReact<ContractType>;
     static contractRangesRepository: RepositoryReact<ContractRangeData>;
 
-    static readonly ANONYMOUS_USER: User = {
-        googleId: "",
-        picture: "",
-        systemEmail: "",
-        systemRoleId: 5,
-        systemRoleName: "EXTERNAL_USER",
-        userName: "Gość",
-    };
-
     static CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
 
     static serverUrl = window.location.href.includes("localhost")
@@ -34,30 +25,41 @@ export default class MainSetup {
         : "https://erp-envi.herokuapp.com/";
 
     static get isDevEnvironment() {
-        return this.serverUrl.includes('localhost') || this.serverUrl.includes('127.0.0.1');
+        return this.serverUrl.includes("localhost") || this.serverUrl.includes("127.0.0.1");
     }
 
-    static get currentUser() {
+    static get currentUserOrNull(): User | null {
         const rawCurrentUser = sessionStorage.getItem("Current User");
 
-        if (!rawCurrentUser) {
-            return this.ANONYMOUS_USER;
+        if (!rawCurrentUser || rawCurrentUser === "null" || rawCurrentUser === "undefined") {
+            return null;
         }
 
         try {
-            const parsedUser = JSON.parse(rawCurrentUser) as Partial<User>;
+            const parsedUser = JSON.parse(rawCurrentUser) as Partial<User> | null;
 
-            if (!parsedUser.systemRoleName) {
-                return this.ANONYMOUS_USER;
+            if (!parsedUser) {
+                return null;
             }
 
-            return {
-                ...this.ANONYMOUS_USER,
-                ...parsedUser,
-            } as User;
+            if (!parsedUser.systemRoleName || !parsedUser.userName) {
+                return null;
+            }
+
+            return parsedUser as User;
         } catch {
-            return this.ANONYMOUS_USER;
+            return null;
         }
+    }
+
+    static get currentUser() {
+        const currentUser = this.currentUserOrNull;
+
+        if (!currentUser) {
+            throw new Error("Current user is not available yet");
+        }
+
+        return currentUser;
     }
 
     static set currentUser(data) {
@@ -301,6 +303,12 @@ export default class MainSetup {
     };
 
     static isRoleAllowed(roles: SystemRoleName[]) {
-        return roles.includes(this.currentUser.systemRoleName);
+        const currentUser = this.currentUserOrNull;
+
+        if (!currentUser) {
+            return false;
+        }
+
+        return roles.includes(currentUser.systemRoleName);
     }
 }

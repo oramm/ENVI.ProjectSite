@@ -1,20 +1,35 @@
-import React, { useState } from "react";
-import { Navbar, Nav, Container, Button, Offcanvas, NavDropdown, Badge } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
-import MainSetup from "../MainSetupReact";
-import MainController from "../MainControllerReact";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import { Badge, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
+import MainController from "../MainControllerReact";
+import MainSetup from "../MainSetupReact";
 
 export default function MainMenu() {
     const location = useLocation();
-    const currentUser = MainSetup.currentUser;
-    const systemRoleName = currentUser.systemRoleName;
-    const userName = currentUser.userName;
+    const currentUser = MainSetup.currentUserOrNull;
 
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
     }
+
+    if (!currentUser) {
+        return (
+            <Navbar sticky="top" bg="light" expand="md">
+                <Container>
+                    <Navbar.Brand as={Link} to={"/"}>
+                        Witryna Projektów
+                    </Navbar.Brand>
+                    <Nav className="ms-auto">
+                        <Navbar.Text className="text-muted">Trwa pobieranie danych użytkownika...</Navbar.Text>
+                    </Nav>
+                </Container>
+            </Navbar>
+        );
+    }
+
+    const { systemRoleName, userName } = currentUser;
 
     return (
         <>
@@ -26,9 +41,7 @@ export default function MainMenu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                systemRoleName
-                            ) && (
+                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (
                                 <NavDropdown
                                     title="Kontrakty"
                                     id="basic-nav-dropdown"
@@ -77,25 +90,39 @@ export default function MainMenu() {
                             </Nav.Link>
                             {(() => {
                                 const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                    systemRoleName
+                                    systemRoleName,
                                 );
-                                const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(
-                                    systemRoleName
-                                );
+                                const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
 
                                 if (!canViewInvoices) return null;
 
                                 // If user can view cost invoices, show expandable menu like other sections
                                 if (canViewCostInvoices) {
                                     return (
-                                        <NavDropdown title="Faktury" id="invoices-nav-dropdown" className={isActive("/invoices")}>
-                                            <NavDropdown.Item as={Link} to="/invoices" className={isActive("/invoices")}>
+                                        <NavDropdown
+                                            title="Faktury"
+                                            id="invoices-nav-dropdown"
+                                            className={isActive("/invoices")}
+                                        >
+                                            <NavDropdown.Item
+                                                as={Link}
+                                                to="/invoices"
+                                                className={isActive("/invoices")}
+                                            >
                                                 Faktury
                                             </NavDropdown.Item>
-                                            <NavDropdown.Item as={Link} to="/costInvoices" className={isActive("/costInvoices")}>
+                                            <NavDropdown.Item
+                                                as={Link}
+                                                to="/costInvoices"
+                                                className={isActive("/costInvoices")}
+                                            >
                                                 Faktury kosztowe
                                             </NavDropdown.Item>
-                                            <NavDropdown.Item as={Link} to="/costInvoices/report" className={isActive("/costInvoices/report")}>
+                                            <NavDropdown.Item
+                                                as={Link}
+                                                to="/costInvoices/report"
+                                                className={isActive("/costInvoices/report")}
+                                            >
                                                 Raport miesięczny
                                             </NavDropdown.Item>
                                         </NavDropdown>
@@ -109,9 +136,7 @@ export default function MainMenu() {
                                     </Nav.Link>
                                 );
                             })()}
-                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                systemRoleName
-                            ) && (
+                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (
                                 <>
                                     <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
                                         Podmioty
@@ -183,9 +208,7 @@ export default function MainMenu() {
                                 >
                                     Wyloguj się
                                 </NavDropdown.Item>
-                                {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                systemRoleName
-                                ) && (
+                                {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (
                                     <>
                                         <NavDropdown.Item as={Link} to="/admin/systemUsers">
                                             Dodaj użytkownika
