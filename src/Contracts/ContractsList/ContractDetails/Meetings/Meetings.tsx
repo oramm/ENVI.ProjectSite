@@ -7,6 +7,7 @@ import { useContractDetails } from '../ContractDetailsContext';
 import { meetingsRepository } from '../../ContractsController';
 import { MeetingAddNewModalButton, MeetingEditModalButton } from './Modals/MeetingModalButtons';
 import MeetingAgendaPanel from './MeetingAgendaPanel';
+import { MeetingsFilterBody } from './MeetingsFilterBody';
 
 export default function Meetings() {
     const { contract } = useContractDetails();
@@ -55,6 +56,7 @@ export default function Meetings() {
                             repository={meetingsRepository}
                             AddNewButtonComponents={[MeetingAddNewModalButton]}
                             EditButtonComponent={MeetingEditModalButton}
+                            FilterBodyComponent={MeetingsFilterBody}
                             isDeletable={true}
                             showTableHeader={false}
                             tableStructure={[

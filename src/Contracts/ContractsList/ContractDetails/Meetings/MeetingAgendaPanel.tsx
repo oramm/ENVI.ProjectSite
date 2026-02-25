@@ -7,6 +7,7 @@ import FilterableTable from '../../../../View/Resultsets/FilterableTable/Filtera
 import { meetingArrangementsRepository, meetingNotesRepository } from '../../ContractsController';
 import { MeetingArrangementAddNewModalButton, MeetingArrangementEditModalButton } from './Modals/MeetingArrangementModalButtons';
 import { useContractDetails } from '../ContractDetailsContext';
+import MeetingNoteSection from './MeetingNoteSection';
 
 const STATUS_LABELS: Record<MeetingArrangementStatus, string> = {
     PLANNED: 'Planowany',
@@ -167,6 +168,9 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                         )}
                     </Button>
                 </div>
+                {contract?.id && meeting?.id && (
+                    <MeetingNoteSection meetingId={meeting.id} contractId={contract.id} />
+                )}
             </Card.Body>
         </Card>
     );
