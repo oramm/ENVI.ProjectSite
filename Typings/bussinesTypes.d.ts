@@ -693,6 +693,51 @@ export interface ContractMeetingNoteData extends RepositoryDataItem {
     meetingId?: number | null;
 }
 
+export interface MeetingData extends RepositoryDataItem {
+    name: string;
+    description?: string;
+    date?: string;
+    location?: string;
+    contractId?: number;
+    protocolGdId?: string;
+    _documentEditUrl?: string;
+    _contract?: {
+        id?: number;
+        number?: string;
+        name?: string;
+    };
+}
+
+export type MeetingArrangementStatus = 'PLANNED' | 'DISCUSSED' | 'CLOSED';
+
+export interface MeetingArrangementData extends RepositoryDataItem {
+    name?: string;
+    description?: string;
+    deadline?: string | null;
+    status: MeetingArrangementStatus;
+    meetingId?: number;
+    caseId?: number;
+    _owner?: {
+        id?: number;
+        name?: string;
+        surname?: string;
+        email?: string;
+    };
+    _case?: {
+        id?: number;
+        name?: string;
+        _type?: {
+            id?: number;
+            name?: string;
+            folderNumber?: string;
+        };
+        _parent?: {
+            id?: number;
+            name?: string;
+        };
+    };
+}
+
 /**
  * Faktura kosztowa (zakupowa) - pobierana z KSeF
  * Faktury VAT przychodzące od kontrahentów

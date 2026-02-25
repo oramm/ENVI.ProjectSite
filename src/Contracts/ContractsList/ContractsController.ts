@@ -7,6 +7,8 @@ import {
     ContractsSettlementData,
     EntityData,
     Invoice,
+    MeetingArrangementData,
+    MeetingData,
     MilestoneData,
     MilestoneType,
     OtherContract,
@@ -147,6 +149,26 @@ export const citiesRepository = new RepositoryReact<CityData>({
         deleteRoute: "city",
     },
     name: "cities",
+});
+
+export const meetingsRepository = new RepositoryReact<MeetingData>({
+    actionRoutes: {
+        getRoute: "meetings",
+        addNewRoute: "meeting",
+        editRoute: "meeting",
+        deleteRoute: "meeting",
+    },
+    name: "meetings",
+});
+
+export const meetingArrangementsRepository = new RepositoryReact<MeetingArrangementData>({
+    actionRoutes: {
+        getRoute: "meetingArrangements",
+        addNewRoute: "meetingArrangement",
+        editRoute: "meetingArrangement",
+        deleteRoute: "meetingArrangement",
+    },
+    name: "meetingArrangements",
 });
 
 export const meetingNotesRepository = new RepositoryReact<ContractMeetingNoteData>({

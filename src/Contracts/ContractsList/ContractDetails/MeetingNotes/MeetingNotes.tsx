@@ -6,6 +6,7 @@ import FilterableTable from "../../../../View/Resultsets/FilterableTable/Filtera
 import { useContractDetails } from "../ContractDetailsContext";
 import { meetingNotesRepository } from "../../ContractsController";
 import { MeetingNoteAddNewModalButton } from "./Modals/MeetingNoteModalButtons";
+import { MeetingNoteEditModalButton } from "./Modals/MeetingNoteEditModalButton";
 
 export default function MeetingNotes() {
     const { contract } = useContractDetails();
@@ -64,7 +65,8 @@ export default function MeetingNotes() {
                             { header: "Data spotkania", objectAttributeToShow: "meetingDate" },
                             { header: "Data utworzenia", objectAttributeToShow: "createdAt" },
                         ]}
-                        isDeletable={false}
+                        EditButtonComponent={MeetingNoteEditModalButton}
+                        isDeletable={true}
                         showTableHeader={false}
                     />
                 ) : (
