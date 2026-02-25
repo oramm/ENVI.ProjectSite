@@ -685,7 +685,8 @@ export interface ContractMeetingNoteData extends RepositoryDataItem {
     sequenceNumber: number;
     title: string;
     gdDocumentId?: string;
-    gdDocumentUrl?: string;
+    _documentOpenUrl?: string;
+    _documentEditUrl?: string;
     meetingDate?: string;
     createdAt?: string;
     createdByPersonId?: number;

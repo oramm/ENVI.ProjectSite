@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 import { ContractMeetingNoteData } from "../../../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../../../View/Resultsets/CommonComponents";
@@ -10,13 +10,34 @@ import { MeetingNoteAddNewModalButton } from "./Modals/MeetingNoteModalButtons";
 export default function MeetingNotes() {
     const { contract } = useContractDetails();
     const [notes, setNotes] = useState<ContractMeetingNoteData[] | undefined>(undefined);
+
     useEffect(() => {
+        let isMounted = true;
+
         async function fetchNotes() {
             if (!contract?.id) return;
-            await meetingNotesRepository.loadItemsFromServerPOST([{ contractId: contract.id }]);
-            setNotes([...meetingNotesRepository.items]);
+            try {
+                await meetingNotesRepository.loadItemsFromServerPOST([{ contractId: contract.id }]);
+                if (!isMounted) return;
+
+                const notesWithActionLinks = meetingNotesRepository.items.map((note) => ({
+                    ...note,
+                    _documentOpenUrl: note._documentOpenUrl || note._documentEditUrl,
+                }));
+
+                meetingNotesRepository.items = notesWithActionLinks;
+                setNotes([...notesWithActionLinks]);
+            } catch (error) {
+                if (!isMounted) return;
+                console.error("MeetingNotes: unable to load notes", error);
+                setNotes([]);
+            }
         }
+
         fetchNotes();
+        return () => {
+            isMounted = false;
+        };
     }, [contract?.id]);
 
     if (!contract) {
@@ -41,20 +62,10 @@ export default function MeetingNotes() {
                             { header: "#", objectAttributeToShow: "sequenceNumber" },
                             { header: "Tytuł", objectAttributeToShow: "title" },
                             { header: "Data spotkania", objectAttributeToShow: "meetingDate" },
-                            {
-                                header: "Link do dokumentu",
-                                renderTdBody: (note: ContractMeetingNoteData) =>
-                                    note.gdDocumentUrl ? (
-                                        <a href={note.gdDocumentUrl} target="_blank" rel="noopener noreferrer">
-                                            Otwórz dokument
-                                        </a>
-                                    ) : (
-                                        <></>
-                                    ),
-                            },
                             { header: "Data utworzenia", objectAttributeToShow: "createdAt" },
                         ]}
                         isDeletable={false}
+                        showTableHeader={false}
                     />
                 ) : (
                     <>
