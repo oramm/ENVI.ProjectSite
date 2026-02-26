@@ -12,7 +12,7 @@ import {
 } from "./CostInvoicesController";
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
-import { CostInvoiceStatusBadge, CategoryBadge, VatDeductionBadge } from "./CostInvoicesBadges";
+import { CostInvoiceStatusBadge, CategoryBadge, VatDeductionBadge, PaymentStatusBadge } from "./CostInvoicesBadges";
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
 import "./CostInvoicesSearch.css";
 
@@ -145,6 +145,11 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                     </div>
                     <div className="cost-invoice-card__status-wrap">
                         <CostInvoiceStatusCell invoice={invoice} />
+                        <PaymentStatusBadge
+                            status={invoice.paymentStatus}
+                            paidAmount={invoice.paidAmount}
+                            grossAmount={toNumber(invoice.grossAmount)}
+                        />
                     </div>
                 </div>
 

@@ -21,6 +21,8 @@ import {
     CostInvoiceApiError,
     CostInvoiceStatus,
     CostInvoiceStatuses,
+    PaymentStatus,
+    PaymentStatuses,
 } from "./CostInvoicesController";
 import { CostInvoiceStatusBadge } from "./CostInvoicesBadges";
 import Tools from "../../React/Tools/Tools";
@@ -45,6 +47,8 @@ export default function CostInvoiceDetails() {
     const [vatDeductionPercentage, setVatDeductionPercentage] = useState(100);
     const [notes, setNotes] = useState("");
     const [status, setStatus] = useState<CostInvoiceStatus>(CostInvoiceStatuses.NEW);
+    const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(PaymentStatuses.UNPAID);
+    const [paidAmount, setPaidAmount] = useState(0);
 
     // Edytowalne pozycje
     const [editedItems, setEditedItems] = useState<Map<number, Partial<CostInvoiceItem>>>(new Map());
@@ -76,6 +80,8 @@ export default function CostInvoiceDetails() {
             setVatDeductionPercentage(invoiceWithItems.vatDeductionPercentage);
             setNotes(invoiceWithItems.notes || "");
             setStatus(invoiceWithItems.status);
+            setPaymentStatus(invoiceWithItems.paymentStatus ?? PaymentStatuses.UNPAID);
+            setPaidAmount(invoiceWithItems.paidAmount ?? 0);
 
             document.title = `Faktura ${invoiceWithItems.invoiceNumber} | ${invoiceWithItems.supplierName}`;
         } catch (err) {
@@ -112,6 +118,10 @@ export default function CostInvoiceDetails() {
 
     const handleSave = async () => {
         if (!invoice) return;
+        if (paymentStatus === PaymentStatuses.PARTIALLY_PAID && paidAmount <= 0) {
+            setError("Dla statusu 'Częściowo zapłacona' kwota zapłacona musi być większa od 0.");
+            return;
+        }
         setSaving(true);
         setError(null);
         setValidationDetails([]);
@@ -141,6 +151,8 @@ export default function CostInvoiceDetails() {
             vatDeductionPercentage,
             notes: notes || null,
             status,
+            paymentStatus,
+            paidAmount,
         });
 
         for (const [itemId, changes] of editedItems) {
@@ -376,7 +388,22 @@ export default function CostInvoiceDetails() {
                             </p>
                             <p className="mb-1 text-muted">NIP: {invoice.supplierNip}</p>
                             {invoice.supplierAddress && (
-                                <p className="mb-0 text-muted small">{invoice.supplierAddress}</p>
+                                <p className="mb-1 text-muted small">{invoice.supplierAddress}</p>
+                            )}
+                            {invoice.supplierBankAccount && (
+                                <p className="mb-0 small">
+                                    <span className="text-muted">Konto: </span>
+                                    <code>{invoice.supplierBankAccount}</code>
+                                    <Button
+                                        variant="link"
+                                        size="sm"
+                                        className="py-0 px-1"
+                                        title="Kopiuj numer rachunku"
+                                        onClick={() => navigator.clipboard.writeText(invoice.supplierBankAccount!)}
+                                    >
+                                        ⎘
+                                    </Button>
+                                </p>
                             )}
                         </Col>
                         <Col md={3}>
@@ -498,8 +525,64 @@ export default function CostInvoiceDetails() {
                         </Col>
                     </Row>
 
+                    <Row className="mt-2">
+                        <Col md={12}>
+                            <Form.Label>Status płatności</Form.Label>
+                            <div className="d-flex gap-2 flex-wrap mb-2">
+                                {([
+                                    { value: PaymentStatuses.UNPAID, label: "● Niezapłacona" },
+                                    { value: PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
+                                    { value: PaymentStatuses.PAID, label: "✓ Zapłacona" },
+                                ] as const).map(({ value, label }) => (
+                                    <Button
+                                        key={value}
+                                        size="sm"
+                                        variant={paymentStatus === value ? "primary" : "outline-secondary"}
+                                        disabled={isBooked}
+                                        onClick={() => {
+                                            setPaymentStatus(value);
+                                            if (value === PaymentStatuses.PAID) setPaidAmount(invoice.grossAmount);
+                                            if (value === PaymentStatuses.UNPAID) setPaidAmount(0);
+                                        }}
+                                    >
+                                        {label}
+                                    </Button>
+                                ))}
+                            </div>
+                            {paymentStatus === PaymentStatuses.PARTIALLY_PAID && (
+                                <Row className="align-items-center g-2">
+                                    <Col xs="auto">
+                                        <Form.Label className="mb-0 small">Kwota zapłacona</Form.Label>
+                                    </Col>
+                                    <Col xs="auto">
+                                        <Form.Control
+                                            type="number"
+                                            size="sm"
+                                            min={0}
+                                            max={invoice.grossAmount}
+                                            step={0.01}
+                                            value={paidAmount}
+                                            disabled={isBooked}
+                                            onChange={(e) => setPaidAmount(parseFloat(e.target.value) || 0)}
+                                            style={{ width: "130px" }}
+                                        />
+                                    </Col>
+                                    <Col xs="auto">
+                                        <span className="text-muted small">
+                                            z {Tools.formatNumber(invoice.grossAmount)} {invoice.currency}
+                                            {" · "}pozostało:{" "}
+                                            <strong className={invoice.grossAmount - paidAmount > 0 ? "text-danger" : "text-success"}>
+                                                {Tools.formatNumber(invoice.grossAmount - paidAmount)} {invoice.currency}
+                                            </strong>
+                                        </span>
+                                    </Col>
+                                </Row>
+                            )}
+                        </Col>
+                    </Row>
+
                     {isBooked && invoice.bookedAt && (
-                        <Alert variant="info" className="mb-0">
+                        <Alert variant="info" className="mb-0 mt-3">
                             <strong>Zaksięgowano:</strong> {ToolsDate.dateToDDmmmYYYYHHMM(invoice.bookedAt)}
                             {invoice._bookedByPerson && (
                                 <> przez {invoice._bookedByPerson.name} {invoice._bookedByPerson.surname}</>

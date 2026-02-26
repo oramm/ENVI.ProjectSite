@@ -99,6 +99,17 @@ export const CostInvoiceStatuses = {
 export type CostInvoiceStatus = typeof CostInvoiceStatuses[keyof typeof CostInvoiceStatuses];
 
 /**
+ * Statusy płatności faktur kosztowych
+ */
+export const PaymentStatuses = {
+    UNPAID: "UNPAID",
+    PARTIALLY_PAID: "PARTIALLY_PAID",
+    PAID: "PAID",
+} as const;
+
+export type PaymentStatus = typeof PaymentStatuses[keyof typeof PaymentStatuses];
+
+/**
  * Repozytorium faktur kosztowych
  * Dane pobierane z KSeF i przechowywane lokalnie
  */
@@ -223,6 +234,8 @@ export async function updateCostInvoice(
     id: number,
     data: Partial<{
         status: CostInvoiceStatus;
+        paymentStatus: PaymentStatus;
+        paidAmount: number;
         bookingPercentage: number;
         vatDeductionPercentage: number;
         categoryId: number | null;

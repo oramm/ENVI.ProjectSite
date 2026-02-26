@@ -754,6 +754,7 @@ export interface CostInvoice extends RepositoryDataItem {
     supplierNip: string;
     supplierName: string;
     supplierAddress?: string | null;
+    supplierBankAccount?: string | null;
 
     // Dane finansowe
     netAmount: number;
@@ -763,6 +764,10 @@ export interface CostInvoice extends RepositoryDataItem {
 
     // Status faktury: "NEW" | "EXCLUDED" | "BOOKED"
     status: "NEW" | "EXCLUDED" | "BOOKED";
+
+    // Status płatności
+    paymentStatus?: "UNPAID" | "PARTIALLY_PAID" | "PAID";
+    paidAmount?: number;
 
     // Ustawienia księgowania
     /** Procent kwoty netto do zaksięgowania (0-100) */

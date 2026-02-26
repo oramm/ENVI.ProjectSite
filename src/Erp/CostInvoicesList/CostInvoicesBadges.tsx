@@ -1,6 +1,6 @@
 import React from "react";
 import { Badge, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { CostInvoiceStatuses } from "./CostInvoicesController";
+import { CostInvoiceStatuses, PaymentStatuses, PaymentStatus } from "./CostInvoicesController";
 import { CostInvoiceCategory } from "../../../Typings/bussinesTypes";
 
 /**
@@ -101,6 +101,69 @@ export function BookingPercentageBadge({ percentage }: { percentage: number }) {
         >
             <Badge bg="info" text="light">
                 {percentage}%
+            </Badge>
+        </OverlayTrigger>
+    );
+}
+
+/**
+ * Badge statusu płatności faktury kosztowej
+ */
+export function PaymentStatusBadge({
+    status,
+    paidAmount,
+    grossAmount,
+}: {
+    status?: PaymentStatus | null;
+    paidAmount?: number;
+    grossAmount?: number;
+}) {
+    const resolved = status ?? PaymentStatuses.UNPAID;
+
+    let variant: string;
+    let textVariant: string;
+    let label: string;
+    let icon: string;
+
+    switch (resolved) {
+        case PaymentStatuses.PAID:
+            variant = "success";
+            textVariant = "light";
+            label = "Zapłacona";
+            icon = "✓";
+            break;
+        case PaymentStatuses.PARTIALLY_PAID: {
+            const pct =
+                grossAmount && paidAmount
+                    ? Math.round((paidAmount / grossAmount) * 100)
+                    : null;
+            variant = "warning";
+            textVariant = "dark";
+            label = pct !== null ? `Częściowo ${pct}%` : "Częściowo";
+            icon = "◑";
+            break;
+        }
+        default:
+            variant = "secondary";
+            textVariant = "light";
+            label = "Niezapłacona";
+            icon = "●";
+    }
+
+    return (
+        <OverlayTrigger
+            placement="top"
+            overlay={
+                <Tooltip id="payment-status-tooltip">
+                    Status płatności: {label}
+                    {resolved === PaymentStatuses.PARTIALLY_PAID && paidAmount !== undefined && grossAmount
+                        ? ` (${paidAmount.toFixed(2)} / ${grossAmount.toFixed(2)})`
+                        : ""}
+                </Tooltip>
+            }
+        >
+            <Badge bg={variant} text={textVariant}>
+                {icon} {label}
             </Badge>
         </OverlayTrigger>
     );
