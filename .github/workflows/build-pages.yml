@@ -40,11 +40,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add docs/
           if git diff --cached --quiet; then
             echo "Brak zmian w docs/ — pomijam commit."
             exit 0
           fi
           git commit -m "build(pages): auto-aktualizacja docs/"
-          git pull --rebase
           git push
