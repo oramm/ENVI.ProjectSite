@@ -46,7 +46,7 @@ const ContractDetailsContext_1 = require("./ContractDetailsContext");
 const ContractMainHeader_1 = require("./ContractMainHeader");
 const ContractOtherDetails_1 = __importDefault(require("./ContractOtherDetails"));
 const ContractOurDetails_1 = __importDefault(require("./ContractOurDetails"));
-const MeetingNotes_1 = __importDefault(require("./MeetingNotes/MeetingNotes"));
+const Meetings_1 = __importDefault(require("./Meetings/Meetings"));
 const Tasks_1 = __importDefault(require("./Tasks/Tasks"));
 function ContractMainViewTabs() {
     const location = (0, react_router_dom_1.useLocation)();
@@ -106,6 +106,6 @@ function ContractMainViewTabs() {
                     react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "Dane og\u00F3lne" }, "ourId" in contract ? react_1.default.createElement(ContractOurDetails_1.default, null) : react_1.default.createElement(ContractOtherDetails_1.default, null)),
                     react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "tasks", title: "Zadania" },
                         react_1.default.createElement(Tasks_1.default, null)),
-                    react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "meetingNotes", title: "Notatki ze spotka\u0144" },
-                        react_1.default.createElement(MeetingNotes_1.default, null))))));
+                    react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "meetings", title: "Spotkania" },
+                        react_1.default.createElement(Meetings_1.default, null))))));
 }

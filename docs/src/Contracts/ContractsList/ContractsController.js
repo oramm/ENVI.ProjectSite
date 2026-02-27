@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.meetingNotesRepository = exports.citiesRepository = exports.securitiesRepository = exports.invoicesRepository = exports.contractsSettlementRepository = exports.projectsRepository = exports.contractRangesRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
+exports.meetingNotesRepository = exports.meetingArrangementsRepository = exports.meetingsRepository = exports.citiesRepository = exports.securitiesRepository = exports.invoicesRepository = exports.contractsSettlementRepository = exports.projectsRepository = exports.contractRangesRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -123,6 +123,24 @@ exports.citiesRepository = new RepositoryReact_1.default({
         deleteRoute: "city",
     },
     name: "cities",
+});
+exports.meetingsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "meetings",
+        addNewRoute: "meeting",
+        editRoute: "meeting",
+        deleteRoute: "meeting",
+    },
+    name: "meetings",
+});
+exports.meetingArrangementsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "meetingArrangements",
+        addNewRoute: "meetingArrangement",
+        editRoute: "meetingArrangement",
+        deleteRoute: "meetingArrangement",
+    },
+    name: "meetingArrangements",
 });
 exports.meetingNotesRepository = new RepositoryReact_1.default({
     actionRoutes: {

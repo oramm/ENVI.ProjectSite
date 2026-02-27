@@ -32124,7 +32124,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.icon {
 .is-warning {
     border-color: #ffc107 !important; /* yellow */
 }
-`, "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,qBAAqB;AACzB;;AAEA;IACI,cAAc;IACd,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,eAAe;IACf,iBAAiB;IACjB,gBAAgB,EAAE,qCAAqC;AAC3D;;AAEA;IACI,+CAA+C,EAAE,oBAAoB;IACrE,8CAA8C;IAC9C,eAAe;AACnB;;AAEA;IACI,gCAAgC,EAAE,WAAW;AACjD","sourcesContent":[".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n\r\n.row-hover:hover {\r\n    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */\r\n    transition: background-color 0.15s ease-in-out;\r\n    cursor: pointer;\r\n}\r\n\r\n.is-warning {\r\n    border-color: #ffc107 !important; /* yellow */\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,qBAAqB;AACzB;;AAEA;IACI,cAAc;IACd,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,eAAe;IACf,iBAAiB;IACjB,gBAAgB,EAAE,qCAAqC;AAC3D;;AAEA;IACI,+CAA+C,EAAE,oBAAoB;IACrE,8CAA8C;IAC9C,eAAe;AACnB;;AAEA;IACI,gCAAgC,EAAE,WAAW;AACjD","sourcesContent":[".icon {\n    width: 24px;\n    height: 24px;\n    display: inline-block;\n}\n\n.icon-vertical {\n    display: block;\n    margin-bottom: 10px;\n}\n\n.icon-horizontal {\n    margin-right: 10px;\n}\n\n.nav-separator {\n    display: flex;\n    align-items: center;\n    padding: 0 15px;\n    font-weight: bold;\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\n}\n\n.row-hover:hover {\n    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */\n    transition: background-color 0.15s ease-in-out;\n    cursor: pointer;\n}\n\n.is-warning {\n    border-color: #ffc107 !important; /* yellow */\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -32375,7 +32375,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.good-tip-toast-wrapper {
 .good-tip-toast-wrapper.show {
     transform: translateX(0);
     opacity: 1;
-}`, "",{"version":3,"sources":["webpack://./src/React/MainWindow/Content/Dashboard/GoodTipToast.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,kEAAkE;IAClE,sBAAsB;IACtB,gBAAgB;AACpB;;AAEA;IACI,WAAW;IACX,kBAAkB;IAClB,SAAS;IACT,OAAO;IACP,WAAW;IACX,gCAAgC;IAChC,yBAAyB;IACzB,8BAA8B;IAC9B,WAAW;AACf;;AAEA;IACI,2BAA2B;IAC3B,UAAU;AACd;;AAEA;IACI,wBAAwB;IACxB,UAAU;AACd","sourcesContent":[".good-tip-toast-wrapper {\r\n    position: relative;\r\n    transition: transform 400ms ease-in-out, opacity 400ms ease-in-out;\r\n    border-radius: 0.35rem;\r\n    overflow: hidden; \r\n}\r\n\r\n.good-tip-toast-wrapper::before {\r\n    content: '';\r\n    position: absolute;\r\n    bottom: 0;\r\n    left: 0;\r\n    height: 4px; \r\n    width: var(--progress-width, 0%);\r\n    background-color: #0d6efd;\r\n    transition: width 0.05s linear;\r\n    z-index: 10; \r\n}\r\n\r\n.good-tip-toast-wrapper.hide {\r\n    transform: translateX(120%);\r\n    opacity: 0;\r\n}\r\n\r\n.good-tip-toast-wrapper.show {\r\n    transform: translateX(0);\r\n    opacity: 1;\r\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./src/React/MainWindow/Content/Dashboard/GoodTipToast.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,kEAAkE;IAClE,sBAAsB;IACtB,gBAAgB;AACpB;;AAEA;IACI,WAAW;IACX,kBAAkB;IAClB,SAAS;IACT,OAAO;IACP,WAAW;IACX,gCAAgC;IAChC,yBAAyB;IACzB,8BAA8B;IAC9B,WAAW;AACf;;AAEA;IACI,2BAA2B;IAC3B,UAAU;AACd;;AAEA;IACI,wBAAwB;IACxB,UAAU;AACd","sourcesContent":[".good-tip-toast-wrapper {\n    position: relative;\n    transition: transform 400ms ease-in-out, opacity 400ms ease-in-out;\n    border-radius: 0.35rem;\n    overflow: hidden; \n}\n\n.good-tip-toast-wrapper::before {\n    content: '';\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    height: 4px; \n    width: var(--progress-width, 0%);\n    background-color: #0d6efd;\n    transition: width 0.05s linear;\n    z-index: 10; \n}\n\n.good-tip-toast-wrapper.hide {\n    transform: translateX(120%);\n    opacity: 0;\n}\n\n.good-tip-toast-wrapper.show {\n    transform: translateX(0);\n    opacity: 1;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -32447,7 +32447,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* ===== TasksGlobal Specific Styles =
 .contract-metadata strong {
     color: var(--section-text-primary);
 }
-`, "",{"version":3,"sources":["webpack://./src/TasksGlobal/TasksGlobal.css"],"names":[],"mappings":"AAAA,4CAA4C;AAC5C;IACI,uCAAuC;IACvC,6BAA6B,IAAI,8BAA8B;IAC/D,+BAA+B,EAAE,mCAAmC;IACpE,2BAA2B;AAC/B;;AAEA,wBAAwB;AACxB;IACI,iCAAiC;IACjC,gBAAgB;IAChB,oCAAoC;IACpC,yBAAyB;IACzB,sBAAsB;AAC1B;;AAEA;IACI,iCAAiC;IACjC,kCAAkC;IAClC,gBAAgB;AACpB;;AAEA;IACI,4CAA4C;AAChD;;AAEA;IACI,4CAA4C;IAC5C,oCAAoC;AACxC;;AAEA;IACI,iCAAiC;IACjC,oCAAoC;AACxC;;AAEA;IACI,mBAAmB;IACnB,gCAAgC;AACpC;;AAEA;IACI,kCAAkC;AACtC","sourcesContent":["/* ===== TasksGlobal Specific Styles ===== */\r\n:root {\r\n    /* Colors specific to Contracts logic */\r\n    --section-border-our: #2196F3;   /* niebieski - OUR contracts */\r\n    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */\r\n    --section-border-width: 4px;\r\n}\r\n\r\n/* Contract Typography */\r\n.contract-id {\r\n    font-size: var(--section-text-xs);\r\n    font-weight: 700;\r\n    color: var(--section-text-secondary);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.05em;\r\n}\r\n\r\n.contract-title {\r\n    font-size: var(--section-text-lg);\r\n    color: var(--section-text-primary);\r\n    margin-bottom: 0;\r\n}\r\n\r\n.contract-status-badge {\r\n    font-size: var(--section-text-10) !important;\r\n}\r\n\r\n.contract-contractors {\r\n    font-size: var(--section-text-sm) !important;\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata {\r\n    font-size: var(--section-text-sm);\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata-icon {\r\n    font-size: 1.125rem;\r\n    color: var(--section-text-muted);\r\n}\r\n\r\n.contract-metadata strong {\r\n    color: var(--section-text-primary);\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/TasksGlobal/TasksGlobal.css"],"names":[],"mappings":"AAAA,4CAA4C;AAC5C;IACI,uCAAuC;IACvC,6BAA6B,IAAI,8BAA8B;IAC/D,+BAA+B,EAAE,mCAAmC;IACpE,2BAA2B;AAC/B;;AAEA,wBAAwB;AACxB;IACI,iCAAiC;IACjC,gBAAgB;IAChB,oCAAoC;IACpC,yBAAyB;IACzB,sBAAsB;AAC1B;;AAEA;IACI,iCAAiC;IACjC,kCAAkC;IAClC,gBAAgB;AACpB;;AAEA;IACI,4CAA4C;AAChD;;AAEA;IACI,4CAA4C;IAC5C,oCAAoC;AACxC;;AAEA;IACI,iCAAiC;IACjC,oCAAoC;AACxC;;AAEA;IACI,mBAAmB;IACnB,gCAAgC;AACpC;;AAEA;IACI,kCAAkC;AACtC","sourcesContent":["/* ===== TasksGlobal Specific Styles ===== */\n:root {\n    /* Colors specific to Contracts logic */\n    --section-border-our: #2196F3;   /* niebieski - OUR contracts */\n    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */\n    --section-border-width: 4px;\n}\n\n/* Contract Typography */\n.contract-id {\n    font-size: var(--section-text-xs);\n    font-weight: 700;\n    color: var(--section-text-secondary);\n    text-transform: uppercase;\n    letter-spacing: 0.05em;\n}\n\n.contract-title {\n    font-size: var(--section-text-lg);\n    color: var(--section-text-primary);\n    margin-bottom: 0;\n}\n\n.contract-status-badge {\n    font-size: var(--section-text-10) !important;\n}\n\n.contract-contractors {\n    font-size: var(--section-text-sm) !important;\n    color: var(--section-text-secondary);\n}\n\n.contract-metadata {\n    font-size: var(--section-text-sm);\n    color: var(--section-text-secondary);\n}\n\n.contract-metadata-icon {\n    font-size: 1.125rem;\n    color: var(--section-text-muted);\n}\n\n.contract-metadata strong {\n    color: var(--section-text-primary);\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -32619,7 +32619,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* ===== Design Tokens (łatwe przenos
 
 
 /* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */
-`, "",{"version":3,"sources":["webpack://./src/View/Resultsets/FilterableTable/FilterableTable.css"],"names":[],"mappings":"AAAA,iEAAiE;AACjE;IACI,iDAAiD;IACjD,0BAA0B,OAAO,4BAA4B;IAC7D,2BAA2B,MAAM,6BAA6B;IAC9D,2BAA2B,MAAM,mCAAmC;IACpE,yBAAyB,QAAQ,oBAAoB;IACrD,2BAA2B,MAAM,yBAAyB;IAC1D,yBAAyB,QAAQ,kCAAkC;;IAEnE,YAAY;IACZ,yCAAyC,GAAG,cAAc;IAC1D,mCAAmC,SAAS,uBAAuB;IACnE,wBAAwB,SAAS,QAAQ;IACzC,yBAAyB,QAAQ,SAAS;IAC1C,sBAAsB,WAAW,SAAS;;IAE1C,WAAW;IACX,+BAA+B;IAC/B,2BAA2B;IAC3B,4BAA4B;;IAE5B,+BAA+B;IAC/B,iCAAiC;IACjC,wCAAwC;IACxC,6BAA6B;AACjC;;AAEA,oCAAoC;AACpC;IACI,iBAAiB;AACrB;;AAEA,+CAA+C;AAC/C;IACI,UAAU;IACV,kCAAkC;IAClC,2BAA2B;IAC3B,YAAY;AAChB;;AAEA,0DAA0D;AAC1D;IACI,wBAAwB;IACxB,wBAAwB;AAC5B;;AAEA;IACI,2BAA2B;AAC/B;;AAEA;IACI,kCAAkC;AACtC;;AAEA;IACI,SAAS;IACT,uBAAuB;AAC3B;;AAEA;IACI,iBAAiB;AACrB;;AAEA,kDAAkD;AAClD,6DAA6D;AAC7D;IACI,gCAAgC,EAAE,qBAAqB;AAC3D;AACA;IACI,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;IACvB,qBAAqB;IACrB,wCAAwC;IACxC,mDAAmD;IACnD,sBAAsB;IACtB,wBAAwB;IACxB,gBAAgB,EAAE,yDAAyD;AAC/E;;AAEA,iDAAiD;AACjD;IACI,qBAAqB;AACzB;;AAEA,sCAAsC;AACtC,sDAAsD;AACtD;IACI,oCAAoC,EAAE,YAAY;IAClD,kCAAkC;AACtC;;AAEA;IACI,yBAAyB,EAAE,YAAY;AAC3C;;AAEA,gFAAgF;AAChF;IACI,kCAAkC;IAClC,eAAe;IACf,sCAAsC;IACtC,yBAAyB;AAC7B;;AAEA,kDAAkD;AAClD;IACI,2CAA2C;IAC3C,sBAAsB;IACtB,uBAAuB,EAAE,cAAc;AAC3C;;AAEA;IACI,yCAAyC;AAC7C;;AAEA;IACI,0CAA0C;AAC9C;;AAEA,uDAAuD;AACvD;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;;AAGA,oEAAoE","sourcesContent":["/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */\r\n:root {\r\n    /* Typography - rozmiary odpowiadające Tailwind */\r\n    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */\r\n    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */\r\n    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */\r\n    --section-text-base: 1rem;       /* 16px - domyślny */\r\n    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */\r\n    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */\r\n\r\n    /* Spacing */\r\n    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */\r\n    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */\r\n    --section-gap-sm: 0.5rem;        /* 8px */\r\n    --section-gap-md: 0.75rem;       /* 12px */\r\n    --section-gap-lg: 1rem;          /* 16px */\r\n\r\n    /* Colors */\r\n    --section-bg-default: aliceblue;\r\n    --section-bg-hover: #e3f2fd;\r\n    --section-bg-active: #e3f2fd;\r\n\r\n    --section-text-primary: #212529;\r\n    --section-text-secondary: #6c757d;\r\n    --section-text-success: rgb(50, 130, 50);\r\n    --section-text-muted: #6c757d;\r\n}\r\n\r\n/* ===== Section Action Menu ===== */\r\n.section-action-menu {\r\n    margin-left: 10px;\r\n}\r\n\r\n/* ===== Accordion Override (scopowane) ===== */\r\n.section-accordion .accordion-button {\r\n    padding: 0;\r\n    background: transparent !important;\r\n    box-shadow: none !important;\r\n    border: none;\r\n}\r\n\r\n/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */\r\n.section-accordion .accordion-button::after {\r\n    display: none !important;\r\n    content: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:focus {\r\n    box-shadow: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:not(.collapsed) {\r\n    background: transparent !important;\r\n}\r\n\r\n.section-accordion .accordion-item {\r\n    border: 0;\r\n    background: transparent;\r\n}\r\n\r\n.section-accordion .accordion-body {\r\n    padding: 0.5rem 0;\r\n}\r\n\r\n/* ===== Accordion Border for Nested Items ===== */\r\n/* Add border to items that are NOT cards (nested sections) */\r\n.section-accordion:not(.section-card) {\r\n    border-bottom: 1px solid #dee2e6; /* Subtle separator */\r\n}\r\n.section-accordion:not(.section-card):last-child {\r\n    border-bottom: none;\r\n}\r\n\r\n.section-card {\r\n    background-color: white;\r\n    border-radius: 0.5rem;\r\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n    /* Border left color is injected via inline style */\r\n    border-left-width: 4px;\r\n    border-left-style: solid;\r\n    overflow: hidden; /* Ensures child border-radius doesn't break card shape */\r\n}\r\n\r\n/* Ensure accordion button inside card is clean */\r\n.section-card .accordion-button {\r\n    padding: 0 !important;\r\n}\r\n\r\n/* ===== Section Header Styles ===== */\r\n/* ===== State Colors (Tailwind Palette Match) ===== */\r\n.state-active {\r\n    background-color: #f2faff !important; /* blue-50 */\r\n    color: var(--section-text-primary);\r\n}\r\n\r\n.state-hover:hover {\r\n    background-color: #f9fafb; /* gray-50 */\r\n}\r\n\r\n/* Base override to ensure hover doesn't conflict with transparent backgrounds */\r\n.section-header {\r\n    /* Base styles mainly for layout */\r\n    cursor: pointer;\r\n    transition: background-color 0.2s ease;\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n/* Domyślny styl (np. dla nagłówków podrzędnych) */\r\n.section-header-default {\r\n    background-color: var(--section-bg-default);\r\n    border-radius: 0.25rem;\r\n    padding: 0.25rem 0.5rem; /* px-2 py-1 */\r\n}\r\n\r\n.section-header-default:hover {\r\n    background-color: var(--section-bg-hover);\r\n}\r\n\r\n.section-header-active {\r\n    background-color: var(--section-bg-active);\r\n}\r\n\r\n/* Typography classes - łatwe przenoszenie z mockupów */\r\n.text-xs {\r\n    font-size: var(--section-text-xs);\r\n}\r\n\r\n.text-10 {\r\n    font-size: var(--section-text-10);\r\n}\r\n\r\n.text-sm {\r\n    font-size: var(--section-text-sm);\r\n}\r\n\r\n.text-lg {\r\n    font-size: var(--section-text-lg);\r\n}\r\n\r\n.text-xl {\r\n    font-size: var(--section-text-xl);\r\n}\r\n\r\n\r\n/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/View/Resultsets/FilterableTable/FilterableTable.css"],"names":[],"mappings":"AAAA,iEAAiE;AACjE;IACI,iDAAiD;IACjD,0BAA0B,OAAO,4BAA4B;IAC7D,2BAA2B,MAAM,6BAA6B;IAC9D,2BAA2B,MAAM,mCAAmC;IACpE,yBAAyB,QAAQ,oBAAoB;IACrD,2BAA2B,MAAM,yBAAyB;IAC1D,yBAAyB,QAAQ,kCAAkC;;IAEnE,YAAY;IACZ,yCAAyC,GAAG,cAAc;IAC1D,mCAAmC,SAAS,uBAAuB;IACnE,wBAAwB,SAAS,QAAQ;IACzC,yBAAyB,QAAQ,SAAS;IAC1C,sBAAsB,WAAW,SAAS;;IAE1C,WAAW;IACX,+BAA+B;IAC/B,2BAA2B;IAC3B,4BAA4B;;IAE5B,+BAA+B;IAC/B,iCAAiC;IACjC,wCAAwC;IACxC,6BAA6B;AACjC;;AAEA,oCAAoC;AACpC;IACI,iBAAiB;AACrB;;AAEA,+CAA+C;AAC/C;IACI,UAAU;IACV,kCAAkC;IAClC,2BAA2B;IAC3B,YAAY;AAChB;;AAEA,0DAA0D;AAC1D;IACI,wBAAwB;IACxB,wBAAwB;AAC5B;;AAEA;IACI,2BAA2B;AAC/B;;AAEA;IACI,kCAAkC;AACtC;;AAEA;IACI,SAAS;IACT,uBAAuB;AAC3B;;AAEA;IACI,iBAAiB;AACrB;;AAEA,kDAAkD;AAClD,6DAA6D;AAC7D;IACI,gCAAgC,EAAE,qBAAqB;AAC3D;AACA;IACI,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;IACvB,qBAAqB;IACrB,wCAAwC;IACxC,mDAAmD;IACnD,sBAAsB;IACtB,wBAAwB;IACxB,gBAAgB,EAAE,yDAAyD;AAC/E;;AAEA,iDAAiD;AACjD;IACI,qBAAqB;AACzB;;AAEA,sCAAsC;AACtC,sDAAsD;AACtD;IACI,oCAAoC,EAAE,YAAY;IAClD,kCAAkC;AACtC;;AAEA;IACI,yBAAyB,EAAE,YAAY;AAC3C;;AAEA,gFAAgF;AAChF;IACI,kCAAkC;IAClC,eAAe;IACf,sCAAsC;IACtC,yBAAyB;AAC7B;;AAEA,kDAAkD;AAClD;IACI,2CAA2C;IAC3C,sBAAsB;IACtB,uBAAuB,EAAE,cAAc;AAC3C;;AAEA;IACI,yCAAyC;AAC7C;;AAEA;IACI,0CAA0C;AAC9C;;AAEA,uDAAuD;AACvD;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;;AAGA,oEAAoE","sourcesContent":["/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */\n:root {\n    /* Typography - rozmiary odpowiadające Tailwind */\n    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */\n    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */\n    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */\n    --section-text-base: 1rem;       /* 16px - domyślny */\n    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */\n    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */\n\n    /* Spacing */\n    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */\n    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */\n    --section-gap-sm: 0.5rem;        /* 8px */\n    --section-gap-md: 0.75rem;       /* 12px */\n    --section-gap-lg: 1rem;          /* 16px */\n\n    /* Colors */\n    --section-bg-default: aliceblue;\n    --section-bg-hover: #e3f2fd;\n    --section-bg-active: #e3f2fd;\n\n    --section-text-primary: #212529;\n    --section-text-secondary: #6c757d;\n    --section-text-success: rgb(50, 130, 50);\n    --section-text-muted: #6c757d;\n}\n\n/* ===== Section Action Menu ===== */\n.section-action-menu {\n    margin-left: 10px;\n}\n\n/* ===== Accordion Override (scopowane) ===== */\n.section-accordion .accordion-button {\n    padding: 0;\n    background: transparent !important;\n    box-shadow: none !important;\n    border: none;\n}\n\n/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */\n.section-accordion .accordion-button::after {\n    display: none !important;\n    content: none !important;\n}\n\n.section-accordion .accordion-button:focus {\n    box-shadow: none !important;\n}\n\n.section-accordion .accordion-button:not(.collapsed) {\n    background: transparent !important;\n}\n\n.section-accordion .accordion-item {\n    border: 0;\n    background: transparent;\n}\n\n.section-accordion .accordion-body {\n    padding: 0.5rem 0;\n}\n\n/* ===== Accordion Border for Nested Items ===== */\n/* Add border to items that are NOT cards (nested sections) */\n.section-accordion:not(.section-card) {\n    border-bottom: 1px solid #dee2e6; /* Subtle separator */\n}\n.section-accordion:not(.section-card):last-child {\n    border-bottom: none;\n}\n\n.section-card {\n    background-color: white;\n    border-radius: 0.5rem;\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n    /* Border left color is injected via inline style */\n    border-left-width: 4px;\n    border-left-style: solid;\n    overflow: hidden; /* Ensures child border-radius doesn't break card shape */\n}\n\n/* Ensure accordion button inside card is clean */\n.section-card .accordion-button {\n    padding: 0 !important;\n}\n\n/* ===== Section Header Styles ===== */\n/* ===== State Colors (Tailwind Palette Match) ===== */\n.state-active {\n    background-color: #f2faff !important; /* blue-50 */\n    color: var(--section-text-primary);\n}\n\n.state-hover:hover {\n    background-color: #f9fafb; /* gray-50 */\n}\n\n/* Base override to ensure hover doesn't conflict with transparent backgrounds */\n.section-header {\n    /* Base styles mainly for layout */\n    cursor: pointer;\n    transition: background-color 0.2s ease;\n    background-color: #f6f6f6;\n}\n\n/* Domyślny styl (np. dla nagłówków podrzędnych) */\n.section-header-default {\n    background-color: var(--section-bg-default);\n    border-radius: 0.25rem;\n    padding: 0.25rem 0.5rem; /* px-2 py-1 */\n}\n\n.section-header-default:hover {\n    background-color: var(--section-bg-hover);\n}\n\n.section-header-active {\n    background-color: var(--section-bg-active);\n}\n\n/* Typography classes - łatwe przenoszenie z mockupów */\n.text-xs {\n    font-size: var(--section-text-xs);\n}\n\n.text-10 {\n    font-size: var(--section-text-10);\n}\n\n.text-sm {\n    font-size: var(--section-text-sm);\n}\n\n.text-lg {\n    font-size: var(--section-text-lg);\n}\n\n.text-xl {\n    font-size: var(--section-text-xl);\n}\n\n\n/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -96283,7 +96283,7 @@ const ContractDetailsContext_1 = __webpack_require__(/*! ./ContractDetailsContex
 const ContractMainHeader_1 = __webpack_require__(/*! ./ContractMainHeader */ "./src/Contracts/ContractsList/ContractDetails/ContractMainHeader.tsx");
 const ContractOtherDetails_1 = __importDefault(__webpack_require__(/*! ./ContractOtherDetails */ "./src/Contracts/ContractsList/ContractDetails/ContractOtherDetails.tsx"));
 const ContractOurDetails_1 = __importDefault(__webpack_require__(/*! ./ContractOurDetails */ "./src/Contracts/ContractsList/ContractDetails/ContractOurDetails.tsx"));
-const MeetingNotes_1 = __importDefault(__webpack_require__(/*! ./MeetingNotes/MeetingNotes */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/MeetingNotes.tsx"));
+const Meetings_1 = __importDefault(__webpack_require__(/*! ./Meetings/Meetings */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Meetings.tsx"));
 const Tasks_1 = __importDefault(__webpack_require__(/*! ./Tasks/Tasks */ "./src/Contracts/ContractsList/ContractDetails/Tasks/Tasks.tsx"));
 function ContractMainViewTabs() {
     const location = (0, react_router_dom_1.useLocation)();
@@ -96343,8 +96343,8 @@ function ContractMainViewTabs() {
                     react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "Dane og\u00F3lne" }, "ourId" in contract ? react_1.default.createElement(ContractOurDetails_1.default, null) : react_1.default.createElement(ContractOtherDetails_1.default, null)),
                     react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "tasks", title: "Zadania" },
                         react_1.default.createElement(Tasks_1.default, null)),
-                    react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "meetingNotes", title: "Notatki ze spotka\u0144" },
-                        react_1.default.createElement(MeetingNotes_1.default, null))))));
+                    react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "meetings", title: "Spotkania" },
+                        react_1.default.createElement(Meetings_1.default, null))))));
 }
 
 
@@ -96622,89 +96622,33 @@ function ContractOurDetails() {
 
 /***/ },
 
-/***/ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/MeetingNotes.tsx"
-/*!***********************************************************************************!*\
-  !*** ./src/Contracts/ContractsList/ContractDetails/MeetingNotes/MeetingNotes.tsx ***!
-  \***********************************************************************************/
+/***/ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteEditModalButton.tsx"
+/*!********************************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteEditModalButton.tsx ***!
+  \********************************************************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MeetingNotes;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
-const ContractDetailsContext_1 = __webpack_require__(/*! ../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
-const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
-const MeetingNoteModalButtons_1 = __webpack_require__(/*! ./Modals/MeetingNoteModalButtons */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteModalButtons.tsx");
-function MeetingNotes() {
-    const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
-    const [notes, setNotes] = (0, react_1.useState)(undefined);
-    (0, react_1.useEffect)(() => {
-        async function fetchNotes() {
-            if (!contract?.id)
-                return;
-            await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([{ contractId: contract.id }]);
-            setNotes([...ContractsController_1.meetingNotesRepository.items]);
-        }
-        fetchNotes();
-    }, [contract?.id]);
-    if (!contract) {
-        return (react_1.default.createElement("div", null,
-            "\u0141aduj\u0119 dane... ",
-            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
-    }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null, notes ? (react_1.default.createElement(FilterableTable_1.default, { id: "meetingNotes", title: "Notatki ze spotka\u0144", initialObjects: notes, repository: ContractsController_1.meetingNotesRepository, AddNewButtonComponents: [MeetingNoteModalButtons_1.MeetingNoteAddNewModalButton], tableStructure: [
-                { header: "#", objectAttributeToShow: "sequenceNumber" },
-                { header: "Tytuł", objectAttributeToShow: "title" },
-                { header: "Data spotkania", objectAttributeToShow: "meetingDate" },
-                {
-                    header: "Link do dokumentu",
-                    renderTdBody: (note) => note.gdDocumentUrl ? (react_1.default.createElement("a", { href: note.gdDocumentUrl, target: "_blank", rel: "noopener noreferrer" }, "Otw\u00F3rz dokument")) : (react_1.default.createElement(react_1.default.Fragment, null)),
-                },
-                { header: "Data utworzenia", objectAttributeToShow: "createdAt" },
-            ], isDeletable: false })) : (react_1.default.createElement(react_1.default.Fragment, null,
-            "\u0141adowanie notatek... ",
-            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))))));
+exports.MeetingNoteEditModalButton = MeetingNoteEditModalButton;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const ContractsController_1 = __webpack_require__(/*! ../../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MeetingNoteModalBody_1 = __webpack_require__(/*! ./MeetingNoteModalBody */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteModalBody.tsx");
+const MeetingNoteValidationSchema_1 = __webpack_require__(/*! ./MeetingNoteValidationSchema */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteValidationSchema.ts");
+function MeetingNoteEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit,
+            ModalBodyComponent: MeetingNoteModalBody_1.MeetingNoteModalBody,
+            modalTitle: 'Edycja notatki ze spotkania',
+            repository: ContractsController_1.meetingNotesRepository,
+            initialData,
+            makeValidationSchema: MeetingNoteValidationSchema_1.makeMeetingNoteValidationSchema,
+        }, buttonProps: { ...buttonProps, buttonVariant: 'outline-success' } }));
 }
 
 
@@ -96782,43 +96726,6 @@ function MeetingNoteModalBody({ isEditing, initialData, contextData }) {
 
 /***/ },
 
-/***/ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteModalButtons.tsx"
-/*!*****************************************************************************************************!*\
-  !*** ./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteModalButtons.tsx ***!
-  \*****************************************************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MeetingNoteAddNewModalButton = MeetingNoteAddNewModalButton;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-const MeetingNoteModalBody_1 = __webpack_require__(/*! ./MeetingNoteModalBody */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteModalBody.tsx");
-const ContractsController_1 = __webpack_require__(/*! ../../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
-const MeetingNoteValidationSchema_1 = __webpack_require__(/*! ./MeetingNoteValidationSchema */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteValidationSchema.ts");
-const ContractDetailsContext_1 = __webpack_require__(/*! ../../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
-function MeetingNoteAddNewModalButton({ modalProps: { onAddNew }, }) {
-    const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
-            onAddNew: onAddNew,
-            ModalBodyComponent: MeetingNoteModalBody_1.MeetingNoteModalBody,
-            modalTitle: "Dodaj notatkę ze spotkania",
-            repository: ContractsController_1.meetingNotesRepository,
-            makeValidationSchema: MeetingNoteValidationSchema_1.makeMeetingNoteValidationSchema,
-            contextData: contract?.id,
-        }, buttonProps: {
-            buttonCaption: "Dodaj notatkę",
-            buttonVariant: "outline-success",
-        } }));
-}
-
-
-/***/ },
-
 /***/ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteValidationSchema.ts"
 /*!********************************************************************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteValidationSchema.ts ***!
@@ -96867,6 +96774,784 @@ function makeMeetingNoteValidationSchema(isEditing) {
     return Yup.object().shape({
         title: Yup.string().required("Tytuł jest wymagany"),
         meetingDate: Yup.date().required("Data spotkania jest wymagana"),
+    });
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingAgendaPanel.tsx"
+/*!*************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingAgendaPanel.tsx ***!
+  \*************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = MeetingAgendaPanel;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
+const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MeetingArrangementModalButtons_1 = __webpack_require__(/*! ./Modals/MeetingArrangementModalButtons */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementModalButtons.tsx");
+const ContractDetailsContext_1 = __webpack_require__(/*! ../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
+const MeetingNoteSection_1 = __importDefault(__webpack_require__(/*! ./MeetingNoteSection */ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingNoteSection.tsx"));
+const STATUS_LABELS = {
+    PLANNED: 'Planowany',
+    DISCUSSED: 'Omówiony',
+    CLOSED: 'Zamknięty',
+};
+const STATUS_VARIANTS = {
+    PLANNED: 'secondary',
+    DISCUSSED: 'primary',
+    CLOSED: 'success',
+};
+const NEXT_STATUS = {
+    PLANNED: 'DISCUSSED',
+    DISCUSSED: 'CLOSED',
+};
+function StatusBadge({ status }) {
+    return react_1.default.createElement(react_bootstrap_1.Badge, { bg: STATUS_VARIANTS[status] || 'secondary' }, STATUS_LABELS[status] || status);
+}
+function MeetingAgendaPanel({ meeting }) {
+    const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
+    const [arrangements, setArrangements] = (0, react_1.useState)(undefined);
+    const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
+    const loadArrangements = (0, react_1.useCallback)(async () => {
+        if (!meeting?.id)
+            return;
+        await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([{ meetingId: meeting.id }]);
+        setArrangements([...ContractsController_1.meetingArrangementsRepository.items]);
+    }, [meeting?.id]);
+    (0, react_1.useEffect)(() => {
+        loadArrangements();
+    }, [loadArrangements]);
+    async function handleStatusChange(arrangement) {
+        const nextStatus = NEXT_STATUS[arrangement.status];
+        if (!nextStatus)
+            return;
+        try {
+            const response = await fetch(`${MainSetupReact_1.default.serverUrl}meetingArrangement/${arrangement.id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ status: nextStatus }),
+            });
+            if (!response.ok)
+                throw new Error('Status change failed');
+            await loadArrangements();
+        }
+        catch (error) {
+            console.error('MeetingAgendaPanel: status change failed', error);
+            alert('Nie udało się zmienić statusu');
+        }
+    }
+    async function handleGenerateNote() {
+        if (!contract?.id || !meeting?.id || !arrangements?.length)
+            return;
+        setIsGenerating(true);
+        try {
+            await ContractsController_1.meetingNotesRepository.addNewItem({
+                contractId: contract.id,
+                meetingId: meeting.id,
+                title: meeting.name,
+                meetingDate: meeting.date,
+            });
+        }
+        catch (error) {
+            console.error('MeetingAgendaPanel: note generation failed', error);
+            alert('Nie udało się wygenerować notatki');
+        }
+        finally {
+            setIsGenerating(false);
+        }
+    }
+    // Wrapper for add button that injects meetingId as contextData
+    const ArrangementAddButton = (0, react_1.useMemo)(() => {
+        return function WrappedAddButton(props) {
+            return react_1.default.createElement(MeetingArrangementModalButtons_1.MeetingArrangementAddNewModalButton, { ...props, contextData: meeting.id });
+        };
+    }, [meeting.id]);
+    if (arrangements === undefined) {
+        return react_1.default.createElement("div", null,
+            "\u0141adowanie agendy... ",
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null));
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
+        react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+            react_1.default.createElement("strong", null,
+                "Spotkanie: ",
+                meeting.name),
+            " (",
+            meeting.date,
+            ")"),
+        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+            react_1.default.createElement(FilterableTable_1.default, { id: "meetingArrangements", title: "Agenda spotkania", initialObjects: arrangements, repository: ContractsController_1.meetingArrangementsRepository, AddNewButtonComponents: [ArrangementAddButton], EditButtonComponent: MeetingArrangementModalButtons_1.MeetingArrangementEditModalButton, isDeletable: true, showTableHeader: false, tableStructure: [
+                    {
+                        header: 'Sprawa',
+                        renderTdBody: (item) => (react_1.default.createElement(react_1.default.Fragment, null,
+                            item._case?._type?.folderNumber && (react_1.default.createElement("span", { className: "text-muted me-1" }, item._case._type.folderNumber)),
+                            item._case?.name || item.name || '—')),
+                    },
+                    {
+                        header: 'Opis',
+                        objectAttributeToShow: 'description',
+                    },
+                    {
+                        header: 'Status',
+                        renderTdBody: (item) => (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                            react_1.default.createElement(StatusBadge, { status: item.status }),
+                            NEXT_STATUS[item.status] && (react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-primary", onClick: (e) => {
+                                    e.stopPropagation();
+                                    handleStatusChange(item);
+                                }, title: `Zmień na: ${STATUS_LABELS[NEXT_STATUS[item.status]]}` }, "\u25B6")))),
+                    },
+                ], externalUpdate: arrangements.length }),
+            react_1.default.createElement("div", { className: "mt-3" },
+                react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
+                    "Generowanie... ",
+                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ('Generuj notatkę ze spotkania'))),
+            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id })))));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingNoteSection.tsx"
+/*!*************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingNoteSection.tsx ***!
+  \*************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = MeetingNoteSection;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MeetingNoteEditModalButton_1 = __webpack_require__(/*! ../MeetingNotes/Modals/MeetingNoteEditModalButton */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteEditModalButton.tsx");
+function MeetingNoteSection({ meetingId, contractId }) {
+    const [note, setNote] = (0, react_1.useState)(undefined);
+    const loadNote = (0, react_1.useCallback)(async () => {
+        try {
+            const items = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([{ meetingId }]);
+            const found = items.find((n) => n.meetingId === meetingId) ?? null;
+            setNote(found);
+        }
+        catch (error) {
+            console.error('MeetingNoteSection: unable to load note', error);
+            setNote(null);
+        }
+    }, [meetingId]);
+    (0, react_1.useEffect)(() => {
+        loadNote();
+    }, [loadNote]);
+    if (note === undefined) {
+        return (react_1.default.createElement("div", { className: "mt-3" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
+    }
+    if (!note) {
+        return (react_1.default.createElement("div", { className: "mt-2 text-muted" },
+            react_1.default.createElement("small", null, "Brak notatki")));
+    }
+    const documentUrl = note._documentOpenUrl || note._documentEditUrl;
+    return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "light", className: "mt-3 mb-0 border" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center justify-content-between" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("strong", null, "Notatka ze spotkania:"),
+                ' ',
+                note.title,
+                documentUrl && (react_1.default.createElement(react_1.default.Fragment, null,
+                    ' — ',
+                    react_1.default.createElement("a", { href: documentUrl, target: "_blank", rel: "noopener noreferrer" }, "Otw\u00F3rz dokument")))),
+            react_1.default.createElement("div", { className: "d-flex gap-2" },
+                react_1.default.createElement(MeetingNoteEditModalButton_1.MeetingNoteEditModalButton, { modalProps: {
+                        onEdit: loadNote,
+                        initialData: note,
+                    }, buttonProps: {} }),
+                react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-danger", onClick: async () => {
+                        if (!window.confirm('Usunąć notatkę?'))
+                            return;
+                        try {
+                            await ContractsController_1.meetingNotesRepository.deleteItemNodeJS(note.id);
+                            setNote(null);
+                        }
+                        catch (error) {
+                            console.error('MeetingNoteSection: delete failed', error);
+                            alert('Nie udało się usunąć notatki');
+                        }
+                    } }, "Usu\u0144")))));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Meetings.tsx"
+/*!***************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Meetings.tsx ***!
+  \***************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = Meetings;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
+const ContractDetailsContext_1 = __webpack_require__(/*! ../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
+const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MeetingModalButtons_1 = __webpack_require__(/*! ./Modals/MeetingModalButtons */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingModalButtons.tsx");
+const MeetingAgendaPanel_1 = __importDefault(__webpack_require__(/*! ./MeetingAgendaPanel */ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingAgendaPanel.tsx"));
+const MeetingsFilterBody_1 = __webpack_require__(/*! ./MeetingsFilterBody */ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingsFilterBody.tsx");
+function Meetings() {
+    const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
+    const [meetings, setMeetings] = (0, react_1.useState)(undefined);
+    const [selectedMeeting, setSelectedMeeting] = (0, react_1.useState)(undefined);
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        async function fetchMeetings() {
+            if (!contract?.id)
+                return;
+            try {
+                await ContractsController_1.meetingsRepository.loadItemsFromServerPOST([{ contractId: contract.id }]);
+                if (!isMounted)
+                    return;
+                setMeetings([...ContractsController_1.meetingsRepository.items]);
+            }
+            catch (error) {
+                if (!isMounted)
+                    return;
+                console.error('Meetings: unable to load meetings', error);
+                setMeetings([]);
+            }
+        }
+        fetchMeetings();
+        return () => { isMounted = false; };
+    }, [contract?.id]);
+    function handleRowClick(meeting) {
+        setSelectedMeeting(selectedMeeting?.id === meeting.id ? undefined : meeting);
+    }
+    if (!contract) {
+        return react_1.default.createElement("div", null,
+            "\u0141aduj\u0119 dane... ",
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null));
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Card, null,
+        react_1.default.createElement(react_bootstrap_1.Card.Body, null, meetings ? (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(FilterableTable_1.default, { id: "meetings", title: "Spotkania", initialObjects: meetings, repository: ContractsController_1.meetingsRepository, AddNewButtonComponents: [MeetingModalButtons_1.MeetingAddNewModalButton], EditButtonComponent: MeetingModalButtons_1.MeetingEditModalButton, FilterBodyComponent: MeetingsFilterBody_1.MeetingsFilterBody, isDeletable: true, showTableHeader: false, tableStructure: [
+                    { header: 'Nazwa', objectAttributeToShow: 'name' },
+                    { header: 'Data', objectAttributeToShow: 'date' },
+                    { header: 'Lokalizacja', objectAttributeToShow: 'location' },
+                ], onRowClick: handleRowClick, externalUpdate: meetings.length }),
+            selectedMeeting && (react_1.default.createElement(MeetingAgendaPanel_1.default, { meeting: selectedMeeting })))) : (react_1.default.createElement(react_1.default.Fragment, null,
+            "\u0141adowanie spotka\u0144... ",
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))))));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingsFilterBody.tsx"
+/*!*************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingsFilterBody.tsx ***!
+  \*************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MeetingsFilterBody = MeetingsFilterBody;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+function MeetingsFilterBody() {
+    const { register } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") }))));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementModalBody.tsx"
+/*!*****************************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementModalBody.tsx ***!
+  \*****************************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MeetingArrangementModalBody = MeetingArrangementModalBody;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+const ContractDetailsContext_1 = __webpack_require__(/*! ../../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
+const caseSelectorRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'cases',
+        addNewRoute: 'case',
+        editRoute: 'case',
+        deleteRoute: 'case',
+    },
+    name: 'cases_meetingArrangement_temp',
+});
+function MeetingArrangementModalBody({ isEditing, initialData, contextData, }) {
+    const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
+    const { register, reset, formState: { errors }, trigger } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            meetingId: contextData,
+            _case: initialData?._case || undefined,
+            description: initialData?.description || '',
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_case" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
+            react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { repository: caseSelectorRepository, _contract: contract, multiple: false, name: "_case" }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "_case", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis (opcjonalny)"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Dodatkowy opis punktu agendy", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementModalButtons.tsx"
+/*!********************************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementModalButtons.tsx ***!
+  \********************************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MeetingArrangementEditModalButton = MeetingArrangementEditModalButton;
+exports.MeetingArrangementAddNewModalButton = MeetingArrangementAddNewModalButton;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const ContractsController_1 = __webpack_require__(/*! ../../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MeetingArrangementModalBody_1 = __webpack_require__(/*! ./MeetingArrangementModalBody */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementModalBody.tsx");
+const MeetingArrangementValidationSchema_1 = __webpack_require__(/*! ./MeetingArrangementValidationSchema */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementValidationSchema.ts");
+function MeetingArrangementEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit,
+            ModalBodyComponent: MeetingArrangementModalBody_1.MeetingArrangementModalBody,
+            modalTitle: 'Edycja punktu agendy',
+            repository: ContractsController_1.meetingArrangementsRepository,
+            initialData,
+            makeValidationSchema: MeetingArrangementValidationSchema_1.makeMeetingArrangementValidationSchema,
+        }, buttonProps: { ...buttonProps, buttonVariant: 'outline-success' } }));
+}
+function MeetingArrangementAddNewModalButton({ modalProps: { onAddNew }, contextData, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew,
+            ModalBodyComponent: MeetingArrangementModalBody_1.MeetingArrangementModalBody,
+            modalTitle: 'Dodaj punkt agendy',
+            repository: ContractsController_1.meetingArrangementsRepository,
+            makeValidationSchema: MeetingArrangementValidationSchema_1.makeMeetingArrangementValidationSchema,
+            contextData,
+        }, buttonProps: {
+            buttonCaption: 'Dodaj punkt agendy',
+            buttonVariant: 'outline-success',
+        } }));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementValidationSchema.ts"
+/*!***********************************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingArrangementValidationSchema.ts ***!
+  \***********************************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeMeetingArrangementValidationSchema = makeMeetingArrangementValidationSchema;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+function makeMeetingArrangementValidationSchema(isEditing) {
+    return Yup.object().shape({
+        _case: Yup.object().required('Sprawa jest wymagana'),
+        description: Yup.string(),
+    });
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingModalBody.tsx"
+/*!******************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingModalBody.tsx ***!
+  \******************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MeetingModalBody = MeetingModalBody;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+function MeetingModalBody({ isEditing, initialData, contextData }) {
+    const { register, reset, formState: { errors }, trigger } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            contractId: contextData,
+            name: initialData?.name || '',
+            date: initialData?.date || new Date().toISOString().slice(0, 10),
+            location: initialData?.location || '',
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa spotkania"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119 spotkania", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "date" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data spotkania"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors?.date, isInvalid: !!errors?.date, ...register('date') }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "date", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "location" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Lokalizacja"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "np. Biuro, Teams, Zoom", isValid: !errors?.location, isInvalid: !!errors?.location, ...register('location') }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "location", errors: errors }))));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingModalButtons.tsx"
+/*!*********************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingModalButtons.tsx ***!
+  \*********************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MeetingEditModalButton = MeetingEditModalButton;
+exports.MeetingAddNewModalButton = MeetingAddNewModalButton;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const ContractsController_1 = __webpack_require__(/*! ../../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MeetingModalBody_1 = __webpack_require__(/*! ./MeetingModalBody */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingModalBody.tsx");
+const MeetingValidationSchema_1 = __webpack_require__(/*! ./MeetingValidationSchema */ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingValidationSchema.ts");
+const ContractDetailsContext_1 = __webpack_require__(/*! ../../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
+function MeetingEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit,
+            ModalBodyComponent: MeetingModalBody_1.MeetingModalBody,
+            modalTitle: 'Edycja spotkania',
+            repository: ContractsController_1.meetingsRepository,
+            initialData,
+            makeValidationSchema: MeetingValidationSchema_1.makeMeetingValidationSchema,
+        }, buttonProps: { ...buttonProps, buttonVariant: 'outline-success' } }));
+}
+function MeetingAddNewModalButton({ modalProps: { onAddNew }, }) {
+    const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew,
+            ModalBodyComponent: MeetingModalBody_1.MeetingModalBody,
+            modalTitle: 'Dodaj spotkanie',
+            repository: ContractsController_1.meetingsRepository,
+            makeValidationSchema: MeetingValidationSchema_1.makeMeetingValidationSchema,
+            contextData: contract?.id,
+        }, buttonProps: {
+            buttonCaption: 'Dodaj spotkanie',
+            buttonVariant: 'outline-success',
+        } }));
+}
+
+
+/***/ },
+
+/***/ "./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingValidationSchema.ts"
+/*!************************************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/Meetings/Modals/MeetingValidationSchema.ts ***!
+  \************************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeMeetingValidationSchema = makeMeetingValidationSchema;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+function makeMeetingValidationSchema(isEditing) {
+    return Yup.object().shape({
+        name: Yup.string().required('Nazwa spotkania jest wymagana'),
+        date: Yup.date().required('Data spotkania jest wymagana'),
+        location: Yup.string(),
     });
 }
 
@@ -97241,7 +97926,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.meetingNotesRepository = exports.citiesRepository = exports.securitiesRepository = exports.invoicesRepository = exports.contractsSettlementRepository = exports.projectsRepository = exports.contractRangesRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
+exports.meetingNotesRepository = exports.meetingArrangementsRepository = exports.meetingsRepository = exports.citiesRepository = exports.securitiesRepository = exports.invoicesRepository = exports.contractsSettlementRepository = exports.projectsRepository = exports.contractRangesRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -97361,6 +98046,24 @@ exports.citiesRepository = new RepositoryReact_1.default({
         deleteRoute: "city",
     },
     name: "cities",
+});
+exports.meetingsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "meetings",
+        addNewRoute: "meeting",
+        editRoute: "meeting",
+        deleteRoute: "meeting",
+    },
+    name: "meetings",
+});
+exports.meetingArrangementsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "meetingArrangements",
+        addNewRoute: "meetingArrangement",
+        editRoute: "meetingArrangement",
+        deleteRoute: "meetingArrangement",
+    },
+    name: "meetingArrangements",
 });
 exports.meetingNotesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -100634,6 +101337,8 @@ function CostInvoiceDetails() {
     const [vatDeductionPercentage, setVatDeductionPercentage] = (0, react_1.useState)(100);
     const [notes, setNotes] = (0, react_1.useState)("");
     const [status, setStatus] = (0, react_1.useState)(CostInvoicesController_1.CostInvoiceStatuses.NEW);
+    const [paymentStatus, setPaymentStatus] = (0, react_1.useState)(CostInvoicesController_1.PaymentStatuses.UNPAID);
+    const [paidAmount, setPaidAmount] = (0, react_1.useState)(0);
     // Edytowalne pozycje
     const [editedItems, setEditedItems] = (0, react_1.useState)(new Map());
     (0, react_1.useEffect)(() => {
@@ -100660,6 +101365,8 @@ function CostInvoiceDetails() {
             setVatDeductionPercentage(invoiceWithItems.vatDeductionPercentage);
             setNotes(invoiceWithItems.notes || "");
             setStatus(invoiceWithItems.status);
+            setPaymentStatus(invoiceWithItems.paymentStatus ?? CostInvoicesController_1.PaymentStatuses.UNPAID);
+            setPaidAmount(invoiceWithItems.paidAmount ?? 0);
             document.title = `Faktura ${invoiceWithItems.invoiceNumber} | ${invoiceWithItems.supplierName}`;
         }
         catch (err) {
@@ -100690,6 +101397,10 @@ function CostInvoiceDetails() {
     const handleSave = async () => {
         if (!invoice)
             return;
+        if (paymentStatus === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && paidAmount <= 0) {
+            setError("Dla statusu 'Częściowo zapłacona' kwota zapłacona musi być większa od 0.");
+            return;
+        }
         setSaving(true);
         setError(null);
         setValidationDetails([]);
@@ -100717,6 +101428,8 @@ function CostInvoiceDetails() {
             vatDeductionPercentage,
             notes: notes || null,
             status,
+            paymentStatus,
+            paidAmount,
         });
         for (const [itemId, changes] of editedItems) {
             if (Object.keys(changes).length > 0) {
@@ -100851,7 +101564,11 @@ function CostInvoiceDetails() {
                         react_1.default.createElement("p", { className: "mb-1 text-muted" },
                             "NIP: ",
                             invoice.supplierNip),
-                        invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-0 text-muted small" }, invoice.supplierAddress))),
+                        invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-1 text-muted small" }, invoice.supplierAddress)),
+                        invoice.supplierBankAccount && (react_1.default.createElement("p", { className: "mb-0 small" },
+                            react_1.default.createElement("span", { className: "text-muted" }, "Konto: "),
+                            react_1.default.createElement("code", null, invoice.supplierBankAccount),
+                            react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "py-0 px-1", title: "Kopiuj numer rachunku", onClick: () => navigator.clipboard.writeText(invoice.supplierBankAccount) }, "\u2398")))),
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                         react_1.default.createElement("h6", null, "Daty"),
                         react_1.default.createElement("p", { className: "mb-1" },
@@ -100928,7 +101645,39 @@ function CostInvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
                             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Notatki"),
                             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, value: notes, onChange: (e) => setNotes(e.target.value), disabled: isBooked, placeholder: "Dodatkowe informacje..." })))),
-                isBooked && invoice.bookedAt && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0" },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status p\u0142atno\u015Bci"),
+                        react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap mb-2" }, [
+                            { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "● Niezapłacona" },
+                            { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
+                            { value: CostInvoicesController_1.PaymentStatuses.PAID, label: "✓ Zapłacona" },
+                        ].map(({ value, label }) => (react_1.default.createElement(react_bootstrap_1.Button, { key: value, size: "sm", variant: paymentStatus === value ? "primary" : "outline-secondary", disabled: isBooked, onClick: () => {
+                                setPaymentStatus(value);
+                                if (value === CostInvoicesController_1.PaymentStatuses.PAID)
+                                    setPaidAmount(invoice.grossAmount);
+                                if (value === CostInvoicesController_1.PaymentStatuses.UNPAID)
+                                    setPaidAmount(0);
+                            } }, label)))),
+                        paymentStatus === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && (react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center g-2" },
+                            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                                react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "mb-0 small" }, "Kwota zap\u0142acona")),
+                            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", size: "sm", min: 0, max: invoice.grossAmount, step: 0.01, value: paidAmount, disabled: isBooked, onChange: (e) => setPaidAmount(parseFloat(e.target.value) || 0), style: { width: "130px" } })),
+                            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                                react_1.default.createElement("span", { className: "text-muted small" },
+                                    "z ",
+                                    Tools_1.default.formatNumber(invoice.grossAmount),
+                                    " ",
+                                    invoice.currency,
+                                    " · ",
+                                    "pozosta\u0142o:",
+                                    " ",
+                                    react_1.default.createElement("strong", { className: invoice.grossAmount - paidAmount > 0 ? "text-danger" : "text-success" },
+                                        Tools_1.default.formatNumber(invoice.grossAmount - paidAmount),
+                                        " ",
+                                        invoice.currency))))))),
+                isBooked && invoice.bookedAt && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0 mt-3" },
                     react_1.default.createElement("strong", null, "Zaksi\u0119gowano:"),
                     " ",
                     ToolsDate_1.default.dateToDDmmmYYYYHHMM(invoice.bookedAt),
@@ -100971,6 +101720,7 @@ exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
 exports.CategoryBadge = CategoryBadge;
 exports.VatDeductionBadge = VatDeductionBadge;
 exports.BookingPercentageBadge = BookingPercentageBadge;
+exports.PaymentStatusBadge = PaymentStatusBadge;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
@@ -101051,6 +101801,49 @@ function BookingPercentageBadge({ percentage }) {
             "%")));
 }
 /**
+ * Badge statusu płatności faktury kosztowej
+ */
+function PaymentStatusBadge({ status, paidAmount, grossAmount, }) {
+    const resolved = status ?? CostInvoicesController_1.PaymentStatuses.UNPAID;
+    let variant;
+    let textVariant;
+    let label;
+    let icon;
+    switch (resolved) {
+        case CostInvoicesController_1.PaymentStatuses.PAID:
+            variant = "success";
+            textVariant = "light";
+            label = "Zapłacona";
+            icon = "✓";
+            break;
+        case CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID: {
+            const pct = grossAmount && paidAmount
+                ? Math.round((paidAmount / grossAmount) * 100)
+                : null;
+            variant = "warning";
+            textVariant = "dark";
+            label = pct !== null ? `Częściowo ${pct}%` : "Częściowo";
+            icon = "◑";
+            break;
+        }
+        default:
+            variant = "secondary";
+            textVariant = "light";
+            label = "Niezapłacona";
+            icon = "●";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "payment-status-tooltip" },
+            "Status p\u0142atno\u015Bci: ",
+            label,
+            resolved === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && paidAmount !== undefined && grossAmount
+                ? ` (${paidAmount.toFixed(2)} / ${grossAmount.toFixed(2)})`
+                : "") },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textVariant },
+            icon,
+            " ",
+            label)));
+}
+/**
  * Oblicza kontrastowy kolor tekstu dla danego tła
  */
 function getContrastColor(hexColor) {
@@ -101080,7 +101873,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.costInvoicesRepository = exports.CostInvoiceStatuses = exports.CostInvoiceApiError = void 0;
+exports.costInvoicesRepository = exports.PaymentStatuses = exports.CostInvoiceStatuses = exports.CostInvoiceApiError = void 0;
 exports.fetchCategories = fetchCategories;
 exports.syncFromKsef = syncFromKsef;
 exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
@@ -101155,6 +101948,14 @@ exports.CostInvoiceStatuses = {
     NEW: "NEW",
     EXCLUDED: "EXCLUDED",
     BOOKED: "BOOKED",
+};
+/**
+ * Statusy płatności faktur kosztowych
+ */
+exports.PaymentStatuses = {
+    UNPAID: "UNPAID",
+    PARTIALLY_PAID: "PARTIALLY_PAID",
+    PAID: "PAID",
 };
 /**
  * Repozytorium faktur kosztowych
@@ -101894,7 +102695,8 @@ function CostInvoicesSearch({ title }) {
                         invoice.supplierNip || "-",
                         invoice.supplierAddress ? ` | ${invoice.supplierAddress}` : "")),
                 react_1.default.createElement("div", { className: "cost-invoice-card__status-wrap" },
-                    react_1.default.createElement(CostInvoiceStatusCell, { invoice: invoice }))),
+                    react_1.default.createElement(CostInvoiceStatusCell, { invoice: invoice }),
+                    react_1.default.createElement(CostInvoicesBadges_1.PaymentStatusBadge, { status: invoice.paymentStatus, paidAmount: invoice.paidAmount, grossAmount: toNumber(invoice.grossAmount) }))),
             react_1.default.createElement("div", { className: "cost-invoice-card__body" },
                 react_1.default.createElement("div", { className: "cost-invoice-card__dates" },
                     react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
@@ -111561,10 +112363,33 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ./Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 class MainSetup {
     static get isDevEnvironment() {
-        return this.serverUrl.includes('localhost') || this.serverUrl.includes('127.0.0.1');
+        return this.serverUrl.includes("localhost") || this.serverUrl.includes("127.0.0.1");
+    }
+    static get currentUserOrNull() {
+        const rawCurrentUser = sessionStorage.getItem("Current User");
+        if (!rawCurrentUser || rawCurrentUser === "null" || rawCurrentUser === "undefined") {
+            return null;
+        }
+        try {
+            const parsedUser = JSON.parse(rawCurrentUser);
+            if (!parsedUser) {
+                return null;
+            }
+            if (!parsedUser.systemRoleName || !parsedUser.userName) {
+                return null;
+            }
+            return parsedUser;
+        }
+        catch {
+            return null;
+        }
     }
     static get currentUser() {
-        return JSON.parse(sessionStorage.getItem("Current User"));
+        const currentUser = this.currentUserOrNull;
+        if (!currentUser) {
+            throw new Error("Current user is not available yet");
+        }
+        return currentUser;
     }
     static set currentUser(data) {
         sessionStorage.setItem("Current User", JSON.stringify(data));
@@ -111580,7 +112405,11 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem("Contracts repository")).currentItems[0];
     }
     static isRoleAllowed(roles) {
-        return roles.includes(this.currentUser.systemRoleName);
+        const currentUser = this.currentUserOrNull;
+        if (!currentUser) {
+            return false;
+        }
+        return roles.includes(currentUser.systemRoleName);
     }
 }
 MainSetup.CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
@@ -111913,10 +112742,16 @@ const InvoicesCard_1 = __importDefault(__webpack_require__(/*! ./InvoicesCard */
 const ApplicationCallsCard_1 = __importDefault(__webpack_require__(/*! ./ApplicationCallsCard */ "./src/React/MainWindow/Content/Dashboard/ApplicationCallsCard.tsx"));
 const MilestonesCard_1 = __importDefault(__webpack_require__(/*! ./MilestonesCard */ "./src/React/MainWindow/Content/Dashboard/MilestonesCard.tsx"));
 function Dashboard() {
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0" }, "Trwa pobieranie danych u\u017Cytkownika. Widok zostanie za\u0142adowany po potwierdzeniu sesji."))));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" }),
-            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" })),
+            ["ADMIN", "ENVI_MANAGER"].includes(currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" })),
             react_1.default.createElement(ApplicationCallsCard_1.default, { className: "mb-3 bg-white" })),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 6, className: "mb-3" },
             react_1.default.createElement(MilestonesCard_1.default, null)),
@@ -112431,7 +113266,14 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function MyData({ title = "Moje Dane", className, style, renderExtraContent }) {
-    const { userName, systemEmail, systemRoleName } = MainSetupReact_1.default.currentUser;
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className, style: style },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-2", style: { fontWeight: 600, fontSize: 18 } }, title),
+                react_1.default.createElement("div", { className: "text-muted small" }, "Trwa synchronizacja danych u\u017Cytkownika..."))));
+    }
+    const { userName, systemEmail, systemRoleName } = currentUser;
     return (react_1.default.createElement(react_bootstrap_1.Card, { className: className, style: style },
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-2" },
@@ -112609,18 +113451,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports["default"] = MainMenu;
+const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ../MainControllerReact */ "./src/React/MainControllerReact.ts"));
-const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function MainMenu() {
     const location = (0, react_router_dom_1.useLocation)();
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
     function isActive(path) {
         return location.pathname === path ? "active" : "";
     }
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: "top", bg: "light", expand: "md" },
+            react_1.default.createElement(react_bootstrap_1.Container, null,
+                react_1.default.createElement(react_bootstrap_1.Navbar.Brand, { as: react_router_dom_1.Link, to: "/" }, "Witryna Projekt\u00F3w"),
+                react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
+                    react_1.default.createElement(react_bootstrap_1.Navbar.Text, { className: "text-muted" }, "Trwa pobieranie danych u\u017Cytkownika...")))));
+    }
+    const { systemRoleName, userName } = currentUser;
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: "top", bg: "light", expand: "md" },
             react_1.default.createElement(react_bootstrap_1.Container, null,
@@ -112628,7 +113479,7 @@ function MainMenu() {
                 react_1.default.createElement(react_bootstrap_1.Navbar.Toggle, { "aria-controls": "basic-navbar-nav" }),
                 react_1.default.createElement(react_bootstrap_1.Navbar.Collapse, { id: "basic-navbar-nav" },
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
-                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Kontrakty", id: "basic-nav-dropdown", className: isActive("/contracts") },
+                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Kontrakty", id: "basic-nav-dropdown", className: isActive("/contracts") },
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts", className: isActive("/contracts") }, "Wszystkie Kontrakty"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/tasksGlobal", className: isActive("/tasksGlobal") }, "Projekty i zadania"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/roles", className: isActive("/contracts/roles") },
@@ -112645,8 +113496,8 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" }, "nowe")))),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive("/letters") }, "Pisma"),
                         (() => {
-                            const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName);
-                            const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName);
+                            const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName);
+                            const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
                             if (!canViewInvoices)
                                 return null;
                             // If user can view cost invoices, show expandable menu like other sections
@@ -112659,7 +113510,7 @@ function MainMenu() {
                             // Otherwise show plain link to invoices (no expand arrow)
                             return (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"));
                         })(),
-                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
+                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/entities", className: isActive("/entities") }, "Podmioty"),
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/persons", className: isActive("/persons") }, "Osoby"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Oferty", id: "basic-nav-dropdown", className: isActive("/offers") },
@@ -112680,12 +113531,12 @@ function MainMenu() {
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
                         react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCircleUser, className: "me-2" }),
-                                MainSetupReact_1.default.currentUser.userName), id: "user-nav-dropdown" },
+                                userName), id: "user-nav-dropdown" },
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { onClick: async () => {
                                     await MainControllerReact_1.default.logout();
                                     window.location.reload();
                                 } }, "Wyloguj si\u0119"),
-                            ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
+                            ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }
 
@@ -112903,6 +113754,7 @@ function App() {
     const [isReady, setIsReady] = (0, react_1.useState)(false);
     const [isPublicProfileSubmissionRoute, setIsPublicProfileSubmissionRoute] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             if (matchesPublicProfileSubmissionRoute(window.location.hash)) {
@@ -112911,12 +113763,16 @@ function App() {
                 return;
             }
             try {
-                const isLoggedIn = await MainControllerReact_1.default.isSessionSet();
-                setIsLoggedIn(isLoggedIn);
-                if (isLoggedIn)
-                    await MainControllerReact_1.default.main();
+                const hasSession = await MainControllerReact_1.default.isSessionSet();
+                if (!hasSession) {
+                    setIsLoggedIn(false);
+                    return;
+                }
+                await MainControllerReact_1.default.main();
+                setIsLoggedIn(true);
             }
             catch (error) {
+                setIsLoggedIn(false);
                 if (error instanceof Error) {
                     console.error(error);
                     setErrorMessage(`${error.message}`);
@@ -112963,6 +113819,11 @@ function App() {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
             errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mb-3" }, errorMessage)),
             react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse })));
+    }
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
+            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mt-3 mb-0" }, "Trwa pobieranie danych u\u017Cytkownika po zalogowaniu...")));
     }
     // zalogowany użytkownik
     return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0 bg-white" },
@@ -119684,13 +120545,13 @@ function SectionHeader({ sectionNode, onClick, isOnActivePath, isEditing, localE
             if (target)
                 navigate(target);
         } },
-        react_1.default.createElement("div", { className: "\r\n                            d-flex\r\n                            align-items-center\r\n                            gap-2\r\n                            flex-grow-1\r\n                            min-w-0\r\n                        ", style: { cursor: "pointer" } },
+        react_1.default.createElement("div", { className: "\n                            d-flex\n                            align-items-center\n                            gap-2\n                            flex-grow-1\n                            min-w-0\n                        ", style: { cursor: "pointer" } },
             react_1.default.createElement("div", { style: makeTitleStyle(), className: "flex-grow-1 text-break" }, sectionNode.title),
             (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "text-muted small flex-shrink-0" },
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
-        isEditing && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
+        isEditing && (react_1.default.createElement("div", { className: "\n                                d-flex\n                                align-items-center\n                                gap-2\n                                \n                                flex-shrink-0\n                                mt-2 mt-md-0\n                            " },
             sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {

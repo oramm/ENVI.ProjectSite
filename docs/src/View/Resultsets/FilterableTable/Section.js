@@ -128,13 +128,13 @@ function SectionHeader({ sectionNode, onClick, isOnActivePath, isEditing, localE
             if (target)
                 navigate(target);
         } },
-        react_1.default.createElement("div", { className: "\r\n                            d-flex\r\n                            align-items-center\r\n                            gap-2\r\n                            flex-grow-1\r\n                            min-w-0\r\n                        ", style: { cursor: "pointer" } },
+        react_1.default.createElement("div", { className: "\n                            d-flex\n                            align-items-center\n                            gap-2\n                            flex-grow-1\n                            min-w-0\n                        ", style: { cursor: "pointer" } },
             react_1.default.createElement("div", { style: makeTitleStyle(), className: "flex-grow-1 text-break" }, sectionNode.title),
             (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "text-muted small flex-shrink-0" },
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
-        isEditing && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
+        isEditing && (react_1.default.createElement("div", { className: "\n                                d-flex\n                                align-items-center\n                                gap-2\n                                \n                                flex-shrink-0\n                                mt-2 mt-md-0\n                            " },
             sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {

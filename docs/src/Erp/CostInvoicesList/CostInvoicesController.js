@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.costInvoicesRepository = exports.CostInvoiceStatuses = exports.CostInvoiceApiError = void 0;
+exports.costInvoicesRepository = exports.PaymentStatuses = exports.CostInvoiceStatuses = exports.CostInvoiceApiError = void 0;
 exports.fetchCategories = fetchCategories;
 exports.syncFromKsef = syncFromKsef;
 exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
@@ -78,6 +78,14 @@ exports.CostInvoiceStatuses = {
     NEW: "NEW",
     EXCLUDED: "EXCLUDED",
     BOOKED: "BOOKED",
+};
+/**
+ * Statusy płatności faktur kosztowych
+ */
+exports.PaymentStatuses = {
+    UNPAID: "UNPAID",
+    PARTIALLY_PAID: "PARTIALLY_PAID",
+    PAID: "PAID",
 };
 /**
  * Repozytorium faktur kosztowych

@@ -4,18 +4,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MainMenu;
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
-const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const MainControllerReact_1 = __importDefault(require("../MainControllerReact"));
-const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
-const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
+const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 function MainMenu() {
     const location = (0, react_router_dom_1.useLocation)();
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
     function isActive(path) {
         return location.pathname === path ? "active" : "";
     }
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: "top", bg: "light", expand: "md" },
+            react_1.default.createElement(react_bootstrap_1.Container, null,
+                react_1.default.createElement(react_bootstrap_1.Navbar.Brand, { as: react_router_dom_1.Link, to: "/" }, "Witryna Projekt\u00F3w"),
+                react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
+                    react_1.default.createElement(react_bootstrap_1.Navbar.Text, { className: "text-muted" }, "Trwa pobieranie danych u\u017Cytkownika...")))));
+    }
+    const { systemRoleName, userName } = currentUser;
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: "top", bg: "light", expand: "md" },
             react_1.default.createElement(react_bootstrap_1.Container, null,
@@ -23,7 +32,7 @@ function MainMenu() {
                 react_1.default.createElement(react_bootstrap_1.Navbar.Toggle, { "aria-controls": "basic-navbar-nav" }),
                 react_1.default.createElement(react_bootstrap_1.Navbar.Collapse, { id: "basic-navbar-nav" },
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
-                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Kontrakty", id: "basic-nav-dropdown", className: isActive("/contracts") },
+                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Kontrakty", id: "basic-nav-dropdown", className: isActive("/contracts") },
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts", className: isActive("/contracts") }, "Wszystkie Kontrakty"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/tasksGlobal", className: isActive("/tasksGlobal") }, "Projekty i zadania"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/roles", className: isActive("/contracts/roles") },
@@ -40,8 +49,8 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" }, "nowe")))),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive("/letters") }, "Pisma"),
                         (() => {
-                            const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName);
-                            const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName);
+                            const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName);
+                            const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
                             if (!canViewInvoices)
                                 return null;
                             // If user can view cost invoices, show expandable menu like other sections
@@ -54,7 +63,7 @@ function MainMenu() {
                             // Otherwise show plain link to invoices (no expand arrow)
                             return (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"));
                         })(),
-                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
+                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/entities", className: isActive("/entities") }, "Podmioty"),
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/persons", className: isActive("/persons") }, "Osoby"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Oferty", id: "basic-nav-dropdown", className: isActive("/offers") },
@@ -75,11 +84,11 @@ function MainMenu() {
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
                         react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCircleUser, className: "me-2" }),
-                                MainSetupReact_1.default.currentUser.userName), id: "user-nav-dropdown" },
+                                userName), id: "user-nav-dropdown" },
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { onClick: async () => {
                                     await MainControllerReact_1.default.logout();
                                     window.location.reload();
                                 } }, "Wyloguj si\u0119"),
-                            ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
+                            ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }

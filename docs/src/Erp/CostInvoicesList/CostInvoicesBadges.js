@@ -7,6 +7,7 @@ exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
 exports.CategoryBadge = CategoryBadge;
 exports.VatDeductionBadge = VatDeductionBadge;
 exports.BookingPercentageBadge = BookingPercentageBadge;
+exports.PaymentStatusBadge = PaymentStatusBadge;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const CostInvoicesController_1 = require("./CostInvoicesController");
@@ -85,6 +86,49 @@ function BookingPercentageBadge({ percentage }) {
         react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" },
             percentage,
             "%")));
+}
+/**
+ * Badge statusu płatności faktury kosztowej
+ */
+function PaymentStatusBadge({ status, paidAmount, grossAmount, }) {
+    const resolved = status ?? CostInvoicesController_1.PaymentStatuses.UNPAID;
+    let variant;
+    let textVariant;
+    let label;
+    let icon;
+    switch (resolved) {
+        case CostInvoicesController_1.PaymentStatuses.PAID:
+            variant = "success";
+            textVariant = "light";
+            label = "Zapłacona";
+            icon = "✓";
+            break;
+        case CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID: {
+            const pct = grossAmount && paidAmount
+                ? Math.round((paidAmount / grossAmount) * 100)
+                : null;
+            variant = "warning";
+            textVariant = "dark";
+            label = pct !== null ? `Częściowo ${pct}%` : "Częściowo";
+            icon = "◑";
+            break;
+        }
+        default:
+            variant = "secondary";
+            textVariant = "light";
+            label = "Niezapłacona";
+            icon = "●";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "payment-status-tooltip" },
+            "Status p\u0142atno\u015Bci: ",
+            label,
+            resolved === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && paidAmount !== undefined && grossAmount
+                ? ` (${paidAmount.toFixed(2)} / ${grossAmount.toFixed(2)})`
+                : "") },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textVariant },
+            icon,
+            " ",
+            label)));
 }
 /**
  * Oblicza kontrastowy kolor tekstu dla danego tła

@@ -9,7 +9,14 @@ const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
 function MyData({ title = "Moje Dane", className, style, renderExtraContent }) {
-    const { userName, systemEmail, systemRoleName } = MainSetupReact_1.default.currentUser;
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className, style: style },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-2", style: { fontWeight: 600, fontSize: 18 } }, title),
+                react_1.default.createElement("div", { className: "text-muted small" }, "Trwa synchronizacja danych u\u017Cytkownika..."))));
+    }
+    const { userName, systemEmail, systemRoleName } = currentUser;
     return (react_1.default.createElement(react_bootstrap_1.Card, { className: className, style: style },
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-2" },

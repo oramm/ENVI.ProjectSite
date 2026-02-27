@@ -14,10 +14,16 @@ const InvoicesCard_1 = __importDefault(require("./InvoicesCard"));
 const ApplicationCallsCard_1 = __importDefault(require("./ApplicationCallsCard"));
 const MilestonesCard_1 = __importDefault(require("./MilestonesCard"));
 function Dashboard() {
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0" }, "Trwa pobieranie danych u\u017Cytkownika. Widok zostanie za\u0142adowany po potwierdzeniu sesji."))));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" }),
-            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" })),
+            ["ADMIN", "ENVI_MANAGER"].includes(currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" })),
             react_1.default.createElement(ApplicationCallsCard_1.default, { className: "mb-3 bg-white" })),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 6, className: "mb-3" },
             react_1.default.createElement(MilestonesCard_1.default, null)),

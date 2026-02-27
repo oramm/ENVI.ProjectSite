@@ -61,6 +61,8 @@ function CostInvoiceDetails() {
     const [vatDeductionPercentage, setVatDeductionPercentage] = (0, react_1.useState)(100);
     const [notes, setNotes] = (0, react_1.useState)("");
     const [status, setStatus] = (0, react_1.useState)(CostInvoicesController_1.CostInvoiceStatuses.NEW);
+    const [paymentStatus, setPaymentStatus] = (0, react_1.useState)(CostInvoicesController_1.PaymentStatuses.UNPAID);
+    const [paidAmount, setPaidAmount] = (0, react_1.useState)(0);
     // Edytowalne pozycje
     const [editedItems, setEditedItems] = (0, react_1.useState)(new Map());
     (0, react_1.useEffect)(() => {
@@ -87,6 +89,8 @@ function CostInvoiceDetails() {
             setVatDeductionPercentage(invoiceWithItems.vatDeductionPercentage);
             setNotes(invoiceWithItems.notes || "");
             setStatus(invoiceWithItems.status);
+            setPaymentStatus(invoiceWithItems.paymentStatus ?? CostInvoicesController_1.PaymentStatuses.UNPAID);
+            setPaidAmount(invoiceWithItems.paidAmount ?? 0);
             document.title = `Faktura ${invoiceWithItems.invoiceNumber} | ${invoiceWithItems.supplierName}`;
         }
         catch (err) {
@@ -117,6 +121,10 @@ function CostInvoiceDetails() {
     const handleSave = async () => {
         if (!invoice)
             return;
+        if (paymentStatus === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && paidAmount <= 0) {
+            setError("Dla statusu 'Częściowo zapłacona' kwota zapłacona musi być większa od 0.");
+            return;
+        }
         setSaving(true);
         setError(null);
         setValidationDetails([]);
@@ -144,6 +152,8 @@ function CostInvoiceDetails() {
             vatDeductionPercentage,
             notes: notes || null,
             status,
+            paymentStatus,
+            paidAmount,
         });
         for (const [itemId, changes] of editedItems) {
             if (Object.keys(changes).length > 0) {
@@ -278,7 +288,11 @@ function CostInvoiceDetails() {
                         react_1.default.createElement("p", { className: "mb-1 text-muted" },
                             "NIP: ",
                             invoice.supplierNip),
-                        invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-0 text-muted small" }, invoice.supplierAddress))),
+                        invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-1 text-muted small" }, invoice.supplierAddress)),
+                        invoice.supplierBankAccount && (react_1.default.createElement("p", { className: "mb-0 small" },
+                            react_1.default.createElement("span", { className: "text-muted" }, "Konto: "),
+                            react_1.default.createElement("code", null, invoice.supplierBankAccount),
+                            react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "py-0 px-1", title: "Kopiuj numer rachunku", onClick: () => navigator.clipboard.writeText(invoice.supplierBankAccount) }, "\u2398")))),
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                         react_1.default.createElement("h6", null, "Daty"),
                         react_1.default.createElement("p", { className: "mb-1" },
@@ -355,7 +369,39 @@ function CostInvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
                             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Notatki"),
                             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, value: notes, onChange: (e) => setNotes(e.target.value), disabled: isBooked, placeholder: "Dodatkowe informacje..." })))),
-                isBooked && invoice.bookedAt && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0" },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status p\u0142atno\u015Bci"),
+                        react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap mb-2" }, [
+                            { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "● Niezapłacona" },
+                            { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
+                            { value: CostInvoicesController_1.PaymentStatuses.PAID, label: "✓ Zapłacona" },
+                        ].map(({ value, label }) => (react_1.default.createElement(react_bootstrap_1.Button, { key: value, size: "sm", variant: paymentStatus === value ? "primary" : "outline-secondary", disabled: isBooked, onClick: () => {
+                                setPaymentStatus(value);
+                                if (value === CostInvoicesController_1.PaymentStatuses.PAID)
+                                    setPaidAmount(invoice.grossAmount);
+                                if (value === CostInvoicesController_1.PaymentStatuses.UNPAID)
+                                    setPaidAmount(0);
+                            } }, label)))),
+                        paymentStatus === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && (react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center g-2" },
+                            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                                react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "mb-0 small" }, "Kwota zap\u0142acona")),
+                            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", size: "sm", min: 0, max: invoice.grossAmount, step: 0.01, value: paidAmount, disabled: isBooked, onChange: (e) => setPaidAmount(parseFloat(e.target.value) || 0), style: { width: "130px" } })),
+                            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                                react_1.default.createElement("span", { className: "text-muted small" },
+                                    "z ",
+                                    Tools_1.default.formatNumber(invoice.grossAmount),
+                                    " ",
+                                    invoice.currency,
+                                    " · ",
+                                    "pozosta\u0142o:",
+                                    " ",
+                                    react_1.default.createElement("strong", { className: invoice.grossAmount - paidAmount > 0 ? "text-danger" : "text-success" },
+                                        Tools_1.default.formatNumber(invoice.grossAmount - paidAmount),
+                                        " ",
+                                        invoice.currency))))))),
+                isBooked && invoice.bookedAt && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0 mt-3" },
                     react_1.default.createElement("strong", null, "Zaksi\u0119gowano:"),
                     " ",
                     ToolsDate_1.default.dateToDDmmmYYYYHHMM(invoice.bookedAt),

@@ -87,6 +87,7 @@ function App() {
     const [isReady, setIsReady] = (0, react_1.useState)(false);
     const [isPublicProfileSubmissionRoute, setIsPublicProfileSubmissionRoute] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
+    const currentUser = MainSetupReact_1.default.currentUserOrNull;
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             if (matchesPublicProfileSubmissionRoute(window.location.hash)) {
@@ -95,12 +96,16 @@ function App() {
                 return;
             }
             try {
-                const isLoggedIn = await MainControllerReact_1.default.isSessionSet();
-                setIsLoggedIn(isLoggedIn);
-                if (isLoggedIn)
-                    await MainControllerReact_1.default.main();
+                const hasSession = await MainControllerReact_1.default.isSessionSet();
+                if (!hasSession) {
+                    setIsLoggedIn(false);
+                    return;
+                }
+                await MainControllerReact_1.default.main();
+                setIsLoggedIn(true);
             }
             catch (error) {
+                setIsLoggedIn(false);
                 if (error instanceof Error) {
                     console.error(error);
                     setErrorMessage(`${error.message}`);
@@ -147,6 +152,11 @@ function App() {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
             errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mb-3" }, errorMessage)),
             react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse })));
+    }
+    if (!currentUser) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
+            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mt-3 mb-0" }, "Trwa pobieranie danych u\u017Cytkownika po zalogowaniu...")));
     }
     // zalogowany użytkownik
     return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0 bg-white" },

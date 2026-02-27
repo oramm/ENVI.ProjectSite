@@ -6,10 +6,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ToolsDate_1 = __importDefault(require("./Tools/ToolsDate"));
 class MainSetup {
     static get isDevEnvironment() {
-        return this.serverUrl.includes('localhost') || this.serverUrl.includes('127.0.0.1');
+        return this.serverUrl.includes("localhost") || this.serverUrl.includes("127.0.0.1");
+    }
+    static get currentUserOrNull() {
+        const rawCurrentUser = sessionStorage.getItem("Current User");
+        if (!rawCurrentUser || rawCurrentUser === "null" || rawCurrentUser === "undefined") {
+            return null;
+        }
+        try {
+            const parsedUser = JSON.parse(rawCurrentUser);
+            if (!parsedUser) {
+                return null;
+            }
+            if (!parsedUser.systemRoleName || !parsedUser.userName) {
+                return null;
+            }
+            return parsedUser;
+        }
+        catch {
+            return null;
+        }
     }
     static get currentUser() {
-        return JSON.parse(sessionStorage.getItem("Current User"));
+        const currentUser = this.currentUserOrNull;
+        if (!currentUser) {
+            throw new Error("Current user is not available yet");
+        }
+        return currentUser;
     }
     static set currentUser(data) {
         sessionStorage.setItem("Current User", JSON.stringify(data));
@@ -25,7 +48,11 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem("Contracts repository")).currentItems[0];
     }
     static isRoleAllowed(roles) {
-        return roles.includes(this.currentUser.systemRoleName);
+        const currentUser = this.currentUserOrNull;
+        if (!currentUser) {
+            return false;
+        }
+        return roles.includes(currentUser.systemRoleName);
     }
 }
 MainSetup.CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
