@@ -51,6 +51,7 @@ function CostInvoicesSearch({ title }) {
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
     const [syncError, setSyncError] = (0, react_1.useState)(null);
     const [syncSuccess, setSyncSuccess] = (0, react_1.useState)(null);
+    const [syncWarnings, setSyncWarnings] = (0, react_1.useState)([]);
     const [statusError, setStatusError] = (0, react_1.useState)(null);
     const [showSyncModal, setShowSyncModal] = (0, react_1.useState)(false);
     const [syncType, setSyncType] = (0, react_1.useState)("INCREMENTAL");
@@ -81,6 +82,7 @@ function CostInvoicesSearch({ title }) {
         setIsSyncing(true);
         setSyncError(null);
         setSyncSuccess(null);
+        setSyncWarnings([]);
         setShowSyncModal(false);
         try {
             const params = {
@@ -94,7 +96,15 @@ function CostInvoicesSearch({ title }) {
                 params.dateTo = dateTo;
             }
             const result = await (0, CostInvoicesController_1.syncFromKsef)(params);
-            setSyncSuccess(result.message || `Zaimportowano ${result.data.imported} faktur, pominięto ${result.data.skipped}`);
+            const imported = result.data.imported ?? 0;
+            const alreadyAdded = result.data.alreadyAdded ?? 0;
+            const failedCount = result.data.failedCount ?? 0;
+            const errors = result.data.errorDetails || [];
+            setSyncSuccess(result.message ||
+                `Synchronizacja zakończona: ${imported} zaimportowanych, ${alreadyAdded} już dodane${failedCount > 0 ? `, ${failedCount} błędne` : ""}`);
+            if (failedCount > 0 && errors.length > 0) {
+                setSyncWarnings(errors);
+            }
             // Odśwież listę faktur
             await CostInvoicesController_1.costInvoicesRepository.loadItemsFromServerPOST([]);
         }
@@ -205,6 +215,9 @@ function CostInvoicesSearch({ title }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         syncError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setSyncError(null), dismissible: true, className: "mx-3 mt-3" }, syncError)),
         syncSuccess && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", onClose: () => setSyncSuccess(null), dismissible: true, className: "mx-3 mt-3" }, syncSuccess)),
+        syncWarnings.length > 0 && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning", onClose: () => setSyncWarnings([]), dismissible: true, className: "mx-3 mt-3" },
+            react_1.default.createElement("div", { className: "fw-semibold mb-1" }, "Faktury z b\u0142\u0119dami importu:"),
+            react_1.default.createElement("ul", { className: "mb-0 ps-3" }, syncWarnings.map((warning, index) => (react_1.default.createElement("li", { key: `${index}_${warning}` }, warning)))))),
         statusError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setStatusError(null), dismissible: true, className: "mx-3 mt-3" }, statusError)),
         react_1.default.createElement("div", { className: "cost-invoices-search" },
             react_1.default.createElement(FilterableTable_1.default, { id: "costInvoices", title: title, FilterBodyComponent: CostInvoicesFilterBody_1.CostInvoicesFilterBody, tableStructure: [

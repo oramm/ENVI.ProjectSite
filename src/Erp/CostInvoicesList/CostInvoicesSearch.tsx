@@ -20,6 +20,7 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncError, setSyncError] = useState<string | null>(null);
     const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
+    const [syncWarnings, setSyncWarnings] = useState<string[]>([]);
     const [statusError, setStatusError] = useState<string | null>(null);
     const [showSyncModal, setShowSyncModal] = useState(false);
     const [syncType, setSyncType] = useState<"INCREMENTAL" | "VERIFICATION">("INCREMENTAL");
@@ -54,6 +55,7 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         setIsSyncing(true);
         setSyncError(null);
         setSyncSuccess(null);
+        setSyncWarnings([]);
         setShowSyncModal(false);
 
         try {
@@ -70,7 +72,19 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
             }
 
             const result = await syncFromKsef(params);
-            setSyncSuccess(result.message || `Zaimportowano ${result.data.imported} faktur, pominięto ${result.data.skipped}`);
+            const imported = result.data.imported ?? 0;
+            const alreadyAdded = result.data.alreadyAdded ?? 0;
+            const failedCount = result.data.failedCount ?? 0;
+            const errors = result.data.errorDetails || [];
+
+            setSyncSuccess(
+                result.message ||
+                    `Synchronizacja zakończona: ${imported} zaimportowanych, ${alreadyAdded} już dodane${failedCount > 0 ? `, ${failedCount} błędne` : ""}`
+            );
+
+            if (failedCount > 0 && errors.length > 0) {
+                setSyncWarnings(errors);
+            }
 
             // Odśwież listę faktur
             await costInvoicesRepository.loadItemsFromServerPOST([]);
@@ -244,6 +258,21 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
             {syncSuccess && (
                 <Alert variant="success" onClose={() => setSyncSuccess(null)} dismissible className="mx-3 mt-3">
                     {syncSuccess}
+                </Alert>
+            )}
+            {syncWarnings.length > 0 && (
+                <Alert
+                    variant="warning"
+                    onClose={() => setSyncWarnings([])}
+                    dismissible
+                    className="mx-3 mt-3"
+                >
+                    <div className="fw-semibold mb-1">Faktury z błędami importu:</div>
+                    <ul className="mb-0 ps-3">
+                        {syncWarnings.map((warning, index) => (
+                            <li key={`${index}_${warning}`}>{warning}</li>
+                        ))}
+                    </ul>
                 </Alert>
             )}
             {statusError && (

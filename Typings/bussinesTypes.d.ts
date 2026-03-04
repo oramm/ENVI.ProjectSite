@@ -844,8 +844,9 @@ export interface CostInvoiceSyncResponse {
     message: string;
     data: {
         imported: number;
-        skipped: number;
-        errors: string[];
+        alreadyAdded: number;
+        failedCount: number;
+        errorDetails: string[];
     };
 }
 

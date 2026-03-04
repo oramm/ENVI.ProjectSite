@@ -65,12 +65,8 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         // Dla korekty - nie używaj tego przycisku (wysyłka korekty jest przez CorrectionModal)
         if (isCorrectionInvoice) return false;
 
-        // Pokaż tylko dla statusów "Wystawiona" (DONE) lub "Wysłana" (SENT)
-        const allowedStatuses = [
-            MainSetup.InvoiceStatuses.DONE,
-            MainSetup.InvoiceStatuses.SENT,
-        ];
-        return allowedStatuses.includes(invoice.status);
+        // Pokaż tylko gdy faktura jest ustawiona jako "Wysłana" (SENT)
+        return invoice.status === MainSetup.InvoiceStatuses.SENT;
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status, isCorrectionInvoice]);
 
     // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF

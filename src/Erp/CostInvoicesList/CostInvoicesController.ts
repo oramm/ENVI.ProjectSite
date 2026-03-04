@@ -290,9 +290,15 @@ export async function updateCostInvoiceItem(
  * Księguje fakturę
  */
 export async function bookCostInvoice(id: number): Promise<CostInvoice> {
-    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/${id}/book`, {
-        method: "POST",
+    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/${id}`, {
+        method: "PATCH",
         credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            status: CostInvoiceStatuses.BOOKED,
+        }),
     });
 
     if (!response.ok) {

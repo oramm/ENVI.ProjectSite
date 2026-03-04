@@ -220,9 +220,15 @@ async function updateCostInvoiceItem(invoiceId, itemId, data) {
  * Księguje fakturę
  */
 async function bookCostInvoice(id) {
-    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/${id}/book`, {
-        method: "POST",
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/${id}`, {
+        method: "PATCH",
         credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            status: exports.CostInvoiceStatuses.BOOKED,
+        }),
     });
     if (!response.ok) {
         await throwCostInvoiceApiError(response, "Błąd księgowania faktury");
