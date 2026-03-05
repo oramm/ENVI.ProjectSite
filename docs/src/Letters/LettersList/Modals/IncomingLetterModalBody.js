@@ -208,6 +208,7 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "fw-bold" }, "Analiza AI dokumentu"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", onChange: handleFileChange, disabled: isAnalyzing, accept: ".pdf,.docx" }),
             react_1.default.createElement(react_bootstrap_1.Form.Text, null, "Za\u0142\u0105cz pismo (PDF lub DOCX), a my spr\u00F3bujemy uzupe\u0142ni\u0107 formularz za Ciebie."),
+            props.isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted small" }, "Wczesniej zalaczone pliki sa widoczne na dysku w folderze pisma. System nie zapamietuje tych plikow jako wartosci pola wyboru pliku.")),
             isAnalyzing && react_1.default.createElement("div", { className: "mt-2" },
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }),
                 " Analizowanie dokumentu..."),

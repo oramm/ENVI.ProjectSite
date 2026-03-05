@@ -117,6 +117,12 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
             <Form.Group controlId="file">
                 <Form.Label>Plik</Form.Label>
                 <FileInput {...register("file")} />
+                {isEditing && (
+                    <Form.Text className="text-muted small">
+                        Wcześniej załączone pliki są widoczne na dysku w folderze pisma. System nie zapamiętuje tych
+                        plików jako wartości pola wyboru pliku.
+                    </Form.Text>
+                )}
             </Form.Group>
         </>
     );

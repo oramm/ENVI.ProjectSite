@@ -716,6 +716,11 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
         };
         fetchData();
     }, [_contract, localRepository]);
+    function normalizeComparableValue(value) {
+        if (value === null || value === undefined)
+            return "";
+        return String(value).trim();
+    }
     function handleOnChange(selectedOptions, field) {
         const selectedLetter = selectedOptions[0];
         const valueToSet = selectedLetter?.number || "";
@@ -725,7 +730,8 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
-                const currentSelection = options.find((option) => option.number === field.value);
+                const normalizedFieldValue = normalizeComparableValue(field.value);
+                const currentSelection = options.find((option) => normalizeComparableValue(option.number) === normalizedFieldValue);
                 return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => {
                         handleOnChange(selected, field);
                         setIsOpen(false);

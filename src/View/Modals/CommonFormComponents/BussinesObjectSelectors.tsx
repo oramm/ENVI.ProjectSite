@@ -1478,6 +1478,11 @@ export function LetterSelector({ name, label, _contract, showValidationInfo = tr
         fetchData();
     }, [_contract, localRepository]);
 
+    function normalizeComparableValue(value: unknown) {
+        if (value === null || value === undefined) return "";
+        return String(value).trim();
+    }
+
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<FieldValues, string>) {
         const selectedLetter = selectedOptions[0] as OurLetterContract | IncomingLetterContract | undefined;
         const valueToSet = selectedLetter?.number || "";
@@ -1493,7 +1498,10 @@ export function LetterSelector({ name, label, _contract, showValidationInfo = tr
                 name={name}
                 control={control}
                 render={({ field }) => {
-                    const currentSelection = options.find((option) => option.number === field.value);
+                    const normalizedFieldValue = normalizeComparableValue(field.value);
+                    const currentSelection = options.find(
+                        (option) => normalizeComparableValue(option.number) === normalizedFieldValue
+                    );
 
                     return (
                         <Typeahead
