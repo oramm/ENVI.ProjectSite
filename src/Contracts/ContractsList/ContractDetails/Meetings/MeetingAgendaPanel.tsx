@@ -1,33 +1,36 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Badge, Button, Card } from 'react-bootstrap';
-import MainSetup from '../../../../React/MainSetupReact';
-import { MeetingArrangementData, MeetingArrangementStatus, MeetingData } from '../../../../../Typings/bussinesTypes';
-import { SpinnerBootstrap } from '../../../../View/Resultsets/CommonComponents';
-import FilterableTable from '../../../../View/Resultsets/FilterableTable/FilterableTable';
-import { meetingArrangementsRepository, meetingNotesRepository } from '../../ContractsController';
-import { MeetingArrangementAddNewModalButton, MeetingArrangementEditModalButton } from './Modals/MeetingArrangementModalButtons';
-import { useContractDetails } from '../ContractDetailsContext';
-import MeetingNoteSection from './MeetingNoteSection';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Badge, Button, Card } from "react-bootstrap";
+import MainSetup from "../../../../React/MainSetupReact";
+import { MeetingArrangementData, MeetingArrangementStatus, MeetingData } from "../../../../../Typings/bussinesTypes";
+import { SpinnerBootstrap } from "../../../../View/Resultsets/CommonComponents";
+import FilterableTable from "../../../../View/Resultsets/FilterableTable/FilterableTable";
+import { meetingArrangementsRepository, meetingNotesRepository } from "../../ContractsController";
+import {
+    MeetingArrangementAddNewModalButton,
+    MeetingArrangementEditModalButton,
+} from "./Modals/MeetingArrangementModalButtons";
+import { useContractDetails } from "../ContractDetailsContext";
+import MeetingNoteSection from "./MeetingNoteSection";
 
 const STATUS_LABELS: Record<MeetingArrangementStatus, string> = {
-    PLANNED: 'Planowany',
-    DISCUSSED: 'Omówiony',
-    CLOSED: 'Zamknięty',
+    PLANNED: "Planowany",
+    DISCUSSED: "Omówiony",
+    CLOSED: "Zamknięty",
 };
 
 const STATUS_VARIANTS: Record<MeetingArrangementStatus, string> = {
-    PLANNED: 'secondary',
-    DISCUSSED: 'primary',
-    CLOSED: 'success',
+    PLANNED: "secondary",
+    DISCUSSED: "primary",
+    CLOSED: "success",
 };
 
 const NEXT_STATUS: Partial<Record<MeetingArrangementStatus, MeetingArrangementStatus>> = {
-    PLANNED: 'DISCUSSED',
-    DISCUSSED: 'CLOSED',
+    PLANNED: "DISCUSSED",
+    DISCUSSED: "CLOSED",
 };
 
 function StatusBadge({ status }: { status: MeetingArrangementStatus }) {
-    return <Badge bg={STATUS_VARIANTS[status] || 'secondary'}>{STATUS_LABELS[status] || status}</Badge>;
+    return <Badge bg={STATUS_VARIANTS[status] || "secondary"}>{STATUS_LABELS[status] || status}</Badge>;
 }
 
 interface MeetingAgendaPanelProps {
@@ -37,12 +40,28 @@ interface MeetingAgendaPanelProps {
 export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps) {
     const { contract } = useContractDetails();
     const [arrangements, setArrangements] = useState<MeetingArrangementData[] | undefined>(undefined);
+    const [arrangementsRefreshToken, setArrangementsRefreshToken] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const loadArrangements = useCallback(async () => {
         if (!meeting?.id) return;
-        await meetingArrangementsRepository.loadItemsFromServerPOST([{ meetingId: meeting.id }]);
-        setArrangements([...meetingArrangementsRepository.items]);
+        const loadedItems: MeetingArrangementData[] = await meetingArrangementsRepository.loadItemsFromServerPOST([
+            { meetingId: meeting.id },
+        ]);
+
+        // Defensive guard: keep only rows that belong to the currently opened meeting.
+        const filteredItems = loadedItems.filter((item: MeetingArrangementData) => item.meetingId === meeting.id);
+        if (filteredItems.length !== loadedItems.length) {
+            console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
+                selectedMeetingId: meeting.id,
+                loadedCount: loadedItems.length,
+                filteredCount: filteredItems.length,
+            });
+        }
+
+        meetingArrangementsRepository.items = filteredItems;
+        setArrangements([...filteredItems]);
+        setArrangementsRefreshToken((prev) => prev + 1);
     }, [meeting?.id]);
 
     useEffect(() => {
@@ -54,20 +73,17 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
         if (!nextStatus) return;
 
         try {
-            const response = await fetch(
-                `${MainSetup.serverUrl}meetingArrangement/${arrangement.id}/status`,
-                {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ status: nextStatus }),
-                },
-            );
-            if (!response.ok) throw new Error('Status change failed');
+            const response = await fetch(`${MainSetup.serverUrl}meetingArrangement/${arrangement.id}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ status: nextStatus }),
+            });
+            if (!response.ok) throw new Error("Status change failed");
             await loadArrangements();
         } catch (error) {
-            console.error('MeetingAgendaPanel: status change failed', error);
-            alert('Nie udało się zmienić statusu');
+            console.error("MeetingAgendaPanel: status change failed", error);
+            alert("Nie udało się zmienić statusu");
         }
     }
 
@@ -82,8 +98,8 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                 meetingDate: meeting.date,
             });
         } catch (error) {
-            console.error('MeetingAgendaPanel: note generation failed', error);
-            alert('Nie udało się wygenerować notatki');
+            console.error("MeetingAgendaPanel: note generation failed", error);
+            alert("Nie udało się wygenerować notatki");
         } finally {
             setIsGenerating(false);
         }
@@ -97,7 +113,11 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
     }, [meeting.id]);
 
     if (arrangements === undefined) {
-        return <div>Ładowanie agendy... <SpinnerBootstrap /></div>;
+        return (
+            <div>
+                Ładowanie agendy... <SpinnerBootstrap />
+            </div>
+        );
     }
 
     return (
@@ -117,22 +137,22 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                     showTableHeader={false}
                     tableStructure={[
                         {
-                            header: 'Sprawa',
+                            header: "Sprawa",
                             renderTdBody: (item: MeetingArrangementData) => (
                                 <>
                                     {item._case?._type?.folderNumber && (
                                         <span className="text-muted me-1">{item._case._type.folderNumber}</span>
                                     )}
-                                    {item._case?.name || item.name || '—'}
+                                    {item._case?.name || item.name || "—"}
                                 </>
                             ),
                         },
                         {
-                            header: 'Opis',
-                            objectAttributeToShow: 'description',
+                            header: "Opis",
+                            objectAttributeToShow: "description",
                         },
                         {
-                            header: 'Status',
+                            header: "Status",
                             renderTdBody: (item: MeetingArrangementData) => (
                                 <div className="d-flex align-items-center gap-2">
                                     <StatusBadge status={item.status} />
@@ -153,7 +173,7 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                             ),
                         },
                     ]}
-                    externalUpdate={arrangements.length}
+                    externalUpdate={arrangementsRefreshToken}
                 />
                 <div className="mt-3">
                     <Button
@@ -162,15 +182,15 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                         onClick={handleGenerateNote}
                     >
                         {isGenerating ? (
-                            <>Generowanie... <SpinnerBootstrap /></>
+                            <>
+                                Generowanie... <SpinnerBootstrap />
+                            </>
                         ) : (
-                            'Generuj notatkę ze spotkania'
+                            "Generuj notatkę ze spotkania"
                         )}
                     </Button>
                 </div>
-                {contract?.id && meeting?.id && (
-                    <MeetingNoteSection meetingId={meeting.id} contractId={contract.id} />
-                )}
+                {contract?.id && meeting?.id && <MeetingNoteSection meetingId={meeting.id} contractId={contract.id} />}
             </Card.Body>
         </Card>
     );
