@@ -49,39 +49,53 @@ export default function Meetings() {
     }
 
     return (
-        <Card>
-            <Card.Body>
+        <Card className="shadow-sm border-0">
+            <Card.Body className="p-3 p-xl-4">
                 {meetings ? (
-                    <Row>
-                        <Col md={4} className="border-end pe-2">
-                            <FilterableTable<MeetingData>
-                                id="meetings"
-                                title="Spotkania"
-                                initialObjects={meetings}
-                                repository={meetingsRepository}
-                                AddNewButtonComponents={[MeetingAddNewModalButton]}
-                                EditButtonComponent={MeetingEditModalButton}
-                                FilterBodyComponent={MeetingsFilterBody}
-                                isDeletable={true}
-                                showTableHeader={false}
-                                tableStructure={[
-                                    { header: "Nazwa", objectAttributeToShow: "name" },
-                                    { header: "Data", objectAttributeToShow: "date" },
-                                ]}
-                                onRowClick={handleRowClick}
-                                externalUpdate={meetings.length}
-                            />
+                    <Row className="g-3 align-items-stretch">
+                        <Col lg={4} className="d-flex">
+                            <Card className="w-100 h-100 shadow-sm border bg-white">
+                                <Card.Body className="p-0">
+                                    <FilterableTable<MeetingData>
+                                        id="meetings"
+                                        title="Spotkania"
+                                        initialObjects={meetings}
+                                        repository={meetingsRepository}
+                                        AddNewButtonComponents={[MeetingAddNewModalButton]}
+                                        EditButtonComponent={MeetingEditModalButton}
+                                        FilterBodyComponent={MeetingsFilterBody}
+                                        isDeletable={true}
+                                        showTableHeader={false}
+                                        tableStructure={[
+                                            { header: "Nazwa", objectAttributeToShow: "name" },
+                                            { header: "Data", objectAttributeToShow: "date" },
+                                        ]}
+                                        onRowClick={handleRowClick}
+                                        externalUpdate={meetings.length}
+                                    />
+                                </Card.Body>
+                            </Card>
                         </Col>
-                        <Col md={8} className="ps-2">
+                        <Col lg={8} className="d-flex">
                             {selectedMeeting ? (
-                                <MeetingAgendaPanel meeting={selectedMeeting} />
-                            ) : (
-                                <div className="d-flex w-100 h-100 min-vh-100 justify-content-center align-items-center text-muted p-4 text-center rounded">
-                                    <h5 className="fw-normal">
-                                        Wybierz spotkanie z listy po lewej, <br />
-                                        aby zobaczyć szczegóły agendy i notatkę
-                                    </h5>
+                                <div className="w-100">
+                                    <MeetingAgendaPanel meeting={selectedMeeting} />
                                 </div>
+                            ) : (
+                                <Card className="w-100 shadow-sm border bg-light-subtle">
+                                    <Card.Body
+                                        className="d-flex flex-column justify-content-center align-items-center text-center text-muted px-4"
+                                        style={{ minHeight: "420px" }}
+                                    >
+                                        <div className="text-uppercase small fw-semibold letter-spacing-1 mb-2">
+                                            Szczegóły spotkania
+                                        </div>
+                                        <h5 className="fw-normal mb-2">Wybierz spotkanie z listy po lewej</h5>
+                                        <p className="mb-0">
+                                            Po wybraniu zobaczysz agendę, statusy punktów i powiązaną notatkę.
+                                        </p>
+                                    </Card.Body>
+                                </Card>
                             )}
                         </Col>
                     </Row>

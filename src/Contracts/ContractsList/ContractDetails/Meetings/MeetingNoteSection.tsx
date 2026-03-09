@@ -1,11 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Card, Button } from 'react-bootstrap';
-import { ContractMeetingNoteData } from '../../../../../Typings/bussinesTypes';
-import { SpinnerBootstrap, MenuExpandIconButton } from '../../../../View/Resultsets/CommonComponents';
-import { meetingNotesRepository } from '../../ContractsController';
-import { MeetingNoteEditModalButton } from '../MeetingNotes/Modals/MeetingNoteEditModalButton';
-import { GeneralDeleteModalButton } from '../../../../View/Modals/GeneralModalButtons';
-import GDDocFileIcon from '../../../../Resources/View/Google-Docs-icon.png';
+import React, { useCallback, useEffect, useState } from "react";
+import { Card } from "react-bootstrap";
+import { ContractMeetingNoteData } from "../../../../../Typings/bussinesTypes";
+import {
+    GDDocFileIconLink,
+    SpinnerBootstrap,
+    MenuExpandIconButton,
+} from "../../../../View/Resultsets/CommonComponents";
+import { meetingNotesRepository } from "../../ContractsController";
+import { MeetingNoteEditModalButton } from "../MeetingNotes/Modals/MeetingNoteEditModalButton";
+import { GeneralDeleteModalButton } from "../../../../View/Modals/GeneralModalButtons";
 
 interface MeetingNoteSectionProps {
     meetingId: number;
@@ -26,7 +29,7 @@ export default function MeetingNoteSection({ meetingId, contractId }: MeetingNot
             const found = items.find((n: ContractMeetingNoteData) => n.meetingId === meetingId) ?? null;
             setNote(found);
         } catch (error) {
-            console.error('MeetingNoteSection: unable to load note', error);
+            console.error("MeetingNoteSection: unable to load note", error);
             setNote(null);
         }
     }, [meetingId]);
@@ -57,9 +60,11 @@ export default function MeetingNoteSection({ meetingId, contractId }: MeetingNot
         <Card className="mt-3 mb-0 shadow-sm border-light position-relative">
             <Card.Body className="d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div className="d-flex align-items-center gap-3">
-                    <div className="bg-light p-2 rounded d-flex align-items-center justify-content-center">
-                        <img src={GDDocFileIcon} alt="Notatka" style={{ width: '40px', height: '40px' }} />
-                    </div>
+                    {documentUrl && (
+                        <div className="bg-light p-2 rounded d-flex align-items-center justify-content-center">
+                            <GDDocFileIconLink folderUrl={documentUrl} layout="vertical" />
+                        </div>
+                    )}
                     <div>
                         <div className="fw-bold fs-5 text-dark">{note.title || "Notatka ze spotkania"}</div>
                         {note.meetingDate && <div className="text-muted small">Data: {note.meetingDate}</div>}
@@ -67,21 +72,11 @@ export default function MeetingNoteSection({ meetingId, contractId }: MeetingNot
                     </div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
-                    {documentUrl && (
-                        <Button
-                            variant="primary"
-                            href={documentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Otwórz dokument
-                        </Button>
-                    )}
                     <div className="d-flex align-items-center p-1 rounded transition-all">
                         <MenuExpandIconButton layout="horizontal" onClick={toggleMenu} />
                         {isMenuExpanded && (
                             <>
-                                <div className="border-start mx-1" style={{ height: '20px' }}></div>
+                                <div className="border-start mx-1" style={{ height: "20px" }}></div>
                                 <MeetingNoteEditModalButton
                                     modalProps={{
                                         onEdit: loadNote,

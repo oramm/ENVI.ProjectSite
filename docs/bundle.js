@@ -96836,31 +96836,45 @@ const MeetingArrangementModalButtons_1 = __webpack_require__(/*! ./Modals/Meetin
 const ContractDetailsContext_1 = __webpack_require__(/*! ../ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
 const MeetingNoteSection_1 = __importDefault(__webpack_require__(/*! ./MeetingNoteSection */ "./src/Contracts/ContractsList/ContractDetails/Meetings/MeetingNoteSection.tsx"));
 const STATUS_LABELS = {
-    PLANNED: 'Planowany',
-    DISCUSSED: 'Omówiony',
-    CLOSED: 'Zamknięty',
+    PLANNED: "Planowany",
+    DISCUSSED: "Omówiony",
+    CLOSED: "Zamknięty",
 };
 const STATUS_VARIANTS = {
-    PLANNED: 'secondary',
-    DISCUSSED: 'primary',
-    CLOSED: 'success',
+    PLANNED: "secondary",
+    DISCUSSED: "primary",
+    CLOSED: "success",
 };
 const NEXT_STATUS = {
-    PLANNED: 'DISCUSSED',
-    DISCUSSED: 'CLOSED',
+    PLANNED: "DISCUSSED",
+    DISCUSSED: "CLOSED",
 };
 function StatusBadge({ status }) {
-    return react_1.default.createElement(react_bootstrap_1.Badge, { bg: STATUS_VARIANTS[status] || 'secondary' }, STATUS_LABELS[status] || status);
+    return react_1.default.createElement(react_bootstrap_1.Badge, { bg: STATUS_VARIANTS[status] || "secondary" }, STATUS_LABELS[status] || status);
 }
 function MeetingAgendaPanel({ meeting }) {
     const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
     const [arrangements, setArrangements] = (0, react_1.useState)(undefined);
+    const [arrangementsRefreshToken, setArrangementsRefreshToken] = (0, react_1.useState)(0);
     const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
     const loadArrangements = (0, react_1.useCallback)(async () => {
         if (!meeting?.id)
             return;
-        await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([{ meetingId: meeting.id }]);
-        setArrangements([...ContractsController_1.meetingArrangementsRepository.items]);
+        const loadedItems = await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([
+            { meetingId: meeting.id },
+        ]);
+        // Defensive guard: keep only rows that belong to the currently opened meeting.
+        const filteredItems = loadedItems.filter((item) => item.meetingId === meeting.id);
+        if (filteredItems.length !== loadedItems.length) {
+            console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
+                selectedMeetingId: meeting.id,
+                loadedCount: loadedItems.length,
+                filteredCount: filteredItems.length,
+            });
+        }
+        ContractsController_1.meetingArrangementsRepository.items = filteredItems;
+        setArrangements([...filteredItems]);
+        setArrangementsRefreshToken((prev) => prev + 1);
     }, [meeting?.id]);
     (0, react_1.useEffect)(() => {
         loadArrangements();
@@ -96871,18 +96885,18 @@ function MeetingAgendaPanel({ meeting }) {
             return;
         try {
             const response = await fetch(`${MainSetupReact_1.default.serverUrl}meetingArrangement/${arrangement.id}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ status: nextStatus }),
             });
             if (!response.ok)
-                throw new Error('Status change failed');
+                throw new Error("Status change failed");
             await loadArrangements();
         }
         catch (error) {
-            console.error('MeetingAgendaPanel: status change failed', error);
-            alert('Nie udało się zmienić statusu');
+            console.error("MeetingAgendaPanel: status change failed", error);
+            alert("Nie udało się zmienić statusu");
         }
     }
     async function handleGenerateNote() {
@@ -96898,8 +96912,8 @@ function MeetingAgendaPanel({ meeting }) {
             });
         }
         catch (error) {
-            console.error('MeetingAgendaPanel: note generation failed', error);
-            alert('Nie udało się wygenerować notatki');
+            console.error("MeetingAgendaPanel: note generation failed", error);
+            alert("Nie udało się wygenerować notatki");
         }
         finally {
             setIsGenerating(false);
@@ -96912,32 +96926,31 @@ function MeetingAgendaPanel({ meeting }) {
         };
     }, [meeting.id]);
     if (arrangements === undefined) {
-        return react_1.default.createElement("div", null,
+        return (react_1.default.createElement("div", null,
             "\u0141adowanie agendy... ",
-            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null));
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
-        react_1.default.createElement(react_bootstrap_1.Card.Header, null,
-            react_1.default.createElement("strong", null,
-                "Spotkanie: ",
-                meeting.name),
-            " (",
-            meeting.date,
-            ")"),
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "shadow-sm border bg-white w-100" },
+        react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "bg-white border-bottom px-4 py-3" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-start gap-3 flex-wrap" },
+                react_1.default.createElement("div", null,
+                    react_1.default.createElement("div", { className: "small text-uppercase text-primary fw-semibold mb-1" }, "Szczeg\u00F3\u0142y spotkania"),
+                    react_1.default.createElement("div", { className: "fw-semibold fs-5" }, meeting.name),
+                    react_1.default.createElement("div", { className: "text-muted" }, meeting.date)))),
+        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-4" },
             react_1.default.createElement(FilterableTable_1.default, { id: "meetingArrangements", title: "Agenda spotkania", initialObjects: arrangements, repository: ContractsController_1.meetingArrangementsRepository, AddNewButtonComponents: [ArrangementAddButton], EditButtonComponent: MeetingArrangementModalButtons_1.MeetingArrangementEditModalButton, isDeletable: true, showTableHeader: false, tableStructure: [
                     {
-                        header: 'Sprawa',
+                        header: "Sprawa",
                         renderTdBody: (item) => (react_1.default.createElement(react_1.default.Fragment, null,
                             item._case?._type?.folderNumber && (react_1.default.createElement("span", { className: "text-muted me-1" }, item._case._type.folderNumber)),
-                            item._case?.name || item.name || '—')),
+                            item._case?.name || item.name || "—")),
                     },
                     {
-                        header: 'Opis',
-                        objectAttributeToShow: 'description',
+                        header: "Opis",
+                        objectAttributeToShow: "description",
                     },
                     {
-                        header: 'Status',
+                        header: "Status",
                         renderTdBody: (item) => (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                             react_1.default.createElement(StatusBadge, { status: item.status }),
                             NEXT_STATUS[item.status] && (react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-primary", onClick: (e) => {
@@ -96945,12 +96958,12 @@ function MeetingAgendaPanel({ meeting }) {
                                     handleStatusChange(item);
                                 }, title: `Zmień na: ${STATUS_LABELS[NEXT_STATUS[item.status]]}` }, "\u25B6")))),
                     },
-                ], externalUpdate: arrangements.length }),
+                ], externalUpdate: arrangementsRefreshToken }),
             react_1.default.createElement("div", { className: "mt-3" },
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
                     "Generowanie... ",
-                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ('Generuj notatkę ze spotkania'))),
-            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id })))));
+                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania"))),
+            contract?.id && meeting?.id && react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id }))));
 }
 
 
@@ -97004,8 +97017,13 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const MeetingNoteEditModalButton_1 = __webpack_require__(/*! ../MeetingNotes/Modals/MeetingNoteEditModalButton */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteEditModalButton.tsx");
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 function MeetingNoteSection({ meetingId, contractId }) {
     const [note, setNote] = (0, react_1.useState)(undefined);
+    const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
+    function toggleMenu() {
+        setIsMenuExpanded((prev) => !prev);
+    }
     const loadNote = (0, react_1.useCallback)(async () => {
         try {
             const items = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([{ meetingId }]);
@@ -97013,7 +97031,7 @@ function MeetingNoteSection({ meetingId, contractId }) {
             setNote(found);
         }
         catch (error) {
-            console.error('MeetingNoteSection: unable to load note', error);
+            console.error("MeetingNoteSection: unable to load note", error);
             setNote(null);
         }
     }, [meetingId]);
@@ -97029,32 +97047,36 @@ function MeetingNoteSection({ meetingId, contractId }) {
             react_1.default.createElement("small", null, "Brak notatki")));
     }
     const documentUrl = note._documentOpenUrl || note._documentEditUrl;
-    return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "light", className: "mt-3 mb-0 border" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center justify-content-between" },
-            react_1.default.createElement("div", null,
-                react_1.default.createElement("strong", null, "Notatka ze spotkania:"),
-                ' ',
-                note.title,
-                documentUrl && (react_1.default.createElement(react_1.default.Fragment, null,
-                    ' — ',
-                    react_1.default.createElement("a", { href: documentUrl, target: "_blank", rel: "noopener noreferrer" }, "Otw\u00F3rz dokument")))),
-            react_1.default.createElement("div", { className: "d-flex gap-2" },
-                react_1.default.createElement(MeetingNoteEditModalButton_1.MeetingNoteEditModalButton, { modalProps: {
-                        onEdit: loadNote,
-                        initialData: note,
-                    }, buttonProps: {} }),
-                react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-danger", onClick: async () => {
-                        if (!window.confirm('Usunąć notatkę?'))
-                            return;
-                        try {
-                            await ContractsController_1.meetingNotesRepository.deleteItemNodeJS(note.id);
-                            setNote(null);
-                        }
-                        catch (error) {
-                            console.error('MeetingNoteSection: delete failed', error);
-                            alert('Nie udało się usunąć notatki');
-                        }
-                    } }, "Usu\u0144")))));
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3 mb-0 shadow-sm border-light position-relative" },
+        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "d-flex align-items-center justify-content-between flex-wrap gap-3" },
+            react_1.default.createElement("div", { className: "d-flex align-items-center gap-3" },
+                documentUrl && (react_1.default.createElement("div", { className: "bg-light p-2 rounded d-flex align-items-center justify-content-center" },
+                    react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: documentUrl, layout: "vertical" }))),
+                react_1.default.createElement("div", null,
+                    react_1.default.createElement("div", { className: "fw-bold fs-5 text-dark" }, note.title || "Notatka ze spotkania"),
+                    note.meetingDate && react_1.default.createElement("div", { className: "text-muted small" },
+                        "Data: ",
+                        note.meetingDate),
+                    !note.meetingDate && react_1.default.createElement("div", { className: "text-muted small" }, "Dokument powi\u0105zany ze spotkaniem"))),
+            react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement("div", { className: "d-flex align-items-center p-1 rounded transition-all" },
+                    react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: "horizontal", onClick: toggleMenu }),
+                    isMenuExpanded && (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("div", { className: "border-start mx-1", style: { height: "20px" } }),
+                        react_1.default.createElement(MeetingNoteEditModalButton_1.MeetingNoteEditModalButton, { modalProps: {
+                                onEdit: loadNote,
+                                initialData: note,
+                            }, buttonProps: {
+                                layout: "horizontal",
+                            } }),
+                        react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
+                                onDelete: () => setNote(null),
+                                modalTitle: "Usuwanie notatki ze spotkania",
+                                initialData: note,
+                                repository: ContractsController_1.meetingNotesRepository,
+                            }, buttonProps: {
+                                layout: "horizontal",
+                            } }))))))));
 }
 
 
@@ -97133,29 +97155,38 @@ function Meetings() {
             catch (error) {
                 if (!isMounted)
                     return;
-                console.error('Meetings: unable to load meetings', error);
+                console.error("Meetings: unable to load meetings", error);
                 setMeetings([]);
             }
         }
         fetchMeetings();
-        return () => { isMounted = false; };
+        return () => {
+            isMounted = false;
+        };
     }, [contract?.id]);
     function handleRowClick(meeting) {
         setSelectedMeeting(selectedMeeting?.id === meeting.id ? undefined : meeting);
     }
     if (!contract) {
-        return react_1.default.createElement("div", null,
+        return (react_1.default.createElement("div", null,
             "\u0141aduj\u0119 dane... ",
-            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null));
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null, meetings ? (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(FilterableTable_1.default, { id: "meetings", title: "Spotkania", initialObjects: meetings, repository: ContractsController_1.meetingsRepository, AddNewButtonComponents: [MeetingModalButtons_1.MeetingAddNewModalButton], EditButtonComponent: MeetingModalButtons_1.MeetingEditModalButton, FilterBodyComponent: MeetingsFilterBody_1.MeetingsFilterBody, isDeletable: true, showTableHeader: false, tableStructure: [
-                    { header: 'Nazwa', objectAttributeToShow: 'name' },
-                    { header: 'Data', objectAttributeToShow: 'date' },
-                    { header: 'Lokalizacja', objectAttributeToShow: 'location' },
-                ], onRowClick: handleRowClick, externalUpdate: meetings.length }),
-            selectedMeeting && (react_1.default.createElement(MeetingAgendaPanel_1.default, { meeting: selectedMeeting })))) : (react_1.default.createElement(react_1.default.Fragment, null,
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "shadow-sm border-0" },
+        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-3 p-xl-4" }, meetings ? (react_1.default.createElement(react_bootstrap_1.Row, { className: "g-3 align-items-stretch" },
+            react_1.default.createElement(react_bootstrap_1.Col, { lg: 4, className: "d-flex" },
+                react_1.default.createElement(react_bootstrap_1.Card, { className: "w-100 h-100 shadow-sm border bg-white" },
+                    react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-0" },
+                        react_1.default.createElement(FilterableTable_1.default, { id: "meetings", title: "Spotkania", initialObjects: meetings, repository: ContractsController_1.meetingsRepository, AddNewButtonComponents: [MeetingModalButtons_1.MeetingAddNewModalButton], EditButtonComponent: MeetingModalButtons_1.MeetingEditModalButton, FilterBodyComponent: MeetingsFilterBody_1.MeetingsFilterBody, isDeletable: true, showTableHeader: false, tableStructure: [
+                                { header: "Nazwa", objectAttributeToShow: "name" },
+                                { header: "Data", objectAttributeToShow: "date" },
+                            ], onRowClick: handleRowClick, externalUpdate: meetings.length })))),
+            react_1.default.createElement(react_bootstrap_1.Col, { lg: 8, className: "d-flex" }, selectedMeeting ? (react_1.default.createElement("div", { className: "w-100" },
+                react_1.default.createElement(MeetingAgendaPanel_1.default, { meeting: selectedMeeting }))) : (react_1.default.createElement(react_bootstrap_1.Card, { className: "w-100 shadow-sm border bg-light-subtle" },
+                react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "d-flex flex-column justify-content-center align-items-center text-center text-muted px-4", style: { minHeight: "420px" } },
+                    react_1.default.createElement("div", { className: "text-uppercase small fw-semibold letter-spacing-1 mb-2" }, "Szczeg\u00F3\u0142y spotkania"),
+                    react_1.default.createElement("h5", { className: "fw-normal mb-2" }, "Wybierz spotkanie z listy po lewej"),
+                    react_1.default.createElement("p", { className: "mb-0" }, "Po wybraniu zobaczysz agend\u0119, statusy punkt\u00F3w i powi\u0105zan\u0105 notatk\u0119."))))))) : (react_1.default.createElement(react_1.default.Fragment, null,
             "\u0141adowanie spotka\u0144... ",
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))))));
 }
@@ -105282,7 +105313,6 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "fw-bold" }, "Analiza AI dokumentu"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", onChange: handleFileChange, disabled: isAnalyzing, accept: ".pdf,.docx" }),
             react_1.default.createElement(react_bootstrap_1.Form.Text, null, "Za\u0142\u0105cz pismo (PDF lub DOCX), a my spr\u00F3bujemy uzupe\u0142ni\u0107 formularz za Ciebie."),
-            props.isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted small" }, "Wczesniej zalaczone pliki sa widoczne na dysku w folderze pisma. System nie zapamietuje tych plikow jako wartosci pola wyboru pliku.")),
             isAnalyzing && react_1.default.createElement("div", { className: "mt-2" },
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }),
                 " Analizowanie dokumentu..."),
@@ -105495,7 +105525,8 @@ function LetterModalBody({ isEditing, initialData, getConfidenceClass = () => ''
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file"), inputRef: fileInputRef })),
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file"), inputRef: fileInputRef }),
+            isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted small" }, "Wcze\u015Bniej za\u0142\u0105czone pliki s\u0105 widoczne na dysku w folderze pisma. System nie zapami\u0119tuje tych plik\u00F3w jako warto\u015Bci pola wyboru pliku."))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" }, _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.LetterSelector, { name: "relatedLetterNumber", label: "Numer powi\u0105zanego pisma", _contract: _contract })) : (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer powi\u0105zanego pisma"),
@@ -106266,7 +106297,8 @@ function LetterModalBody({ isEditing, initialData }) {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }),
+            isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted small" }, "Wcze\u015Bniej za\u0142\u0105czone pliki s\u0105 widoczne na dysku w folderze pisma. System nie zapami\u0119tuje tych plik\u00F3w jako warto\u015Bci pola wyboru pliku.")))));
 }
 
 
