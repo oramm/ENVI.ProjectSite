@@ -29,7 +29,7 @@ User Action (Modal)
 
 #### Global vs. Local Repositories
 
-- **Global**: Initialized in [MainControllerReact.ts](src/React/MainControllerReact.ts), accessed via `MainSetup` static properties
+- **Global**: Initialized in [MainControllerReact.ts](../src/React/MainControllerReact.ts), accessed via `MainSetup` static properties
     - Examples: `MainSetup.personsEnviRepository`, `MainSetup.contractTypesRepository`
 - **Local**: Created in `useMemo` for helper components (Selectors, Autocomplete) with unique name suffix
     ```typescript
@@ -41,19 +41,19 @@ User Action (Modal)
 
 #### Why Local Repositories Matter
 
-Using global repositories in selectors causes **state pollution**: components overwrite each other's data in sessionStorage. See [selectors-architecture.md](instructions/selectors-architecture.md) section 2.
+Using global repositories in selectors causes **state pollution**: components overwrite each other's data in sessionStorage. See [selectors-architecture.md](../instructions/selectors-architecture.md) section 2.
 
 ### 2. File Structure & Build Pipeline
 
 - **Source**: `src/` (all TypeScript/React code)
 - **Output**: `docs/` (compiled bundle served by Apache)
-- **Entry Point**: [src/React/MainWindow/index.tsx](src/React/MainWindow/index.tsx)
+- **Entry Point**: [src/React/MainWindow/index.tsx](../src/React/MainWindow/index.tsx)
 - **Build**: `yarn build` runs `tsc` → `webpack` → copies static files (`copyfiles`)
 - **Domain Structure**: Code organized by business domain (`Contracts/`, `Persons/`, `Projects/`, `TasksGlobal/`, etc.)
 
 ### 3. Key Components & Their Roles
 
-#### FilterableTable ([FilterableTable.tsx](src/View/Resultsets/FilterableTable/FilterableTable.tsx))
+#### FilterableTable ([FilterableTable.tsx](../src/View/Resultsets/FilterableTable/FilterableTable.tsx))
 
 Standard component for data lists. Features:
 
@@ -62,19 +62,19 @@ Standard component for data lists. Features:
 - Integrates CRUD callbacks: `handleAddObject`, `handleEditObject`, `handleDeleteObject`
 - Persists state via snapshots (`snapshotMode`: `"criteria+objects"` or `"criteria-only"`)
 
-Data flow: See [filterable-table-data-flow.md](instructions/filterable-table-data-flow.md)
+Data flow: See [filterable-table-data-flow.md](../instructions/filterable-table-data-flow.md)
 
-#### Business Object Selectors ([BussinesObjectSelectors.tsx](src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx))
+#### Business Object Selectors ([BussinesObjectSelectors.tsx](../src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx))
 
 Reusable dropdowns for entities (Projects, Contracts, Persons). Built with:
 
-- **MyAsyncTypeahead** ([GenericComponents.tsx](src/View/Modals/CommonFormComponents/GenericComponents.tsx)): Core selector logic
+- **MyAsyncTypeahead** ([GenericComponents.tsx](../src/View/Modals/CommonFormComponents/GenericComponents.tsx)): Core selector logic
 - **ensureLabelKey** validation: Ensures backend provides required fields (e.g., `_ourIdOrNumber_Name`)
 - **Local repositories**: Each selector creates isolated `RepositoryReact` instance
 
-See [business-object-selectors.md](instructions/business-object-selectors.md) for usage patterns.
+See [business-object-selectors.md](../instructions/business-object-selectors.md) for usage patterns.
 
-#### MainSetup ([MainSetupReact.ts](src/React/MainSetupReact.ts))
+#### MainSetup ([MainSetupReact.ts](../src/React/MainSetupReact.ts))
 
 Static service registry holding:
 
@@ -83,7 +83,7 @@ Static service registry holding:
 - Global repository instances (`personsEnviRepository`, `contractTypesRepository`, etc.)
 - Business status enums (`ProjectStatuses`, `TaskStatus`, `OfferStatus`, etc.)
 
-#### MainControllerReact ([MainControllerReact.ts](src/React/MainControllerReact.ts))
+#### MainControllerReact ([MainControllerReact.ts](../src/React/MainControllerReact.ts))
 
 Application bootstrap:
 
@@ -101,7 +101,7 @@ Application bootstrap:
     MODE=development
     ENABLE_DEV_LOGIN=true  # Mock authentication for local testing
     ```
-    **⚠️ NEVER commit `.env` files** - see [DEVELOPMENT.md](instructions/DEVELOPMENT.md) security guidelines
+    **⚠️ NEVER commit `.env` files** - see [DEVELOPMENT.md](../instructions/DEVELOPMENT.md) security guidelines
 
 ### Build & Run
 
@@ -113,7 +113,16 @@ Application bootstrap:
 
 - **Routing**: React Router with `HashRouter` (URLs like `#/persons`, `#/contracts`)
 - **API Base URL**: `MainSetup.serverUrl` (auto-detects `localhost:3000` vs production Heroku)
-- **Dev Login**: Set `ENABLE_DEV_LOGIN=true` in `.env` for mock authentication (see [DEVELOPMENT.md](instructions/DEVELOPMENT.md#-dev-login--mock-authentication))
+- **Dev Login**: Set `ENABLE_DEV_LOGIN=true` in `.env` for mock authentication (see [DEVELOPMENT.md](../instructions/DEVELOPMENT.md))
+
+### UI Browser Loop
+
+- **App Route Base**: local app is served under `http://localhost:9000/docs/#/...`, not the bare root path
+- **Local Backend**: frontend uses `http://localhost:3000` when opened on localhost
+- **Stable Verification**: `scripts/screenshot.js` supports `--mock-login`, `--timeout`, `--viewport`, `--selector`, `--text`
+- **Tmp Artifacts**: store browser-loop screenshots in `tmp/ui-browser-loop/` and remove them after verification with `yarn screenshot:cleanup`
+- **Port Safety**: if port `9000` or `3000` is already occupied, verify whether the frontend or backend is already running before restarting anything
+- **Cross-Repo Entry Point**: when agents are launched from `PS-nodeJS`, use the thin server-side adapter there, but keep `instructions/AI_GUIDELINES.md` and `instructions/ui-browser-loop.md` here as canonical
 
 ## 📋 Coding Conventions & Patterns
 
@@ -143,11 +152,11 @@ updateSnapshot(); // Persist to sessionStorage
 - When you see console warnings like `⚠️ Brak wymaganego pola "_ourIdOrNumber_Name"`:
     - **Fix the backend** (Node.js/Express controllers) by adding computed fields
     - **DON'T add workarounds** in frontend code
-- See [backend-computed-fields.md](instructions/backend-computed-fields.md) for examples
+- See [backend-computed-fields.md](../instructions/backend-computed-fields.md) for examples
 
 ### Types & Type Safety
 
-- **Business Types**: Defined in [Typings/bussinesTypes.d.ts](Typings/bussinesTypes.d.ts)
+- **Business Types**: Defined in [Typings/bussinesTypes.d.ts](../Typings/bussinesTypes.d.ts)
     - Examples: `PersonData`, `ContractType`, `ProjectData`, `RepositoryDataItem`
 - **Strict TypeScript**: `tsconfig.json` has `"strict": true` - avoid `any` types
 - **Type Guards**: Available in `Typings/typeGuards.ts` for runtime checks
@@ -174,16 +183,16 @@ updateSnapshot(); // Persist to sessionStorage
 
 ### Architecture Deep Dives
 
-- **Selectors Architecture**: [selectors-architecture.md](instructions/selectors-architecture.md) - 3-layer architecture, validation layer, creating new selectors
-- **FilterableTable Data Flow**: [filterable-table-data-flow.md](instructions/filterable-table-data-flow.md) - Component hierarchy, state management, CRUD operations
-- **TasksGlobal View**: [instructions/TasksGlobalView.md](instructions/TasksGlobalView.md) - Cross-domain task management architecture
+- **Selectors Architecture**: [selectors-architecture.md](../instructions/selectors-architecture.md) - 3-layer architecture, validation layer, creating new selectors
+- **FilterableTable Data Flow**: [filterable-table-data-flow.md](../instructions/filterable-table-data-flow.md) - Component hierarchy, state management, CRUD operations
+- **TasksGlobal View**: [instructions/TasksGlobalView.md](../instructions/TasksGlobalView.md) - Cross-domain task management architecture
 
 ### Developer Guides
 
-- **Development Setup**: [DEVELOPMENT.md](instructions/DEVELOPMENT.md) - .env config, scripts, dev login, Puppeteer testing
-- **AI Guidelines**: [AI_GUIDELINES.md](instructions/AI_GUIDELINES.md) - General AI developer workflows, UI Browser Loop mode
-- **Business Object Selectors Usage**: [business-object-selectors.md](instructions/business-object-selectors.md) - Quick start, examples, debugging
+- **Development Setup**: [DEVELOPMENT.md](../instructions/DEVELOPMENT.md) - .env config, scripts, dev login, Puppeteer testing
+- **AI Guidelines**: [AI_GUIDELINES.md](../instructions/AI_GUIDELINES.md) - General AI developer workflows, UI Browser Loop mode
+- **Business Object Selectors Usage**: [business-object-selectors.md](../instructions/business-object-selectors.md) - Quick start, examples, debugging
 
 ### Navigation
 
-All documentation indexed in [instructions/README.md](instructions/README.md) with Quick Links for common scenarios.
+All documentation indexed in [instructions/README.md](../instructions/README.md) with Quick Links for common scenarios.

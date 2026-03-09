@@ -6,6 +6,7 @@ yarn-error.log
 # Puppeteer / Testing artifacts
 screenshot*.png
 test-results/
+tmp/ui-browser-loop/
 
 # Claude AI artifacts
 .claude/
