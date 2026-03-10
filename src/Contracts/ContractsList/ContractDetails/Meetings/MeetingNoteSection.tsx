@@ -12,10 +12,10 @@ import { GeneralDeleteModalButton } from "../../../../View/Modals/GeneralModalBu
 
 interface MeetingNoteSectionProps {
     meetingId: number;
-    contractId: number;
+    refreshToken?: number;
 }
 
-export default function MeetingNoteSection({ meetingId, contractId }: MeetingNoteSectionProps) {
+export default function MeetingNoteSection({ meetingId, refreshToken }: MeetingNoteSectionProps) {
     const [note, setNote] = useState<ContractMeetingNoteData | null | undefined>(undefined);
     const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
@@ -36,7 +36,13 @@ export default function MeetingNoteSection({ meetingId, contractId }: MeetingNot
 
     useEffect(() => {
         loadNote();
-    }, [loadNote]);
+    }, [loadNote, refreshToken]);
+
+    useEffect(() => {
+        if (note?.id) {
+            meetingNotesRepository.currentItems = [note];
+        }
+    }, [note]);
 
     if (note === undefined) {
         return (

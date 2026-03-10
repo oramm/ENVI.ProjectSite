@@ -41,27 +41,33 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
     const { contract } = useContractDetails();
     const [arrangements, setArrangements] = useState<MeetingArrangementData[] | undefined>(undefined);
     const [arrangementsRefreshToken, setArrangementsRefreshToken] = useState(0);
+    const [noteRefreshToken, setNoteRefreshToken] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const loadArrangements = useCallback(async () => {
         if (!meeting?.id) return;
-        const loadedItems: MeetingArrangementData[] = await meetingArrangementsRepository.loadItemsFromServerPOST([
-            { meetingId: meeting.id },
-        ]);
+        try {
+            const loadedItems: MeetingArrangementData[] = await meetingArrangementsRepository.loadItemsFromServerPOST([
+                { meetingId: meeting.id },
+            ]);
 
-        // Defensive guard: keep only rows that belong to the currently opened meeting.
-        const filteredItems = loadedItems.filter((item: MeetingArrangementData) => item.meetingId === meeting.id);
-        if (filteredItems.length !== loadedItems.length) {
-            console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
-                selectedMeetingId: meeting.id,
-                loadedCount: loadedItems.length,
-                filteredCount: filteredItems.length,
-            });
+            // Defensive guard: keep only rows that belong to the currently opened meeting.
+            const filteredItems = loadedItems.filter((item: MeetingArrangementData) => item.meetingId === meeting.id);
+            if (filteredItems.length !== loadedItems.length) {
+                console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
+                    selectedMeetingId: meeting.id,
+                    loadedCount: loadedItems.length,
+                    filteredCount: filteredItems.length,
+                });
+            }
+
+            meetingArrangementsRepository.items = filteredItems;
+            setArrangements([...filteredItems]);
+            setArrangementsRefreshToken((prev) => prev + 1);
+        } catch (error) {
+            console.error("MeetingAgendaPanel: unable to load arrangements", error);
+            setArrangements([]);
         }
-
-        meetingArrangementsRepository.items = filteredItems;
-        setArrangements([...filteredItems]);
-        setArrangementsRefreshToken((prev) => prev + 1);
     }, [meeting?.id]);
 
     useEffect(() => {
@@ -91,12 +97,20 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
         if (!contract?.id || !meeting?.id || !arrangements?.length) return;
         setIsGenerating(true);
         try {
+            const existingNotes = await meetingNotesRepository.loadItemsFromServerPOST([
+                { meetingId: meeting.id },
+            ]);
+            if (existingNotes.length > 0) {
+                alert("Notatka dla tego spotkania już istnieje");
+                return;
+            }
             await meetingNotesRepository.addNewItem({
                 contractId: contract.id,
                 meetingId: meeting.id,
                 title: meeting.name,
                 meetingDate: meeting.date,
             });
+            setNoteRefreshToken((prev) => prev + 1);
         } catch (error) {
             console.error("MeetingAgendaPanel: note generation failed", error);
             alert("Nie udało się wygenerować notatki");
@@ -196,7 +210,12 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                         )}
                     </Button>
                 </div>
-                {contract?.id && meeting?.id && <MeetingNoteSection meetingId={meeting.id} contractId={contract.id} />}
+                {contract?.id && meeting?.id && (
+                    <MeetingNoteSection
+                        meetingId={meeting.id}
+                        refreshToken={noteRefreshToken}
+                    />
+                )}
             </Card.Body>
         </Card>
     );
