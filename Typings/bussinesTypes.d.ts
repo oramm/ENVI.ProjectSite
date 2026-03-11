@@ -746,6 +746,7 @@ export interface CostInvoice extends RepositoryDataItem {
     // Podstawowe dane faktury
     ksefNumber: string;
     invoiceNumber: string;
+    invoiceType?: string | null;
     issueDate: string;
     saleDate?: string | null;
     dueDate?: string | null;
@@ -755,6 +756,8 @@ export interface CostInvoice extends RepositoryDataItem {
     supplierName: string;
     supplierAddress?: string | null;
     supplierBankAccount?: string | null;
+    paymentMethod?: string | null;
+    paymentDate?: string | null;
 
     // Dane finansowe
     netAmount: number;

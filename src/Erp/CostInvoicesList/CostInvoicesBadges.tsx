@@ -170,6 +170,75 @@ export function PaymentStatusBadge({
 }
 
 /**
+ * Badge formy płatności wyciągniętej z KSeF.
+ */
+export function PaymentMethodBadge({ paymentMethod }: { paymentMethod?: string | null }) {
+    if (!paymentMethod) {
+        return (
+            <Badge bg="light" text="dark" className="border">
+                Brak formy platnosci
+            </Badge>
+        );
+    }
+
+    const normalized = normalizePaymentMethod(paymentMethod);
+    const { icon, label, variant } = getPaymentMethodMeta(normalized, paymentMethod);
+
+    return (
+        <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id="payment-method-tooltip">Forma platnosci z KSeF: {paymentMethod}</Tooltip>}
+        >
+            <Badge bg={variant} text={variant === "warning" ? "dark" : "light"}>
+                {icon} {label}
+            </Badge>
+        </OverlayTrigger>
+    );
+}
+
+function normalizePaymentMethod(paymentMethod: string): string {
+    return paymentMethod
+        .trim()
+        .toLocaleLowerCase("pl-PL")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getPaymentMethodMeta(normalized: string, rawValue: string): {
+    icon: string;
+    label: string;
+    variant: "success" | "primary" | "info" | "warning" | "secondary";
+} {
+    if (normalized.includes("przelew")) {
+        return { icon: "🏦", label: "Przelew", variant: "primary" };
+    }
+    if (normalized.includes("gotowka")) {
+        return { icon: "💵", label: "Gotowka", variant: "success" };
+    }
+    if (normalized.includes("karta")) {
+        return { icon: "💳", label: "Karta", variant: "info" };
+    }
+    if (normalized.includes("mobil")) {
+        return { icon: "📱", label: "Mobilna", variant: "warning" };
+    }
+    if (normalized.includes("bon")) {
+        return { icon: "🎟️", label: "Bon", variant: "secondary" };
+    }
+    if (normalized.includes("czek")) {
+        return { icon: "🧾", label: "Czek", variant: "secondary" };
+    }
+    if (normalized.includes("kredyt")) {
+        return { icon: "🏷️", label: "Kredyt", variant: "secondary" };
+    }
+
+    return {
+        icon: "•",
+        label: rawValue,
+        variant: "secondary",
+    };
+}
+
+/**
  * Oblicza kontrastowy kolor tekstu dla danego tła
  */
 function getContrastColor(hexColor: string): string {
@@ -185,4 +254,40 @@ function getContrastColor(hexColor: string): string {
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
     return luminance > 0.5 ? "#000000" : "#FFFFFF";
+}
+
+/**
+ * Mapowanie kodów KSeF → etykieta i wariant koloru.
+ */
+const INVOICE_TYPE_META: Record<string, { label: string; variant: "primary" | "secondary" | "warning" | "danger" | "info" }> = {
+    "VAT":     { label: "VAT",              variant: "primary"   },
+    "KOR":     { label: "Korekta",          variant: "warning"   },
+    "ZAL":     { label: "Zaliczka",         variant: "info"      },
+    "ROZ":     { label: "Rozliczenie",      variant: "info"      },
+    "UPR":     { label: "Uproszczona",      variant: "secondary" },
+    "KOR_ZAL": { label: "Kor. zaliczki",    variant: "warning"   },
+    "KOR_ROZ": { label: "Kor. rozliczenia", variant: "warning"   },
+};
+
+/**
+ * Badge rodzaju faktury (RodzajFaktury z KSeF FA(3))
+ */
+export function InvoiceTypeBadge({ invoiceType }: { invoiceType?: string | null }) {
+    if (!invoiceType) return null;
+
+    const key = invoiceType.trim().toUpperCase();
+    const meta = INVOICE_TYPE_META[key];
+    const variant = meta?.variant ?? "secondary";
+    const label = meta?.label ?? invoiceType;
+
+    return (
+        <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id="invoice-type-tooltip">Rodzaj faktury z KSeF: {invoiceType}</Tooltip>}
+        >
+            <Badge bg={variant} text={variant === "warning" ? "dark" : "light"}>
+                {label}
+            </Badge>
+        </OverlayTrigger>
+    );
 }

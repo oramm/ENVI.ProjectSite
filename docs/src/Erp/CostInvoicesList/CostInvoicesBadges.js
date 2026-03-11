@@ -8,6 +8,8 @@ exports.CategoryBadge = CategoryBadge;
 exports.VatDeductionBadge = VatDeductionBadge;
 exports.BookingPercentageBadge = BookingPercentageBadge;
 exports.PaymentStatusBadge = PaymentStatusBadge;
+exports.PaymentMethodBadge = PaymentMethodBadge;
+exports.InvoiceTypeBadge = InvoiceTypeBadge;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const CostInvoicesController_1 = require("./CostInvoicesController");
@@ -131,6 +133,58 @@ function PaymentStatusBadge({ status, paidAmount, grossAmount, }) {
             label)));
 }
 /**
+ * Badge formy płatności wyciągniętej z KSeF.
+ */
+function PaymentMethodBadge({ paymentMethod }) {
+    if (!paymentMethod) {
+        return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark", className: "border" }, "Brak formy platnosci"));
+    }
+    const normalized = normalizePaymentMethod(paymentMethod);
+    const { icon, label, variant } = getPaymentMethodMeta(normalized, paymentMethod);
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "payment-method-tooltip" },
+            "Forma platnosci z KSeF: ",
+            paymentMethod) },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: variant === "warning" ? "dark" : "light" },
+            icon,
+            " ",
+            label)));
+}
+function normalizePaymentMethod(paymentMethod) {
+    return paymentMethod
+        .trim()
+        .toLocaleLowerCase("pl-PL")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+function getPaymentMethodMeta(normalized, rawValue) {
+    if (normalized.includes("przelew")) {
+        return { icon: "🏦", label: "Przelew", variant: "primary" };
+    }
+    if (normalized.includes("gotowka")) {
+        return { icon: "💵", label: "Gotowka", variant: "success" };
+    }
+    if (normalized.includes("karta")) {
+        return { icon: "💳", label: "Karta", variant: "info" };
+    }
+    if (normalized.includes("mobil")) {
+        return { icon: "📱", label: "Mobilna", variant: "warning" };
+    }
+    if (normalized.includes("bon")) {
+        return { icon: "🎟️", label: "Bon", variant: "secondary" };
+    }
+    if (normalized.includes("czek")) {
+        return { icon: "🧾", label: "Czek", variant: "secondary" };
+    }
+    if (normalized.includes("kredyt")) {
+        return { icon: "🏷️", label: "Kredyt", variant: "secondary" };
+    }
+    return {
+        icon: "•",
+        label: rawValue,
+        variant: "secondary",
+    };
+}
+/**
  * Oblicza kontrastowy kolor tekstu dla danego tła
  */
 function getContrastColor(hexColor) {
@@ -143,4 +197,31 @@ function getContrastColor(hexColor) {
     // Oblicz luminancję
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5 ? "#000000" : "#FFFFFF";
+}
+/**
+ * Mapowanie kodów KSeF → etykieta i wariant koloru.
+ */
+const INVOICE_TYPE_META = {
+    "VAT": { label: "VAT", variant: "primary" },
+    "KOR": { label: "Korekta", variant: "warning" },
+    "ZAL": { label: "Zaliczka", variant: "info" },
+    "ROZ": { label: "Rozliczenie", variant: "info" },
+    "UPR": { label: "Uproszczona", variant: "secondary" },
+    "KOR_ZAL": { label: "Kor. zaliczki", variant: "warning" },
+    "KOR_ROZ": { label: "Kor. rozliczenia", variant: "warning" },
+};
+/**
+ * Badge rodzaju faktury (RodzajFaktury z KSeF FA(3))
+ */
+function InvoiceTypeBadge({ invoiceType }) {
+    if (!invoiceType)
+        return null;
+    const key = invoiceType.trim().toUpperCase();
+    const meta = INVOICE_TYPE_META[key];
+    const variant = meta?.variant ?? "secondary";
+    const label = meta?.label ?? invoiceType;
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "invoice-type-tooltip" },
+            "Rodzaj faktury z KSeF: ",
+            invoiceType) },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: variant === "warning" ? "dark" : "light" }, label)));
 }

@@ -5,15 +5,19 @@ import { CostInvoicesFilterBody } from "./CostInvoicesFilterBody";
 import { CostInvoice } from "../../../Typings/bussinesTypes";
 import {
     costInvoicesRepository,
-    CostInvoiceStatus,
     CostInvoiceStatuses,
     syncFromKsef,
-    updateCostInvoice,
 } from "./CostInvoicesController";
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
-import { CostInvoiceStatusBadge, CategoryBadge, VatDeductionBadge, PaymentStatusBadge } from "./CostInvoicesBadges";
-import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
+import {
+    CostInvoiceStatusBadge,
+    CategoryBadge,
+    VatDeductionBadge,
+    PaymentStatusBadge,
+    PaymentMethodBadge,
+    InvoiceTypeBadge,
+} from "./CostInvoicesBadges";
 import "./CostInvoicesSearch.css";
 
 export default function CostInvoicesSearch({ title }: { title: string }) {
@@ -21,7 +25,6 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
     const [syncError, setSyncError] = useState<string | null>(null);
     const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
     const [syncWarnings, setSyncWarnings] = useState<string[]>([]);
-    const [statusError, setStatusError] = useState<string | null>(null);
     const [showSyncModal, setShowSyncModal] = useState(false);
     const [syncType, setSyncType] = useState<"INCREMENTAL" | "VERIFICATION">("INCREMENTAL");
     const [dateFrom, setDateFrom] = useState("");
@@ -95,48 +98,6 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         }
     }, [syncType, dateFrom, dateTo]);
 
-    function CostInvoiceStatusCell({ invoice }: { invoice: CostInvoice }) {
-        const { repository, setObjects } = useFilterableTableContext<CostInvoice>();
-        const [isUpdating, setIsUpdating] = useState(false);
-
-        const handleStatusChange = async (status: CostInvoiceStatus) => {
-            if (status === invoice.status) return;
-            setIsUpdating(true);
-            setStatusError(null);
-
-            try {
-                const updated = await updateCostInvoice(invoice.id, { status });
-                repository.replaceItemById(invoice.id, updated);
-                repository.saveToSessionStorage();
-                setObjects([...repository.items]);
-            } catch (error) {
-                setStatusError(error instanceof Error ? error.message : "Błąd zmiany statusu");
-            } finally {
-                setIsUpdating(false);
-            }
-        };
-
-        if (invoice.status !== CostInvoiceStatuses.NEW) {
-            return <CostInvoiceStatusBadge status={invoice.status} />;
-        }
-
-        return (
-            <div onClick={(e) => e.stopPropagation()}>
-                <Form.Select
-                    size="sm"
-                    value={invoice.status}
-                    disabled={isUpdating}
-                    onChange={(e) => handleStatusChange(e.target.value as CostInvoiceStatus)}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <option value={CostInvoiceStatuses.NEW}>Nowa</option>
-                    <option value={CostInvoiceStatuses.EXCLUDED}>Poza kosztami</option>
-                    <option value={CostInvoiceStatuses.BOOKED}>Zaksięgowana</option>
-                </Form.Select>
-            </div>
-        );
-    }
-
     function renderInvoiceCard(invoice: CostInvoice, isActive?: boolean) {
         void isActive;
         const category = invoice._category || null;
@@ -158,12 +119,14 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                         </div>
                     </div>
                     <div className="cost-invoice-card__status-wrap">
-                        <CostInvoiceStatusCell invoice={invoice} />
+                        <InvoiceTypeBadge invoiceType={invoice.invoiceType} />
+                        <CostInvoiceStatusBadge status={invoice.status} />
                         <PaymentStatusBadge
                             status={invoice.paymentStatus}
                             paidAmount={invoice.paidAmount}
                             grossAmount={toNumber(invoice.grossAmount)}
                         />
+                        <PaymentMethodBadge paymentMethod={invoice.paymentMethod} />
                     </div>
                 </div>
 
@@ -181,6 +144,12 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                             <div className="cost-invoice-card__label">Termin plat.</div>
                             <div className="cost-invoice-card__value">{formatDate(invoice.dueDate)}</div>
                         </div>
+                        {invoice.paymentDate && (
+                            <div className="cost-invoice-card__date-item">
+                                <div className="cost-invoice-card__label">Data zapl.</div>
+                                <div className="cost-invoice-card__value cost-invoice-card__value--paid">{formatDate(invoice.paymentDate)}</div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="cost-invoice-card__amounts">
@@ -275,12 +244,6 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                     </ul>
                 </Alert>
             )}
-            {statusError && (
-                <Alert variant="danger" onClose={() => setStatusError(null)} dismissible className="mx-3 mt-3">
-                    {statusError}
-                </Alert>
-            )}
-
             <div className="cost-invoices-search">
             <FilterableTable<CostInvoice>
                 id="costInvoices"

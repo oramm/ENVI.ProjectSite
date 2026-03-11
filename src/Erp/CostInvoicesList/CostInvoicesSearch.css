@@ -36,8 +36,10 @@
 .cost-invoice-card__status-wrap {
     min-width: 180px;
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 0.35rem;
 }
 
 .cost-invoice-card__body {
@@ -49,7 +51,7 @@
 
 .cost-invoice-card__dates {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 1rem;
     flex: 1;
     border-right: 1px solid #e3e6eb;
@@ -78,7 +80,9 @@
     line-height: 1.05;
     font-weight: 700;
 }
-
+.cost-invoice-card__value--paid {
+    color: #198754;
+}
 .cost-invoice-card__amount-detail {
     margin-top: 0.2rem;
     color: #495057;
@@ -150,7 +154,7 @@
 
     .cost-invoice-card__status-wrap {
         min-width: 0;
-        justify-content: flex-start;
+        align-items: flex-start;
     }
 
     .cost-invoice-card__bottom {

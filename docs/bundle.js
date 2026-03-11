@@ -32189,8 +32189,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.cost-invoices-search .bg-light.p-3.ro
 .cost-invoice-card__status-wrap {
     min-width: 180px;
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 0.35rem;
 }
 
 .cost-invoice-card__body {
@@ -32202,7 +32204,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.cost-invoices-search .bg-light.p-3.ro
 
 .cost-invoice-card__dates {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 1rem;
     flex: 1;
     border-right: 1px solid #e3e6eb;
@@ -32231,7 +32233,9 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.cost-invoices-search .bg-light.p-3.ro
     line-height: 1.05;
     font-weight: 700;
 }
-
+.cost-invoice-card__value--paid {
+    color: #198754;
+}
 .cost-invoice-card__amount-detail {
     margin-top: 0.2rem;
     color: #495057;
@@ -32303,7 +32307,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.cost-invoices-search .bg-light.p-3.ro
 
     .cost-invoice-card__status-wrap {
         min-width: 0;
-        justify-content: flex-start;
+        align-items: flex-start;
     }
 
     .cost-invoice-card__bottom {
@@ -32321,7 +32325,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.cost-invoices-search .bg-light.p-3.ro
         gap: 0.7rem;
     }
 }
-`, "",{"version":3,"sources":["webpack://./src/Erp/CostInvoicesList/CostInvoicesSearch.css"],"names":[],"mappings":"AAAA;IACI,8BAA8B;IAC9B,yBAAyB;IACzB,8BAA8B;AAClC;;AAEA;IACI,8BAA8B;IAC9B,2BAA2B;AAC/B;;AAEA;IACI,aAAa;IACb,8BAA8B;IAC9B,SAAS;AACb;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,iBAAiB;IACjB,gBAAgB;AACpB;;AAEA;IACI,kBAAkB;IAClB,cAAc;IACd,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;IAChB,aAAa;IACb,yBAAyB;IACzB,uBAAuB;AAC3B;;AAEA;IACI,aAAa;IACb,8BAA8B;IAC9B,WAAW;IACX,mBAAmB;AACvB;;AAEA;IACI,aAAa;IACb,gDAAgD;IAChD,SAAS;IACT,OAAO;IACP,+BAA+B;IAC/B,mBAAmB;AACvB;;AAEA;IACI,cAAc;IACd,kBAAkB;IAClB,yBAAyB;IACzB,sBAAsB;AAC1B;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;AACpB;;AAEA;IACI,gBAAgB;IAChB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;IACjB,iBAAiB;IACjB,gBAAgB;AACpB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,8BAA8B;IAC9B,qBAAqB;IACrB,YAAY;IACZ,kBAAkB;IAClB,oBAAoB;IACpB,6BAA6B;AACjC;;AAEA;IACI,aAAa;IACb,eAAe;IACf,YAAY;AAChB;;AAEA;IACI,aAAa;IACb,qBAAqB;IACrB,YAAY;IACZ,iBAAiB;IACjB,cAAc;IACd,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;IAClB,cAAc;IACd,qBAAqB;AACzB;;AAEA;IACI;QACI,sBAAsB;IAC1B;;IAEA;QACI,gDAAgD;QAChD,eAAe;QACf,gCAAgC;QAChC,gBAAgB;QAChB,uBAAuB;IAC3B;;IAEA;QACI,gBAAgB;QAChB,YAAY;IAChB;;IAEA;QACI,iBAAiB;IACrB;AACJ;;AAEA;IACI;QACI,sBAAsB;IAC1B;;IAEA;QACI,YAAY;QACZ,2BAA2B;IAC/B;;IAEA;QACI,sBAAsB;QACtB,uBAAuB;IAC3B;;IAEA;QACI,cAAc;QACd,mBAAmB;IACvB;;IAEA;QACI,0BAA0B;QAC1B,WAAW;IACf;AACJ","sourcesContent":[".cost-invoices-search .bg-light.p-3.rounded-3.mb-3 {\n    background: #f5f6f8 !important;\n    border: 1px solid #d9dde3;\n    border-radius: 12px !important;\n}\n\n.cost-invoices-search .row.p-3.mb-2.rounded.shadow-sm.mx-0 {\n    border-radius: 12px !important;\n    box-shadow: none !important;\n}\n\n.cost-invoice-card__header {\n    display: flex;\n    justify-content: space-between;\n    gap: 1rem;\n}\n\n.cost-invoice-card__number {\n    font-size: 1.65rem;\n    font-weight: 700;\n    line-height: 1.15;\n}\n\n.cost-invoice-card__supplier {\n    margin-top: 0.6rem;\n    font-size: 1.1rem;\n    font-weight: 600;\n}\n\n.cost-invoice-card__meta {\n    margin-top: 0.2rem;\n    color: #6c757d;\n    font-size: 0.9rem;\n}\n\n.cost-invoice-card__status-wrap {\n    min-width: 180px;\n    display: flex;\n    justify-content: flex-end;\n    align-items: flex-start;\n}\n\n.cost-invoice-card__body {\n    display: flex;\n    justify-content: space-between;\n    gap: 1.2rem;\n    margin-top: 0.95rem;\n}\n\n.cost-invoice-card__dates {\n    display: grid;\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n    gap: 1rem;\n    flex: 1;\n    border-right: 1px solid #e3e6eb;\n    padding-right: 1rem;\n}\n\n.cost-invoice-card__label {\n    color: #6c757d;\n    font-size: 0.75rem;\n    text-transform: uppercase;\n    letter-spacing: 0.05em;\n}\n\n.cost-invoice-card__value {\n    margin-top: 0.2rem;\n    font-weight: 600;\n}\n\n.cost-invoice-card__amounts {\n    min-width: 240px;\n    text-align: right;\n}\n\n.cost-invoice-card__gross {\n    font-size: 1.9rem;\n    line-height: 1.05;\n    font-weight: 700;\n}\n\n.cost-invoice-card__amount-detail {\n    margin-top: 0.2rem;\n    color: #495057;\n}\n\n.cost-invoice-card__amount-detail--info {\n    color: #0c63e4;\n}\n\n.cost-invoice-card__bottom {\n    display: flex;\n    justify-content: space-between;\n    align-items: baseline;\n    gap: 0.75rem;\n    margin-top: 0.9rem;\n    padding-top: 0.75rem;\n    border-top: 1px solid #eceff3;\n}\n\n.cost-invoice-card__tags {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 0.45rem;\n}\n\n.cost-invoice-card__footer {\n    display: flex;\n    align-items: baseline;\n    gap: 0.45rem;\n    margin-left: auto;\n    color: #6c757d;\n    font-size: 0.86rem;\n    white-space: nowrap;\n}\n\n.cost-invoice-card__ksef {\n    font-size: 0.82rem;\n    color: #495057;\n    word-break: break-all;\n}\n\n@media (max-width: 991px) {\n    .cost-invoice-card__body {\n        flex-direction: column;\n    }\n\n    .cost-invoice-card__dates {\n        grid-template-columns: repeat(3, minmax(0, 1fr));\n        border-right: 0;\n        border-bottom: 1px solid #e3e6eb;\n        padding-right: 0;\n        padding-bottom: 0.75rem;\n    }\n\n    .cost-invoice-card__amounts {\n        text-align: left;\n        min-width: 0;\n    }\n\n    .cost-invoice-card__gross {\n        font-size: 1.5rem;\n    }\n}\n\n@media (max-width: 767px) {\n    .cost-invoice-card__header {\n        flex-direction: column;\n    }\n\n    .cost-invoice-card__status-wrap {\n        min-width: 0;\n        justify-content: flex-start;\n    }\n\n    .cost-invoice-card__bottom {\n        flex-direction: column;\n        align-items: flex-start;\n    }\n\n    .cost-invoice-card__footer {\n        margin-left: 0;\n        white-space: normal;\n    }\n\n    .cost-invoice-card__dates {\n        grid-template-columns: 1fr;\n        gap: 0.7rem;\n    }\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/Erp/CostInvoicesList/CostInvoicesSearch.css"],"names":[],"mappings":"AAAA;IACI,8BAA8B;IAC9B,yBAAyB;IACzB,8BAA8B;AAClC;;AAEA;IACI,8BAA8B;IAC9B,2BAA2B;AAC/B;;AAEA;IACI,aAAa;IACb,8BAA8B;IAC9B,SAAS;AACb;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,iBAAiB;IACjB,gBAAgB;AACpB;;AAEA;IACI,kBAAkB;IAClB,cAAc;IACd,iBAAiB;AACrB;;AAEA;IACI,gBAAgB;IAChB,aAAa;IACb,sBAAsB;IACtB,2BAA2B;IAC3B,qBAAqB;IACrB,YAAY;AAChB;;AAEA;IACI,aAAa;IACb,8BAA8B;IAC9B,WAAW;IACX,mBAAmB;AACvB;;AAEA;IACI,aAAa;IACb,2DAA2D;IAC3D,SAAS;IACT,OAAO;IACP,+BAA+B;IAC/B,mBAAmB;AACvB;;AAEA;IACI,cAAc;IACd,kBAAkB;IAClB,yBAAyB;IACzB,sBAAsB;AAC1B;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;AACpB;;AAEA;IACI,gBAAgB;IAChB,iBAAiB;AACrB;;AAEA;IACI,iBAAiB;IACjB,iBAAiB;IACjB,gBAAgB;AACpB;AACA;IACI,cAAc;AAClB;AACA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,8BAA8B;IAC9B,qBAAqB;IACrB,YAAY;IACZ,kBAAkB;IAClB,oBAAoB;IACpB,6BAA6B;AACjC;;AAEA;IACI,aAAa;IACb,eAAe;IACf,YAAY;AAChB;;AAEA;IACI,aAAa;IACb,qBAAqB;IACrB,YAAY;IACZ,iBAAiB;IACjB,cAAc;IACd,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;IAClB,cAAc;IACd,qBAAqB;AACzB;;AAEA;IACI;QACI,sBAAsB;IAC1B;;IAEA;QACI,gDAAgD;QAChD,eAAe;QACf,gCAAgC;QAChC,gBAAgB;QAChB,uBAAuB;IAC3B;;IAEA;QACI,gBAAgB;QAChB,YAAY;IAChB;;IAEA;QACI,iBAAiB;IACrB;AACJ;;AAEA;IACI;QACI,sBAAsB;IAC1B;;IAEA;QACI,YAAY;QACZ,uBAAuB;IAC3B;;IAEA;QACI,sBAAsB;QACtB,uBAAuB;IAC3B;;IAEA;QACI,cAAc;QACd,mBAAmB;IACvB;;IAEA;QACI,0BAA0B;QAC1B,WAAW;IACf;AACJ","sourcesContent":[".cost-invoices-search .bg-light.p-3.rounded-3.mb-3 {\r\n    background: #f5f6f8 !important;\r\n    border: 1px solid #d9dde3;\r\n    border-radius: 12px !important;\r\n}\r\n\r\n.cost-invoices-search .row.p-3.mb-2.rounded.shadow-sm.mx-0 {\r\n    border-radius: 12px !important;\r\n    box-shadow: none !important;\r\n}\r\n\r\n.cost-invoice-card__header {\r\n    display: flex;\r\n    justify-content: space-between;\r\n    gap: 1rem;\r\n}\r\n\r\n.cost-invoice-card__number {\r\n    font-size: 1.65rem;\r\n    font-weight: 700;\r\n    line-height: 1.15;\r\n}\r\n\r\n.cost-invoice-card__supplier {\r\n    margin-top: 0.6rem;\r\n    font-size: 1.1rem;\r\n    font-weight: 600;\r\n}\r\n\r\n.cost-invoice-card__meta {\r\n    margin-top: 0.2rem;\r\n    color: #6c757d;\r\n    font-size: 0.9rem;\r\n}\r\n\r\n.cost-invoice-card__status-wrap {\r\n    min-width: 180px;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: flex-start;\r\n    align-items: flex-end;\r\n    gap: 0.35rem;\r\n}\r\n\r\n.cost-invoice-card__body {\r\n    display: flex;\r\n    justify-content: space-between;\r\n    gap: 1.2rem;\r\n    margin-top: 0.95rem;\r\n}\r\n\r\n.cost-invoice-card__dates {\r\n    display: grid;\r\n    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));\r\n    gap: 1rem;\r\n    flex: 1;\r\n    border-right: 1px solid #e3e6eb;\r\n    padding-right: 1rem;\r\n}\r\n\r\n.cost-invoice-card__label {\r\n    color: #6c757d;\r\n    font-size: 0.75rem;\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.05em;\r\n}\r\n\r\n.cost-invoice-card__value {\r\n    margin-top: 0.2rem;\r\n    font-weight: 600;\r\n}\r\n\r\n.cost-invoice-card__amounts {\r\n    min-width: 240px;\r\n    text-align: right;\r\n}\r\n\r\n.cost-invoice-card__gross {\r\n    font-size: 1.9rem;\r\n    line-height: 1.05;\r\n    font-weight: 700;\r\n}\r\n.cost-invoice-card__value--paid {\r\n    color: #198754;\r\n}\r\n.cost-invoice-card__amount-detail {\r\n    margin-top: 0.2rem;\r\n    color: #495057;\r\n}\r\n\r\n.cost-invoice-card__amount-detail--info {\r\n    color: #0c63e4;\r\n}\r\n\r\n.cost-invoice-card__bottom {\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: baseline;\r\n    gap: 0.75rem;\r\n    margin-top: 0.9rem;\r\n    padding-top: 0.75rem;\r\n    border-top: 1px solid #eceff3;\r\n}\r\n\r\n.cost-invoice-card__tags {\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    gap: 0.45rem;\r\n}\r\n\r\n.cost-invoice-card__footer {\r\n    display: flex;\r\n    align-items: baseline;\r\n    gap: 0.45rem;\r\n    margin-left: auto;\r\n    color: #6c757d;\r\n    font-size: 0.86rem;\r\n    white-space: nowrap;\r\n}\r\n\r\n.cost-invoice-card__ksef {\r\n    font-size: 0.82rem;\r\n    color: #495057;\r\n    word-break: break-all;\r\n}\r\n\r\n@media (max-width: 991px) {\r\n    .cost-invoice-card__body {\r\n        flex-direction: column;\r\n    }\r\n\r\n    .cost-invoice-card__dates {\r\n        grid-template-columns: repeat(3, minmax(0, 1fr));\r\n        border-right: 0;\r\n        border-bottom: 1px solid #e3e6eb;\r\n        padding-right: 0;\r\n        padding-bottom: 0.75rem;\r\n    }\r\n\r\n    .cost-invoice-card__amounts {\r\n        text-align: left;\r\n        min-width: 0;\r\n    }\r\n\r\n    .cost-invoice-card__gross {\r\n        font-size: 1.5rem;\r\n    }\r\n}\r\n\r\n@media (max-width: 767px) {\r\n    .cost-invoice-card__header {\r\n        flex-direction: column;\r\n    }\r\n\r\n    .cost-invoice-card__status-wrap {\r\n        min-width: 0;\r\n        align-items: flex-start;\r\n    }\r\n\r\n    .cost-invoice-card__bottom {\r\n        flex-direction: column;\r\n        align-items: flex-start;\r\n    }\r\n\r\n    .cost-invoice-card__footer {\r\n        margin-left: 0;\r\n        white-space: normal;\r\n    }\r\n\r\n    .cost-invoice-card__dates {\r\n        grid-template-columns: 1fr;\r\n        gap: 0.7rem;\r\n    }\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -96856,25 +96860,32 @@ function MeetingAgendaPanel({ meeting }) {
     const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
     const [arrangements, setArrangements] = (0, react_1.useState)(undefined);
     const [arrangementsRefreshToken, setArrangementsRefreshToken] = (0, react_1.useState)(0);
+    const [noteRefreshToken, setNoteRefreshToken] = (0, react_1.useState)(0);
     const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
     const loadArrangements = (0, react_1.useCallback)(async () => {
         if (!meeting?.id)
             return;
-        const loadedItems = await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([
-            { meetingId: meeting.id },
-        ]);
-        // Defensive guard: keep only rows that belong to the currently opened meeting.
-        const filteredItems = loadedItems.filter((item) => item.meetingId === meeting.id);
-        if (filteredItems.length !== loadedItems.length) {
-            console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
-                selectedMeetingId: meeting.id,
-                loadedCount: loadedItems.length,
-                filteredCount: filteredItems.length,
-            });
+        try {
+            const loadedItems = await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([
+                { meetingId: meeting.id },
+            ]);
+            // Defensive guard: keep only rows that belong to the currently opened meeting.
+            const filteredItems = loadedItems.filter((item) => item.meetingId === meeting.id);
+            if (filteredItems.length !== loadedItems.length) {
+                console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
+                    selectedMeetingId: meeting.id,
+                    loadedCount: loadedItems.length,
+                    filteredCount: filteredItems.length,
+                });
+            }
+            ContractsController_1.meetingArrangementsRepository.items = filteredItems;
+            setArrangements([...filteredItems]);
+            setArrangementsRefreshToken((prev) => prev + 1);
         }
-        ContractsController_1.meetingArrangementsRepository.items = filteredItems;
-        setArrangements([...filteredItems]);
-        setArrangementsRefreshToken((prev) => prev + 1);
+        catch (error) {
+            console.error("MeetingAgendaPanel: unable to load arrangements", error);
+            setArrangements([]);
+        }
     }, [meeting?.id]);
     (0, react_1.useEffect)(() => {
         loadArrangements();
@@ -96904,12 +96915,20 @@ function MeetingAgendaPanel({ meeting }) {
             return;
         setIsGenerating(true);
         try {
+            const existingNotes = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([
+                { meetingId: meeting.id },
+            ]);
+            if (existingNotes.length > 0) {
+                alert("Notatka dla tego spotkania już istnieje");
+                return;
+            }
             await ContractsController_1.meetingNotesRepository.addNewItem({
                 contractId: contract.id,
                 meetingId: meeting.id,
                 title: meeting.name,
                 meetingDate: meeting.date,
             });
+            setNoteRefreshToken((prev) => prev + 1);
         }
         catch (error) {
             console.error("MeetingAgendaPanel: note generation failed", error);
@@ -96963,7 +96982,7 @@ function MeetingAgendaPanel({ meeting }) {
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
                     "Generowanie... ",
                     react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania"))),
-            contract?.id && meeting?.id && react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id }))));
+            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, refreshToken: noteRefreshToken })))));
 }
 
 
@@ -97018,7 +97037,7 @@ const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/C
 const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const MeetingNoteEditModalButton_1 = __webpack_require__(/*! ../MeetingNotes/Modals/MeetingNoteEditModalButton */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteEditModalButton.tsx");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-function MeetingNoteSection({ meetingId, contractId }) {
+function MeetingNoteSection({ meetingId, refreshToken }) {
     const [note, setNote] = (0, react_1.useState)(undefined);
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -97037,7 +97056,12 @@ function MeetingNoteSection({ meetingId, contractId }) {
     }, [meetingId]);
     (0, react_1.useEffect)(() => {
         loadNote();
-    }, [loadNote]);
+    }, [loadNote, refreshToken]);
+    (0, react_1.useEffect)(() => {
+        if (note?.id) {
+            ContractsController_1.meetingNotesRepository.currentItems = [note];
+        }
+    }, [note]);
     if (note === undefined) {
         return (react_1.default.createElement("div", { className: "mt-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
@@ -101507,6 +101531,7 @@ function CostInvoiceDetails() {
         return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "m-3" }, "Nie znaleziono faktury"));
     }
     const isBooked = invoice.status === CostInvoicesController_1.CostInvoiceStatuses.BOOKED;
+    const supplierBankAccount = invoice.supplierBankAccount?.trim();
     const getItemSelection = (item) => {
         const edited = editedItems.get(item.id) || {};
         return {
@@ -101578,7 +101603,8 @@ function CostInvoiceDetails() {
                         react_1.default.createElement("h4", { className: "mb-0" },
                             "Faktura ",
                             invoice.invoiceNumber,
-                            react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: status }))),
+                            react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: status }),
+                            react_1.default.createElement(CostInvoicesBadges_1.InvoiceTypeBadge, { invoiceType: invoice.invoiceType }))),
                     react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center gap-2" },
                         react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "mb-0 small text-muted" }, "Status"),
                         react_1.default.createElement(react_bootstrap_1.Form.Select, { size: "sm", value: status, onChange: (e) => setStatus(e.target.value), disabled: isBooked || saving, "aria-label": "Status faktury" },
@@ -101596,10 +101622,11 @@ function CostInvoiceDetails() {
                             "NIP: ",
                             invoice.supplierNip),
                         invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-1 text-muted small" }, invoice.supplierAddress)),
-                        invoice.supplierBankAccount && (react_1.default.createElement("p", { className: "mb-0 small" },
+                        react_1.default.createElement("p", { className: "mb-0 small" },
                             react_1.default.createElement("span", { className: "text-muted" }, "Konto: "),
-                            react_1.default.createElement("code", null, invoice.supplierBankAccount),
-                            react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "py-0 px-1", title: "Kopiuj numer rachunku", onClick: () => navigator.clipboard.writeText(invoice.supplierBankAccount) }, "\u2398")))),
+                            supplierBankAccount ? (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement("code", null, supplierBankAccount),
+                                react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "py-0 px-1", title: "Kopiuj numer rachunku", onClick: () => navigator.clipboard.writeText(supplierBankAccount) }, "\u2398"))) : (react_1.default.createElement("span", { className: "text-muted" }, "brak")))),
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                         react_1.default.createElement("h6", null, "Daty"),
                         react_1.default.createElement("p", { className: "mb-1" },
@@ -101610,10 +101637,14 @@ function CostInvoiceDetails() {
                             react_1.default.createElement("small", { className: "text-muted" }, "Sprzeda\u017Cy:"),
                             " ",
                             ToolsDate_1.default.dateYMDtoDMY(invoice.saleDate))),
-                        invoice.dueDate && (react_1.default.createElement("p", { className: "mb-0" },
+                        invoice.dueDate && (react_1.default.createElement("p", { className: "mb-1" },
                             react_1.default.createElement("small", { className: "text-muted" }, "P\u0142atno\u015Bci:"),
                             " ",
-                            ToolsDate_1.default.dateYMDtoDMY(invoice.dueDate)))),
+                            ToolsDate_1.default.dateYMDtoDMY(invoice.dueDate))),
+                        invoice.paymentDate && (react_1.default.createElement("p", { className: "mb-0" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "Zap\u0142acono:"),
+                            " ",
+                            react_1.default.createElement("strong", { className: "text-success" }, ToolsDate_1.default.dateYMDtoDMY(invoice.paymentDate))))),
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                         react_1.default.createElement("h6", null, "Warto\u015Bci"),
                         react_1.default.createElement("p", { className: "mb-1" },
@@ -101679,6 +101710,8 @@ function CostInvoiceDetails() {
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
                         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status p\u0142atno\u015Bci"),
+                        react_1.default.createElement("div", { className: "mb-2" },
+                            react_1.default.createElement(CostInvoicesBadges_1.PaymentMethodBadge, { paymentMethod: invoice.paymentMethod })),
                         react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap mb-2" }, [
                             { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "● Niezapłacona" },
                             { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
@@ -101727,9 +101760,9 @@ function CostInvoiceDetails() {
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSave, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
                 "Zapisywanie...")) : ("💾 Zapisz zmiany")),
-            react_1.default.createElement(react_bootstrap_1.Button, { variant: "success", onClick: handleBook, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
+            status !== CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "success", onClick: handleBook, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
-                "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę"))))));
+                "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę")))))));
 }
 
 
@@ -101752,6 +101785,8 @@ exports.CategoryBadge = CategoryBadge;
 exports.VatDeductionBadge = VatDeductionBadge;
 exports.BookingPercentageBadge = BookingPercentageBadge;
 exports.PaymentStatusBadge = PaymentStatusBadge;
+exports.PaymentMethodBadge = PaymentMethodBadge;
+exports.InvoiceTypeBadge = InvoiceTypeBadge;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
@@ -101875,6 +101910,58 @@ function PaymentStatusBadge({ status, paidAmount, grossAmount, }) {
             label)));
 }
 /**
+ * Badge formy płatności wyciągniętej z KSeF.
+ */
+function PaymentMethodBadge({ paymentMethod }) {
+    if (!paymentMethod) {
+        return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark", className: "border" }, "Brak formy platnosci"));
+    }
+    const normalized = normalizePaymentMethod(paymentMethod);
+    const { icon, label, variant } = getPaymentMethodMeta(normalized, paymentMethod);
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "payment-method-tooltip" },
+            "Forma platnosci z KSeF: ",
+            paymentMethod) },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: variant === "warning" ? "dark" : "light" },
+            icon,
+            " ",
+            label)));
+}
+function normalizePaymentMethod(paymentMethod) {
+    return paymentMethod
+        .trim()
+        .toLocaleLowerCase("pl-PL")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+function getPaymentMethodMeta(normalized, rawValue) {
+    if (normalized.includes("przelew")) {
+        return { icon: "🏦", label: "Przelew", variant: "primary" };
+    }
+    if (normalized.includes("gotowka")) {
+        return { icon: "💵", label: "Gotowka", variant: "success" };
+    }
+    if (normalized.includes("karta")) {
+        return { icon: "💳", label: "Karta", variant: "info" };
+    }
+    if (normalized.includes("mobil")) {
+        return { icon: "📱", label: "Mobilna", variant: "warning" };
+    }
+    if (normalized.includes("bon")) {
+        return { icon: "🎟️", label: "Bon", variant: "secondary" };
+    }
+    if (normalized.includes("czek")) {
+        return { icon: "🧾", label: "Czek", variant: "secondary" };
+    }
+    if (normalized.includes("kredyt")) {
+        return { icon: "🏷️", label: "Kredyt", variant: "secondary" };
+    }
+    return {
+        icon: "•",
+        label: rawValue,
+        variant: "secondary",
+    };
+}
+/**
  * Oblicza kontrastowy kolor tekstu dla danego tła
  */
 function getContrastColor(hexColor) {
@@ -101887,6 +101974,33 @@ function getContrastColor(hexColor) {
     // Oblicz luminancję
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5 ? "#000000" : "#FFFFFF";
+}
+/**
+ * Mapowanie kodów KSeF → etykieta i wariant koloru.
+ */
+const INVOICE_TYPE_META = {
+    "VAT": { label: "VAT", variant: "primary" },
+    "KOR": { label: "Korekta", variant: "warning" },
+    "ZAL": { label: "Zaliczka", variant: "info" },
+    "ROZ": { label: "Rozliczenie", variant: "info" },
+    "UPR": { label: "Uproszczona", variant: "secondary" },
+    "KOR_ZAL": { label: "Kor. zaliczki", variant: "warning" },
+    "KOR_ROZ": { label: "Kor. rozliczenia", variant: "warning" },
+};
+/**
+ * Badge rodzaju faktury (RodzajFaktury z KSeF FA(3))
+ */
+function InvoiceTypeBadge({ invoiceType }) {
+    if (!invoiceType)
+        return null;
+    const key = invoiceType.trim().toUpperCase();
+    const meta = INVOICE_TYPE_META[key];
+    const variant = meta?.variant ?? "secondary";
+    const label = meta?.label ?? invoiceType;
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "invoice-type-tooltip" },
+            "Rodzaj faktury z KSeF: ",
+            invoiceType) },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: variant === "warning" ? "dark" : "light" }, label)));
 }
 
 
@@ -102624,14 +102738,12 @@ const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesControlle
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const CostInvoicesBadges_1 = __webpack_require__(/*! ./CostInvoicesBadges */ "./src/Erp/CostInvoicesList/CostInvoicesBadges.tsx");
-const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 __webpack_require__(/*! ./CostInvoicesSearch.css */ "./src/Erp/CostInvoicesList/CostInvoicesSearch.css");
 function CostInvoicesSearch({ title }) {
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
     const [syncError, setSyncError] = (0, react_1.useState)(null);
     const [syncSuccess, setSyncSuccess] = (0, react_1.useState)(null);
     const [syncWarnings, setSyncWarnings] = (0, react_1.useState)([]);
-    const [statusError, setStatusError] = (0, react_1.useState)(null);
     const [showSyncModal, setShowSyncModal] = (0, react_1.useState)(false);
     const [syncType, setSyncType] = (0, react_1.useState)("INCREMENTAL");
     const [dateFrom, setDateFrom] = (0, react_1.useState)("");
@@ -102694,36 +102806,6 @@ function CostInvoicesSearch({ title }) {
             setIsSyncing(false);
         }
     }, [syncType, dateFrom, dateTo]);
-    function CostInvoiceStatusCell({ invoice }) {
-        const { repository, setObjects } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        const [isUpdating, setIsUpdating] = (0, react_1.useState)(false);
-        const handleStatusChange = async (status) => {
-            if (status === invoice.status)
-                return;
-            setIsUpdating(true);
-            setStatusError(null);
-            try {
-                const updated = await (0, CostInvoicesController_1.updateCostInvoice)(invoice.id, { status });
-                repository.replaceItemById(invoice.id, updated);
-                repository.saveToSessionStorage();
-                setObjects([...repository.items]);
-            }
-            catch (error) {
-                setStatusError(error instanceof Error ? error.message : "Błąd zmiany statusu");
-            }
-            finally {
-                setIsUpdating(false);
-            }
-        };
-        if (invoice.status !== CostInvoicesController_1.CostInvoiceStatuses.NEW) {
-            return react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status });
-        }
-        return (react_1.default.createElement("div", { onClick: (e) => e.stopPropagation() },
-            react_1.default.createElement(react_bootstrap_1.Form.Select, { size: "sm", value: invoice.status, disabled: isUpdating, onChange: (e) => handleStatusChange(e.target.value), onClick: (e) => e.stopPropagation() },
-                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.NEW }, "Nowa"),
-                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED }, "Poza kosztami"),
-                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.BOOKED }, "Zaksi\u0119gowana"))));
-    }
     function renderInvoiceCard(invoice, isActive) {
         void isActive;
         const category = invoice._category || null;
@@ -102742,8 +102824,10 @@ function CostInvoicesSearch({ title }) {
                         invoice.supplierNip || "-",
                         invoice.supplierAddress ? ` | ${invoice.supplierAddress}` : "")),
                 react_1.default.createElement("div", { className: "cost-invoice-card__status-wrap" },
-                    react_1.default.createElement(CostInvoiceStatusCell, { invoice: invoice }),
-                    react_1.default.createElement(CostInvoicesBadges_1.PaymentStatusBadge, { status: invoice.paymentStatus, paidAmount: invoice.paidAmount, grossAmount: toNumber(invoice.grossAmount) }))),
+                    react_1.default.createElement(CostInvoicesBadges_1.InvoiceTypeBadge, { invoiceType: invoice.invoiceType }),
+                    react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status }),
+                    react_1.default.createElement(CostInvoicesBadges_1.PaymentStatusBadge, { status: invoice.paymentStatus, paidAmount: invoice.paidAmount, grossAmount: toNumber(invoice.grossAmount) }),
+                    react_1.default.createElement(CostInvoicesBadges_1.PaymentMethodBadge, { paymentMethod: invoice.paymentMethod }))),
             react_1.default.createElement("div", { className: "cost-invoice-card__body" },
                 react_1.default.createElement("div", { className: "cost-invoice-card__dates" },
                     react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
@@ -102754,7 +102838,10 @@ function CostInvoicesSearch({ title }) {
                         react_1.default.createElement("div", { className: "cost-invoice-card__value" }, formatDate(invoice.saleDate))),
                     react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
                         react_1.default.createElement("div", { className: "cost-invoice-card__label" }, "Termin plat."),
-                        react_1.default.createElement("div", { className: "cost-invoice-card__value" }, formatDate(invoice.dueDate)))),
+                        react_1.default.createElement("div", { className: "cost-invoice-card__value" }, formatDate(invoice.dueDate))),
+                    invoice.paymentDate && (react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
+                        react_1.default.createElement("div", { className: "cost-invoice-card__label" }, "Data zapl."),
+                        react_1.default.createElement("div", { className: "cost-invoice-card__value cost-invoice-card__value--paid" }, formatDate(invoice.paymentDate))))),
                 react_1.default.createElement("div", { className: "cost-invoice-card__amounts" },
                     react_1.default.createElement("div", { className: "cost-invoice-card__gross" }, formatAmount(invoice.grossAmount, invoice.currency)),
                     react_1.default.createElement("div", { className: "cost-invoice-card__amount-detail" },
@@ -102797,7 +102884,6 @@ function CostInvoicesSearch({ title }) {
         syncWarnings.length > 0 && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning", onClose: () => setSyncWarnings([]), dismissible: true, className: "mx-3 mt-3" },
             react_1.default.createElement("div", { className: "fw-semibold mb-1" }, "Faktury z b\u0142\u0119dami importu:"),
             react_1.default.createElement("ul", { className: "mb-0 ps-3" }, syncWarnings.map((warning, index) => (react_1.default.createElement("li", { key: `${index}_${warning}` }, warning)))))),
-        statusError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setStatusError(null), dismissible: true, className: "mx-3 mt-3" }, statusError)),
         react_1.default.createElement("div", { className: "cost-invoices-search" },
             react_1.default.createElement(FilterableTable_1.default, { id: "costInvoices", title: title, FilterBodyComponent: CostInvoicesFilterBody_1.CostInvoicesFilterBody, tableStructure: [
                     { header: undefined, renderTdBody: renderInvoiceCard },
@@ -112906,31 +112992,64 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GoodTipToast = GoodTipToast;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_dom_1 = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 __webpack_require__(/*! ./GoodTipToast.css */ "./src/React/MainWindow/Content/Dashboard/GoodTipToast.css");
+const tipCategoryLabels = {
+    general: 'Ogólne',
+    lettersAi: 'Rozpoznawanie pism AI',
+    invoices: 'Faktury',
+    costInvoices: 'Faktury kosztowe',
+};
 const tips = [
-    "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.",
-    "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.",
-    "Aktualizuj daty zakończenia kamieni i kontraktów.",
+    // Ogólne porady
+    { text: "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.", category: 'general' },
+    { text: "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.", category: 'general' },
+    { text: "Aktualizuj daty zakończenia kamieni i kontraktów.", category: 'general' },
+    // Porady o analizie AI pism
+    { text: "Rozpoznawanie pism AI uzupełnia: numer pisma, daty, opis, kontrakt. Zawsze sprawdź żółte pola (średnia pewność)!", isNew: true, category: 'lettersAi' },
+    { text: "Aby poprawnie zaimportować dane z pisma, załączaj czytelne PDF - AI nie rozpozna słabych kopii i zeskanowanych dokumentów.", isNew: true, category: 'lettersAi' },
+    { text: "Pola zielone = wysoka pewność AI. Pola żółte = sprawdź. Pola szare = brakuje danych, wypełnij.", isNew: true, category: 'lettersAi' },
+    // Faktury i KSeF
+    { text: "Po ustawieniu statusu \"Wysłana\" możliwe będzie wysłanie faktury do KSeF. Po pomyślnym przesłaniu możesz pobrać UPO jako potwierdzenie przyjęcia.", isNew: true, category: 'invoices' },
+    { text: "Kliknij \"Pobierz z KSeF\" aby pobrać nowe faktury kosztowe. Wybierz tryb przyrostowy (zostaną pobrane faktury, od ostatniej aktualizacji) lub weryfikacyjny (wybrany zakres dat), aby upewnić się, czy żadna faktura nie została pominięta.", isNew: true, category: 'costInvoices' },
+    { text: "Każdej fakturze kosztowej możesz przypisać kategorię kosztową oraz określić procent odliczenia VAT.", isNew: true, category: 'costInvoices' },
+    { text: "W sekcji \"Raport miesięczny\" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.", isNew: true, category: 'costInvoices' },
 ];
 function GoodTipToast({ delay = 5000 }) {
     const [isVisible, setIsVisible] = (0, react_1.useState)(false);
-    const [tip, setTip] = (0, react_1.useState)('');
+    const [tip, setTip] = (0, react_1.useState)({ text: '' });
     const [isPaused, setIsPaused] = (0, react_1.useState)(false);
     const toastWrapperRef = (0, react_1.useRef)(null);
+    const systemRoleName = MainSetupReact_1.default.currentUserOrNull?.systemRoleName;
+    const canViewInvoices = !!systemRoleName && ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName);
+    const canViewCostInvoices = !!systemRoleName && ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
+    const tipCategoryLabel = tip.category ? tipCategoryLabels[tip.category] : null;
+    const displayDuration = tip.isNew ? delay * 2 : delay;
     const timerRef = (0, react_1.useRef)(null);
     const progressIntervalRef = (0, react_1.useRef)(null);
     const startTimeRef = (0, react_1.useRef)(0);
-    const remainingTimeRef = (0, react_1.useRef)(delay);
+    const remainingTimeRef = (0, react_1.useRef)(displayDuration);
     (0, react_1.useEffect)(() => {
-        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+        const availableTips = tips.filter((currentTip) => {
+            if (currentTip.category === 'invoices')
+                return canViewInvoices;
+            if (currentTip.category === 'costInvoices')
+                return canViewCostInvoices;
+            return true;
+        });
+        const randomTip = availableTips[Math.floor(Math.random() * availableTips.length)] ?? tips[0];
+        remainingTimeRef.current = randomTip.isNew ? delay * 2 : delay;
         setTip(randomTip);
         setTimeout(() => setIsVisible(true), 100);
-    }, []);
+    }, [canViewCostInvoices, canViewInvoices, delay]);
     (0, react_1.useEffect)(() => {
         if (!isVisible)
             return;
@@ -112950,7 +113069,7 @@ function GoodTipToast({ delay = 5000 }) {
             if (timerRef.current)
                 clearTimeout(timerRef.current);
         };
-    }, [isPaused, isVisible]);
+    }, [displayDuration, isPaused, isVisible]);
     (0, react_1.useEffect)(() => {
         if (!isVisible || isPaused) {
             if (progressIntervalRef.current)
@@ -112960,12 +113079,12 @@ function GoodTipToast({ delay = 5000 }) {
         const intervalTime = 50;
         progressIntervalRef.current = setInterval(() => {
             const elapsedTime = Date.now() - startTimeRef.current;
-            const totalElapsedTime = (delay - remainingTimeRef.current) + elapsedTime;
-            const percentage = (totalElapsedTime / delay) * 100;
+            const totalElapsedTime = (displayDuration - remainingTimeRef.current) + elapsedTime;
+            const percentage = (totalElapsedTime / displayDuration) * 100;
             if (toastWrapperRef.current) {
                 toastWrapperRef.current.style.setProperty('--progress-width', `${Math.min(percentage, 100)}%`);
             }
-            if (totalElapsedTime >= delay) {
+            if (totalElapsedTime >= displayDuration) {
                 if (progressIntervalRef.current)
                     clearInterval(progressIntervalRef.current);
             }
@@ -112974,15 +113093,17 @@ function GoodTipToast({ delay = 5000 }) {
             if (progressIntervalRef.current)
                 clearInterval(progressIntervalRef.current);
         };
-    }, [isPaused, isVisible, delay]);
+    }, [displayDuration, isPaused, isVisible]);
     if (typeof document === 'undefined')
         return null;
     return (0, react_dom_1.createPortal)(react_1.default.createElement(react_bootstrap_1.ToastContainer, { position: "bottom-end", className: "p-3", style: { zIndex: 1050, overflowX: 'hidden', position: 'fixed', right: 0, bottom: 0 } },
         react_1.default.createElement("div", { ref: toastWrapperRef, className: `good-tip-toast-wrapper ${isVisible ? 'show' : 'hide'}` },
             react_1.default.createElement(react_bootstrap_1.Toast, { onClose: () => setIsVisible(false), show: true, autohide: false, onMouseEnter: () => setIsPaused(true), onMouseLeave: () => setIsPaused(false) },
                 react_1.default.createElement(react_bootstrap_1.Toast.Header, { closeButton: true },
-                    react_1.default.createElement("strong", { className: "me-auto" }, "Dobra rada")),
-                react_1.default.createElement(react_bootstrap_1.Toast.Body, { className: "good-tip-toast-body" }, tip)))), document.body);
+                    react_1.default.createElement("strong", { className: "me-auto" }, "Dobra rada"),
+                    tipCategoryLabel && (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "secondary", text: "light", pill: true, className: "ms-2 text-uppercase" }, tipCategoryLabel)),
+                    tip.isNew && (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light", pill: true, className: "ms-2" }, "nowe"))),
+                react_1.default.createElement(react_bootstrap_1.Toast.Body, { className: "good-tip-toast-body" }, tip.text)))), document.body);
 }
 
 

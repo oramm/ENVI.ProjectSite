@@ -96,5 +96,6 @@ function LetterModalBody({ isEditing, initialData }) {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }),
+            isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted small" }, "Wcze\u015Bniej za\u0142\u0105czone pliki s\u0105 widoczne na dysku w folderze pisma. System nie zapami\u0119tuje tych plik\u00F3w jako warto\u015Bci pola wyboru pliku.")))));
 }

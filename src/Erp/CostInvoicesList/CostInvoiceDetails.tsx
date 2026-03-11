@@ -24,7 +24,7 @@ import {
     PaymentStatus,
     PaymentStatuses,
 } from "./CostInvoicesController";
-import { CostInvoiceStatusBadge } from "./CostInvoicesBadges";
+import { CostInvoiceStatusBadge, PaymentMethodBadge, InvoiceTypeBadge } from "./CostInvoicesBadges";
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
@@ -211,6 +211,7 @@ export default function CostInvoiceDetails() {
     }
 
     const isBooked = invoice.status === CostInvoiceStatuses.BOOKED;
+    const supplierBankAccount = invoice.supplierBankAccount?.trim();
 
     const getItemSelection = (item: CostInvoiceItem) => {
         const edited = editedItems.get(item.id) || {};
@@ -353,6 +354,7 @@ export default function CostInvoiceDetails() {
                             <h4 className="mb-0">
                                 Faktura {invoice.invoiceNumber}
                                 <CostInvoiceStatusBadge status={status} />
+                                <InvoiceTypeBadge invoiceType={invoice.invoiceType} />
                             </h4>
                         </Col>
                         <Col xs="auto" className="d-flex align-items-center gap-2">
@@ -390,21 +392,25 @@ export default function CostInvoiceDetails() {
                             {invoice.supplierAddress && (
                                 <p className="mb-1 text-muted small">{invoice.supplierAddress}</p>
                             )}
-                            {invoice.supplierBankAccount && (
-                                <p className="mb-0 small">
-                                    <span className="text-muted">Konto: </span>
-                                    <code>{invoice.supplierBankAccount}</code>
-                                    <Button
-                                        variant="link"
-                                        size="sm"
-                                        className="py-0 px-1"
-                                        title="Kopiuj numer rachunku"
-                                        onClick={() => navigator.clipboard.writeText(invoice.supplierBankAccount!)}
-                                    >
-                                        ⎘
-                                    </Button>
-                                </p>
-                            )}
+                            <p className="mb-0 small">
+                                <span className="text-muted">Konto: </span>
+                                {supplierBankAccount ? (
+                                    <>
+                                        <code>{supplierBankAccount}</code>
+                                        <Button
+                                            variant="link"
+                                            size="sm"
+                                            className="py-0 px-1"
+                                            title="Kopiuj numer rachunku"
+                                            onClick={() => navigator.clipboard.writeText(supplierBankAccount)}
+                                        >
+                                            ⎘
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <span className="text-muted">brak</span>
+                                )}
+                            </p>
                         </Col>
                         <Col md={3}>
                             <h6>Daty</h6>
@@ -419,9 +425,15 @@ export default function CostInvoiceDetails() {
                                 </p>
                             )}
                             {invoice.dueDate && (
-                                <p className="mb-0">
+                                <p className="mb-1">
                                     <small className="text-muted">Płatności:</small>{" "}
                                     {ToolsDate.dateYMDtoDMY(invoice.dueDate)}
+                                </p>
+                            )}
+                            {invoice.paymentDate && (
+                                <p className="mb-0">
+                                    <small className="text-muted">Zapłacono:</small>{" "}
+                                    <strong className="text-success">{ToolsDate.dateYMDtoDMY(invoice.paymentDate)}</strong>
                                 </p>
                             )}
                         </Col>
@@ -528,6 +540,9 @@ export default function CostInvoiceDetails() {
                     <Row className="mt-2">
                         <Col md={12}>
                             <Form.Label>Status płatności</Form.Label>
+                            <div className="mb-2">
+                                <PaymentMethodBadge paymentMethod={invoice.paymentMethod} />
+                            </div>
                             <div className="d-flex gap-2 flex-wrap mb-2">
                                 {([
                                     { value: PaymentStatuses.UNPAID, label: "● Niezapłacona" },
@@ -616,16 +631,18 @@ export default function CostInvoiceDetails() {
                             "💾 Zapisz zmiany"
                         )}
                     </Button>
-                    <Button variant="success" onClick={handleBook} disabled={saving}>
-                        {saving ? (
-                            <>
-                                <Spinner animation="border" size="sm" className="me-1" />
-                                Księgowanie...
-                            </>
-                        ) : (
-                            "✅ Zaksięguj fakturę"
-                        )}
-                    </Button>
+                    {status !== CostInvoiceStatuses.EXCLUDED && (
+                        <Button variant="success" onClick={handleBook} disabled={saving}>
+                            {saving ? (
+                                <>
+                                    <Spinner animation="border" size="sm" className="me-1" />
+                                    Księgowanie...
+                                </>
+                            ) : (
+                                "✅ Zaksięguj fakturę"
+                            )}
+                        </Button>
+                    )}
                 </div>
             )}
         </Container>

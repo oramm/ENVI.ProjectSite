@@ -67,25 +67,32 @@ function MeetingAgendaPanel({ meeting }) {
     const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
     const [arrangements, setArrangements] = (0, react_1.useState)(undefined);
     const [arrangementsRefreshToken, setArrangementsRefreshToken] = (0, react_1.useState)(0);
+    const [noteRefreshToken, setNoteRefreshToken] = (0, react_1.useState)(0);
     const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
     const loadArrangements = (0, react_1.useCallback)(async () => {
         if (!meeting?.id)
             return;
-        const loadedItems = await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([
-            { meetingId: meeting.id },
-        ]);
-        // Defensive guard: keep only rows that belong to the currently opened meeting.
-        const filteredItems = loadedItems.filter((item) => item.meetingId === meeting.id);
-        if (filteredItems.length !== loadedItems.length) {
-            console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
-                selectedMeetingId: meeting.id,
-                loadedCount: loadedItems.length,
-                filteredCount: filteredItems.length,
-            });
+        try {
+            const loadedItems = await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([
+                { meetingId: meeting.id },
+            ]);
+            // Defensive guard: keep only rows that belong to the currently opened meeting.
+            const filteredItems = loadedItems.filter((item) => item.meetingId === meeting.id);
+            if (filteredItems.length !== loadedItems.length) {
+                console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
+                    selectedMeetingId: meeting.id,
+                    loadedCount: loadedItems.length,
+                    filteredCount: filteredItems.length,
+                });
+            }
+            ContractsController_1.meetingArrangementsRepository.items = filteredItems;
+            setArrangements([...filteredItems]);
+            setArrangementsRefreshToken((prev) => prev + 1);
         }
-        ContractsController_1.meetingArrangementsRepository.items = filteredItems;
-        setArrangements([...filteredItems]);
-        setArrangementsRefreshToken((prev) => prev + 1);
+        catch (error) {
+            console.error("MeetingAgendaPanel: unable to load arrangements", error);
+            setArrangements([]);
+        }
     }, [meeting?.id]);
     (0, react_1.useEffect)(() => {
         loadArrangements();
@@ -115,12 +122,20 @@ function MeetingAgendaPanel({ meeting }) {
             return;
         setIsGenerating(true);
         try {
+            const existingNotes = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([
+                { meetingId: meeting.id },
+            ]);
+            if (existingNotes.length > 0) {
+                alert("Notatka dla tego spotkania już istnieje");
+                return;
+            }
             await ContractsController_1.meetingNotesRepository.addNewItem({
                 contractId: contract.id,
                 meetingId: meeting.id,
                 title: meeting.name,
                 meetingDate: meeting.date,
             });
+            setNoteRefreshToken((prev) => prev + 1);
         }
         catch (error) {
             console.error("MeetingAgendaPanel: note generation failed", error);
@@ -174,5 +189,5 @@ function MeetingAgendaPanel({ meeting }) {
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
                     "Generowanie... ",
                     react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania"))),
-            contract?.id && meeting?.id && react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id }))));
+            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, refreshToken: noteRefreshToken })))));
 }

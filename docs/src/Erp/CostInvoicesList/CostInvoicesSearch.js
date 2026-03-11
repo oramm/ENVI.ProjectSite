@@ -45,14 +45,12 @@ const CostInvoicesController_1 = require("./CostInvoicesController");
 const Tools_1 = __importDefault(require("../../React/Tools/Tools"));
 const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 const CostInvoicesBadges_1 = require("./CostInvoicesBadges");
-const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
 require("./CostInvoicesSearch.css");
 function CostInvoicesSearch({ title }) {
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
     const [syncError, setSyncError] = (0, react_1.useState)(null);
     const [syncSuccess, setSyncSuccess] = (0, react_1.useState)(null);
     const [syncWarnings, setSyncWarnings] = (0, react_1.useState)([]);
-    const [statusError, setStatusError] = (0, react_1.useState)(null);
     const [showSyncModal, setShowSyncModal] = (0, react_1.useState)(false);
     const [syncType, setSyncType] = (0, react_1.useState)("INCREMENTAL");
     const [dateFrom, setDateFrom] = (0, react_1.useState)("");
@@ -115,36 +113,6 @@ function CostInvoicesSearch({ title }) {
             setIsSyncing(false);
         }
     }, [syncType, dateFrom, dateTo]);
-    function CostInvoiceStatusCell({ invoice }) {
-        const { repository, setObjects } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        const [isUpdating, setIsUpdating] = (0, react_1.useState)(false);
-        const handleStatusChange = async (status) => {
-            if (status === invoice.status)
-                return;
-            setIsUpdating(true);
-            setStatusError(null);
-            try {
-                const updated = await (0, CostInvoicesController_1.updateCostInvoice)(invoice.id, { status });
-                repository.replaceItemById(invoice.id, updated);
-                repository.saveToSessionStorage();
-                setObjects([...repository.items]);
-            }
-            catch (error) {
-                setStatusError(error instanceof Error ? error.message : "Błąd zmiany statusu");
-            }
-            finally {
-                setIsUpdating(false);
-            }
-        };
-        if (invoice.status !== CostInvoicesController_1.CostInvoiceStatuses.NEW) {
-            return react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status });
-        }
-        return (react_1.default.createElement("div", { onClick: (e) => e.stopPropagation() },
-            react_1.default.createElement(react_bootstrap_1.Form.Select, { size: "sm", value: invoice.status, disabled: isUpdating, onChange: (e) => handleStatusChange(e.target.value), onClick: (e) => e.stopPropagation() },
-                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.NEW }, "Nowa"),
-                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED }, "Poza kosztami"),
-                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.BOOKED }, "Zaksi\u0119gowana"))));
-    }
     function renderInvoiceCard(invoice, isActive) {
         void isActive;
         const category = invoice._category || null;
@@ -163,8 +131,10 @@ function CostInvoicesSearch({ title }) {
                         invoice.supplierNip || "-",
                         invoice.supplierAddress ? ` | ${invoice.supplierAddress}` : "")),
                 react_1.default.createElement("div", { className: "cost-invoice-card__status-wrap" },
-                    react_1.default.createElement(CostInvoiceStatusCell, { invoice: invoice }),
-                    react_1.default.createElement(CostInvoicesBadges_1.PaymentStatusBadge, { status: invoice.paymentStatus, paidAmount: invoice.paidAmount, grossAmount: toNumber(invoice.grossAmount) }))),
+                    react_1.default.createElement(CostInvoicesBadges_1.InvoiceTypeBadge, { invoiceType: invoice.invoiceType }),
+                    react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status }),
+                    react_1.default.createElement(CostInvoicesBadges_1.PaymentStatusBadge, { status: invoice.paymentStatus, paidAmount: invoice.paidAmount, grossAmount: toNumber(invoice.grossAmount) }),
+                    react_1.default.createElement(CostInvoicesBadges_1.PaymentMethodBadge, { paymentMethod: invoice.paymentMethod }))),
             react_1.default.createElement("div", { className: "cost-invoice-card__body" },
                 react_1.default.createElement("div", { className: "cost-invoice-card__dates" },
                     react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
@@ -175,7 +145,10 @@ function CostInvoicesSearch({ title }) {
                         react_1.default.createElement("div", { className: "cost-invoice-card__value" }, formatDate(invoice.saleDate))),
                     react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
                         react_1.default.createElement("div", { className: "cost-invoice-card__label" }, "Termin plat."),
-                        react_1.default.createElement("div", { className: "cost-invoice-card__value" }, formatDate(invoice.dueDate)))),
+                        react_1.default.createElement("div", { className: "cost-invoice-card__value" }, formatDate(invoice.dueDate))),
+                    invoice.paymentDate && (react_1.default.createElement("div", { className: "cost-invoice-card__date-item" },
+                        react_1.default.createElement("div", { className: "cost-invoice-card__label" }, "Data zapl."),
+                        react_1.default.createElement("div", { className: "cost-invoice-card__value cost-invoice-card__value--paid" }, formatDate(invoice.paymentDate))))),
                 react_1.default.createElement("div", { className: "cost-invoice-card__amounts" },
                     react_1.default.createElement("div", { className: "cost-invoice-card__gross" }, formatAmount(invoice.grossAmount, invoice.currency)),
                     react_1.default.createElement("div", { className: "cost-invoice-card__amount-detail" },
@@ -218,7 +191,6 @@ function CostInvoicesSearch({ title }) {
         syncWarnings.length > 0 && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning", onClose: () => setSyncWarnings([]), dismissible: true, className: "mx-3 mt-3" },
             react_1.default.createElement("div", { className: "fw-semibold mb-1" }, "Faktury z b\u0142\u0119dami importu:"),
             react_1.default.createElement("ul", { className: "mb-0 ps-3" }, syncWarnings.map((warning, index) => (react_1.default.createElement("li", { key: `${index}_${warning}` }, warning)))))),
-        statusError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setStatusError(null), dismissible: true, className: "mx-3 mt-3" }, statusError)),
         react_1.default.createElement("div", { className: "cost-invoices-search" },
             react_1.default.createElement(FilterableTable_1.default, { id: "costInvoices", title: title, FilterBodyComponent: CostInvoicesFilterBody_1.CostInvoicesFilterBody, tableStructure: [
                     { header: undefined, renderTdBody: renderInvoiceCard },

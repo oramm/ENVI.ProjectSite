@@ -200,6 +200,7 @@ function CostInvoiceDetails() {
         return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "m-3" }, "Nie znaleziono faktury"));
     }
     const isBooked = invoice.status === CostInvoicesController_1.CostInvoiceStatuses.BOOKED;
+    const supplierBankAccount = invoice.supplierBankAccount?.trim();
     const getItemSelection = (item) => {
         const edited = editedItems.get(item.id) || {};
         return {
@@ -271,7 +272,8 @@ function CostInvoiceDetails() {
                         react_1.default.createElement("h4", { className: "mb-0" },
                             "Faktura ",
                             invoice.invoiceNumber,
-                            react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: status }))),
+                            react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: status }),
+                            react_1.default.createElement(CostInvoicesBadges_1.InvoiceTypeBadge, { invoiceType: invoice.invoiceType }))),
                     react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center gap-2" },
                         react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "mb-0 small text-muted" }, "Status"),
                         react_1.default.createElement(react_bootstrap_1.Form.Select, { size: "sm", value: status, onChange: (e) => setStatus(e.target.value), disabled: isBooked || saving, "aria-label": "Status faktury" },
@@ -289,10 +291,11 @@ function CostInvoiceDetails() {
                             "NIP: ",
                             invoice.supplierNip),
                         invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-1 text-muted small" }, invoice.supplierAddress)),
-                        invoice.supplierBankAccount && (react_1.default.createElement("p", { className: "mb-0 small" },
+                        react_1.default.createElement("p", { className: "mb-0 small" },
                             react_1.default.createElement("span", { className: "text-muted" }, "Konto: "),
-                            react_1.default.createElement("code", null, invoice.supplierBankAccount),
-                            react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "py-0 px-1", title: "Kopiuj numer rachunku", onClick: () => navigator.clipboard.writeText(invoice.supplierBankAccount) }, "\u2398")))),
+                            supplierBankAccount ? (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement("code", null, supplierBankAccount),
+                                react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "py-0 px-1", title: "Kopiuj numer rachunku", onClick: () => navigator.clipboard.writeText(supplierBankAccount) }, "\u2398"))) : (react_1.default.createElement("span", { className: "text-muted" }, "brak")))),
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                         react_1.default.createElement("h6", null, "Daty"),
                         react_1.default.createElement("p", { className: "mb-1" },
@@ -303,10 +306,14 @@ function CostInvoiceDetails() {
                             react_1.default.createElement("small", { className: "text-muted" }, "Sprzeda\u017Cy:"),
                             " ",
                             ToolsDate_1.default.dateYMDtoDMY(invoice.saleDate))),
-                        invoice.dueDate && (react_1.default.createElement("p", { className: "mb-0" },
+                        invoice.dueDate && (react_1.default.createElement("p", { className: "mb-1" },
                             react_1.default.createElement("small", { className: "text-muted" }, "P\u0142atno\u015Bci:"),
                             " ",
-                            ToolsDate_1.default.dateYMDtoDMY(invoice.dueDate)))),
+                            ToolsDate_1.default.dateYMDtoDMY(invoice.dueDate))),
+                        invoice.paymentDate && (react_1.default.createElement("p", { className: "mb-0" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "Zap\u0142acono:"),
+                            " ",
+                            react_1.default.createElement("strong", { className: "text-success" }, ToolsDate_1.default.dateYMDtoDMY(invoice.paymentDate))))),
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                         react_1.default.createElement("h6", null, "Warto\u015Bci"),
                         react_1.default.createElement("p", { className: "mb-1" },
@@ -372,6 +379,8 @@ function CostInvoiceDetails() {
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
                         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status p\u0142atno\u015Bci"),
+                        react_1.default.createElement("div", { className: "mb-2" },
+                            react_1.default.createElement(CostInvoicesBadges_1.PaymentMethodBadge, { paymentMethod: invoice.paymentMethod })),
                         react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap mb-2" }, [
                             { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "● Niezapłacona" },
                             { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
@@ -420,7 +429,7 @@ function CostInvoiceDetails() {
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSave, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
                 "Zapisywanie...")) : ("💾 Zapisz zmiany")),
-            react_1.default.createElement(react_bootstrap_1.Button, { variant: "success", onClick: handleBook, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
+            status !== CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "success", onClick: handleBook, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
-                "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę"))))));
+                "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę")))))));
 }

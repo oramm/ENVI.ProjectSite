@@ -40,7 +40,7 @@ const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents
 const ContractsController_1 = require("../../ContractsController");
 const MeetingNoteEditModalButton_1 = require("../MeetingNotes/Modals/MeetingNoteEditModalButton");
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
-function MeetingNoteSection({ meetingId, contractId }) {
+function MeetingNoteSection({ meetingId, refreshToken }) {
     const [note, setNote] = (0, react_1.useState)(undefined);
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -59,7 +59,12 @@ function MeetingNoteSection({ meetingId, contractId }) {
     }, [meetingId]);
     (0, react_1.useEffect)(() => {
         loadNote();
-    }, [loadNote]);
+    }, [loadNote, refreshToken]);
+    (0, react_1.useEffect)(() => {
+        if (note?.id) {
+            ContractsController_1.meetingNotesRepository.currentItems = [note];
+        }
+    }, [note]);
     if (note === undefined) {
         return (react_1.default.createElement("div", { className: "mt-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
