@@ -121,11 +121,17 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
     }
 
     return (
-        <Card className="mt-3">
-            <Card.Header>
-                <strong>Spotkanie: {meeting.name}</strong> ({meeting.date})
+        <Card className="shadow-sm border bg-white w-100">
+            <Card.Header className="bg-white border-bottom px-4 py-3">
+                <div className="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                    <div>
+                        <div className="small text-uppercase text-primary fw-semibold mb-1">Szczegóły spotkania</div>
+                        <div className="fw-semibold fs-5">{meeting.name}</div>
+                        <div className="text-muted">{meeting.date}</div>
+                    </div>
+                </div>
             </Card.Header>
-            <Card.Body>
+            <Card.Body className="p-4">
                 <FilterableTable<MeetingArrangementData>
                     id="meetingArrangements"
                     title="Agenda spotkania"

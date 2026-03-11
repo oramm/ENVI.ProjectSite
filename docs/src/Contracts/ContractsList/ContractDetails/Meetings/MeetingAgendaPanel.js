@@ -47,31 +47,45 @@ const MeetingArrangementModalButtons_1 = require("./Modals/MeetingArrangementMod
 const ContractDetailsContext_1 = require("../ContractDetailsContext");
 const MeetingNoteSection_1 = __importDefault(require("./MeetingNoteSection"));
 const STATUS_LABELS = {
-    PLANNED: 'Planowany',
-    DISCUSSED: 'Omówiony',
-    CLOSED: 'Zamknięty',
+    PLANNED: "Planowany",
+    DISCUSSED: "Omówiony",
+    CLOSED: "Zamknięty",
 };
 const STATUS_VARIANTS = {
-    PLANNED: 'secondary',
-    DISCUSSED: 'primary',
-    CLOSED: 'success',
+    PLANNED: "secondary",
+    DISCUSSED: "primary",
+    CLOSED: "success",
 };
 const NEXT_STATUS = {
-    PLANNED: 'DISCUSSED',
-    DISCUSSED: 'CLOSED',
+    PLANNED: "DISCUSSED",
+    DISCUSSED: "CLOSED",
 };
 function StatusBadge({ status }) {
-    return react_1.default.createElement(react_bootstrap_1.Badge, { bg: STATUS_VARIANTS[status] || 'secondary' }, STATUS_LABELS[status] || status);
+    return react_1.default.createElement(react_bootstrap_1.Badge, { bg: STATUS_VARIANTS[status] || "secondary" }, STATUS_LABELS[status] || status);
 }
 function MeetingAgendaPanel({ meeting }) {
     const { contract } = (0, ContractDetailsContext_1.useContractDetails)();
     const [arrangements, setArrangements] = (0, react_1.useState)(undefined);
+    const [arrangementsRefreshToken, setArrangementsRefreshToken] = (0, react_1.useState)(0);
     const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
     const loadArrangements = (0, react_1.useCallback)(async () => {
         if (!meeting?.id)
             return;
-        await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([{ meetingId: meeting.id }]);
-        setArrangements([...ContractsController_1.meetingArrangementsRepository.items]);
+        const loadedItems = await ContractsController_1.meetingArrangementsRepository.loadItemsFromServerPOST([
+            { meetingId: meeting.id },
+        ]);
+        // Defensive guard: keep only rows that belong to the currently opened meeting.
+        const filteredItems = loadedItems.filter((item) => item.meetingId === meeting.id);
+        if (filteredItems.length !== loadedItems.length) {
+            console.warn("MeetingAgendaPanel: received arrangements from other meetings", {
+                selectedMeetingId: meeting.id,
+                loadedCount: loadedItems.length,
+                filteredCount: filteredItems.length,
+            });
+        }
+        ContractsController_1.meetingArrangementsRepository.items = filteredItems;
+        setArrangements([...filteredItems]);
+        setArrangementsRefreshToken((prev) => prev + 1);
     }, [meeting?.id]);
     (0, react_1.useEffect)(() => {
         loadArrangements();
@@ -82,18 +96,18 @@ function MeetingAgendaPanel({ meeting }) {
             return;
         try {
             const response = await fetch(`${MainSetupReact_1.default.serverUrl}meetingArrangement/${arrangement.id}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ status: nextStatus }),
             });
             if (!response.ok)
-                throw new Error('Status change failed');
+                throw new Error("Status change failed");
             await loadArrangements();
         }
         catch (error) {
-            console.error('MeetingAgendaPanel: status change failed', error);
-            alert('Nie udało się zmienić statusu');
+            console.error("MeetingAgendaPanel: status change failed", error);
+            alert("Nie udało się zmienić statusu");
         }
     }
     async function handleGenerateNote() {
@@ -109,8 +123,8 @@ function MeetingAgendaPanel({ meeting }) {
             });
         }
         catch (error) {
-            console.error('MeetingAgendaPanel: note generation failed', error);
-            alert('Nie udało się wygenerować notatki');
+            console.error("MeetingAgendaPanel: note generation failed", error);
+            alert("Nie udało się wygenerować notatki");
         }
         finally {
             setIsGenerating(false);
@@ -123,32 +137,31 @@ function MeetingAgendaPanel({ meeting }) {
         };
     }, [meeting.id]);
     if (arrangements === undefined) {
-        return react_1.default.createElement("div", null,
+        return (react_1.default.createElement("div", null,
             "\u0141adowanie agendy... ",
-            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null));
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
-        react_1.default.createElement(react_bootstrap_1.Card.Header, null,
-            react_1.default.createElement("strong", null,
-                "Spotkanie: ",
-                meeting.name),
-            " (",
-            meeting.date,
-            ")"),
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "shadow-sm border bg-white w-100" },
+        react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "bg-white border-bottom px-4 py-3" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-start gap-3 flex-wrap" },
+                react_1.default.createElement("div", null,
+                    react_1.default.createElement("div", { className: "small text-uppercase text-primary fw-semibold mb-1" }, "Szczeg\u00F3\u0142y spotkania"),
+                    react_1.default.createElement("div", { className: "fw-semibold fs-5" }, meeting.name),
+                    react_1.default.createElement("div", { className: "text-muted" }, meeting.date)))),
+        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-4" },
             react_1.default.createElement(FilterableTable_1.default, { id: "meetingArrangements", title: "Agenda spotkania", initialObjects: arrangements, repository: ContractsController_1.meetingArrangementsRepository, AddNewButtonComponents: [ArrangementAddButton], EditButtonComponent: MeetingArrangementModalButtons_1.MeetingArrangementEditModalButton, isDeletable: true, showTableHeader: false, tableStructure: [
                     {
-                        header: 'Sprawa',
+                        header: "Sprawa",
                         renderTdBody: (item) => (react_1.default.createElement(react_1.default.Fragment, null,
                             item._case?._type?.folderNumber && (react_1.default.createElement("span", { className: "text-muted me-1" }, item._case._type.folderNumber)),
-                            item._case?.name || item.name || '—')),
+                            item._case?.name || item.name || "—")),
                     },
                     {
-                        header: 'Opis',
-                        objectAttributeToShow: 'description',
+                        header: "Opis",
+                        objectAttributeToShow: "description",
                     },
                     {
-                        header: 'Status',
+                        header: "Status",
                         renderTdBody: (item) => (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                             react_1.default.createElement(StatusBadge, { status: item.status }),
                             NEXT_STATUS[item.status] && (react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-primary", onClick: (e) => {
@@ -156,10 +169,10 @@ function MeetingAgendaPanel({ meeting }) {
                                     handleStatusChange(item);
                                 }, title: `Zmień na: ${STATUS_LABELS[NEXT_STATUS[item.status]]}` }, "\u25B6")))),
                     },
-                ], externalUpdate: arrangements.length }),
+                ], externalUpdate: arrangementsRefreshToken }),
             react_1.default.createElement("div", { className: "mt-3" },
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
                     "Generowanie... ",
-                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ('Generuj notatkę ze spotkania'))),
-            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id })))));
+                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania"))),
+            contract?.id && meeting?.id && react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, contractId: contract.id }))));
 }

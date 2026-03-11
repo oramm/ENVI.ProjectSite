@@ -39,8 +39,13 @@ const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const ContractsController_1 = require("../../ContractsController");
 const MeetingNoteEditModalButton_1 = require("../MeetingNotes/Modals/MeetingNoteEditModalButton");
+const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
 function MeetingNoteSection({ meetingId, contractId }) {
     const [note, setNote] = (0, react_1.useState)(undefined);
+    const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
+    function toggleMenu() {
+        setIsMenuExpanded((prev) => !prev);
+    }
     const loadNote = (0, react_1.useCallback)(async () => {
         try {
             const items = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([{ meetingId }]);
@@ -48,7 +53,7 @@ function MeetingNoteSection({ meetingId, contractId }) {
             setNote(found);
         }
         catch (error) {
-            console.error('MeetingNoteSection: unable to load note', error);
+            console.error("MeetingNoteSection: unable to load note", error);
             setNote(null);
         }
     }, [meetingId]);
@@ -64,30 +69,34 @@ function MeetingNoteSection({ meetingId, contractId }) {
             react_1.default.createElement("small", null, "Brak notatki")));
     }
     const documentUrl = note._documentOpenUrl || note._documentEditUrl;
-    return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "light", className: "mt-3 mb-0 border" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center justify-content-between" },
-            react_1.default.createElement("div", null,
-                react_1.default.createElement("strong", null, "Notatka ze spotkania:"),
-                ' ',
-                note.title,
-                documentUrl && (react_1.default.createElement(react_1.default.Fragment, null,
-                    ' — ',
-                    react_1.default.createElement("a", { href: documentUrl, target: "_blank", rel: "noopener noreferrer" }, "Otw\u00F3rz dokument")))),
-            react_1.default.createElement("div", { className: "d-flex gap-2" },
-                react_1.default.createElement(MeetingNoteEditModalButton_1.MeetingNoteEditModalButton, { modalProps: {
-                        onEdit: loadNote,
-                        initialData: note,
-                    }, buttonProps: {} }),
-                react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-danger", onClick: async () => {
-                        if (!window.confirm('Usunąć notatkę?'))
-                            return;
-                        try {
-                            await ContractsController_1.meetingNotesRepository.deleteItemNodeJS(note.id);
-                            setNote(null);
-                        }
-                        catch (error) {
-                            console.error('MeetingNoteSection: delete failed', error);
-                            alert('Nie udało się usunąć notatki');
-                        }
-                    } }, "Usu\u0144")))));
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3 mb-0 shadow-sm border-light position-relative" },
+        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "d-flex align-items-center justify-content-between flex-wrap gap-3" },
+            react_1.default.createElement("div", { className: "d-flex align-items-center gap-3" },
+                documentUrl && (react_1.default.createElement("div", { className: "bg-light p-2 rounded d-flex align-items-center justify-content-center" },
+                    react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: documentUrl, layout: "vertical" }))),
+                react_1.default.createElement("div", null,
+                    react_1.default.createElement("div", { className: "fw-bold fs-5 text-dark" }, note.title || "Notatka ze spotkania"),
+                    note.meetingDate && react_1.default.createElement("div", { className: "text-muted small" },
+                        "Data: ",
+                        note.meetingDate),
+                    !note.meetingDate && react_1.default.createElement("div", { className: "text-muted small" }, "Dokument powi\u0105zany ze spotkaniem"))),
+            react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement("div", { className: "d-flex align-items-center p-1 rounded transition-all" },
+                    react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: "horizontal", onClick: toggleMenu }),
+                    isMenuExpanded && (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("div", { className: "border-start mx-1", style: { height: "20px" } }),
+                        react_1.default.createElement(MeetingNoteEditModalButton_1.MeetingNoteEditModalButton, { modalProps: {
+                                onEdit: loadNote,
+                                initialData: note,
+                            }, buttonProps: {
+                                layout: "horizontal",
+                            } }),
+                        react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
+                                onDelete: () => setNote(null),
+                                modalTitle: "Usuwanie notatki ze spotkania",
+                                initialData: note,
+                                repository: ContractsController_1.meetingNotesRepository,
+                            }, buttonProps: {
+                                layout: "horizontal",
+                            } }))))))));
 }

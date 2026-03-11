@@ -2,17 +2,23 @@
  * Puppeteer screenshot utility for localhost testing
  * Usage:
  *   yarn screenshot
- *   yarn screenshot http://localhost:9000/other-page
- *   yarn screenshot http://localhost:9000/page custom-name.png
+ *   node scripts/screenshot.js http://localhost:9000/docs/#/persons tmp/ui-browser-loop/persons.png
+ *   node scripts/screenshot.js http://localhost:9000/docs/#/contract/1770 tmp/ui-browser-loop/contract-1770.png --mock-login
  */
+const fs = require('fs');
+const path = require('path');
 const puppeteer = require('puppeteer');
 
 function parseArgs(argv) {
   const result = {
-    url: 'http://localhost:9000/docs/',
-    output: 'screenshot.png',
+    url: 'http://localhost:9000/docs/#/',
+    output: 'tmp/ui-browser-loop/ui-browser-loop.png',
     mockLogin: false,
     timeoutMs: 30000,
+    viewportWidth: 1920,
+    viewportHeight: 1080,
+    waitForSelector: null,
+    waitForText: null,
   };
 
   const positional = [];
@@ -24,6 +30,21 @@ function parseArgs(argv) {
     if (arg.startsWith('--timeout=')) {
       const value = Number(arg.slice('--timeout='.length));
       if (!Number.isNaN(value) && value > 0) result.timeoutMs = value;
+      continue;
+    }
+    if (arg.startsWith('--viewport=')) {
+      const value = arg.slice('--viewport='.length);
+      const [width, height] = value.split('x').map(Number);
+      if (!Number.isNaN(width) && width > 0) result.viewportWidth = width;
+      if (!Number.isNaN(height) && height > 0) result.viewportHeight = height;
+      continue;
+    }
+    if (arg.startsWith('--selector=')) {
+      result.waitForSelector = arg.slice('--selector='.length);
+      continue;
+    }
+    if (arg.startsWith('--text=')) {
+      result.waitForText = arg.slice('--text='.length);
       continue;
     }
     if (arg.startsWith('-')) continue;
@@ -55,11 +76,35 @@ async function clickMockLoginIfPresent(page) {
   return false;
 }
 
-const { url, output, mockLogin, timeoutMs } = parseArgs(process.argv.slice(2));
+async function waitForText(page, text, timeoutMs) {
+  await page.waitForFunction(
+    (expectedText) => document.body?.innerText?.includes(expectedText),
+    { timeout: timeoutMs },
+    text,
+  );
+}
+
+const {
+  url,
+  output,
+  mockLogin,
+  timeoutMs,
+  viewportWidth,
+  viewportHeight,
+  waitForSelector,
+  waitForText: expectedText,
+} = parseArgs(process.argv.slice(2));
+
+function ensureOutputDirectory(filePath) {
+  const outputDir = path.dirname(filePath);
+  if (!outputDir || outputDir === '.') return;
+  fs.mkdirSync(outputDir, { recursive: true });
+}
 
 (async () => {
   console.log(`📸 Taking screenshot of: ${url}`);
   if (mockLogin) console.log('🔐 Mock login enabled: will click DEV login if visible');
+  ensureOutputDirectory(output);
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -67,7 +112,7 @@ const { url, output, mockLogin, timeoutMs } = parseArgs(process.argv.slice(2));
   });
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1920, height: 1080 });
+  await page.setViewport({ width: viewportWidth, height: viewportHeight });
 
   try {
     await page.goto(url, {
@@ -90,6 +135,14 @@ const { url, output, mockLogin, timeoutMs } = parseArgs(process.argv.slice(2));
       } else {
         console.warn('⚠️ Mock login button not found on the page (is ENABLE_DEV_LOGIN=true in the bundle/dev server?)');
       }
+    }
+
+    if (waitForSelector) {
+      await page.waitForSelector(waitForSelector, { timeout: timeoutMs });
+    }
+
+    if (expectedText) {
+      await waitForText(page, expectedText, timeoutMs);
     }
 
     await page.screenshot({

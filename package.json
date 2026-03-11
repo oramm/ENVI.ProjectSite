@@ -13,6 +13,8 @@
         "dev": "webpack serve",
         "kill:webpack": "powershell -Command \"$pids = Get-NetTCPConnection -LocalPort 9000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess; if ($pids) { $pids | ForEach-Object { Stop-Process -Id $_ -Force } }\"",
         "screenshot": "node scripts/screenshot.js",
+        "screenshot:contract": "node scripts/screenshot.js http://localhost:9000/docs/#/contract/1770 tmp/ui-browser-loop/contract-1770-1920.png --mock-login --selector=#uncontrolled-tab-example --text=\"Nr umowy\" --viewport=1920x1080",
+        "screenshot:cleanup": "rimraf ./tmp/ui-browser-loop",
         "test": "vitest run",
         "test:watch": "vitest"
     },

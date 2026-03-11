@@ -28,13 +28,13 @@ Gdy napiszesz to hasło + opis zadania, pracujemy iteracyjnie według kroków po
 
 Wklej i uzupełnij:
 
--   Tryb: UI Browser Loop
--   Route/ekran: `#/...` (np. `#/persons`)
--   Co jest nie tak teraz: …
--   Co ma być docelowo (kryteria akceptacji): …
--   Ograniczenia: (np. nie zmieniać logiki CRUD / tylko CSS / bez nowych zależności)
--   Rola użytkownika: (ADMIN / ENVI_MANAGER / ENVI_EMPLOYEE)
--   Rozdzielczość: (np. 1920x1080)
+- Tryb: UI Browser Loop
+- Route/ekran: `#/...` (np. `#/persons`)
+- Co jest nie tak teraz: …
+- Co ma być docelowo (kryteria akceptacji): …
+- Ograniczenia: (np. nie zmieniać logiki CRUD / tylko CSS / bez nowych zależności)
+- Rola użytkownika: (ADMIN / ENVI_MANAGER / ENVI_EMPLOYEE)
+- Rozdzielczość: (np. 1920x1080)
 
 ---
 
@@ -42,36 +42,53 @@ Wklej i uzupełnij:
 
 Projekt ma skrypt do screenshotów. Agent może go używać do szybkiej weryfikacji.
 
+### Ustalony kontekst środowiska
+
+- frontend dev server działa na `http://localhost:9000`, ale aplikacja jest serwowana pod `http://localhost:9000/docs/#/...`
+- przy uruchomieniu na localhost frontend komunikuje się z backendem pod `http://localhost:3000`
+- dla ekranów wymagających logowania używaj `ENABLE_DEV_LOGIN=true` po stronie frontendu i backendowego wsparcia dla `POST /login` z `dev_mode: true`
+- gdy port `9000` lub `3000` jest już zajęty, najpierw sprawdź, czy serwer już działa, zamiast od razu go restartować lub zabijać
+- `scripts/screenshot.js` obsługuje opcje `--mock-login`, `--timeout=...`, `--viewport=WxH`, `--selector=...`, `--text="..."`
+- tymczasowe zrzuty ekranu zapisuj do `tmp/ui-browser-loop/` i usuń je po weryfikacji; nie są to artefakty do commita
+
 ### Wymagania
 
--   dev server działa na `http://localhost:9000`
--   jeśli ekran wymaga logowania, włącz DEV login:
-    -   ustaw `ENABLE_DEV_LOGIN=true` w `.env` (frontend)
-    -   backend musi obsługiwać `dev_mode: true` w `POST /login`
+- dev server działa na `http://localhost:9000`
+- jeśli ekran wymaga logowania, włącz DEV login:
+    - ustaw `ENABLE_DEV_LOGIN=true` w `.env` (frontend)
+    - backend musi obsługiwać `dev_mode: true` w `POST /login`
 
 ### Przykładowe komendy
 
 Screenshot bez logowania:
 
--   `node scripts/screenshot.js http://localhost:9000/docs/#/letters test-results/screenshots/letters.png`
+- `node scripts/screenshot.js http://localhost:9000/docs/#/letters tmp/ui-browser-loop/letters.png`
 
 Screenshot z automatycznym kliknięciem „DEV: Mock Login”:
 
--   `node scripts/screenshot.js http://localhost:9000/docs/#/persons test-results/screenshots/persons-logged.png --mock-login`
+- `node scripts/screenshot.js http://localhost:9000/docs/#/persons tmp/ui-browser-loop/persons-logged.png --mock-login`
 
 Timeout (gdy ekran ładuje się długo):
 
--   `node scripts/screenshot.js http://localhost:9000/docs/#/contracts test-results/screenshots/contracts.png --timeout=60000`
+- `node scripts/screenshot.js http://localhost:9000/docs/#/contracts tmp/ui-browser-loop/contracts.png --timeout=60000`
+
+Gotowy skrót dla kontraktu:
+
+- `yarn screenshot:contract`
+
+Czyszczenie po zakończeniu iteracji:
+
+- `yarn screenshot:cleanup`
 
 ---
 
 ## Kryteria oceny UI (co agent sprawdza)
 
--   Czytelność (kontrast, wielkość fontu, gęstość informacji)
--   Spójność (Bootstrap spacing, warianty przycisków, nagłówki)
--   Układ (wyrównania, szerokości kolumn, overflow tabel)
--   Stany (loading, empty state, error)
--   Responsywność (minimum: 1280px i 1920px; jeśli dotyczy: mobile)
+- Czytelność (kontrast, wielkość fontu, gęstość informacji)
+- Spójność (Bootstrap spacing, warianty przycisków, nagłówki)
+- Układ (wyrównania, szerokości kolumn, overflow tabel)
+- Stany (loading, empty state, error)
+- Responsywność (minimum: 1280px i 1920px; jeśli dotyczy: mobile)
 
 ---
 
@@ -79,6 +96,8 @@ Timeout (gdy ekran ładuje się długo):
 
 Jeśli UI zależy od danych z backendu (np. tabela pusta), agent może potrzebować:
 
--   przykładowego rekordu/testowych danych
--   wskazania, które środowisko/serwer ma być użyte
--   informacji: „ma być poprawnie nawet przy pustej liście” vs „skupiamy się na stanie z danymi”
+- przykładowego rekordu/testowych danych
+- wskazania, które środowisko/serwer ma być użyte
+- informacji: „ma być poprawnie nawet przy pustej liście” vs „skupiamy się na stanie z danymi”
+
+Po zakończeniu iteracji usuń zawartość `tmp/ui-browser-loop/`, aby nie zostawiać zbędnych artefaktów lokalnych.

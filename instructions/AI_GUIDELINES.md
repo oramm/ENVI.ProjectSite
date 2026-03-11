@@ -23,12 +23,22 @@ Pełny opis i szablon polecenia: [ui-browser-loop.md](./ui-browser-loop.md)
 
 Minimalny zestaw informacji, żeby agent mógł działać bez dopytywania:
 
--   Route/ekran (`#/...`), np. `#/persons`
--   Co jest nie tak teraz + co ma być docelowo (kryteria akceptacji)
--   Czy zmiany mają dotyczyć tylko CSS/układu czy też komponentów
--   Czy ekran wymaga logowania (DEV Mock Login) i jaka rola jest potrzebna
+- Route/ekran (`#/...`), np. `#/persons`
+- Co jest nie tak teraz + co ma być docelowo (kryteria akceptacji)
+- Czy zmiany mają dotyczyć tylko CSS/układu czy też komponentów
+- Czy ekran wymaga logowania (DEV Mock Login) i jaka rola jest potrzebna
 
-Weryfikacja efektu: agent używa Puppeteer (skrypt `scripts/screenshot.js`) i zapisuje screenshoty do `test-results/screenshots`.
+Weryfikacja efektu: agent używa Puppeteer (skrypt `scripts/screenshot.js`) i zapisuje screenshoty do `tmp/ui-browser-loop/`.
+
+Ustalony kontekst środowiska dla tego trybu:
+
+- aplikacja frontendowa działa pod `http://localhost:9000/docs/#/...`
+- na localhost frontend komunikuje się z backendem pod `http://localhost:3000`
+- dla automatycznego logowania używaj `ENABLE_DEV_LOGIN=true` i backendowego `dev_mode: true`
+- `scripts/screenshot.js` wspiera `--mock-login`, `--timeout`, `--viewport`, `--selector`, `--text`
+- zrzuty trafiają do `tmp/ui-browser-loop/`, są tymczasowe i po weryfikacji należy je usunąć przez `yarn screenshot:cleanup`
+- jeśli port `9000` lub `3000` jest zajęty, najpierw sprawdź, czy odpowiedni serwer już działa
+- jeśli agent startuje z `PS-nodeJS`, używaj tamtejszego cienkiego adaptera jako entrypointu, ale źródłem prawdy pozostają ten plik i `instructions/ui-browser-loop.md`
 
 ## Architektura projektu
 
@@ -36,9 +46,9 @@ Weryfikacja efektu: agent używa Puppeteer (skrypt `scripts/screenshot.js`) i za
 
 #### 1. `repository.items` jest Jedynym Źródłem Prawdy
 
--   Wszystkie dane pochodzą z serwera i są przechowywane w `RepositoryReact.items`
--   Komponenty React synchronizują swój lokalny stan z `repository.items`
--   Synchronizacja jest **jedokierunkowa**: `repository.items` → `objects` (stan komponentu)
+- Wszystkie dane pochodzą z serwera i są przechowywane w `RepositoryReact.items`
+- Komponenty React synchronizują swój lokalny stan z `repository.items`
+- Synchronizacja jest **jedokierunkowa**: `repository.items` → `objects` (stan komponentu)
 
 #### 2. Przepływ Danych w Operacjach CRUD
 
@@ -54,9 +64,9 @@ setObjects([...repository.items]) → synchronizacja lokalnego stanu
 
 #### 3. NIE Modyfikuj Danych Ręcznie
 
--   ❌ `setObjects([...objects, newObject])` - tworzy duplikaty
--   ❌ `setObjects(objects.map(...))` - desynchronizuje z repository
--   ✅ `setObjects([...repository.items])` - zawsze synchronizowane
+- ❌ `setObjects([...objects, newObject])` - tworzy duplikaty
+- ❌ `setObjects(objects.map(...))` - desynchronizuje z repository
+- ✅ `setObjects([...repository.items])` - zawsze synchronizowane
 
 #### 4. Izolacja Komponentów
 
@@ -81,10 +91,10 @@ const localRepository = useMemo(
 
 `FilterableTable` to główny komponent do wyświetlania i zarządzania listami danych. Odpowiada za:
 
--   Renderowanie tabel z danymi z `repository.items`
--   Filtrowanie i sortowanie
--   Integrację z operacjami CRUD (dodawanie, edycja, usuwanie)
--   Zarządzanie snapshotami (stan filtrów i danych w sessionStorage)
+- Renderowanie tabel z danymi z `repository.items`
+- Filtrowanie i sortowanie
+- Integrację z operacjami CRUD (dodawanie, edycja, usuwanie)
+- Zarządzanie snapshotami (stan filtrów i danych w sessionStorage)
 
 **Kluczowa zasada:** `FilterableTable` używa **globalnego, współdzielonego** repository, podczas gdy komponenty pomocnicze (selektory) używają **lokalnych** repozytoriów.
 
@@ -231,10 +241,10 @@ export function ContractSelector({ name, typesToInclude, _project }: Props) {
 
 **Dlaczego?**
 
--   ✅ Brak konfliktów z `FilterableTable`
--   ✅ Izolacja danych - każdy selektor ma swoje
--   ✅ Prosty interfejs - nie trzeba przekazywać repository
--   ✅ Reużywalność - można używać wszędzie
+- ✅ Brak konfliktów z `FilterableTable`
+- ✅ Izolacja danych - każdy selektor ma swoje
+- ✅ Prosty interfejs - nie trzeba przekazywać repository
+- ✅ Reużywalność - można używać wszędzie
 
 **Więcej:** Pełna dokumentacja wzorca, przykłady i FAQ w [business-object-selectors.md](./business-object-selectors.md)
 
@@ -334,36 +344,36 @@ function handleAddObject(object: LeafDataItemType) {
 
 **Operacje CRUD:**
 
--   [ ] Operacje CRUD synchronizują `objects` z `repository.items`
--   [ ] Nie ma ręcznych modyfikacji `objects` (dodawanie/edycja/usuwanie)
--   [ ] `updateSnapshot()` jest wywoływane po synchronizacji stanu
+- [ ] Operacje CRUD synchronizują `objects` z `repository.items`
+- [ ] Nie ma ręcznych modyfikacji `objects` (dodawanie/edycja/usuwanie)
+- [ ] `updateSnapshot()` jest wywoływane po synchronizacji stanu
 
 **Komponenty:**
 
--   [ ] Komponenty pomocnicze (selektory) mają własne lokalne repository
--   [ ] Nie ma mutacji obiektów/tablic - zawsze nowe referencje
--   [ ] `handleRowClick` zawsze znajdzie obiekt w `repository.items`
+- [ ] Komponenty pomocnicze (selektory) mają własne lokalne repository
+- [ ] Nie ma mutacji obiektów/tablic - zawsze nowe referencje
+- [ ] `handleRowClick` zawsze znajdzie obiekt w `repository.items`
 
 **Business Object Selectors:**
 
--   [ ] Props NIE zawierają `repository`
--   [ ] Lokalne repository utworzone z `useMemo(() => new RepositoryReact(...), [])`
--   [ ] Nazwa repository jest unikalna i kończy się `_temp`
--   [ ] Zobacz pełny checklist w [business-object-selectors.md](./business-object-selectors.md)
+- [ ] Props NIE zawierają `repository`
+- [ ] Lokalne repository utworzone z `useMemo(() => new RepositoryReact(...), [])`
+- [ ] Nazwa repository jest unikalna i kończy się `_temp`
+- [ ] Zobacz pełny checklist w [business-object-selectors.md](./business-object-selectors.md)
 
 ### Przed Refactoringiem
 
--   [ ] Przeczytaj aktualne wytyczne dla modyfikowanego obszaru
--   [ ] Sprawdź czy istnieje wzorzec do naśladowania
--   [ ] Upewnij się że rozumiesz przepływ danych
+- [ ] Przeczytaj aktualne wytyczne dla modyfikowanego obszaru
+- [ ] Sprawdź czy istnieje wzorzec do naśladowania
+- [ ] Upewnij się że rozumiesz przepływ danych
 
 ## Checklist przed commitowaniem zmian
 
 ### Przed Refactoringiem
 
--   [ ] Przeczytaj aktualne wytyczne dla modyfikowanego obszaru
--   [ ] Sprawdź czy istnieje wzorzec do naśladowania
--   [ ] Upewnij się że rozumiesz przepływ danych
+- [ ] Przeczytaj aktualne wytyczne dla modyfikowanego obszaru
+- [ ] Sprawdź czy istnieje wzorzec do naśladowania
+- [ ] Upewnij się że rozumiesz przepływ danych
 
 ## Przykłady Kodu
 
@@ -431,8 +441,8 @@ export function ContractSelector({ name, typesToInclude, _project }: Props) {
 
 Projekt jest w trakcie refactoringu. Szczegółowe wytyczne są rozdzielone na moduły:
 
--   **[Business Object Selectors](./business-object-selectors.md)** - Wzorce dla komponentów wyboru obiektów
--   _(Więcej modułów w przyszłości)_
+- **[Business Object Selectors](./business-object-selectors.md)** - Wzorce dla komponentów wyboru obiektów
+- _(Więcej modułów w przyszłości)_
 
 ## Pytania i Odpowiedzi
 
@@ -458,6 +468,6 @@ Przy wprowadzaniu zmian w projekcie, zawsze sprawdź:
 
 W razie wątpliwości, preferuj:
 
--   Synchronizację zamiast modyfikacji
--   Izolację zamiast współdzielenia
--   Immutability zamiast mutacji
+- Synchronizację zamiast modyfikacji
+- Izolację zamiast współdzielenia
+- Immutability zamiast mutacji

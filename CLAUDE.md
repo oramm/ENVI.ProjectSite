@@ -5,16 +5,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 **Development:**
+
 - `yarn install` - Install dependencies
 - `yarn start` - Start webpack dev server on port 9000 with HMR
 - `yarn build` - Full production build (clean → tsc → webpack → copy-files to `docs/`)
 - `yarn clean` - Remove `docs/` output directory
 
 **Testing:**
-- `yarn screenshot` - Run Puppeteer screenshot utility (see `scripts/screenshot.js`)
-  - Options: `yarn screenshot http://localhost:9000/page custom-name.png --mock-login`
+
+- `yarn screenshot` - Run Puppeteer screenshot utility with default route/output in `tmp/ui-browser-loop/` (see `scripts/screenshot.js`)
+    - Options: `node scripts/screenshot.js http://localhost:9000/docs/#/persons tmp/ui-browser-loop/persons-logged.png --mock-login`
+- `yarn screenshot:contract` - Capture the local contract screen into `tmp/ui-browser-loop/`
+- `yarn screenshot:cleanup` - Remove temporary browser-loop screenshots from `tmp/ui-browser-loop/`
 
 **Compilation:**
+
 - `tsc` - TypeScript compilation only (outputs to `docs/`)
 - `webpack` - Bundle only (requires tsc to run first)
 
@@ -63,6 +68,7 @@ Typings/             - Shared TypeScript types (bussinesTypes.d.ts)
 The app uses `RepositoryReact<T>` (not Redux/Context) for ALL data management.
 
 **Single Source of Truth:** Always sync component state FROM `repository.items`:
+
 - `setObjects([...repository.items])` after every CRUD operation
 - Never mutate component state directly (`objects.push()`, `setObjects([...objects, newItem])`)
 - Global repos in `MainSetup` (sessionStorage-backed); local repos (`_temp` suffix) for selectors
@@ -103,6 +109,7 @@ Full guidelines: [`instructions/AI_GUIDELINES.md`](instructions/AI_GUIDELINES.md
 ## Environment Variables
 
 Create `.env` in project root:
+
 ```bash
 MODE=development
 ENABLE_DEV_LOGIN=true  # Mock auth for local dev
@@ -115,24 +122,31 @@ ENABLE_DEV_LOGIN=true  # Mock auth for local dev
 Detailed guides in `instructions/` directory:
 
 **Architecture:**
+
 - `selectors-architecture.md` - 3-layer selector architecture, validation, creating new selectors
 - `filterable-table-data-flow.md` - Component hierarchy, state flow, CRUD operations
 - `TasksGlobalView.md` - Cross-domain task management
 
 **Development:**
+
 - `DEVELOPMENT.md` - .env config, dev login, Puppeteer testing
 - `backend-computed-fields.md` - Backend field computation patterns
 - `business-object-selectors.md` - Selector usage, examples, debugging
 
 **AI Workflow:**
+
 - `AI_GUIDELINES.md` - General AI development workflows
 - `ui-browser-loop.md` - UI testing loop mode
+
+Use the `ui-browser-loop` skill for iterative browser-based UI verification with automated screenshots, mock login, and viewport controls.
+Treat `tmp/ui-browser-loop/` as temporary workspace output and clean it after verification.
 
 All docs indexed in `instructions/README.md`.
 
 ## Definition of Done
 
 Before marking work complete:
+
 1. TypeScript compiles: `yarn build` passes
 2. App renders: `yarn start` → verify in browser
 3. State sync correct: Component state matches `repository.items`
