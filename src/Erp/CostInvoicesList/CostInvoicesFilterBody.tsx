@@ -4,6 +4,7 @@ import { useFormContext } from "../../View/Modals/FormContext";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import { CostInvoiceStatuses, fetchCategories } from "./CostInvoicesController";
 import { CostInvoiceCategory } from "../../../Typings/bussinesTypes";
+import { paymentMethodFilterOptions, paymentStatusFilterOptions } from "./costInvoicePaymentFilters";
 
 export function CostInvoicesFilterBody() {
     const { register } = useFormContext();
@@ -56,6 +57,28 @@ export function CostInvoicesFilterBody() {
                                 : value === "BOOKED"
                                 ? "Zaksięgowana"
                                 : value}
+                        </option>
+                    ))}
+                </Form.Select>
+            </Form.Group>
+            <Form.Group as={Col} sm={12} md={3}>
+                <Form.Label>Stan platnosci</Form.Label>
+                <Form.Select {...register("paymentStatus")}>
+                    <option value="">Wszystkie</option>
+                    {paymentStatusFilterOptions.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                            {label}
+                        </option>
+                    ))}
+                </Form.Select>
+            </Form.Group>
+            <Form.Group as={Col} sm={12} md={3}>
+                <Form.Label>Forma platnosci</Form.Label>
+                <Form.Select {...register("paymentMethod")}>
+                    <option value="">Wszystkie</option>
+                    {paymentMethodFilterOptions.map(({ value, label }) => (
+                        <option key={value} value={value}>
+                            {label}
                         </option>
                     ))}
                 </Form.Select>

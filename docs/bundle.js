@@ -102336,6 +102336,7 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
+const costInvoicePaymentFilters_1 = __webpack_require__(/*! ./costInvoicePaymentFilters */ "./src/Erp/CostInvoicesList/costInvoicePaymentFilters.ts");
 function CostInvoicesFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     const [categories, setCategories] = (0, react_1.useState)([]);
@@ -102365,7 +102366,17 @@ function CostInvoicesFilterBody() {
                         ? "Poza kosztami"
                         : value === "BOOKED"
                             ? "Zaksięgowana"
-                            : value)))))));
+                            : value))))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Stan platnosci"),
+            react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("paymentStatus") },
+                react_1.default.createElement("option", { value: "" }, "Wszystkie"),
+                costInvoicePaymentFilters_1.paymentStatusFilterOptions.map(({ value, label }) => (react_1.default.createElement("option", { key: value, value: value }, label))))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Forma platnosci"),
+            react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("paymentMethod") },
+                react_1.default.createElement("option", { value: "" }, "Wszystkie"),
+                costInvoicePaymentFilters_1.paymentMethodFilterOptions.map(({ value, label }) => (react_1.default.createElement("option", { key: value, value: value }, label)))))));
 }
 
 
@@ -102913,6 +102924,46 @@ function CostInvoicesSearch({ title }) {
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: () => setShowSyncModal(false) }, "Anuluj"),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSync, disabled: syncType === "VERIFICATION" && (!dateFrom || !dateTo) }, "Synchronizuj")))));
 }
+
+
+/***/ },
+
+/***/ "./src/Erp/CostInvoicesList/costInvoicePaymentFilters.ts"
+/*!***************************************************************!*\
+  !*** ./src/Erp/CostInvoicesList/costInvoicePaymentFilters.ts ***!
+  \***************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.paymentMethodFilterOptions = exports.PaymentMethodFilters = exports.paymentStatusFilterOptions = void 0;
+const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
+exports.paymentStatusFilterOptions = [
+    { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "Niezaplacona" },
+    { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "Czesciowo zaplacona" },
+    { value: CostInvoicesController_1.PaymentStatuses.PAID, label: "Zaplacona" },
+];
+exports.PaymentMethodFilters = {
+    BANK_TRANSFER: "BANK_TRANSFER",
+    CASH: "CASH",
+    CARD: "CARD",
+    MOBILE: "MOBILE",
+    VOUCHER: "VOUCHER",
+    CHECK: "CHECK",
+    CREDIT: "CREDIT",
+    OTHER_OR_EMPTY: "OTHER_OR_EMPTY",
+};
+exports.paymentMethodFilterOptions = [
+    { value: exports.PaymentMethodFilters.BANK_TRANSFER, label: "Przelew" },
+    { value: exports.PaymentMethodFilters.CASH, label: "Gotowka" },
+    { value: exports.PaymentMethodFilters.CARD, label: "Karta" },
+    { value: exports.PaymentMethodFilters.MOBILE, label: "Mobilna" },
+    { value: exports.PaymentMethodFilters.VOUCHER, label: "Bon" },
+    { value: exports.PaymentMethodFilters.CHECK, label: "Czek" },
+    { value: exports.PaymentMethodFilters.CREDIT, label: "Kredyt" },
+    { value: exports.PaymentMethodFilters.OTHER_OR_EMPTY, label: "Inna / brak" },
+];
 
 
 /***/ },

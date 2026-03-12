@@ -39,6 +39,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
 const CostInvoicesController_1 = require("./CostInvoicesController");
+const costInvoicePaymentFilters_1 = require("./costInvoicePaymentFilters");
 function CostInvoicesFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     const [categories, setCategories] = (0, react_1.useState)([]);
@@ -68,5 +69,15 @@ function CostInvoicesFilterBody() {
                         ? "Poza kosztami"
                         : value === "BOOKED"
                             ? "Zaksięgowana"
-                            : value)))))));
+                            : value))))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Stan platnosci"),
+            react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("paymentStatus") },
+                react_1.default.createElement("option", { value: "" }, "Wszystkie"),
+                costInvoicePaymentFilters_1.paymentStatusFilterOptions.map(({ value, label }) => (react_1.default.createElement("option", { key: value, value: value }, label))))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Forma platnosci"),
+            react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("paymentMethod") },
+                react_1.default.createElement("option", { value: "" }, "Wszystkie"),
+                costInvoicePaymentFilters_1.paymentMethodFilterOptions.map(({ value, label }) => (react_1.default.createElement("option", { key: value, value: value }, label)))))));
 }
