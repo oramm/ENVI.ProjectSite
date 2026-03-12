@@ -132,6 +132,12 @@ export function PaymentStatusBadge({
             label = "Zapłacona";
             icon = "✓";
             break;
+        case PaymentStatuses.NOT_APPLICABLE:
+            variant = "info";
+            textVariant = "light";
+            label = "Nie dotyczy";
+            icon = "–";
+            break;
         case PaymentStatuses.PARTIALLY_PAID: {
             const pct =
                 grossAmount && paidAmount

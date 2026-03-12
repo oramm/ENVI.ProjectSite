@@ -105,6 +105,12 @@ function PaymentStatusBadge({ status, paidAmount, grossAmount, }) {
             label = "Zapłacona";
             icon = "✓";
             break;
+        case CostInvoicesController_1.PaymentStatuses.NOT_APPLICABLE:
+            variant = "info";
+            textVariant = "light";
+            label = "Nie dotyczy";
+            icon = "–";
+            break;
         case CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID: {
             const pct = grossAmount && paidAmount
                 ? Math.round((paidAmount / grossAmount) * 100)

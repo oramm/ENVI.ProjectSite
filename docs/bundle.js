@@ -101532,6 +101532,7 @@ function CostInvoiceDetails() {
     }
     const isBooked = invoice.status === CostInvoicesController_1.CostInvoiceStatuses.BOOKED;
     const supplierBankAccount = invoice.supplierBankAccount?.trim();
+    const canMarkPartiallyPaid = invoice.grossAmount > 0;
     const getItemSelection = (item) => {
         const edited = editedItems.get(item.id) || {};
         return {
@@ -101716,13 +101717,15 @@ function CostInvoiceDetails() {
                             { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "● Niezapłacona" },
                             { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
                             { value: CostInvoicesController_1.PaymentStatuses.PAID, label: "✓ Zapłacona" },
-                        ].map(({ value, label }) => (react_1.default.createElement(react_bootstrap_1.Button, { key: value, size: "sm", variant: paymentStatus === value ? "primary" : "outline-secondary", disabled: isBooked, onClick: () => {
+                            { value: CostInvoicesController_1.PaymentStatuses.NOT_APPLICABLE, label: "– Nie dotyczy" },
+                        ].map(({ value, label }) => (react_1.default.createElement(react_bootstrap_1.Button, { key: value, size: "sm", variant: paymentStatus === value ? "primary" : "outline-secondary", disabled: isBooked || (value === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && !canMarkPartiallyPaid), onClick: () => {
                                 setPaymentStatus(value);
                                 if (value === CostInvoicesController_1.PaymentStatuses.PAID)
                                     setPaidAmount(invoice.grossAmount);
-                                if (value === CostInvoicesController_1.PaymentStatuses.UNPAID)
+                                if (value === CostInvoicesController_1.PaymentStatuses.UNPAID || value === CostInvoicesController_1.PaymentStatuses.NOT_APPLICABLE)
                                     setPaidAmount(0);
                             } }, label)))),
+                        !canMarkPartiallyPaid && (react_1.default.createElement("div", { className: "text-muted small mb-2" }, "Dla dokument\u00F3w z ujemnym brutto status cz\u0119\u015Bciowej p\u0142atno\u015Bci nie jest dost\u0119pny.")),
                         paymentStatus === CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID && (react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center g-2" },
                             react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
                                 react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "mb-0 small" }, "Kwota zap\u0142acona")),
@@ -101881,6 +101884,12 @@ function PaymentStatusBadge({ status, paidAmount, grossAmount, }) {
             textVariant = "light";
             label = "Zapłacona";
             icon = "✓";
+            break;
+        case CostInvoicesController_1.PaymentStatuses.NOT_APPLICABLE:
+            variant = "info";
+            textVariant = "light";
+            label = "Nie dotyczy";
+            icon = "–";
             break;
         case CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID: {
             const pct = grossAmount && paidAmount
@@ -102101,6 +102110,7 @@ exports.PaymentStatuses = {
     UNPAID: "UNPAID",
     PARTIALLY_PAID: "PARTIALLY_PAID",
     PAID: "PAID",
+    NOT_APPLICABLE: "NOT_APPLICABLE",
 };
 /**
  * Repozytorium faktur kosztowych
@@ -102943,6 +102953,7 @@ exports.paymentStatusFilterOptions = [
     { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "Niezaplacona" },
     { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "Czesciowo zaplacona" },
     { value: CostInvoicesController_1.PaymentStatuses.PAID, label: "Zaplacona" },
+    { value: CostInvoicesController_1.PaymentStatuses.NOT_APPLICABLE, label: "Nie dotyczy" },
 ];
 exports.PaymentMethodFilters = {
     BANK_TRANSFER: "BANK_TRANSFER",

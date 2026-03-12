@@ -4,6 +4,7 @@ export const paymentStatusFilterOptions = [
     { value: PaymentStatuses.UNPAID, label: "Niezaplacona" },
     { value: PaymentStatuses.PARTIALLY_PAID, label: "Czesciowo zaplacona" },
     { value: PaymentStatuses.PAID, label: "Zaplacona" },
+    { value: PaymentStatuses.NOT_APPLICABLE, label: "Nie dotyczy" },
 ] as const;
 
 export const PaymentMethodFilters = {

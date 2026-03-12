@@ -86,6 +86,7 @@ exports.PaymentStatuses = {
     UNPAID: "UNPAID",
     PARTIALLY_PAID: "PARTIALLY_PAID",
     PAID: "PAID",
+    NOT_APPLICABLE: "NOT_APPLICABLE",
 };
 /**
  * Repozytorium faktur kosztowych

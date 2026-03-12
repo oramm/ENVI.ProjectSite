@@ -105,6 +105,7 @@ export const PaymentStatuses = {
     UNPAID: "UNPAID",
     PARTIALLY_PAID: "PARTIALLY_PAID",
     PAID: "PAID",
+    NOT_APPLICABLE: "NOT_APPLICABLE",
 } as const;
 
 export type PaymentStatus = typeof PaymentStatuses[keyof typeof PaymentStatuses];

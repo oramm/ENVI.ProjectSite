@@ -6,6 +6,7 @@ exports.paymentStatusFilterOptions = [
     { value: CostInvoicesController_1.PaymentStatuses.UNPAID, label: "Niezaplacona" },
     { value: CostInvoicesController_1.PaymentStatuses.PARTIALLY_PAID, label: "Czesciowo zaplacona" },
     { value: CostInvoicesController_1.PaymentStatuses.PAID, label: "Zaplacona" },
+    { value: CostInvoicesController_1.PaymentStatuses.NOT_APPLICABLE, label: "Nie dotyczy" },
 ];
 exports.PaymentMethodFilters = {
     BANK_TRANSFER: "BANK_TRANSFER",

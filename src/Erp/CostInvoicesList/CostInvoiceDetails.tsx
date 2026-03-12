@@ -212,6 +212,7 @@ export default function CostInvoiceDetails() {
 
     const isBooked = invoice.status === CostInvoiceStatuses.BOOKED;
     const supplierBankAccount = invoice.supplierBankAccount?.trim();
+    const canMarkPartiallyPaid = invoice.grossAmount > 0;
 
     const getItemSelection = (item: CostInvoiceItem) => {
         const edited = editedItems.get(item.id) || {};
@@ -548,22 +549,28 @@ export default function CostInvoiceDetails() {
                                     { value: PaymentStatuses.UNPAID, label: "● Niezapłacona" },
                                     { value: PaymentStatuses.PARTIALLY_PAID, label: "◑ Częściowo" },
                                     { value: PaymentStatuses.PAID, label: "✓ Zapłacona" },
+                                    { value: PaymentStatuses.NOT_APPLICABLE, label: "– Nie dotyczy" },
                                 ] as const).map(({ value, label }) => (
                                     <Button
                                         key={value}
                                         size="sm"
                                         variant={paymentStatus === value ? "primary" : "outline-secondary"}
-                                        disabled={isBooked}
+                                        disabled={isBooked || (value === PaymentStatuses.PARTIALLY_PAID && !canMarkPartiallyPaid)}
                                         onClick={() => {
                                             setPaymentStatus(value);
                                             if (value === PaymentStatuses.PAID) setPaidAmount(invoice.grossAmount);
-                                            if (value === PaymentStatuses.UNPAID) setPaidAmount(0);
+                                            if (value === PaymentStatuses.UNPAID || value === PaymentStatuses.NOT_APPLICABLE) setPaidAmount(0);
                                         }}
                                     >
                                         {label}
                                     </Button>
                                 ))}
                             </div>
+                            {!canMarkPartiallyPaid && (
+                                <div className="text-muted small mb-2">
+                                    Dla dokumentów z ujemnym brutto status częściowej płatności nie jest dostępny.
+                                </div>
+                            )}
                             {paymentStatus === PaymentStatuses.PARTIALLY_PAID && (
                                 <Row className="align-items-center g-2">
                                     <Col xs="auto">

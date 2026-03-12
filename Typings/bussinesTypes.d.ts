@@ -769,7 +769,7 @@ export interface CostInvoice extends RepositoryDataItem {
     status: "NEW" | "EXCLUDED" | "BOOKED";
 
     // Status płatności
-    paymentStatus?: "UNPAID" | "PARTIALLY_PAID" | "PAID";
+    paymentStatus?: "UNPAID" | "PARTIALLY_PAID" | "PAID" | "NOT_APPLICABLE";
     paidAmount?: number;
 
     // Ustawienia księgowania
