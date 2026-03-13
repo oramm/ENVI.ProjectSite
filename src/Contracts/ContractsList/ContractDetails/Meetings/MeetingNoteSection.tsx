@@ -13,9 +13,14 @@ import { GeneralDeleteModalButton } from "../../../../View/Modals/GeneralModalBu
 interface MeetingNoteSectionProps {
     meetingId: number;
     refreshToken?: number;
+    onNoteStateChange?: (note: ContractMeetingNoteData | null) => void;
 }
 
-export default function MeetingNoteSection({ meetingId, refreshToken }: MeetingNoteSectionProps) {
+export default function MeetingNoteSection({
+    meetingId,
+    refreshToken,
+    onNoteStateChange,
+}: MeetingNoteSectionProps) {
     const [note, setNote] = useState<ContractMeetingNoteData | null | undefined>(undefined);
     const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
@@ -28,11 +33,13 @@ export default function MeetingNoteSection({ meetingId, refreshToken }: MeetingN
             const items = await meetingNotesRepository.loadItemsFromServerPOST([{ meetingId }]);
             const found = items.find((n: ContractMeetingNoteData) => n.meetingId === meetingId) ?? null;
             setNote(found);
+            onNoteStateChange?.(found);
         } catch (error) {
             console.error("MeetingNoteSection: unable to load note", error);
             setNote(null);
+            onNoteStateChange?.(null);
         }
-    }, [meetingId]);
+    }, [meetingId, onNoteStateChange]);
 
     useEffect(() => {
         loadNote();
@@ -94,7 +101,10 @@ export default function MeetingNoteSection({ meetingId, refreshToken }: MeetingN
                                 />
                                 <GeneralDeleteModalButton<ContractMeetingNoteData>
                                     modalProps={{
-                                        onDelete: () => setNote(null),
+                                        onDelete: () => {
+                                            setNote(null);
+                                            onNoteStateChange?.(null);
+                                        },
                                         modalTitle: "Usuwanie notatki ze spotkania",
                                         initialData: note,
                                         repository: meetingNotesRepository,

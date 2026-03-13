@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Badge, Button, Card } from "react-bootstrap";
 import MainSetup from "../../../../React/MainSetupReact";
-import { MeetingArrangementData, MeetingArrangementStatus, MeetingData } from "../../../../../Typings/bussinesTypes";
+import { ContractMeetingNoteData, MeetingArrangementData, MeetingArrangementStatus, MeetingData } from "../../../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../../View/Resultsets/FilterableTable/FilterableTable";
 import { meetingArrangementsRepository, meetingNotesRepository } from "../../ContractsController";
@@ -43,6 +43,13 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
     const [arrangementsRefreshToken, setArrangementsRefreshToken] = useState(0);
     const [noteRefreshToken, setNoteRefreshToken] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [noteExists, setNoteExists] = useState<boolean | undefined>(undefined);
+    const handleNoteStateChange = useCallback(
+        (note: ContractMeetingNoteData | null) => {
+            setNoteExists(Boolean(note?.id));
+        },
+        []
+    );
 
     const loadArrangements = useCallback(async () => {
         if (!meeting?.id) return;
@@ -74,6 +81,10 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
         loadArrangements();
     }, [loadArrangements]);
 
+    useEffect(() => {
+        setNoteExists(undefined);
+    }, [meeting?.id]);
+
     async function handleStatusChange(arrangement: MeetingArrangementData) {
         const nextStatus = NEXT_STATUS[arrangement.status];
         if (!nextStatus) return;
@@ -101,6 +112,7 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                 { meetingId: meeting.id },
             ]);
             if (existingNotes.length > 0) {
+                setNoteExists(true);
                 alert("Notatka dla tego spotkania już istnieje");
                 return;
             }
@@ -110,6 +122,7 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                 title: meeting.name,
                 meetingDate: meeting.date,
             });
+            setNoteExists(true);
             setNoteRefreshToken((prev) => prev + 1);
         } catch (error) {
             console.error("MeetingAgendaPanel: note generation failed", error);
@@ -195,25 +208,28 @@ export default function MeetingAgendaPanel({ meeting }: MeetingAgendaPanelProps)
                     ]}
                     externalUpdate={arrangementsRefreshToken}
                 />
-                <div className="mt-3">
-                    <Button
-                        variant="outline-primary"
-                        disabled={!arrangements.length || isGenerating}
-                        onClick={handleGenerateNote}
-                    >
-                        {isGenerating ? (
-                            <>
-                                Generowanie... <SpinnerBootstrap />
-                            </>
-                        ) : (
-                            "Generuj notatkę ze spotkania"
-                        )}
-                    </Button>
-                </div>
+                {noteExists === false && (
+                    <div className="mt-3">
+                        <Button
+                            variant="outline-primary"
+                            disabled={!arrangements.length || isGenerating}
+                            onClick={handleGenerateNote}
+                        >
+                            {isGenerating ? (
+                                <>
+                                    Generowanie... <SpinnerBootstrap />
+                                </>
+                            ) : (
+                                "Generuj notatkę ze spotkania"
+                            )}
+                        </Button>
+                    </div>
+                )}
                 {contract?.id && meeting?.id && (
                     <MeetingNoteSection
                         meetingId={meeting.id}
                         refreshToken={noteRefreshToken}
+                        onNoteStateChange={handleNoteStateChange}
                     />
                 )}
             </Card.Body>
