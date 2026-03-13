@@ -96862,6 +96862,10 @@ function MeetingAgendaPanel({ meeting }) {
     const [arrangementsRefreshToken, setArrangementsRefreshToken] = (0, react_1.useState)(0);
     const [noteRefreshToken, setNoteRefreshToken] = (0, react_1.useState)(0);
     const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
+    const [noteExists, setNoteExists] = (0, react_1.useState)(undefined);
+    const handleNoteStateChange = (0, react_1.useCallback)((note) => {
+        setNoteExists(Boolean(note?.id));
+    }, []);
     const loadArrangements = (0, react_1.useCallback)(async () => {
         if (!meeting?.id)
             return;
@@ -96890,6 +96894,9 @@ function MeetingAgendaPanel({ meeting }) {
     (0, react_1.useEffect)(() => {
         loadArrangements();
     }, [loadArrangements]);
+    (0, react_1.useEffect)(() => {
+        setNoteExists(undefined);
+    }, [meeting?.id]);
     async function handleStatusChange(arrangement) {
         const nextStatus = NEXT_STATUS[arrangement.status];
         if (!nextStatus)
@@ -96919,6 +96926,7 @@ function MeetingAgendaPanel({ meeting }) {
                 { meetingId: meeting.id },
             ]);
             if (existingNotes.length > 0) {
+                setNoteExists(true);
                 alert("Notatka dla tego spotkania już istnieje");
                 return;
             }
@@ -96928,6 +96936,7 @@ function MeetingAgendaPanel({ meeting }) {
                 title: meeting.name,
                 meetingDate: meeting.date,
             });
+            setNoteExists(true);
             setNoteRefreshToken((prev) => prev + 1);
         }
         catch (error) {
@@ -96978,11 +96987,11 @@ function MeetingAgendaPanel({ meeting }) {
                                 }, title: `Zmień na: ${STATUS_LABELS[NEXT_STATUS[item.status]]}` }, "\u25B6")))),
                     },
                 ], externalUpdate: arrangementsRefreshToken }),
-            react_1.default.createElement("div", { className: "mt-3" },
+            noteExists === false && (react_1.default.createElement("div", { className: "mt-3" },
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
                     "Generowanie... ",
-                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania"))),
-            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, refreshToken: noteRefreshToken })))));
+                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania")))),
+            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, refreshToken: noteRefreshToken, onNoteStateChange: handleNoteStateChange })))));
 }
 
 
@@ -97037,7 +97046,7 @@ const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/C
 const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const MeetingNoteEditModalButton_1 = __webpack_require__(/*! ../MeetingNotes/Modals/MeetingNoteEditModalButton */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteEditModalButton.tsx");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-function MeetingNoteSection({ meetingId, refreshToken }) {
+function MeetingNoteSection({ meetingId, refreshToken, onNoteStateChange, }) {
     const [note, setNote] = (0, react_1.useState)(undefined);
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -97048,12 +97057,14 @@ function MeetingNoteSection({ meetingId, refreshToken }) {
             const items = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([{ meetingId }]);
             const found = items.find((n) => n.meetingId === meetingId) ?? null;
             setNote(found);
+            onNoteStateChange?.(found);
         }
         catch (error) {
             console.error("MeetingNoteSection: unable to load note", error);
             setNote(null);
+            onNoteStateChange?.(null);
         }
-    }, [meetingId]);
+    }, [meetingId, onNoteStateChange]);
     (0, react_1.useEffect)(() => {
         loadNote();
     }, [loadNote, refreshToken]);
@@ -97094,7 +97105,10 @@ function MeetingNoteSection({ meetingId, refreshToken }) {
                                 layout: "horizontal",
                             } }),
                         react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
-                                onDelete: () => setNote(null),
+                                onDelete: () => {
+                                    setNote(null);
+                                    onNoteStateChange?.(null);
+                                },
                                 modalTitle: "Usuwanie notatki ze spotkania",
                                 initialData: note,
                                 repository: ContractsController_1.meetingNotesRepository,

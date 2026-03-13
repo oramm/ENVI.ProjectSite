@@ -69,6 +69,10 @@ function MeetingAgendaPanel({ meeting }) {
     const [arrangementsRefreshToken, setArrangementsRefreshToken] = (0, react_1.useState)(0);
     const [noteRefreshToken, setNoteRefreshToken] = (0, react_1.useState)(0);
     const [isGenerating, setIsGenerating] = (0, react_1.useState)(false);
+    const [noteExists, setNoteExists] = (0, react_1.useState)(undefined);
+    const handleNoteStateChange = (0, react_1.useCallback)((note) => {
+        setNoteExists(Boolean(note?.id));
+    }, []);
     const loadArrangements = (0, react_1.useCallback)(async () => {
         if (!meeting?.id)
             return;
@@ -97,6 +101,9 @@ function MeetingAgendaPanel({ meeting }) {
     (0, react_1.useEffect)(() => {
         loadArrangements();
     }, [loadArrangements]);
+    (0, react_1.useEffect)(() => {
+        setNoteExists(undefined);
+    }, [meeting?.id]);
     async function handleStatusChange(arrangement) {
         const nextStatus = NEXT_STATUS[arrangement.status];
         if (!nextStatus)
@@ -126,6 +133,7 @@ function MeetingAgendaPanel({ meeting }) {
                 { meetingId: meeting.id },
             ]);
             if (existingNotes.length > 0) {
+                setNoteExists(true);
                 alert("Notatka dla tego spotkania już istnieje");
                 return;
             }
@@ -135,6 +143,7 @@ function MeetingAgendaPanel({ meeting }) {
                 title: meeting.name,
                 meetingDate: meeting.date,
             });
+            setNoteExists(true);
             setNoteRefreshToken((prev) => prev + 1);
         }
         catch (error) {
@@ -185,9 +194,9 @@ function MeetingAgendaPanel({ meeting }) {
                                 }, title: `Zmień na: ${STATUS_LABELS[NEXT_STATUS[item.status]]}` }, "\u25B6")))),
                     },
                 ], externalUpdate: arrangementsRefreshToken }),
-            react_1.default.createElement("div", { className: "mt-3" },
+            noteExists === false && (react_1.default.createElement("div", { className: "mt-3" },
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", disabled: !arrangements.length || isGenerating, onClick: handleGenerateNote }, isGenerating ? (react_1.default.createElement(react_1.default.Fragment, null,
                     "Generowanie... ",
-                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania"))),
-            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, refreshToken: noteRefreshToken })))));
+                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : ("Generuj notatkę ze spotkania")))),
+            contract?.id && meeting?.id && (react_1.default.createElement(MeetingNoteSection_1.default, { meetingId: meeting.id, refreshToken: noteRefreshToken, onNoteStateChange: handleNoteStateChange })))));
 }

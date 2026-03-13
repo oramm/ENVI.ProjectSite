@@ -40,7 +40,7 @@ const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents
 const ContractsController_1 = require("../../ContractsController");
 const MeetingNoteEditModalButton_1 = require("../MeetingNotes/Modals/MeetingNoteEditModalButton");
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
-function MeetingNoteSection({ meetingId, refreshToken }) {
+function MeetingNoteSection({ meetingId, refreshToken, onNoteStateChange, }) {
     const [note, setNote] = (0, react_1.useState)(undefined);
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -51,12 +51,14 @@ function MeetingNoteSection({ meetingId, refreshToken }) {
             const items = await ContractsController_1.meetingNotesRepository.loadItemsFromServerPOST([{ meetingId }]);
             const found = items.find((n) => n.meetingId === meetingId) ?? null;
             setNote(found);
+            onNoteStateChange?.(found);
         }
         catch (error) {
             console.error("MeetingNoteSection: unable to load note", error);
             setNote(null);
+            onNoteStateChange?.(null);
         }
-    }, [meetingId]);
+    }, [meetingId, onNoteStateChange]);
     (0, react_1.useEffect)(() => {
         loadNote();
     }, [loadNote, refreshToken]);
@@ -97,7 +99,10 @@ function MeetingNoteSection({ meetingId, refreshToken }) {
                                 layout: "horizontal",
                             } }),
                         react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
-                                onDelete: () => setNote(null),
+                                onDelete: () => {
+                                    setNote(null);
+                                    onNoteStateChange?.(null);
+                                },
                                 modalTitle: "Usuwanie notatki ze spotkania",
                                 initialData: note,
                                 repository: ContractsController_1.meetingNotesRepository,
