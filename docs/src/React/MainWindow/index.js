@@ -54,6 +54,7 @@ const MainControllerReact_1 = __importDefault(require("../MainControllerReact"))
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const Footer_1 = __importDefault(require("./Footer"));
 const MainMenu_1 = __importDefault(require("./MainMenu"));
+const clientErrorReporter_1 = require("./clientErrorReporter");
 const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
 const SkillsDictionarySearch_1 = __importDefault(require("../../Admin/SkillsDictionary/SkillsDictionarySearch"));
 const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
@@ -211,6 +212,7 @@ function matchesPublicProfileSubmissionRoute(hash) {
     return /^#\/public\/experience-update\/[^/?#]+\/?$/.test(hash);
 }
 async function renderApp() {
+    (0, clientErrorReporter_1.installClientErrorReporter)();
     const root = document.getElementById("root");
     if (!root)
         return;

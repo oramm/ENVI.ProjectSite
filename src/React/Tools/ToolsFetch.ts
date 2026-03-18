@@ -2,6 +2,20 @@ import { ErrorServerResponse } from "../../../Typings/bussinesTypes";
 import MainSetup from "../MainSetupReact";
 
 export default class ToolsFetch {
+    private static getClientErrorSecret(): string | null {
+        const runtimeSecret = (window as any).__BUG_CLIENT_ERROR_SECRET__;
+        if (typeof runtimeSecret === "string" && runtimeSecret.trim().length > 0) {
+            return runtimeSecret.trim();
+        }
+
+        const storageSecret = window.localStorage.getItem("BUG_CLIENT_ERROR_SECRET");
+        if (typeof storageSecret === "string" && storageSecret.trim().length > 0) {
+            return storageSecret.trim();
+        }
+
+        return null;
+    }
+
     static async fetchJsonWithSafeError(url: string, options: RequestInit = {}, customErrorMsg?: string) {
         try {
             const response = await fetch(url, options);
@@ -44,23 +58,37 @@ export default class ToolsFetch {
      */
     static async sendClientErrorReport(error: unknown, additionalData?: any) {
         try {
+            const secret = this.getClientErrorSecret();
+
+            const message = error instanceof Error ? error.message : String(error || "Unknown client error");
+            const stack = error instanceof Error ? error.stack : undefined;
+
             const errorData = {
-                error: error instanceof Error ? error.message + "\n\n" + error.stack : String(error),
-                url: window.location.href,
-                timestamp: new Date().toISOString(),
-                additionalData: {
-                    ...additionalData,
-                    userAgent: navigator.userAgent,
+                message,
+                stack,
+                path: window.location.pathname,
+                route: window.location.hash || window.location.pathname,
+                userAgent: navigator.userAgent,
+                tags: ["frontend", "repository"],
+                statusCode: 500,
+                context: {
                     repositoryName: additionalData?.repositoryName,
                     action: additionalData?.action,
+                    details: additionalData,
                 },
             };
 
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+            };
+
+            if (secret) {
+                headers["x-client-error-secret"] = secret;
+            }
+
             await fetch(MainSetup.serverUrl + "client-error", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers,
                 credentials: "include",
                 body: JSON.stringify(errorData),
             });

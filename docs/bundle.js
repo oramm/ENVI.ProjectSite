@@ -113903,6 +113903,106 @@ MilestonesBusinessLogic.processCollection = (milestones) => {
 
 /***/ },
 
+/***/ "./src/React/MainWindow/clientErrorReporter.ts"
+/*!*****************************************************!*\
+  !*** ./src/React/MainWindow/clientErrorReporter.ts ***!
+  \*****************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.installClientErrorReporter = installClientErrorReporter;
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+let isInstalled = false;
+let lastSentAt = 0;
+let lastSignature = "";
+const DEDUPE_WINDOW_MS = 3000;
+function getClientErrorSecret() {
+    const runtimeSecret = window.__BUG_CLIENT_ERROR_SECRET__;
+    if (typeof runtimeSecret === "string" && runtimeSecret.trim().length > 0) {
+        return runtimeSecret.trim();
+    }
+    const fromStorage = window.localStorage.getItem("BUG_CLIENT_ERROR_SECRET");
+    if (typeof fromStorage === "string" && fromStorage.trim().length > 0) {
+        return fromStorage.trim();
+    }
+    return null;
+}
+function shouldDedupe(payload) {
+    const signature = `${payload.message}|${payload.stack || ""}|${payload.route}`;
+    const now = Date.now();
+    if (signature === lastSignature && now - lastSentAt < DEDUPE_WINDOW_MS) {
+        return true;
+    }
+    lastSignature = signature;
+    lastSentAt = now;
+    return false;
+}
+async function sendClientError(payload) {
+    const secret = getClientErrorSecret();
+    if (shouldDedupe(payload)) {
+        return;
+    }
+    const endpoint = new URL("client-error", MainSetupReact_1.default.serverUrl).toString();
+    try {
+        const headers = {
+            "Content-Type": "application/json",
+        };
+        if (secret) {
+            headers["x-client-error-secret"] = secret;
+        }
+        await fetch(endpoint, {
+            method: "POST",
+            credentials: "include",
+            keepalive: true,
+            headers,
+            body: JSON.stringify(payload),
+        });
+    }
+    catch {
+        // Intentionally ignored; reporting must never break app flow.
+    }
+}
+function makeBasePayload(message, stack) {
+    return {
+        message,
+        stack,
+        path: window.location.pathname,
+        route: window.location.hash || window.location.pathname,
+        userAgent: window.navigator.userAgent,
+        tags: ["frontend", "global-handler"],
+    };
+}
+function installClientErrorReporter() {
+    if (isInstalled) {
+        return;
+    }
+    isInstalled = true;
+    window.addEventListener("error", (event) => {
+        const errorMessage = event.error?.message || event.message || "Unknown frontend error";
+        const errorStack = event.error?.stack;
+        void sendClientError(makeBasePayload(errorMessage, errorStack));
+    });
+    window.addEventListener("unhandledrejection", (event) => {
+        const reason = event.reason;
+        if (reason instanceof Error) {
+            void sendClientError(makeBasePayload(reason.message, reason.stack));
+            return;
+        }
+        const message = typeof reason === "string"
+            ? reason
+            : `Unhandled rejection: ${JSON.stringify(reason || {})}`;
+        void sendClientError(makeBasePayload(message));
+    });
+}
+
+
+/***/ },
+
 /***/ "./src/React/MainWindow/index.tsx"
 /*!****************************************!*\
   !*** ./src/React/MainWindow/index.tsx ***!
@@ -113966,6 +114066,7 @@ const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ../MainCon
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./src/React/MainWindow/Footer.tsx"));
 const MainMenu_1 = __importDefault(__webpack_require__(/*! ./MainMenu */ "./src/React/MainWindow/MainMenu.tsx"));
+const clientErrorReporter_1 = __webpack_require__(/*! ./clientErrorReporter */ "./src/React/MainWindow/clientErrorReporter.ts");
 const CitiesSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/Cities/CitiesSearch */ "./src/Admin/Cities/CitiesSearch.tsx"));
 const SkillsDictionarySearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/SkillsDictionary/SkillsDictionarySearch */ "./src/Admin/SkillsDictionary/SkillsDictionarySearch.tsx"));
 const ContractRangesSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/ContractRanges/ContractRangesSearch */ "./src/Admin/ContractRanges/ContractRangesSearch.tsx"));
@@ -114123,6 +114224,7 @@ function matchesPublicProfileSubmissionRoute(hash) {
     return /^#\/public\/experience-update\/[^/?#]+\/?$/.test(hash);
 }
 async function renderApp() {
+    (0, clientErrorReporter_1.installClientErrorReporter)();
     const root = document.getElementById("root");
     if (!root)
         return;
@@ -114955,6 +115057,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 class ToolsFetch {
+    static getClientErrorSecret() {
+        const runtimeSecret = window.__BUG_CLIENT_ERROR_SECRET__;
+        if (typeof runtimeSecret === "string" && runtimeSecret.trim().length > 0) {
+            return runtimeSecret.trim();
+        }
+        const storageSecret = window.localStorage.getItem("BUG_CLIENT_ERROR_SECRET");
+        if (typeof storageSecret === "string" && storageSecret.trim().length > 0) {
+            return storageSecret.trim();
+        }
+        return null;
+    }
     static async fetchJsonWithSafeError(url, options = {}, customErrorMsg) {
         try {
             const response = await fetch(url, options);
@@ -114998,22 +115111,32 @@ class ToolsFetch {
      */
     static async sendClientErrorReport(error, additionalData) {
         try {
+            const secret = this.getClientErrorSecret();
+            const message = error instanceof Error ? error.message : String(error || "Unknown client error");
+            const stack = error instanceof Error ? error.stack : undefined;
             const errorData = {
-                error: error instanceof Error ? error.message + "\n\n" + error.stack : String(error),
-                url: window.location.href,
-                timestamp: new Date().toISOString(),
-                additionalData: {
-                    ...additionalData,
-                    userAgent: navigator.userAgent,
+                message,
+                stack,
+                path: window.location.pathname,
+                route: window.location.hash || window.location.pathname,
+                userAgent: navigator.userAgent,
+                tags: ["frontend", "repository"],
+                statusCode: 500,
+                context: {
                     repositoryName: additionalData?.repositoryName,
                     action: additionalData?.action,
+                    details: additionalData,
                 },
             };
+            const headers = {
+                "Content-Type": "application/json",
+            };
+            if (secret) {
+                headers["x-client-error-secret"] = secret;
+            }
             await fetch(MainSetupReact_1.default.serverUrl + "client-error", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers,
                 credentials: "include",
                 body: JSON.stringify(errorData),
             });

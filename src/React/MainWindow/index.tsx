@@ -15,6 +15,7 @@ import MainController from "../MainControllerReact";
 import MainSetup from "../MainSetupReact";
 import Footer from "./Footer";
 import MainMenu from "./MainMenu";
+import { installClientErrorReporter } from "./clientErrorReporter";
 
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
 import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
@@ -237,6 +238,8 @@ function matchesPublicProfileSubmissionRoute(hash: string): boolean {
 }
 
 export async function renderApp() {
+    installClientErrorReporter();
+
     const root = document.getElementById("root");
 
     if (!root) return;
