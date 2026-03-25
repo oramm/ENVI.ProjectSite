@@ -146,8 +146,14 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
             setErrorMessage("");
             setProgressData({ text: "" });
             setRequestPending(true);
-            // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
-            const hasFiles = Object.values(data).some((value) => value instanceof FileList || value instanceof File);
+            // Traktuj pole pliku jako "obecne" tylko gdy faktycznie wybrano plik.
+            const hasFiles = Object.values(data).some((value) => {
+                if (value instanceof FileList)
+                    return value.length > 0;
+                if (value instanceof File)
+                    return true;
+                return false;
+            });
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
             const requestData = hasFiles ? (0, CommonComponentsController_1.parseFieldValuestoFormData)(data) : data;
             if (isEditing) {

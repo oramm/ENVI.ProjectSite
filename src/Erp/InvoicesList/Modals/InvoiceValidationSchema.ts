@@ -34,10 +34,7 @@ export function makeInvoiceIssueValidationSchema() {
                 .min(6, 'Numer musi mieć co najmniej 6 znaków')
                 .max(9, 'Numer może mieć maksymalnie 9 znaków'),
             file: Yup.mixed()
-                .test('file', 'Plik jest wymagany', (value: any) => {
-                    console.log('issueInvoiceSchema:', value);
-                    return value && value.length > 0;
-                })
+                .notRequired()
 
         })
     )
