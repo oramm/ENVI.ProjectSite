@@ -50,6 +50,55 @@ export default function CostInvoiceDetails() {
     const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(PaymentStatuses.UNPAID);
     const [paidAmount, setPaidAmount] = useState(0);
 
+    const updateListCaches = useCallback((updatedInvoice: CostInvoice) => {
+        if (!updatedInvoice?.id) return;
+
+        const updateById = <T extends { id?: number }>(items: T[], nextItem: T): T[] => {
+            if (!Array.isArray(items)) return items;
+            let found = false;
+            const updated = items.map((item) => {
+                if (item?.id === nextItem.id) {
+                    found = true;
+                    return { ...item, ...nextItem };
+                }
+                return item;
+            });
+            return found ? updated : items;
+        };
+
+        try {
+            const repoRaw = sessionStorage.getItem("costInvoices");
+            if (repoRaw) {
+                const repoParsed = JSON.parse(repoRaw);
+                const updatedItems = updateById(repoParsed?.items || [], updatedInvoice);
+                sessionStorage.setItem(
+                    "costInvoices",
+                    JSON.stringify({ ...repoParsed, items: updatedItems })
+                );
+            }
+        } catch (error) {
+            console.warn("[CostInvoiceDetails] Nie udało się zaktualizować cache repozytorium", error);
+        }
+
+        try {
+            const snapshotKey = "filtersableTableSnapshot_costInvoices";
+            const snapshotRaw = sessionStorage.getItem(snapshotKey);
+            if (snapshotRaw) {
+                const snapshotParsed = JSON.parse(snapshotRaw);
+                const updatedStoredObjects = updateById(
+                    snapshotParsed?.storedObjects || [],
+                    updatedInvoice
+                );
+                sessionStorage.setItem(
+                    snapshotKey,
+                    JSON.stringify({ ...snapshotParsed, storedObjects: updatedStoredObjects })
+                );
+            }
+        } catch (error) {
+            console.warn("[CostInvoiceDetails] Nie udało się zaktualizować snapshotu listy", error);
+        }
+    }, []);
+
     // Edytowalne pozycje
     const [editedItems, setEditedItems] = useState<Map<number, Partial<CostInvoiceItem>>>(new Map());
 
@@ -145,7 +194,7 @@ export default function CostInvoiceDetails() {
     };
 
     const persistChanges = async (invoiceId: number) => {
-        await updateCostInvoice(invoiceId, {
+        const updatedInvoice = await updateCostInvoice(invoiceId, {
             categoryId,
             bookingPercentage,
             vatDeductionPercentage,
@@ -154,6 +203,12 @@ export default function CostInvoiceDetails() {
             paymentStatus,
             paidAmount,
         });
+
+        updateListCaches(updatedInvoice);
+        setInvoice((prev) => (prev ? { ...prev, ...updatedInvoice } : updatedInvoice));
+        setStatus(updatedInvoice.status);
+        setPaymentStatus(updatedInvoice.paymentStatus ?? PaymentStatuses.UNPAID);
+        setPaidAmount(updatedInvoice.paidAmount ?? 0);
 
         for (const [itemId, changes] of editedItems) {
             if (Object.keys(changes).length > 0) {
