@@ -162,7 +162,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
                 statuses.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "status" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nabywca"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),
         react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2 g-3 flex-nowrap overflow-auto pb-1" },
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: "auto", className: "mb-0", controlId: "isJstSubordinate" },

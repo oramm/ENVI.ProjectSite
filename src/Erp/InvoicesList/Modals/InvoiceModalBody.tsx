@@ -173,7 +173,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                 <ErrorMessage errors={errors} name={"status"} />
             </Form.Group>
             <Form.Group>
-                <Form.Label>Odbiorca</Form.Label>
+                <Form.Label>Nabywca</Form.Label>
                 <EntitySelector name="_entity" multiple={false} />
             </Form.Group>
             <Row className="mt-2 g-3 flex-nowrap overflow-auto pb-1">

@@ -212,7 +212,7 @@ export default function InvoiceDetails() {
                                 <h5>{invoice._totalNetValue && Tools.formatNumber(invoice._totalNetValue)}</h5>
                             </Col>
                             <Col sm={12} md={8}>
-                                <div>Odbiorca</div>
+                                <div>Nabywca</div>
                                 <h5>{invoice._entity.name}</h5>
                                 <h5>{invoice._entity.address}</h5>
                                 <h5>NIP: {invoice._entity.taxNumber}</h5>

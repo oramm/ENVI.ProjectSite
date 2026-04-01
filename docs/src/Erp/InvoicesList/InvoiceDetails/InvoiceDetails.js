@@ -192,7 +192,7 @@ function InvoiceDetails() {
                             react_1.default.createElement("div", null, "Warto\u015B\u0107 netto:"),
                             react_1.default.createElement("h5", null, invoice._totalNetValue && Tools_1.default.formatNumber(invoice._totalNetValue))),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 8 },
-                            react_1.default.createElement("div", null, "Odbiorca"),
+                            react_1.default.createElement("div", null, "Nabywca"),
                             react_1.default.createElement("h5", null, invoice._entity.name),
                             react_1.default.createElement("h5", null, invoice._entity.address),
                             react_1.default.createElement("h5", null,
