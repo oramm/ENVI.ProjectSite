@@ -48,6 +48,8 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             _owner: setInitialOwner(),
             _editor: MainSetup.getCurrentUserAsPerson(),
             description: initialData?.description || "",
+            isJstSubordinate: initialData?.isJstSubordinate ?? false,
+            isGvMember: initialData?.isGvMember ?? true,
         };
         reset(resetData);
         trigger();
@@ -99,6 +101,26 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                 <Form.Label>Odbiorca</Form.Label>
                 <EntitySelector name="_entity" multiple={false} />
             </Form.Group>
+            <Row className="mt-2">
+                <Form.Group as={Col} controlId="isJstSubordinate">
+                    <Form.Check
+                        type="checkbox"
+                        label="Faktura dotyczy jednostki podrzędnej JST"
+                        isInvalid={!!errors.isJstSubordinate}
+                        {...register("isJstSubordinate")}
+                    />
+                    <ErrorMessage name="isJstSubordinate" errors={errors} />
+                </Form.Group>
+                <Form.Group as={Col} controlId="isGvMember">
+                    <Form.Check
+                        type="checkbox"
+                        label="Faktura dotyczy członka grupy GV"
+                        isInvalid={!!errors.isGvMember}
+                        {...register("isGvMember")}
+                    />
+                    <ErrorMessage name="isGvMember" errors={errors} />
+                </Form.Group>
+            </Row>
             <Form.Group controlId="_owner">
                 <PersonSelectorPreloaded
                     label="Osoba rejestrująca"

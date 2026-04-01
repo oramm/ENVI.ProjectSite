@@ -497,6 +497,8 @@ export interface Invoice extends RepositoryDataItem {
     ksefStatus?: string | null;
     ksefSessionId?: string | null;
     ksefUpo?: string | null;
+    isJstSubordinate?: boolean;
+    isGvMember?: boolean;
 }
 
 export interface InvoiceItem extends RepositoryDataItem {

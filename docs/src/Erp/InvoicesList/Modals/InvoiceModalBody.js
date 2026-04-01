@@ -68,6 +68,8 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
             _owner: setInitialOwner(),
             _editor: MainSetupReact_1.default.getCurrentUserAsPerson(),
             description: initialData?.description || "",
+            isJstSubordinate: initialData?.isJstSubordinate ?? false,
+            isGvMember: initialData?.isGvMember ?? true,
         };
         reset(resetData);
         trigger();
@@ -94,6 +96,13 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "isJstSubordinate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", label: "Faktura dotyczy jednostki podrz\u0119dnej JST", isInvalid: !!errors.isJstSubordinate, ...register("isJstSubordinate") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "isJstSubordinate", errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "isGvMember" },
+                react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", label: "Faktura dotyczy cz\u0142onka grupy GV", isInvalid: !!errors.isGvMember, ...register("isGvMember") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "isGvMember", errors: errors }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },

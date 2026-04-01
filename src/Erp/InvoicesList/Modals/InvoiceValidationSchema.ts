@@ -17,6 +17,8 @@ const commonFields = {
         .required('Podaj kto rejestruje'),
     description: Yup.string()
         .max(500, 'Opis może mieć maksymalnie 500 znaków'),
+    isJstSubordinate: Yup.boolean(),
+    isGvMember: Yup.boolean(),
 };
 
 export function makeInvoiceValidationSchema(isEditing: boolean) {
