@@ -53,6 +53,18 @@ const Tools_1 = __importDefault(require("../../../React/Tools/Tools"));
 const KsefSection_1 = __importDefault(require("./KsefSection"));
 const CorrectionModal_1 = __importDefault(require("../Modals/CorrectionModal"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
+const THIRD_PARTY_ROLE_LABELS = {
+    1: "Faktor",
+    2: "Odbiorca",
+    3: "Podmiot pierwotny",
+    4: "Dodatkowy nabywca",
+    5: "Wystawca faktury",
+    6: "Dokonujący płatności",
+    7: "JST wystawca",
+    8: "JST odbiorca",
+    9: "Członek GV wystawca",
+    10: "Członek GV odbiorca",
+};
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
@@ -185,7 +197,25 @@ function InvoiceDetails() {
                             react_1.default.createElement("h5", null, invoice._entity.address),
                             react_1.default.createElement("h5", null,
                                 "NIP: ",
-                                invoice._entity.taxNumber))),
+                                invoice._entity.taxNumber)),
+                        invoice.includeThirdParty && invoice._thirdParties && invoice._thirdParties.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 8 },
+                            react_1.default.createElement("div", null, "Podmioty 3 (KSeF)"),
+                            react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", striped: true, bordered: true },
+                                react_1.default.createElement("thead", null,
+                                    react_1.default.createElement("tr", null,
+                                        react_1.default.createElement("th", null, "#"),
+                                        react_1.default.createElement("th", null, "Rola"),
+                                        react_1.default.createElement("th", null, "Nazwa"),
+                                        react_1.default.createElement("th", null, "NIP"),
+                                        react_1.default.createElement("th", null, "Adres"))),
+                                react_1.default.createElement("tbody", null, invoice._thirdParties.map((thirdParty, index) => (react_1.default.createElement("tr", { key: `invoice-third-party-${index}` },
+                                    react_1.default.createElement("td", null, index + 1),
+                                    react_1.default.createElement("td", null, typeof thirdParty.role === "number"
+                                        ? THIRD_PARTY_ROLE_LABELS[thirdParty.role] || `Rola ${thirdParty.role}`
+                                        : "-"),
+                                    react_1.default.createElement("td", null, thirdParty._entity?.name || "-"),
+                                    react_1.default.createElement("td", null, thirdParty._entity?.taxNumber || "-"),
+                                    react_1.default.createElement("td", null, thirdParty._entity?.address || "-"))))))))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, null, invoice.description && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "succes" },
                             " ",

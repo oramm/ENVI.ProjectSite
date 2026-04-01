@@ -464,6 +464,12 @@ export interface DocumentTemplate extends RepositoryDataItem {
     _nameContentsAlias?: string;
 }
 
+export interface InvoiceThirdParty {
+    entityId?: number | null;
+    role?: number | null;
+    _entity?: EntityData;
+}
+
 export interface Invoice extends RepositoryDataItem {
     number?: string | null;
     description?: string;
@@ -499,6 +505,10 @@ export interface Invoice extends RepositoryDataItem {
     ksefUpo?: string | null;
     isJstSubordinate?: boolean;
     isGvMember?: boolean;
+    includeThirdParty?: boolean;
+    thirdPartyEntityId?: number | null;
+    _thirdParty?: EntityData;
+    _thirdParties?: InvoiceThirdParty[];
 }
 
 export interface InvoiceItem extends RepositoryDataItem {

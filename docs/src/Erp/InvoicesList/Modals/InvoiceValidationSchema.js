@@ -56,6 +56,38 @@ const commonFields = {
         .max(500, 'Opis może mieć maksymalnie 500 znaków'),
     isJstSubordinate: Yup.boolean(),
     isGvMember: Yup.boolean(),
+    includeThirdParty: Yup.boolean().when(['isJstSubordinate', 'isGvMember'], {
+        is: (isJstSubordinate, isGvMember) => Boolean(isJstSubordinate) || Boolean(isGvMember),
+        then: (schema) => schema.oneOf([true], 'Podmiot 3 jest wymagany dla JST/GV'),
+        otherwise: (schema) => schema,
+    }),
+    addAnotherThirdParty: Yup.boolean(),
+    _thirdParties: Yup.array()
+        .of(Yup.object().shape({
+        _entity: Yup.object().required('Wybierz podmiot 3'),
+        role: Yup.number()
+            .nullable()
+            .typeError('Wybierz rolę podmiotu 3')
+            .required('Wybierz rolę podmiotu 3')
+            .integer('Rola musi być liczbą całkowitą')
+            .min(1, 'Rola musi być w zakresie 1-10')
+            .max(10, 'Rola musi być w zakresie 1-10'),
+    }))
+        .when('includeThirdParty', {
+        is: true,
+        then: (schema) => schema.min(1, 'Dodaj co najmniej jeden Podmiot 3'),
+        otherwise: (schema) => schema.max(0),
+    })
+        .test('jst-role-8', 'Dla JST wymagany jest Podmiot 3 z rolą 8', function (value) {
+        if (!this.parent.isJstSubordinate)
+            return true;
+        return Boolean((value || []).some((item) => Number(item?.role) === 8));
+    })
+        .test('gv-role-10', 'Dla GV wymagany jest Podmiot 3 z rolą 10', function (value) {
+        if (!this.parent.isGvMember)
+            return true;
+        return Boolean((value || []).some((item) => Number(item?.role) === 10));
+    }),
 };
 function makeInvoiceValidationSchema(isEditing) {
     return (Yup.object().shape({

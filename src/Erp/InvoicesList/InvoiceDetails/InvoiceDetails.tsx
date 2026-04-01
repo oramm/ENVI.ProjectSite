@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Container, Card, Col, Row, Button, Alert, Badge } from "react-bootstrap";
+import { Container, Card, Col, Row, Button, Alert, Badge, Table } from "react-bootstrap";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Invoice, InvoiceItem } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
@@ -13,6 +13,19 @@ import Tools from "../../../React/Tools/Tools";
 import KsefSection from "./KsefSection";
 import CorrectionModal from "../Modals/CorrectionModal";
 import { GeneralDeleteModalButton } from "../../../View/Modals/GeneralModalButtons";
+
+const THIRD_PARTY_ROLE_LABELS: Record<number, string> = {
+    1: "Faktor",
+    2: "Odbiorca",
+    3: "Podmiot pierwotny",
+    4: "Dodatkowy nabywca",
+    5: "Wystawca faktury",
+    6: "Dokonujący płatności",
+    7: "JST wystawca",
+    8: "JST odbiorca",
+    9: "Członek GV wystawca",
+    10: "Członek GV odbiorca",
+};
 
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
@@ -204,6 +217,37 @@ export default function InvoiceDetails() {
                                 <h5>{invoice._entity.address}</h5>
                                 <h5>NIP: {invoice._entity.taxNumber}</h5>
                             </Col>
+                            {invoice.includeThirdParty && invoice._thirdParties && invoice._thirdParties.length > 0 && (
+                                <Col sm={12} md={8}>
+                                    <div>Podmioty 3 (KSeF)</div>
+                                    <Table size="sm" striped bordered>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Rola</th>
+                                                <th>Nazwa</th>
+                                                <th>NIP</th>
+                                                <th>Adres</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {invoice._thirdParties.map((thirdParty, index) => (
+                                                <tr key={`invoice-third-party-${index}`}>
+                                                    <td>{index + 1}</td>
+                                                    <td>
+                                                        {typeof thirdParty.role === "number"
+                                                            ? THIRD_PARTY_ROLE_LABELS[thirdParty.role] || `Rola ${thirdParty.role}`
+                                                            : "-"}
+                                                    </td>
+                                                    <td>{thirdParty._entity?.name || "-"}</td>
+                                                    <td>{thirdParty._entity?.taxNumber || "-"}</td>
+                                                    <td>{thirdParty._entity?.address || "-"}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </Col>
+                            )}
                         </Row>
                         <Row>
                             <Col>
