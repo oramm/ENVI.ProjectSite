@@ -135,6 +135,13 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
         setError(null);
         try {
             const currentPerson = MainSetupReact_1.default.getCurrentUserAsPerson();
+            // Debug logging
+            console.log("📋 CorrectionModal - Creating correction:", {
+                correctionType,
+                correctionTypeType: typeof correctionType,
+                correctionReason,
+                ownerId: currentPerson?.id,
+            });
             const formData = new FormData();
             formData.append("correctionType", correctionType);
             formData.append("correctionReason", correctionReason.trim());
@@ -263,8 +270,14 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null,
                         react_1.default.createElement("strong", null, "Typ korekty")),
                     react_1.default.createElement("div", null,
-                        react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "radio", id: "correction-zero", name: "correctionType", label: "Wyzeruj ca\u0142\u0105 faktur\u0119 (anulowanie)", checked: correctionType === "zero", onChange: () => setCorrectionType("zero") }),
-                        react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "radio", id: "correction-custom", name: "correctionType", label: "Podaj w\u0142asne pozycje korekty", checked: correctionType === "custom", onChange: () => setCorrectionType("custom") }))),
+                        react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "radio", id: "correction-zero", name: "correctionType", value: "zero", label: "Wyzeruj ca\u0142\u0105 faktur\u0119 (anulowanie)", checked: correctionType === "zero", onChange: (e) => {
+                                console.log("Radio zero changed:", e.target.value);
+                                setCorrectionType("zero");
+                            } }),
+                        react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "radio", id: "correction-custom", name: "correctionType", value: "custom", label: "Podaj w\u0142asne pozycje korekty", checked: correctionType === "custom", onChange: (e) => {
+                                console.log("Radio custom changed:", e.target.value);
+                                setCorrectionType("custom");
+                            } }))),
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null,
                         react_1.default.createElement("strong", null, "Przyczyna korekty"),

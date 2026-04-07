@@ -134,6 +134,14 @@ export default function CorrectionModal({
         try {
             const currentPerson = MainSetup.getCurrentUserAsPerson();
             
+            // Debug logging
+            console.log("📋 CorrectionModal - Creating correction:", {
+                correctionType,
+                correctionTypeType: typeof correctionType,
+                correctionReason,
+                ownerId: currentPerson?.id,
+            });
+            
             const formData = new FormData();
             formData.append("correctionType", correctionType);
             formData.append("correctionReason", correctionReason.trim());
@@ -294,17 +302,25 @@ export default function CorrectionModal({
                                     type="radio"
                                     id="correction-zero"
                                     name="correctionType"
+                                    value="zero"
                                     label="Wyzeruj całą fakturę (anulowanie)"
                                     checked={correctionType === "zero"}
-                                    onChange={() => setCorrectionType("zero")}
+                                    onChange={(e) => {
+                                        console.log("Radio zero changed:", e.target.value);
+                                        setCorrectionType("zero");
+                                    }}
                                 />
                                 <Form.Check
                                     type="radio"
                                     id="correction-custom"
                                     name="correctionType"
+                                    value="custom"
                                     label="Podaj własne pozycje korekty"
                                     checked={correctionType === "custom"}
-                                    onChange={() => setCorrectionType("custom")}
+                                    onChange={(e) => {
+                                        console.log("Radio custom changed:", e.target.value);
+                                        setCorrectionType("custom");
+                                    }}
                                 />
                             </div>
                         </Form.Group>
