@@ -7,6 +7,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
+import InvoicePdfPreview from "../../Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
@@ -172,6 +173,7 @@ function AppRoutes() {
                         <Route path="/contract/:id" element={<ContractMainViewTabs />} />
                         <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
                         <Route path="/invoice/:id" element={<InvoiceDetails />} />
+                        <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />

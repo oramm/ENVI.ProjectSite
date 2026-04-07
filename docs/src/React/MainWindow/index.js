@@ -46,6 +46,7 @@ const react_router_dom_1 = require("react-router-dom");
 require("react-toastify/dist/ReactToastify.css");
 const ContractsSearch_1 = __importDefault(require("../../Contracts/ContractsList/ContractsSearch"));
 const InvoiceDetails_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails"));
+const InvoicePdfPreview_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview"));
 const InvoicesSearch_1 = __importDefault(require("../../Erp/InvoicesList/InvoicesSearch"));
 const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/LettersSearch"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
@@ -181,6 +182,7 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id/ksef/pdf-preview", element: react_1.default.createElement(InvoicePdfPreview_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),

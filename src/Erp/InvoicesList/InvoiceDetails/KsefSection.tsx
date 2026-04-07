@@ -44,6 +44,7 @@ type AlertState = {
 export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }: KsefSectionProps) {
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
+    const [copyingXml, setCopyingXml] = useState(false);
     const [alert, setAlert] = useState<AlertState>(null);
     const [statusDetails, setStatusDetails] = useState<KsefStatusResponse | null>(null);
     const pollingRef = useRef<NodeJS.Timeout | null>(null);
@@ -71,6 +72,68 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
     // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
     const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
+
+    const openPdfPreview = () => {
+        const previewUrl = `${window.location.origin}${window.location.pathname}#/invoice/${invoice.id}/ksef/pdf-preview`;
+        window.open(previewUrl, "_blank", "noopener,noreferrer");
+    };
+
+    const copyCurrentXml = async () => {
+        setCopyingXml(true);
+        setAlert(null);
+
+        try {
+            const response = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/xml-preview`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                if (response.status === 400 && errorData.details) {
+                    const detailsList = errorData.details.join("\n• ");
+                    throw new Error(`Błąd walidacji:\n• ${detailsList}`);
+                }
+
+                throw new Error(
+                    errorData.error
+                        || errorData.errorMessage
+                        || errorData.message
+                        || `Błąd serwera (${response.status})`,
+                );
+            }
+
+            const xml = await response.text();
+
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(xml);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = xml;
+                textarea.setAttribute("readonly", "true");
+                textarea.style.position = "absolute";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+
+            setAlert({
+                type: "success",
+                message: isCorrectionInvoice
+                    ? "XML faktury korygującej został skopiowany do schowka."
+                    : "XML faktury został skopiowany do schowka.",
+            });
+        } catch (error) {
+            setAlert({
+                type: "danger",
+                message: error instanceof Error ? error.message : "Nie udało się skopiować XML",
+            });
+        } finally {
+            setCopyingXml(false);
+        }
+    };
 
     // Funkcja do wysyłania faktury do KSeF
     const sendToKsef = async () => {
@@ -444,6 +507,14 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
                     {/* Przyciski akcji */}
                     <div className="d-flex gap-2 flex-wrap">
+                        <Button variant="outline-secondary" onClick={openPdfPreview} disabled={loading || copyingXml}>
+                            Podgląd PDF
+                        </Button>
+
+                        <Button variant="outline-primary" onClick={copyCurrentXml} disabled={loading || copyingXml}>
+                            {copyingXml ? "Kopiowanie XML..." : "Kopiuj XML"}
+                        </Button>
+
                         {canSendToKsef() && (
                             <Button
                                 variant="primary"

@@ -45,6 +45,7 @@ const react_router_dom_1 = require("react-router-dom");
 function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
     const [loading, setLoading] = (0, react_1.useState)(false);
     const [loadingMessage, setLoadingMessage] = (0, react_1.useState)("");
+    const [copyingXml, setCopyingXml] = (0, react_1.useState)(false);
     const [alert, setAlert] = (0, react_1.useState)(null);
     const [statusDetails, setStatusDetails] = (0, react_1.useState)(null);
     const pollingRef = (0, react_1.useRef)(null);
@@ -69,6 +70,61 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status, isCorrectionInvoice]);
     // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
     const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
+    const openPdfPreview = () => {
+        const previewUrl = `${window.location.origin}${window.location.pathname}#/invoice/${invoice.id}/ksef/pdf-preview`;
+        window.open(previewUrl, "_blank", "noopener,noreferrer");
+    };
+    const copyCurrentXml = async () => {
+        setCopyingXml(true);
+        setAlert(null);
+        try {
+            const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/ksef/xml-preview`, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                if (response.status === 400 && errorData.details) {
+                    const detailsList = errorData.details.join("\n• ");
+                    throw new Error(`Błąd walidacji:\n• ${detailsList}`);
+                }
+                throw new Error(errorData.error
+                    || errorData.errorMessage
+                    || errorData.message
+                    || `Błąd serwera (${response.status})`);
+            }
+            const xml = await response.text();
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(xml);
+            }
+            else {
+                const textarea = document.createElement("textarea");
+                textarea.value = xml;
+                textarea.setAttribute("readonly", "true");
+                textarea.style.position = "absolute";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+            setAlert({
+                type: "success",
+                message: isCorrectionInvoice
+                    ? "XML faktury korygującej został skopiowany do schowka."
+                    : "XML faktury został skopiowany do schowka.",
+            });
+        }
+        catch (error) {
+            setAlert({
+                type: "danger",
+                message: error instanceof Error ? error.message : "Nie udało się skopiować XML",
+            });
+        }
+        finally {
+            setCopyingXml(false);
+        }
+    };
     // Funkcja do wysyłania faktury do KSeF
     const sendToKsef = async () => {
         setLoading(true);
@@ -361,6 +417,8 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                             react_1.default.createElement("strong", null, "Data przyj\u0119cia:")),
                         react_1.default.createElement(react_bootstrap_1.Col, { md: 9 }, formatDate(statusDetails.acquisitionDate))))),
                 react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: openPdfPreview, disabled: loading || copyingXml }, "Podgl\u0105d PDF"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", onClick: copyCurrentXml, disabled: loading || copyingXml }, copyingXml ? "Kopiowanie XML..." : "Kopiuj XML"),
                     canSendToKsef() && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: sendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
                         react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                         "Wysy\u0142anie...")) : ("Wyślij do KSeF"))),

@@ -103331,6 +103331,361 @@ function useInvoice() {
 
 /***/ },
 
+/***/ "./src/Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview.tsx"
+/*!*******************************************************************!*\
+  !*** ./src/Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview.tsx ***!
+  \*******************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = InvoicePdfPreview;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+function findFirstByLocalName(root, localName) {
+    const all = root.getElementsByTagName("*");
+    for (let i = 0; i < all.length; i++) {
+        if (all[i].localName === localName) {
+            return all[i];
+        }
+    }
+    return null;
+}
+function findChildrenByLocalName(parent, localName) {
+    const result = [];
+    for (let i = 0; i < parent.children.length; i++) {
+        const child = parent.children[i];
+        if (child.localName === localName) {
+            result.push(child);
+        }
+    }
+    return result;
+}
+function getChildText(parent, localName) {
+    if (!parent)
+        return "";
+    const child = findChildrenByLocalName(parent, localName)[0];
+    return (child?.textContent || "").trim();
+}
+function parsePreviewXml(xml) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, "application/xml");
+    const parserError = doc.getElementsByTagName("parsererror")[0];
+    if (parserError) {
+        throw new Error("Nie udało się sparsować XML podglądu faktury");
+    }
+    const podmiot1 = findFirstByLocalName(doc, "Podmiot1");
+    const podmiot2 = findFirstByLocalName(doc, "Podmiot2");
+    const fa = findFirstByLocalName(doc, "Fa");
+    const platnosc = findFirstByLocalName(doc, "Platnosc");
+    const podmiot1Id = podmiot1 ? findFirstByLocalName(podmiot1, "DaneIdentyfikacyjne") : null;
+    const podmiot1Adr = podmiot1 ? findFirstByLocalName(podmiot1, "Adres") : null;
+    const podmiot2Id = podmiot2 ? findFirstByLocalName(podmiot2, "DaneIdentyfikacyjne") : null;
+    const podmiot2Adr = podmiot2 ? findFirstByLocalName(podmiot2, "Adres") : null;
+    const rachunekBankowy = platnosc ? findFirstByLocalName(platnosc, "RachunekBankowy") : null;
+    const terminPlatnosci = platnosc ? findFirstByLocalName(platnosc, "TerminPlatnosci") : null;
+    const items = [];
+    if (fa) {
+        const faLines = fa.getElementsByTagName("*");
+        for (let i = 0; i < faLines.length; i++) {
+            if (faLines[i].localName !== "FaWiersz")
+                continue;
+            const row = faLines[i];
+            items.push({
+                lineNo: getChildText(row, "NrWierszaFa"),
+                name: getChildText(row, "P_7"),
+                unit: getChildText(row, "P_8A"),
+                quantity: getChildText(row, "P_8B"),
+                unitPrice: getChildText(row, "P_9A"),
+                netValue: getChildText(row, "P_11"),
+                vatRate: getChildText(row, "P_12"),
+            });
+        }
+    }
+    return {
+        invoiceNumber: getChildText(fa, "P_2"),
+        issueDate: getChildText(fa, "P_1"),
+        saleDate: getChildText(fa, "P_6"),
+        totalGross: getChildText(fa, "P_15"),
+        invoiceType: getChildText(fa, "RodzajFaktury"),
+        paymentDeadline: getChildText(terminPlatnosci, "Termin"),
+        bankAccount: getChildText(rachunekBankowy, "NrRB"),
+        bankName: getChildText(rachunekBankowy, "NazwaBanku"),
+        seller: {
+            name: getChildText(podmiot1Id, "Nazwa"),
+            nip: getChildText(podmiot1Id, "NIP"),
+            line1: getChildText(podmiot1Adr, "AdresL1"),
+            line2: getChildText(podmiot1Adr, "AdresL2"),
+        },
+        buyer: {
+            name: getChildText(podmiot2Id, "Nazwa"),
+            nip: getChildText(podmiot2Id, "NIP"),
+            line1: getChildText(podmiot2Adr, "AdresL1"),
+            line2: getChildText(podmiot2Adr, "AdresL2"),
+        },
+        items,
+    };
+}
+function InvoicePdfPreview() {
+    const { id } = (0, react_router_dom_1.useParams)();
+    const navigate = (0, react_router_dom_1.useNavigate)();
+    const [xml, setXml] = (0, react_1.useState)("");
+    const [loading, setLoading] = (0, react_1.useState)(true);
+    const [error, setError] = (0, react_1.useState)("");
+    (0, react_1.useEffect)(() => {
+        let cancelled = false;
+        async function loadPreview() {
+            if (!id) {
+                setError("Brak id faktury w adresie.");
+                setLoading(false);
+                return;
+            }
+            setLoading(true);
+            setError("");
+            try {
+                const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${id}/ksef/xml-preview`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (!response.ok) {
+                    const payload = await response.json().catch(() => ({}));
+                    throw new Error(payload.error || payload.errorMessage || `Błąd serwera (${response.status})`);
+                }
+                const text = await response.text();
+                if (!cancelled) {
+                    setXml(text);
+                }
+            }
+            catch (err) {
+                if (!cancelled) {
+                    setError(err instanceof Error ? err.message : "Nie udało się pobrać podglądu faktury");
+                }
+            }
+            finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        }
+        loadPreview();
+        return () => {
+            cancelled = true;
+        };
+    }, [id]);
+    const parsedResult = (0, react_1.useMemo)(() => {
+        if (!xml)
+            return { data: null, parseError: "" };
+        try {
+            return { data: parsePreviewXml(xml), parseError: "" };
+        }
+        catch (err) {
+            return {
+                data: null,
+                parseError: err instanceof Error ? err.message : "Błąd parsowania XML",
+            };
+        }
+    }, [xml]);
+    const parsed = parsedResult.data;
+    if (loading) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+            "Generowanie podgl\u0105du PDF..."));
+    }
+    if (error || parsedResult.parseError) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4" },
+            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, error || parsedResult.parseError),
+            react_1.default.createElement(react_router_dom_1.Link, { to: `/invoice/${id}` }, "Wr\u00F3\u0107 do faktury")));
+    }
+    if (!parsed) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4" },
+            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Brak danych podgl\u0105du.")));
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-3 invoice-preview-page" },
+        react_1.default.createElement("style", null, `
+                @media print {
+                    @page {
+                        size: A4;
+                        margin: 10mm;
+                    }
+                    .no-print { display: none !important; }
+                    body { background: #fff !important; }
+                    .invoice-preview-page { padding: 0 !important; }
+                    .invoice-sheet {
+                        width: 190mm !important;
+                        max-width: 190mm !important;
+                        margin: 0 auto !important;
+                        box-shadow: none !important;
+                        border: 1px solid #666 !important;
+                        break-inside: avoid;
+                        page-break-inside: avoid;
+                    }
+                }
+                .invoice-sheet {
+                    max-width: 190mm;
+                    margin: 0 auto;
+                    border: 1px solid #d0d0d0;
+                    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+                }
+                .invoice-ksef-title {
+                    letter-spacing: 0.04em;
+                    font-weight: 700;
+                }
+                .preview-badge {
+                    display: inline-block;
+                    padding: 0.2rem 0.5rem;
+                    border: 1px solid #999;
+                    border-radius: 999px;
+                    font-size: 0.75rem;
+                }
+                .invoice-mono {
+                    font-family: Consolas, "Courier New", monospace;
+                }
+            `),
+        react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-3 no-print" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("h5", { className: "mb-1" }, "Podgl\u0105d faktury do PDF"),
+                react_1.default.createElement("div", { className: "text-muted small" }, "Widok generowany z aktualnego XML KSeF")),
+            react_1.default.createElement("div", { className: "d-flex gap-2" },
+                react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => navigate(`/invoice/${id}`) }, "Wr\u00F3\u0107"),
+                react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: () => window.print() }, "Drukuj / Zapisz PDF"))),
+        react_1.default.createElement(react_bootstrap_1.Card, { className: "invoice-sheet" },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Col, null,
+                        react_1.default.createElement("div", { className: "invoice-ksef-title" }, "FAKTURA (podgl\u0105d KSeF)"),
+                        react_1.default.createElement("div", { className: "text-muted small" }, "Uk\u0142ad zbli\u017Cony do orygina\u0142u KSeF")),
+                    react_1.default.createElement(react_bootstrap_1.Col, { className: "text-end" },
+                        react_1.default.createElement("div", { className: "mb-2" },
+                            react_1.default.createElement("span", { className: "preview-badge" }, parsed.invoiceType || "VAT")),
+                        react_1.default.createElement("div", null,
+                            react_1.default.createElement("strong", null, "Numer:"),
+                            " ",
+                            react_1.default.createElement("span", { className: "invoice-mono" }, parsed.invoiceNumber || "-")),
+                        react_1.default.createElement("div", null,
+                            react_1.default.createElement("strong", null, "Data wystawienia:"),
+                            " ",
+                            parsed.issueDate || "-"),
+                        react_1.default.createElement("div", null,
+                            react_1.default.createElement("strong", null, "Data sprzeda\u017Cy:"),
+                            " ",
+                            parsed.saleDate || "-"))),
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                        react_1.default.createElement(react_bootstrap_1.Card, null,
+                            react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "py-2" },
+                                react_1.default.createElement("strong", null, "Sprzedawca (Podmiot1)")),
+                            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
+                                react_1.default.createElement("div", null,
+                                    react_1.default.createElement("strong", null, parsed.seller.name || "-")),
+                                react_1.default.createElement("div", null,
+                                    "NIP: ",
+                                    react_1.default.createElement("span", { className: "invoice-mono" }, parsed.seller.nip || "-")),
+                                react_1.default.createElement("div", null, parsed.seller.line1 || "-"),
+                                react_1.default.createElement("div", null, parsed.seller.line2 || "")))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                        react_1.default.createElement(react_bootstrap_1.Card, null,
+                            react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "py-2" },
+                                react_1.default.createElement("strong", null, "Nabywca (Podmiot2)")),
+                            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
+                                react_1.default.createElement("div", null,
+                                    react_1.default.createElement("strong", null, parsed.buyer.name || "-")),
+                                react_1.default.createElement("div", null,
+                                    "NIP: ",
+                                    react_1.default.createElement("span", { className: "invoice-mono" }, parsed.buyer.nip || "-")),
+                                react_1.default.createElement("div", null, parsed.buyer.line1 || "-"),
+                                react_1.default.createElement("div", null, parsed.buyer.line2 || ""))))),
+                react_1.default.createElement("div", { className: "mb-2" },
+                    react_1.default.createElement("strong", null, "Pozycje faktury")),
+                react_1.default.createElement(react_bootstrap_1.Table, { bordered: true, size: "sm", responsive: true },
+                    react_1.default.createElement("thead", null,
+                        react_1.default.createElement("tr", null,
+                            react_1.default.createElement("th", null, "Lp."),
+                            react_1.default.createElement("th", null, "Nazwa"),
+                            react_1.default.createElement("th", null, "Il."),
+                            react_1.default.createElement("th", null, "JM"),
+                            react_1.default.createElement("th", null, "Cena netto"),
+                            react_1.default.createElement("th", null, "Warto\u015B\u0107 netto"),
+                            react_1.default.createElement("th", null, "VAT"))),
+                    react_1.default.createElement("tbody", null, parsed.items.map((item, idx) => (react_1.default.createElement("tr", { key: `preview-item-${idx}` },
+                        react_1.default.createElement("td", null, item.lineNo || idx + 1),
+                        react_1.default.createElement("td", null, item.name),
+                        react_1.default.createElement("td", { className: "text-end invoice-mono" }, item.quantity),
+                        react_1.default.createElement("td", null, item.unit),
+                        react_1.default.createElement("td", { className: "text-end invoice-mono" }, item.unitPrice),
+                        react_1.default.createElement("td", { className: "text-end invoice-mono" }, item.netValue),
+                        react_1.default.createElement("td", { className: "text-end invoice-mono" }, item.vatRate)))))),
+                react_1.default.createElement(react_bootstrap_1.Row, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: { span: 4, offset: 8 } },
+                        react_1.default.createElement(react_bootstrap_1.Card, null,
+                            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
+                                react_1.default.createElement("div", { className: "d-flex justify-content-between" },
+                                    react_1.default.createElement("strong", null, "Razem brutto"),
+                                    react_1.default.createElement("strong", { className: "invoice-mono" },
+                                        parsed.totalGross || "0.00",
+                                        " PLN")))))),
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
+                        react_1.default.createElement(react_bootstrap_1.Card, null,
+                            react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "py-2" },
+                                react_1.default.createElement("strong", null, "P\u0142atno\u015B\u0107")),
+                            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
+                                react_1.default.createElement(react_bootstrap_1.Row, null,
+                                    react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
+                                        react_1.default.createElement("div", null,
+                                            react_1.default.createElement("strong", null, "Termin p\u0142atno\u015Bci:")),
+                                        react_1.default.createElement("div", null, parsed.paymentDeadline || react_1.default.createElement("span", { className: "text-muted" }, "(puste)"))),
+                                    react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
+                                        react_1.default.createElement("div", null,
+                                            react_1.default.createElement("strong", null, "Numer konta:")),
+                                        react_1.default.createElement("div", { className: "invoice-mono" }, parsed.bankAccount || react_1.default.createElement("span", { className: "text-muted" }, "(puste)"))),
+                                    react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
+                                        react_1.default.createElement("div", null,
+                                            react_1.default.createElement("strong", null, "Bank:")),
+                                        react_1.default.createElement("div", null, parsed.bankName || react_1.default.createElement("span", { className: "text-muted" }, "(puste)"))))))))))));
+}
+
+
+/***/ },
+
 /***/ "./src/Erp/InvoicesList/InvoiceDetails/KsefSection.tsx"
 /*!*************************************************************!*\
   !*** ./src/Erp/InvoicesList/InvoiceDetails/KsefSection.tsx ***!
@@ -103385,6 +103740,7 @@ const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_m
 function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
     const [loading, setLoading] = (0, react_1.useState)(false);
     const [loadingMessage, setLoadingMessage] = (0, react_1.useState)("");
+    const [copyingXml, setCopyingXml] = (0, react_1.useState)(false);
     const [alert, setAlert] = (0, react_1.useState)(null);
     const [statusDetails, setStatusDetails] = (0, react_1.useState)(null);
     const pollingRef = (0, react_1.useRef)(null);
@@ -103409,6 +103765,61 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status, isCorrectionInvoice]);
     // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
     const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
+    const openPdfPreview = () => {
+        const previewUrl = `${window.location.origin}${window.location.pathname}#/invoice/${invoice.id}/ksef/pdf-preview`;
+        window.open(previewUrl, "_blank", "noopener,noreferrer");
+    };
+    const copyCurrentXml = async () => {
+        setCopyingXml(true);
+        setAlert(null);
+        try {
+            const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/ksef/xml-preview`, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                if (response.status === 400 && errorData.details) {
+                    const detailsList = errorData.details.join("\n• ");
+                    throw new Error(`Błąd walidacji:\n• ${detailsList}`);
+                }
+                throw new Error(errorData.error
+                    || errorData.errorMessage
+                    || errorData.message
+                    || `Błąd serwera (${response.status})`);
+            }
+            const xml = await response.text();
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(xml);
+            }
+            else {
+                const textarea = document.createElement("textarea");
+                textarea.value = xml;
+                textarea.setAttribute("readonly", "true");
+                textarea.style.position = "absolute";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+            setAlert({
+                type: "success",
+                message: isCorrectionInvoice
+                    ? "XML faktury korygującej został skopiowany do schowka."
+                    : "XML faktury został skopiowany do schowka.",
+            });
+        }
+        catch (error) {
+            setAlert({
+                type: "danger",
+                message: error instanceof Error ? error.message : "Nie udało się skopiować XML",
+            });
+        }
+        finally {
+            setCopyingXml(false);
+        }
+    };
     // Funkcja do wysyłania faktury do KSeF
     const sendToKsef = async () => {
         setLoading(true);
@@ -103701,6 +104112,8 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                             react_1.default.createElement("strong", null, "Data przyj\u0119cia:")),
                         react_1.default.createElement(react_bootstrap_1.Col, { md: 9 }, formatDate(statusDetails.acquisitionDate))))),
                 react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: openPdfPreview, disabled: loading || copyingXml }, "Podgl\u0105d PDF"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", onClick: copyCurrentXml, disabled: loading || copyingXml }, copyingXml ? "Kopiowanie XML..." : "Kopiuj XML"),
                     canSendToKsef() && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: sendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
                         react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                         "Wysy\u0142anie...")) : ("Wyślij do KSeF"))),
@@ -114264,6 +114677,7 @@ const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_m
 __webpack_require__(/*! react-toastify/dist/ReactToastify.css */ "./node_modules/react-toastify/dist/ReactToastify.css");
 const ContractsSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx"));
 const InvoiceDetails_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails */ "./src/Erp/InvoicesList/InvoiceDetails/InvoiceDetails.tsx"));
+const InvoicePdfPreview_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview */ "./src/Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview.tsx"));
 const InvoicesSearch_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoicesSearch */ "./src/Erp/InvoicesList/InvoicesSearch.tsx"));
 const LettersSearch_1 = __importDefault(__webpack_require__(/*! ../../Letters/LettersList/LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
@@ -114399,6 +114813,7 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id/ksef/pdf-preview", element: react_1.default.createElement(InvoicePdfPreview_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
