@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Card, Col, Container, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MainSetup from "../../../React/MainSetupReact";
+import { QRCodeSVG } from "qrcode.react";
 
 type PreviewParty = {
     name: string;
@@ -45,6 +46,12 @@ type PreviewDocument = {
     buyer: PreviewParty;
     thirdParties: PreviewThirdParty[];
     items: PreviewItem[];
+};
+
+type KsefPreviewStatus = {
+    qrVerificationUrl?: string;
+    qrLabel?: string | null;
+    ksefNumber?: string | null;
 };
 
 function getCorrectionTypeLabel(correctionType: string): string {
@@ -215,6 +222,7 @@ export default function InvoicePdfPreview() {
     const [xml, setXml] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [ksefPreviewStatus, setKsefPreviewStatus] = useState<KsefPreviewStatus | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -228,6 +236,7 @@ export default function InvoicePdfPreview() {
 
             setLoading(true);
             setError("");
+            setKsefPreviewStatus(null);
             try {
                 const response = await fetch(`${MainSetup.serverUrl}invoice/${id}/ksef/xml-preview`, {
                     method: "GET",
@@ -242,6 +251,28 @@ export default function InvoicePdfPreview() {
                 const text = await response.text();
                 if (!cancelled) {
                     setXml(text);
+                }
+
+                if (!cancelled) {
+                    try {
+                        const statusResponse = await fetch(`${MainSetup.serverUrl}invoice/${id}/ksef/status`, {
+                            method: "GET",
+                            credentials: "include",
+                        });
+
+                        if (statusResponse.ok) {
+                            const statusData = await statusResponse.json();
+                            if (!cancelled && statusData?.qrVerificationUrl) {
+                                setKsefPreviewStatus({
+                                    qrVerificationUrl: statusData.qrVerificationUrl,
+                                    qrLabel: statusData.qrLabel,
+                                    ksefNumber: statusData.ksefNumber,
+                                });
+                            }
+                        }
+                    } catch {
+                        // Preview PDF nadal działa bez QR, jeśli status KSeF chwilowo nie jest dostępny.
+                    }
                 }
             } catch (err) {
                 if (!cancelled) {
@@ -274,6 +305,8 @@ export default function InvoicePdfPreview() {
 
     const parsed = parsedResult.data;
     const isCorrectionInvoice = parsed?.invoiceType?.startsWith("KOR") || false;
+    const hasKsefQr = Boolean(ksefPreviewStatus?.qrVerificationUrl);
+    const ksefInvoiceNumber = ksefPreviewStatus?.ksefNumber || ksefPreviewStatus?.qrLabel || "";
 
     if (loading) {
         return (
@@ -307,7 +340,7 @@ export default function InvoicePdfPreview() {
                 @media print {
                     @page {
                         size: A4;
-                        margin: 10mm;
+                        margin: 0 !important;
                     }
                     body > #root .navbar.sticky-top,
                     body > #root .navbar.mt-auto,
@@ -316,26 +349,53 @@ export default function InvoicePdfPreview() {
                         display: none !important;
                     }
                     .no-print { display: none !important; }
-                    .invoice-preview-page > :not(.invoice-sheet) {
+                    .invoice-preview-page > :not(.invoice-sheet):not(.invoice-qr-print-section) {
                         display: none !important;
                     }
-                    body { background: #fff !important; }
-                    .invoice-preview-page { padding: 0 !important; }
-                    .invoice-sheet {
-                        width: 190mm !important;
-                        max-width: 190mm !important;
+                    body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+                    .invoice-preview-page {
+                        width: 100% !important;
+                        max-width: none !important;
+                        padding: 0 !important;
                         margin: 0 auto !important;
+                        box-sizing: border-box !important;
+                    }
+                    .invoice-sheet {
+                        width: 100% !important;
+                        max-width: 190mm !important;
+                        padding: 10mm !important;
+                        margin: 0 auto !important;
+                        box-sizing: border-box !important;
                         box-shadow: none !important;
                         border: 1px solid #666 !important;
+                    }
+                    .invoice-party-row > [class*="col-"] {
+                        flex: 0 0 50% !important;
+                        max-width: 50% !important;
+                    }
+                    .invoice-qr-print-section {
+                        break-before: page;
+                        page-break-before: always;
                         break-inside: avoid;
                         page-break-inside: avoid;
                     }
+                    .invoice-qr-preview-section {
+                        display: none !important;
+                    }
+                    .invoice-qr-preview-actions {
+                        display: none !important;
+                    }
                 }
                 .invoice-sheet {
+                    width: 100%;
                     max-width: 190mm;
                     margin: 0 auto;
                     border: 1px solid #d0d0d0;
                     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+                }
+                .invoice-party-row > [class*="col-"] {
+                    flex: 0 0 50%;
+                    max-width: 50%;
                 }
                 .invoice-ksef-title {
                     letter-spacing: 0.04em;
@@ -373,7 +433,7 @@ export default function InvoicePdfPreview() {
                     <Row className="mb-3">
                         <Col>
                             <div className="invoice-ksef-title">FAKTURA (podgląd)</div>
-                            <div className="text-muted small">To nie jest dokument, tylko podgląd danych przed wysłaniem do KSeF</div>
+                            <div className="text-muted small">To nie jest dokument, tylko podgląd danych wysyłanych do KSeF</div>
                         </Col>
                         <Col className="text-end">
                             <div className="mb-2">
@@ -382,6 +442,9 @@ export default function InvoicePdfPreview() {
                             <div><strong>Numer:</strong> <span className="invoice-mono">{parsed.invoiceNumber || "-"}</span></div>
                             <div><strong>Data wystawienia:</strong> {parsed.issueDate || "-"}</div>
                             <div><strong>Data sprzedaży:</strong> {parsed.saleDate || "-"}</div>
+                            {ksefInvoiceNumber && (
+                                <div><strong>Numer KSeF:</strong> <span className="invoice-mono">{ksefInvoiceNumber}</span></div>
+                            )}
                             {isCorrectionInvoice && parsed.correctionType && (
                                 <div>
                                     <strong>Typ korekty:</strong> {getCorrectionTypeLabel(parsed.correctionType)}
@@ -390,10 +453,10 @@ export default function InvoicePdfPreview() {
                         </Col>
                     </Row>
 
-                    <Row className="mb-3">
-                        <Col md={6}>
+                    <Row className="mb-3 invoice-party-row">
+                        <Col xs={6}>
                             <Card>
-                                <Card.Header className="py-2"><strong>Sprzedawca (Podmiot1)</strong></Card.Header>
+                                <Card.Header className="py-2"><strong>Sprzedawca</strong></Card.Header>
                                 <Card.Body className="py-2">
                                     <div><strong>{parsed.seller.name || "-"}</strong></div>
                                     <div>NIP: <span className="invoice-mono">{parsed.seller.nip || "-"}</span></div>
@@ -402,9 +465,9 @@ export default function InvoicePdfPreview() {
                                 </Card.Body>
                             </Card>
                         </Col>
-                        <Col md={6}>
+                        <Col xs={6}>
                             <Card>
-                                <Card.Header className="py-2"><strong>Nabywca (Podmiot2)</strong></Card.Header>
+                                <Card.Header className="py-2"><strong>Nabywca</strong></Card.Header>
                                 <Card.Body className="py-2">
                                     <div><strong>{parsed.buyer.name || "-"}</strong></div>
                                     <div>NIP: <span className="invoice-mono">{parsed.buyer.nip || "-"}</span></div>
@@ -423,7 +486,7 @@ export default function InvoicePdfPreview() {
                         <Row className="mb-3">
                             <Col>
                                 <Card>
-                                    <Card.Header className="py-2"><strong>Podmioty trzecie (Podmiot3)</strong></Card.Header>
+                                    <Card.Header className="py-2"><strong>Podmioty trzecie</strong></Card.Header>
                                     <Card.Body className="py-2">
                                         {parsed.thirdParties.map((thirdParty, index) => (
                                             <div key={`third-party-${index}`} className={index > 0 ? "mt-3 pt-3 border-top" : ""}>
@@ -508,8 +571,76 @@ export default function InvoicePdfPreview() {
                             </Card>
                         </Col>
                     </Row>
+
+                    {hasKsefQr && (
+                        <Row className="mt-4 justify-content-center">
+                            <Col md={8} lg={6} className="text-center invoice-qr-preview-section">
+                                <Card className="shadow-sm">
+                                    <Card.Body className="text-center py-4">
+                                        <div className="fw-bold mb-2">Sprawdź, czy Twoja faktura znajduje się w KSeF!</div>
+                                        <div className="d-inline-flex p-3 bg-white border rounded-3">
+                                            <QRCodeSVG
+                                                value={ksefPreviewStatus?.qrVerificationUrl || ""}
+                                                size={180}
+                                                level="M"
+                                                includeMargin
+                                            />
+                                        </div>
+                                        {ksefInvoiceNumber && (
+                                            <div className="mt-2 small text-break">
+                                                <strong>Numer KSeF:</strong> <span className="invoice-mono">{ksefInvoiceNumber}</span>
+                                            </div>
+                                        )}
+                                        <div className="mt-3 d-flex gap-2 justify-content-center flex-wrap invoice-qr-preview-actions">
+                                            <Button
+                                                as="a"
+                                                href={ksefPreviewStatus?.qrVerificationUrl || ""}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                size="sm"
+                                                variant="outline-primary"
+                                            >
+                                                Otwórz link
+                                            </Button>
+                                        </div>
+                                        <div className="d-none d-print-block mt-3 small text-break">
+                                            <strong>Link weryfikacyjny:</strong>{" "}
+                                            <span className="invoice-mono">{ksefPreviewStatus?.qrVerificationUrl}</span>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        </Row>
+                    )}
                 </Card.Body>
             </Card>
+
+            {hasKsefQr && (
+                <div className="invoice-qr-print-section d-none d-print-block mt-4">
+                    <Card className="shadow-sm" style={{ maxWidth: 520, margin: '0 auto' }}>
+                        <Card.Body className="text-center py-4">
+                            <div className="fw-bold mb-2">Sprawdź, czy Twoja faktura znajduje się w KSeF!</div>
+                            <div className="d-inline-flex p-3 bg-white border rounded-3">
+                                <QRCodeSVG
+                                    value={ksefPreviewStatus?.qrVerificationUrl || ""}
+                                    size={180}
+                                    level="M"
+                                    includeMargin
+                                />
+                            </div>
+                            {ksefInvoiceNumber && (
+                                <div className="mt-2 small text-break">
+                                    <strong>Numer KSeF:</strong> <span className="invoice-mono">{ksefInvoiceNumber}</span>
+                                </div>
+                            )}
+                            <div className="mt-3 small text-break">
+                                <strong>Link weryfikacyjny:</strong>{" "}
+                                <span className="invoice-mono">{ksefPreviewStatus?.qrVerificationUrl}</span>
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </div>
+            )}
         </Container>
     );
 }

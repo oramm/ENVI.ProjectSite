@@ -4,6 +4,7 @@ import { Invoice } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import MainSetup from "../../../React/MainSetupReact";
 import { Link } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 
 // Typy dla odpowiedzi API KSeF
 interface KsefSendResponse {
@@ -31,6 +32,14 @@ interface KsefStatusResponse {
     invoiceId: number;
     referenceNumber?: string;
     ksefNumber?: string | null;
+    qrVerificationUrl?: string;
+    qrLabel?: string | null;
+    qrPayload?: {
+        environment: string;
+        sellerNip: string;
+        issueDate: string;
+        invoiceHash: string;
+    };
     status?: {
         code: number;
         description: string;
@@ -63,6 +72,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
     const [statusDetails, setStatusDetails] = useState<KsefStatusResponse | null>(null);
     const [ksefCorrectionType, setKsefCorrectionType] = useState<1 | 2 | 3 | null>(null);
     const pollingRef = useRef<NodeJS.Timeout | null>(null);
+    const activeInvoiceIdRef = useRef<number | null>(invoice.id ?? null);
 
     // Faktura jest korektą jeśli ma ustawione correctedInvoiceId
     const isCorrectionInvoice = !!invoice.correctedInvoiceId;
@@ -80,6 +90,15 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
         setKsefCorrectionType(null);
     }, [invoice.id, invoice.ksefCorrectionType, isCorrectionInvoice]);
+
+    React.useEffect(() => {
+        activeInvoiceIdRef.current = invoice.id ?? null;
+        stopPolling();
+        setStatusDetails(null);
+        setAlert(null);
+        setLoading(false);
+        setLoadingMessage("");
+    }, [invoice.id]);
 
     const persistCorrectionType = async (nextCorrectionType: 1 | 2 | 3 | null): Promise<boolean> => {
         if (!invoice.id) {
@@ -315,6 +334,12 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
             }
 
             const sendResult: KsefSendResponse = await sendResponse.json();
+
+            if (activeInvoiceIdRef.current !== invoice.id) {
+                setLoading(false);
+                setLoadingMessage("");
+                return;
+            }
             
             const updatedInvoice: Invoice = {
                 ...invoice,
@@ -349,6 +374,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
         const checkStatus = async () => {
             attempts++;
+            const requestedInvoiceId = invoice.id;
 
             try {
                 const statusResponse = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/status`, {
@@ -362,6 +388,11 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                 }
 
                 const statusResult: KsefStatusResponse = await statusResponse.json();
+
+                if (activeInvoiceIdRef.current !== requestedInvoiceId) {
+                    return;
+                }
+
                 setStatusDetails(statusResult);
 
                 // Sukces - faktura przyjęta
@@ -437,6 +468,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         setLoading(true);
         setLoadingMessage("Sprawdzanie statusu...");
         setAlert(null);
+        const requestedInvoiceId = invoice.id;
 
         try {
             const statusResponse = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/status`, {
@@ -450,6 +482,11 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
             }
 
             const statusResult: KsefStatusResponse = await statusResponse.json();
+
+            if (activeInvoiceIdRef.current !== requestedInvoiceId) {
+                return;
+            }
+
             setStatusDetails(statusResult);
 
             if (statusResult.ksefNumber) {
@@ -490,6 +527,44 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         } finally {
             setLoading(false);
             setLoadingMessage("");
+        }
+    };
+
+    React.useEffect(() => {
+        if (invoice.id && invoice.ksefNumber && !statusDetails && !loading) {
+            void refreshStatus();
+        }
+    }, [invoice.id, invoice.ksefNumber, statusDetails, loading]);
+
+    const copyQrLink = async () => {
+        if (!statusDetails?.qrVerificationUrl) {
+            return;
+        }
+
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(statusDetails.qrVerificationUrl);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = statusDetails.qrVerificationUrl;
+                textarea.setAttribute("readonly", "true");
+                textarea.style.position = "absolute";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+
+            setAlert({
+                type: "success",
+                message: "Link QR został skopiowany do schowka.",
+            });
+        } catch (error) {
+            setAlert({
+                type: "danger",
+                message: error instanceof Error ? error.message : "Nie udało się skopiować linku QR",
+            });
         }
     };
 
@@ -683,6 +758,50 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                             </Row>
                         )}
                     </div>
+
+                    {invoice.ksefNumber && statusDetails?.qrVerificationUrl && (
+                        <div className="mb-3 p-3 border rounded-3 bg-white">
+                            <Row className="align-items-center g-3">
+                                <Col md={4} className="text-center">
+                                    <div className="d-inline-flex p-2 bg-white border rounded-3 shadow-sm">
+                                        <QRCodeSVG
+                                            value={statusDetails.qrVerificationUrl}
+                                            size={176}
+                                            level="M"
+                                            includeMargin
+                                        />
+                                    </div>
+                                    <div className="mt-2 small text-muted">Kod QR dla faktury online</div>
+                                    <div className="fw-bold">{statusDetails.qrLabel || invoice.ksefNumber}</div>
+                                </Col>
+                                <Col md={8}>
+                                    <div className="fw-semibold mb-2">Link weryfikacyjny KSeF</div>
+                                    <div className="small text-break mb-3">
+                                        <code>{statusDetails.qrVerificationUrl}</code>
+                                    </div>
+                                    <div className="d-flex gap-2 flex-wrap">
+                                        <Button
+                                            as="a"
+                                            href={statusDetails.qrVerificationUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            variant="outline-primary"
+                                            size="sm"
+                                        >
+                                            Otwórz link
+                                        </Button>
+                                        <Button
+                                            variant="outline-secondary"
+                                            size="sm"
+                                            onClick={copyQrLink}
+                                        >
+                                            Kopiuj link
+                                        </Button>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+                    )}
 
                     {/* Przyciski akcji */}
                     <div className="d-flex gap-2 flex-wrap">

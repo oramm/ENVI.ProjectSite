@@ -42,6 +42,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const react_router_dom_1 = require("react-router-dom");
+const qrcode_react_1 = require("qrcode.react");
 const KSEF_CORRECTION_TYPES = {
     1: "Korekta skutkująca w dacie ujęcia faktury pierwotnej",
     2: "Korekta skutkująca w dacie wystawienia faktury korygującej",
@@ -55,6 +56,7 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
     const [statusDetails, setStatusDetails] = (0, react_1.useState)(null);
     const [ksefCorrectionType, setKsefCorrectionType] = (0, react_1.useState)(null);
     const pollingRef = (0, react_1.useRef)(null);
+    const activeInvoiceIdRef = (0, react_1.useRef)(invoice.id ?? null);
     // Faktura jest korektą jeśli ma ustawione correctedInvoiceId
     const isCorrectionInvoice = !!invoice.correctedInvoiceId;
     react_1.default.useEffect(() => {
@@ -68,6 +70,14 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
         }
         setKsefCorrectionType(null);
     }, [invoice.id, invoice.ksefCorrectionType, isCorrectionInvoice]);
+    react_1.default.useEffect(() => {
+        activeInvoiceIdRef.current = invoice.id ?? null;
+        stopPolling();
+        setStatusDetails(null);
+        setAlert(null);
+        setLoading(false);
+        setLoadingMessage("");
+    }, [invoice.id]);
     const persistCorrectionType = async (nextCorrectionType) => {
         if (!invoice.id) {
             return false;
@@ -275,6 +285,11 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                 throw new Error(errorMessage + details);
             }
             const sendResult = await sendResponse.json();
+            if (activeInvoiceIdRef.current !== invoice.id) {
+                setLoading(false);
+                setLoadingMessage("");
+                return;
+            }
             const updatedInvoice = {
                 ...invoice,
                 ksefStatus: isCorrectionInvoice ? "PENDING_CORRECTION" : "PENDING",
@@ -304,6 +319,7 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
         const pollingInterval = 3000;
         const checkStatus = async () => {
             attempts++;
+            const requestedInvoiceId = invoice.id;
             try {
                 const statusResponse = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/ksef/status`, {
                     method: "GET",
@@ -314,6 +330,9 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                     throw new Error(errorData.error || "Błąd sprawdzania statusu");
                 }
                 const statusResult = await statusResponse.json();
+                if (activeInvoiceIdRef.current !== requestedInvoiceId) {
+                    return;
+                }
                 setStatusDetails(statusResult);
                 // Sukces - faktura przyjęta
                 if (statusResult.ksefNumber || statusResult.status?.code === 200) {
@@ -381,6 +400,7 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
         setLoading(true);
         setLoadingMessage("Sprawdzanie statusu...");
         setAlert(null);
+        const requestedInvoiceId = invoice.id;
         try {
             const statusResponse = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/ksef/status`, {
                 method: "GET",
@@ -391,6 +411,9 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                 throw new Error(errorData.error || "Błąd sprawdzania statusu");
             }
             const statusResult = await statusResponse.json();
+            if (activeInvoiceIdRef.current !== requestedInvoiceId) {
+                return;
+            }
             setStatusDetails(statusResult);
             if (statusResult.ksefNumber) {
                 const updatedInvoice = {
@@ -433,6 +456,42 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
         finally {
             setLoading(false);
             setLoadingMessage("");
+        }
+    };
+    react_1.default.useEffect(() => {
+        if (invoice.id && invoice.ksefNumber && !statusDetails && !loading) {
+            void refreshStatus();
+        }
+    }, [invoice.id, invoice.ksefNumber, statusDetails, loading]);
+    const copyQrLink = async () => {
+        if (!statusDetails?.qrVerificationUrl) {
+            return;
+        }
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(statusDetails.qrVerificationUrl);
+            }
+            else {
+                const textarea = document.createElement("textarea");
+                textarea.value = statusDetails.qrVerificationUrl;
+                textarea.setAttribute("readonly", "true");
+                textarea.style.position = "absolute";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+            setAlert({
+                type: "success",
+                message: "Link QR został skopiowany do schowka.",
+            });
+        }
+        catch (error) {
+            setAlert({
+                type: "danger",
+                message: error instanceof Error ? error.message : "Nie udało się skopiować linku QR",
+            });
         }
     };
     // Pobieranie UPO
@@ -552,6 +611,20 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                         react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                             react_1.default.createElement("strong", null, "Data przyj\u0119cia:")),
                         react_1.default.createElement(react_bootstrap_1.Col, { md: 9 }, formatDate(statusDetails.acquisitionDate))))),
+                invoice.ksefNumber && statusDetails?.qrVerificationUrl && (react_1.default.createElement("div", { className: "mb-3 p-3 border rounded-3 bg-white" },
+                    react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center g-3" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 4, className: "text-center" },
+                            react_1.default.createElement("div", { className: "d-inline-flex p-2 bg-white border rounded-3 shadow-sm" },
+                                react_1.default.createElement(qrcode_react_1.QRCodeSVG, { value: statusDetails.qrVerificationUrl, size: 176, level: "M", includeMargin: true })),
+                            react_1.default.createElement("div", { className: "mt-2 small text-muted" }, "Kod QR dla faktury online"),
+                            react_1.default.createElement("div", { className: "fw-bold" }, statusDetails.qrLabel || invoice.ksefNumber)),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 8 },
+                            react_1.default.createElement("div", { className: "fw-semibold mb-2" }, "Link weryfikacyjny KSeF"),
+                            react_1.default.createElement("div", { className: "small text-break mb-3" },
+                                react_1.default.createElement("code", null, statusDetails.qrVerificationUrl)),
+                            react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
+                                react_1.default.createElement(react_bootstrap_1.Button, { as: "a", href: statusDetails.qrVerificationUrl, target: "_blank", rel: "noopener noreferrer", variant: "outline-primary", size: "sm" }, "Otw\u00F3rz link"),
+                                react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: copyQrLink }, "Kopiuj link")))))),
                 react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: openPdfPreview, disabled: loading || copyingXml }, "Podgl\u0105d PDF"),
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", onClick: copyCurrentXml, disabled: loading || copyingXml }, copyingXml ? "Kopiowanie XML..." : "Kopiuj XML"),

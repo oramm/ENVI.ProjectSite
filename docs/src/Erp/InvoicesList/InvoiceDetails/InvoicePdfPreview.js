@@ -41,6 +41,7 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const qrcode_react_1 = require("qrcode.react");
 function getCorrectionTypeLabel(correctionType) {
     if (correctionType === "1") {
         return "Korekta skutkująca w dacie ujęcia faktury pierwotnej";
@@ -197,6 +198,7 @@ function InvoicePdfPreview() {
     const [xml, setXml] = (0, react_1.useState)("");
     const [loading, setLoading] = (0, react_1.useState)(true);
     const [error, setError] = (0, react_1.useState)("");
+    const [ksefPreviewStatus, setKsefPreviewStatus] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         let cancelled = false;
         async function loadPreview() {
@@ -207,6 +209,7 @@ function InvoicePdfPreview() {
             }
             setLoading(true);
             setError("");
+            setKsefPreviewStatus(null);
             try {
                 const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${id}/ksef/xml-preview`, {
                     method: "GET",
@@ -219,6 +222,27 @@ function InvoicePdfPreview() {
                 const text = await response.text();
                 if (!cancelled) {
                     setXml(text);
+                }
+                if (!cancelled) {
+                    try {
+                        const statusResponse = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${id}/ksef/status`, {
+                            method: "GET",
+                            credentials: "include",
+                        });
+                        if (statusResponse.ok) {
+                            const statusData = await statusResponse.json();
+                            if (!cancelled && statusData?.qrVerificationUrl) {
+                                setKsefPreviewStatus({
+                                    qrVerificationUrl: statusData.qrVerificationUrl,
+                                    qrLabel: statusData.qrLabel,
+                                    ksefNumber: statusData.ksefNumber,
+                                });
+                            }
+                        }
+                    }
+                    catch {
+                        // Preview PDF nadal działa bez QR, jeśli status KSeF chwilowo nie jest dostępny.
+                    }
                 }
             }
             catch (err) {
@@ -252,6 +276,8 @@ function InvoicePdfPreview() {
     }, [xml]);
     const parsed = parsedResult.data;
     const isCorrectionInvoice = parsed?.invoiceType?.startsWith("KOR") || false;
+    const hasKsefQr = Boolean(ksefPreviewStatus?.qrVerificationUrl);
+    const ksefInvoiceNumber = ksefPreviewStatus?.ksefNumber || ksefPreviewStatus?.qrLabel || "";
     if (loading) {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4" },
             react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
@@ -271,7 +297,7 @@ function InvoicePdfPreview() {
                 @media print {
                     @page {
                         size: A4;
-                        margin: 10mm;
+                        margin: 0 !important;
                     }
                     body > #root .navbar.sticky-top,
                     body > #root .navbar.mt-auto,
@@ -280,26 +306,53 @@ function InvoicePdfPreview() {
                         display: none !important;
                     }
                     .no-print { display: none !important; }
-                    .invoice-preview-page > :not(.invoice-sheet) {
+                    .invoice-preview-page > :not(.invoice-sheet):not(.invoice-qr-print-section) {
                         display: none !important;
                     }
-                    body { background: #fff !important; }
-                    .invoice-preview-page { padding: 0 !important; }
-                    .invoice-sheet {
-                        width: 190mm !important;
-                        max-width: 190mm !important;
+                    body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+                    .invoice-preview-page {
+                        width: 100% !important;
+                        max-width: none !important;
+                        padding: 0 !important;
                         margin: 0 auto !important;
+                        box-sizing: border-box !important;
+                    }
+                    .invoice-sheet {
+                        width: 100% !important;
+                        max-width: 190mm !important;
+                        padding: 10mm !important;
+                        margin: 0 auto !important;
+                        box-sizing: border-box !important;
                         box-shadow: none !important;
                         border: 1px solid #666 !important;
+                    }
+                    .invoice-party-row > [class*="col-"] {
+                        flex: 0 0 50% !important;
+                        max-width: 50% !important;
+                    }
+                    .invoice-qr-print-section {
+                        break-before: page;
+                        page-break-before: always;
                         break-inside: avoid;
                         page-break-inside: avoid;
                     }
+                    .invoice-qr-preview-section {
+                        display: none !important;
+                    }
+                    .invoice-qr-preview-actions {
+                        display: none !important;
+                    }
                 }
                 .invoice-sheet {
+                    width: 100%;
                     max-width: 190mm;
                     margin: 0 auto;
                     border: 1px solid #d0d0d0;
                     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+                }
+                .invoice-party-row > [class*="col-"] {
+                    flex: 0 0 50%;
+                    max-width: 50%;
                 }
                 .invoice-ksef-title {
                     letter-spacing: 0.04em;
@@ -328,7 +381,7 @@ function InvoicePdfPreview() {
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Col, null,
                         react_1.default.createElement("div", { className: "invoice-ksef-title" }, "FAKTURA (podgl\u0105d)"),
-                        react_1.default.createElement("div", { className: "text-muted small" }, "To nie jest dokument, tylko podgl\u0105d danych przed wys\u0142aniem do KSeF")),
+                        react_1.default.createElement("div", { className: "text-muted small" }, "To nie jest dokument, tylko podgl\u0105d danych wysy\u0142anych do KSeF")),
                     react_1.default.createElement(react_bootstrap_1.Col, { className: "text-end" },
                         react_1.default.createElement("div", { className: "mb-2" },
                             react_1.default.createElement("span", { className: "preview-badge" }, parsed.invoiceType || "VAT")),
@@ -344,15 +397,19 @@ function InvoicePdfPreview() {
                             react_1.default.createElement("strong", null, "Data sprzeda\u017Cy:"),
                             " ",
                             parsed.saleDate || "-"),
+                        ksefInvoiceNumber && (react_1.default.createElement("div", null,
+                            react_1.default.createElement("strong", null, "Numer KSeF:"),
+                            " ",
+                            react_1.default.createElement("span", { className: "invoice-mono" }, ksefInvoiceNumber))),
                         isCorrectionInvoice && parsed.correctionType && (react_1.default.createElement("div", null,
                             react_1.default.createElement("strong", null, "Typ korekty:"),
                             " ",
                             getCorrectionTypeLabel(parsed.correctionType))))),
-                react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
-                    react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3 invoice-party-row" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { xs: 6 },
                         react_1.default.createElement(react_bootstrap_1.Card, null,
                             react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "py-2" },
-                                react_1.default.createElement("strong", null, "Sprzedawca (Podmiot1)")),
+                                react_1.default.createElement("strong", null, "Sprzedawca")),
                             react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
                                 react_1.default.createElement("div", null,
                                     react_1.default.createElement("strong", null, parsed.seller.name || "-")),
@@ -361,10 +418,10 @@ function InvoicePdfPreview() {
                                     react_1.default.createElement("span", { className: "invoice-mono" }, parsed.seller.nip || "-")),
                                 react_1.default.createElement("div", null, parsed.seller.line1 || "-"),
                                 react_1.default.createElement("div", null, parsed.seller.line2 || "")))),
-                    react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                    react_1.default.createElement(react_bootstrap_1.Col, { xs: 6 },
                         react_1.default.createElement(react_bootstrap_1.Card, null,
                             react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "py-2" },
-                                react_1.default.createElement("strong", null, "Nabywca (Podmiot2)")),
+                                react_1.default.createElement("strong", null, "Nabywca")),
                             react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
                                 react_1.default.createElement("div", null,
                                     react_1.default.createElement("strong", null, parsed.buyer.name || "-")),
@@ -384,7 +441,7 @@ function InvoicePdfPreview() {
                     react_1.default.createElement(react_bootstrap_1.Col, null,
                         react_1.default.createElement(react_bootstrap_1.Card, null,
                             react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "py-2" },
-                                react_1.default.createElement("strong", null, "Podmioty trzecie (Podmiot3)")),
+                                react_1.default.createElement("strong", null, "Podmioty trzecie")),
                             react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" }, parsed.thirdParties.map((thirdParty, index) => (react_1.default.createElement("div", { key: `third-party-${index}`, className: index > 0 ? "mt-3 pt-3 border-top" : "" },
                                 react_1.default.createElement("div", null,
                                     react_1.default.createElement("strong", null,
@@ -449,5 +506,36 @@ function InvoicePdfPreview() {
                                     react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
                                         react_1.default.createElement("div", null,
                                             react_1.default.createElement("strong", null, "Bank:")),
-                                        react_1.default.createElement("div", null, parsed.bankName || react_1.default.createElement("span", { className: "text-muted" }, "(puste)"))))))))))));
+                                        react_1.default.createElement("div", null, parsed.bankName || react_1.default.createElement("span", { className: "text-muted" }, "(puste)")))))))),
+                hasKsefQr && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-4 justify-content-center" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 8, lg: 6, className: "text-center invoice-qr-preview-section" },
+                        react_1.default.createElement(react_bootstrap_1.Card, { className: "shadow-sm" },
+                            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "text-center py-4" },
+                                react_1.default.createElement("div", { className: "fw-bold mb-2" }, "Sprawd\u017A, czy Twoja faktura znajduje si\u0119 w KSeF!"),
+                                react_1.default.createElement("div", { className: "d-inline-flex p-3 bg-white border rounded-3" },
+                                    react_1.default.createElement(qrcode_react_1.QRCodeSVG, { value: ksefPreviewStatus?.qrVerificationUrl || "", size: 180, level: "M", includeMargin: true })),
+                                ksefInvoiceNumber && (react_1.default.createElement("div", { className: "mt-2 small text-break" },
+                                    react_1.default.createElement("strong", null, "Numer KSeF:"),
+                                    " ",
+                                    react_1.default.createElement("span", { className: "invoice-mono" }, ksefInvoiceNumber))),
+                                react_1.default.createElement("div", { className: "mt-3 d-flex gap-2 justify-content-center flex-wrap invoice-qr-preview-actions" },
+                                    react_1.default.createElement(react_bootstrap_1.Button, { as: "a", href: ksefPreviewStatus?.qrVerificationUrl || "", target: "_blank", rel: "noopener noreferrer", size: "sm", variant: "outline-primary" }, "Otw\u00F3rz link")),
+                                react_1.default.createElement("div", { className: "d-none d-print-block mt-3 small text-break" },
+                                    react_1.default.createElement("strong", null, "Link weryfikacyjny:"),
+                                    " ",
+                                    react_1.default.createElement("span", { className: "invoice-mono" }, ksefPreviewStatus?.qrVerificationUrl))))))))),
+        hasKsefQr && (react_1.default.createElement("div", { className: "invoice-qr-print-section d-none d-print-block mt-4" },
+            react_1.default.createElement(react_bootstrap_1.Card, { className: "shadow-sm", style: { maxWidth: 520, margin: '0 auto' } },
+                react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "text-center py-4" },
+                    react_1.default.createElement("div", { className: "fw-bold mb-2" }, "Sprawd\u017A, czy Twoja faktura znajduje si\u0119 w KSeF!"),
+                    react_1.default.createElement("div", { className: "d-inline-flex p-3 bg-white border rounded-3" },
+                        react_1.default.createElement(qrcode_react_1.QRCodeSVG, { value: ksefPreviewStatus?.qrVerificationUrl || "", size: 180, level: "M", includeMargin: true })),
+                    ksefInvoiceNumber && (react_1.default.createElement("div", { className: "mt-2 small text-break" },
+                        react_1.default.createElement("strong", null, "Numer KSeF:"),
+                        " ",
+                        react_1.default.createElement("span", { className: "invoice-mono" }, ksefInvoiceNumber))),
+                    react_1.default.createElement("div", { className: "mt-3 small text-break" },
+                        react_1.default.createElement("strong", null, "Link weryfikacyjny:"),
+                        " ",
+                        react_1.default.createElement("span", { className: "invoice-mono" }, ksefPreviewStatus?.qrVerificationUrl))))))));
 }
