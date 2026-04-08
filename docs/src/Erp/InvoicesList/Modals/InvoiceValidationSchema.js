@@ -99,8 +99,6 @@ function makeInvoiceIssueValidationSchema() {
         number: Yup.string()
             .min(6, 'Numer musi mieć co najmniej 6 znaków')
             .max(9, 'Numer może mieć maksymalnie 9 znaków'),
-        file: Yup.mixed()
-            .notRequired()
     }));
 }
 function makeInvoiceSetAsSentValidationSchema() {

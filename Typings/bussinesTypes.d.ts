@@ -499,6 +499,7 @@ export interface Invoice extends RepositoryDataItem {
     _totalGrossValue?: number;
     _totalNetValue?: number;
     // Pola KSeF
+    ksefCorrectionType?: 1 | 2 | 3 | null;
     ksefNumber?: string | null;
     ksefStatus?: string | null;
     ksefSessionId?: string | null;

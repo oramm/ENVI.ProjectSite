@@ -41,6 +41,18 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+function getCorrectionTypeLabel(correctionType) {
+    if (correctionType === "1") {
+        return "Korekta skutkująca w dacie ujęcia faktury pierwotnej";
+    }
+    if (correctionType === "2") {
+        return "Korekta skutkująca w dacie wystawienia faktury korygującej";
+    }
+    if (correctionType === "3") {
+        return "Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne";
+    }
+    return "(nie ustawiono)";
+}
 function findFirstByLocalName(root, localName) {
     const all = root.getElementsByTagName("*");
     for (let i = 0; i < all.length; i++) {
@@ -107,6 +119,7 @@ function parsePreviewXml(xml) {
         saleDate: getChildText(fa, "P_6"),
         totalGross: getChildText(fa, "P_15"),
         invoiceType: getChildText(fa, "RodzajFaktury"),
+        correctionType: getChildText(fa, "TypKorekty"),
         paymentDeadline: getChildText(terminPlatnosci, "Termin"),
         bankAccount: getChildText(rachunekBankowy, "NrRB"),
         bankName: getChildText(rachunekBankowy, "NazwaBanku"),
@@ -185,6 +198,7 @@ function InvoicePdfPreview() {
         }
     }, [xml]);
     const parsed = parsedResult.data;
+    const isCorrectionInvoice = parsed?.invoiceType?.startsWith("KOR") || false;
     if (loading) {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4" },
             react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
@@ -243,7 +257,7 @@ function InvoicePdfPreview() {
         react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-3 no-print" },
             react_1.default.createElement("div", null,
                 react_1.default.createElement("h5", { className: "mb-1" }, "Podgl\u0105d faktury do PDF"),
-                react_1.default.createElement("div", { className: "text-muted small" }, "Widok generowany z aktualnego XML KSeF")),
+                react_1.default.createElement("div", { className: "text-muted small" }, "Widok generowany z aktualnego XML")),
             react_1.default.createElement("div", { className: "d-flex gap-2" },
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => navigate(`/invoice/${id}`) }, "Wr\u00F3\u0107"),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: () => window.print() }, "Drukuj / Zapisz PDF"))),
@@ -251,8 +265,8 @@ function InvoicePdfPreview() {
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Col, null,
-                        react_1.default.createElement("div", { className: "invoice-ksef-title" }, "FAKTURA (podgl\u0105d KSeF)"),
-                        react_1.default.createElement("div", { className: "text-muted small" }, "Uk\u0142ad zbli\u017Cony do orygina\u0142u KSeF")),
+                        react_1.default.createElement("div", { className: "invoice-ksef-title" }, "FAKTURA (podgl\u0105d)"),
+                        react_1.default.createElement("div", { className: "text-muted small" }, "To nie jest dokument, tylko podgl\u0105d danych przed wys\u0142aniem do KSeF")),
                     react_1.default.createElement(react_bootstrap_1.Col, { className: "text-end" },
                         react_1.default.createElement("div", { className: "mb-2" },
                             react_1.default.createElement("span", { className: "preview-badge" }, parsed.invoiceType || "VAT")),
@@ -267,7 +281,11 @@ function InvoicePdfPreview() {
                         react_1.default.createElement("div", null,
                             react_1.default.createElement("strong", null, "Data sprzeda\u017Cy:"),
                             " ",
-                            parsed.saleDate || "-"))),
+                            parsed.saleDate || "-"),
+                        isCorrectionInvoice && parsed.correctionType && (react_1.default.createElement("div", null,
+                            react_1.default.createElement("strong", null, "Typ korekty:"),
+                            " ",
+                            getCorrectionTypeLabel(parsed.correctionType))))),
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
                         react_1.default.createElement(react_bootstrap_1.Card, null,

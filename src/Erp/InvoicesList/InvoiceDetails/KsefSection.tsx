@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Alert, Button, Container, Row, Col, Spinner } from "react-bootstrap";
+import { Alert, Button, Container, Row, Col, Spinner, Form } from "react-bootstrap";
 import { Invoice } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import MainSetup from "../../../React/MainSetupReact";
@@ -12,6 +12,20 @@ interface KsefSendResponse {
     status: string;
     message: string;
 }
+
+interface CorrectionSendPayload {
+    originalKsefNumber: string;
+    originalInvoiceNumber?: string;
+    originalIssueDate?: string;
+    correctionReason?: string;
+    correctionType?: 1 | 2 | 3;
+}
+
+const KSEF_CORRECTION_TYPES = {
+    1: "Korekta skutkująca w dacie ujęcia faktury pierwotnej",
+    2: "Korekta skutkująca w dacie wystawienia faktury korygującej",
+    3: "Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne",
+} as const;
 
 interface KsefStatusResponse {
     invoiceId: number;
@@ -47,10 +61,70 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
     const [copyingXml, setCopyingXml] = useState(false);
     const [alert, setAlert] = useState<AlertState>(null);
     const [statusDetails, setStatusDetails] = useState<KsefStatusResponse | null>(null);
+    const [ksefCorrectionType, setKsefCorrectionType] = useState<1 | 2 | 3 | null>(null);
     const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
     // Faktura jest korektą jeśli ma ustawione correctedInvoiceId
     const isCorrectionInvoice = !!invoice.correctedInvoiceId;
+
+    React.useEffect(() => {
+        if (!isCorrectionInvoice || !invoice.id) {
+            return;
+        }
+
+        const fromInvoice = Number(invoice.ksefCorrectionType);
+        if (fromInvoice >= 1 && fromInvoice <= 3) {
+            setKsefCorrectionType(fromInvoice as 1 | 2 | 3);
+            return;
+        }
+
+        setKsefCorrectionType(null);
+    }, [invoice.id, invoice.ksefCorrectionType, isCorrectionInvoice]);
+
+    const persistCorrectionType = async (nextCorrectionType: 1 | 2 | 3 | null): Promise<boolean> => {
+        if (!invoice.id) {
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    ...invoice,
+                    ksefCorrectionType: nextCorrectionType,
+                    _fieldsToUpdate: ["ksefCorrectionType"],
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(
+                    errorData.error
+                        || errorData.errorMessage
+                        || errorData.message
+                        || `Błąd zapisu typu korekty (${response.status})`,
+                );
+            }
+
+            const updatedInvoiceFromServer = await response.json();
+            onInvoiceUpdate({
+                ...invoice,
+                ...updatedInvoiceFromServer,
+                ksefCorrectionType: nextCorrectionType,
+            });
+            return true;
+        } catch (error) {
+            setAlert({
+                type: "danger",
+                message: error instanceof Error ? error.message : "Nie udało się zapisać typu korekty",
+            });
+            return false;
+        }
+    };
 
     // Sprawdź czy przycisk "Wyślij do KSeF" powinien być widoczny
     const canSendToKsef = useCallback(() => {
@@ -63,12 +137,70 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         // Nie pokazuj jeśli faktura ma już sessionId (była wysłana)
         if (invoice.ksefSessionId) return false;
 
-        // Dla korekty - nie używaj tego przycisku (wysyłka korekty jest przez CorrectionModal)
-        if (isCorrectionInvoice) return false;
-
         // Pokaż tylko gdy faktura jest ustawiona jako "Wysłana" (SENT)
         return invoice.status === MainSetup.InvoiceStatuses.SENT;
-    }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status, isCorrectionInvoice]);
+    }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status]);
+
+    const resolveCorrectionSendPayload = async (): Promise<CorrectionSendPayload> => {
+        const originalKsefNumberFromInvoice =
+            invoice.originalKsefNumber || invoice._correctedInvoice?.ksefNumber || null;
+
+        if (originalKsefNumberFromInvoice) {
+            const payload: CorrectionSendPayload = {
+                originalKsefNumber: originalKsefNumberFromInvoice,
+                originalInvoiceNumber: invoice._correctedInvoice?.number || undefined,
+                originalIssueDate: invoice._correctedInvoice?.issueDate || undefined,
+                correctionReason: invoice.correctionReason || undefined,
+            };
+            if (ksefCorrectionType !== null) {
+                payload.correctionType = ksefCorrectionType;
+            }
+            return {
+                ...payload,
+            };
+        }
+
+        if (!invoice.correctedInvoiceId) {
+            throw new Error("Brak correctedInvoiceId dla faktury korygującej");
+        }
+
+        const originalResponse = await fetch(`${MainSetup.serverUrl}invoices`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                orConditions: [{ id: invoice.correctedInvoiceId }],
+            }),
+        });
+
+        if (!originalResponse.ok) {
+            throw new Error("Nie udało się pobrać faktury źródłowej do wysyłki korekty");
+        }
+
+        const originalInvoices = await originalResponse.json();
+        const originalInvoice: Invoice | undefined = Array.isArray(originalInvoices)
+            ? originalInvoices[0]
+            : undefined;
+
+        const originalKsefNumber = originalInvoice?.ksefNumber || null;
+        if (!originalKsefNumber) {
+            throw new Error("Faktura źródłowa nie ma numeru KSeF (originalKsefNumber)");
+        }
+
+        const payload: CorrectionSendPayload = {
+            originalKsefNumber,
+            originalInvoiceNumber: originalInvoice?.number || undefined,
+            originalIssueDate: originalInvoice?.issueDate || undefined,
+            correctionReason: invoice.correctionReason || undefined,
+        };
+        if (ksefCorrectionType !== null) {
+            payload.correctionType = ksefCorrectionType;
+        }
+
+        return payload;
+    };
 
     // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
     const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
@@ -83,7 +215,9 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         setAlert(null);
 
         try {
-            const response = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/xml-preview`, {
+            const previewUrl = `${MainSetup.serverUrl}invoice/${invoice.id}/ksef/xml-preview`;
+
+            const response = await fetch(previewUrl, {
                 method: "GET",
                 credentials: "include",
             });
@@ -143,13 +277,26 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         setStatusDetails(null);
 
         try {
-            const sendResponse = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/send`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
+            let sendResponse: Response;
+            if (isCorrectionInvoice) {
+                const correctionPayload = await resolveCorrectionSendPayload();
+                sendResponse = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/correction`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(correctionPayload),
+                });
+            } else {
+                sendResponse = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/send`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                });
+            }
 
             if (!sendResponse.ok) {
                 const errorData = await sendResponse.json();
@@ -171,7 +318,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
             
             const updatedInvoice: Invoice = {
                 ...invoice,
-                ksefStatus: "PENDING",
+                ksefStatus: isCorrectionInvoice ? "PENDING_CORRECTION" : "PENDING",
                 ksefSessionId: sendResult.referenceNumber,
             };
             onInvoiceUpdate(updatedInvoice);
@@ -489,6 +636,38 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                                 </Col>
                                 <Col md={9}>
                                     <code className="small">{invoice.ksefSessionId}</code>
+                                </Col>
+                            </Row>
+                        )}
+
+                        {isCorrectionInvoice && (
+                            <Row className="mt-2">
+                                <Col md={3}>
+                                    <strong>Typ korekty KSeF:</strong>
+                                </Col>
+                                <Col md={9}>
+                                    <Form.Select
+                                        size="sm"
+                                        value={ksefCorrectionType ?? ""}
+                                        onChange={async (e) => {
+                                            const rawValue = e.target.value;
+                                            const nextValue = rawValue ? (Number(rawValue) as 1 | 2 | 3) : null;
+                                            const previousValue = ksefCorrectionType;
+
+                                            setKsefCorrectionType(nextValue);
+                                            const saved = await persistCorrectionType(nextValue);
+                                            if (!saved) {
+                                                setKsefCorrectionType(previousValue);
+                                            }
+                                        }}
+                                    >
+                                        <option value="">Wybierz</option>
+                                        {Object.entries(KSEF_CORRECTION_TYPES).map(([value, label]) => (
+                                            <option key={value} value={value}>
+                                                {label}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
                                 </Col>
                             </Row>
                         )}

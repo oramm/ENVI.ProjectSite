@@ -52,8 +52,5 @@ function InvoiceIssueModalBody({ initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "input", isValid: !errors?.number, isInvalid: !!errors?.number, ...register("number") }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "number", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf", ...register("file"), multiple: false }))));
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "number", errors: errors }))));
 }

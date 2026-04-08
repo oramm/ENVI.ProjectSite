@@ -26,6 +26,7 @@ type PreviewDocument = {
     saleDate: string;
     totalGross: string;
     invoiceType: string;
+    correctionType: string;
     paymentDeadline: string;
     bankAccount: string;
     bankName: string;
@@ -33,6 +34,20 @@ type PreviewDocument = {
     buyer: PreviewParty;
     items: PreviewItem[];
 };
+
+function getCorrectionTypeLabel(correctionType: string): string {
+    if (correctionType === "1") {
+        return "Korekta skutkująca w dacie ujęcia faktury pierwotnej";
+    }
+    if (correctionType === "2") {
+        return "Korekta skutkująca w dacie wystawienia faktury korygującej";
+    }
+    if (correctionType === "3") {
+        return "Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne";
+    }
+
+    return "(nie ustawiono)";
+}
 
 function findFirstByLocalName(root: Element | Document, localName: string): Element | null {
     const all = root.getElementsByTagName("*");
@@ -107,6 +122,7 @@ function parsePreviewXml(xml: string): PreviewDocument {
         saleDate: getChildText(fa, "P_6"),
         totalGross: getChildText(fa, "P_15"),
         invoiceType: getChildText(fa, "RodzajFaktury"),
+        correctionType: getChildText(fa, "TypKorekty"),
         paymentDeadline: getChildText(terminPlatnosci, "Termin"),
         bankAccount: getChildText(rachunekBankowy, "NrRB"),
         bankName: getChildText(rachunekBankowy, "NazwaBanku"),
@@ -190,6 +206,7 @@ export default function InvoicePdfPreview() {
     }, [xml]);
 
     const parsed = parsedResult.data;
+    const isCorrectionInvoice = parsed?.invoiceType?.startsWith("KOR") || false;
 
     if (loading) {
         return (
@@ -263,7 +280,7 @@ export default function InvoicePdfPreview() {
             <div className="d-flex justify-content-between align-items-center mb-3 no-print">
                 <div>
                     <h5 className="mb-1">Podgląd faktury do PDF</h5>
-                    <div className="text-muted small">Widok generowany z aktualnego XML KSeF</div>
+                    <div className="text-muted small">Widok generowany z aktualnego XML</div>
                 </div>
                 <div className="d-flex gap-2">
                     <Button variant="outline-secondary" onClick={() => navigate(`/invoice/${id}`)}>
@@ -279,8 +296,8 @@ export default function InvoicePdfPreview() {
                 <Card.Body>
                     <Row className="mb-3">
                         <Col>
-                            <div className="invoice-ksef-title">FAKTURA (podgląd KSeF)</div>
-                            <div className="text-muted small">Układ zbliżony do oryginału KSeF</div>
+                            <div className="invoice-ksef-title">FAKTURA (podgląd)</div>
+                            <div className="text-muted small">To nie jest dokument, tylko podgląd danych przed wysłaniem do KSeF</div>
                         </Col>
                         <Col className="text-end">
                             <div className="mb-2">
@@ -289,6 +306,11 @@ export default function InvoicePdfPreview() {
                             <div><strong>Numer:</strong> <span className="invoice-mono">{parsed.invoiceNumber || "-"}</span></div>
                             <div><strong>Data wystawienia:</strong> {parsed.issueDate || "-"}</div>
                             <div><strong>Data sprzedaży:</strong> {parsed.saleDate || "-"}</div>
+                            {isCorrectionInvoice && parsed.correctionType && (
+                                <div>
+                                    <strong>Typ korekty:</strong> {getCorrectionTypeLabel(parsed.correctionType)}
+                                </div>
+                            )}
                         </Col>
                     </Row>
 

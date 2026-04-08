@@ -42,20 +42,20 @@ const react_bootstrap_1 = require("react-bootstrap");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const Tools_1 = __importDefault(require("../../../React/Tools/Tools"));
 const InvoicesController_1 = require("../InvoicesController");
-// Typy korekty KSeF
 const KSEF_CORRECTION_TYPES = {
-    1: "Skutek w dacie faktury pierwotnej (błąd rachunkowy)",
-    2: "Skutek w dacie korekty (rabat, zwrot)",
-    3: "Inna data",
+    1: "Korekta skutkująca w dacie ujęcia faktury pierwotnej",
+    2: "Korekta skutkująca w dacie wystawienia faktury korygującej",
+    3: "Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne",
 };
 function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
     const [correctionType, setCorrectionType] = (0, react_1.useState)("zero");
     const [correctionReason, setCorrectionReason] = (0, react_1.useState)("");
-    const [ksefCorrectionType, setKsefCorrectionType] = (0, react_1.useState)(2);
+    const [issueDate, setIssueDate] = (0, react_1.useState)(invoice.issueDate || new Date().toISOString().slice(0, 10));
+    const [sentDate, setSentDate] = (0, react_1.useState)(new Date().toISOString().slice(0, 10));
+    const [ksefCorrectionType, setKsefCorrectionType] = (0, react_1.useState)(null);
     const [customItems, setCustomItems] = (0, react_1.useState)([
         { description: "", quantity: "1", unitPrice: "0", vatTax: 23 },
     ]);
-    const [attachment, setAttachment] = (0, react_1.useState)(null);
     const [originalItems, setOriginalItems] = (0, react_1.useState)([]);
     const [loadingItems, setLoadingItems] = (0, react_1.useState)(false);
     const [loading, setLoading] = (0, react_1.useState)(false);
@@ -65,7 +65,9 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
     const resetForm = () => {
         setCorrectionType("zero");
         setCorrectionReason("");
-        setKsefCorrectionType(2);
+        setIssueDate(invoice.issueDate || new Date().toISOString().slice(0, 10));
+        setSentDate(new Date().toISOString().slice(0, 10));
+        setKsefCorrectionType(null);
         setCustomItems([{ description: "", quantity: 1, unitPrice: 0, vatTax: 23 }]);
         setOriginalItems([]);
         setError(null);
@@ -78,6 +80,12 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
             loadOriginalItems();
         }
     }, [show, correctionType]);
+    (0, react_1.useEffect)(() => {
+        if (show) {
+            setIssueDate(invoice.issueDate || new Date().toISOString().slice(0, 10));
+            setSentDate(new Date().toISOString().slice(0, 10));
+        }
+    }, [show, invoice.id, invoice.issueDate]);
     const loadOriginalItems = async () => {
         setLoadingItems(true);
         try {
@@ -140,11 +148,15 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                 correctionType,
                 correctionTypeType: typeof correctionType,
                 correctionReason,
+                issueDate,
+                sentDate,
                 ownerId: currentPerson?.id,
             });
             const formData = new FormData();
             formData.append("correctionType", correctionType);
             formData.append("correctionReason", correctionReason.trim());
+            formData.append("issueDate", issueDate);
+            formData.append("sentDate", sentDate);
             if (currentPerson?.id)
                 formData.append("ownerId", String(currentPerson.id));
             if (correctionType === "custom") {
@@ -165,9 +177,6 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                 });
                 formData.append("customItems", JSON.stringify(converted));
             }
-            if (attachment) {
-                formData.append("file", attachment);
-            }
             const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/correction`, {
                 method: "POST",
                 credentials: "include",
@@ -185,15 +194,7 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                 return;
             }
             setCreatedCorrection(result.correctionInvoice);
-            // Jeśli oryginalna faktura ma numer KSeF, przejdź do kroku wysyłki
-            if (invoice.ksefNumber) {
-                setStep("send");
-            }
-            else {
-                // Faktura bez KSeF - zakończ
-                onCorrectionCreated(result.correctionInvoice);
-                handleClose();
-            }
+            setStep("created");
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "Błąd tworzenia korekty");
@@ -202,50 +203,53 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
             setLoading(false);
         }
     };
-    // Krok 2: Wyślij korektę do KSeF
-    const handleSendToKsef = async () => {
-        if (!createdCorrection || !invoice.ksefNumber)
+    const handleGoToDetails = async () => {
+        if (!createdCorrection)
             return;
-        setLoading(true);
-        setError(null);
+        if (!createdCorrection.id) {
+            setError("Brak ID korekty - nie można przejść do szczegółów.");
+            return;
+        }
+        if (ksefCorrectionType === null) {
+            onCorrectionCreated(createdCorrection);
+            handleClose();
+            return;
+        }
         try {
-            const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${createdCorrection.id}/ksef/correction`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            setLoading(true);
+            const saveResponse = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${createdCorrection.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 credentials: "include",
                 body: JSON.stringify({
-                    originalKsefNumber: invoice.ksefNumber,
-                    correctionReason: correctionReason.trim(),
-                    correctionType: ksefCorrectionType,
+                    ...createdCorrection,
+                    ksefCorrectionType,
+                    _fieldsToUpdate: ["ksefCorrectionType"],
                 }),
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || errorData.message || "Błąd wysyłki do KSeF");
+            if (!saveResponse.ok) {
+                const errorData = await saveResponse.json().catch(() => ({}));
+                throw new Error(errorData.error
+                    || errorData.errorMessage
+                    || errorData.message
+                    || "Nie udało się zapisać typu korekty");
             }
-            const result = await response.json();
-            // Zaktualizuj korektę z danymi KSeF
-            const updatedCorrection = {
+            const updatedCorrection = await saveResponse.json();
+            onCorrectionCreated({
                 ...createdCorrection,
-                ksefStatus: "PENDING_CORRECTION",
-                ksefSessionId: result.referenceNumber,
-            };
-            onCorrectionCreated(updatedCorrection);
+                ...updatedCorrection,
+                ksefCorrectionType,
+            });
             handleClose();
         }
         catch (err) {
-            setError(err instanceof Error ? err.message : "Błąd wysyłki do KSeF");
+            setError(err instanceof Error ? err.message : "Nie udało się zapisać typu korekty");
         }
         finally {
             setLoading(false);
         }
-    };
-    // Pomiń wysyłkę do KSeF
-    const handleSkipKsef = () => {
-        if (createdCorrection) {
-            onCorrectionCreated(createdCorrection);
-        }
-        handleClose();
     };
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: handleClose, size: "lg" },
         react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
@@ -284,6 +288,15 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                         " ",
                         react_1.default.createElement("span", { className: "text-danger" }, "*")),
                     react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, value: correctionReason, onChange: (e) => setCorrectionReason(e.target.value), placeholder: "Np. B\u0142\u0105d w cenie, Zwrot towaru, Rabat...", required: true })),
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null,
+                        react_1.default.createElement("strong", null, "Data sprzeda\u017Cy")),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", value: issueDate, onChange: (e) => setIssueDate(e.target.value), required: true }),
+                    react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, "Domy\u015Blnie ustawiona data sprzeda\u017Cy z faktury \u017Ar\u00F3d\u0142owej.")),
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null,
+                        react_1.default.createElement("strong", null, "Data wys\u0142ania korekty")),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", value: sentDate, onChange: (e) => setSentDate(e.target.value), required: true })),
                 correctionType === "custom" && (react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null,
                         react_1.default.createElement("strong", null, "Pozycje korekty")),
@@ -351,37 +364,25 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                                         react_1.default.createElement("option", { value: 0 }, "0%"))),
                                 react_1.default.createElement("td", null,
                                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-danger", size: "sm", onClick: () => removeCustomItem(index), disabled: customItems.length === 1 }, "\u00D7"))))))),
-                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: addCustomItem }, "+ Dodaj pozycj\u0119"))))),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null,
-                        react_1.default.createElement("strong", null, "Za\u0142\u0105cznik PDF (opcjonalnie)")),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", accept: "application/pdf", onChange: (e) => {
-                            const f = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-                            setAttachment(f);
-                        } }),
-                    attachment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" },
-                        "Wybrany plik: ",
-                        attachment.name))))),
-            step === "send" && createdCorrection && (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: addCustomItem }, "+ Dodaj pozycj\u0119"))))))),
+            step === "created" && createdCorrection && (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success" },
                     "\u2705 Korekta zosta\u0142a utworzona: ",
                     react_1.default.createElement("strong", null, createdCorrection.number || `#${createdCorrection.id}`)),
-                react_1.default.createElement("p", null, "Oryginalna faktura ma numer KSeF. Czy chcesz wys\u0142a\u0107 korekt\u0119 do KSeF?"),
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null,
                         react_1.default.createElement("strong", null, "Typ korekty KSeF")),
-                    react_1.default.createElement(react_bootstrap_1.Form.Select, { value: ksefCorrectionType, onChange: (e) => setKsefCorrectionType(Number(e.target.value)) }, Object.entries(KSEF_CORRECTION_TYPES).map(([value, label]) => (react_1.default.createElement("option", { key: value, value: value }, label)))),
-                    react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, "Najcz\u0119\u015Bciej wybierany: typ 2 (skutek w dacie korekty)")),
-                react_1.default.createElement(react_bootstrap_1.Alert, { variant: "secondary" },
-                    react_1.default.createElement("strong", null, "Nr KSeF faktury \u017Ar\u00F3d\u0142owej:"),
-                    react_1.default.createElement("br", null),
-                    react_1.default.createElement("code", null, invoice.ksefNumber))))),
+                    react_1.default.createElement(react_bootstrap_1.Form.Select, { value: ksefCorrectionType ?? "", onChange: (e) => {
+                            const rawValue = e.target.value;
+                            setKsefCorrectionType(rawValue ? Number(rawValue) : null);
+                        } },
+                        react_1.default.createElement("option", { value: "" }, "Wybierz"),
+                        Object.entries(KSEF_CORRECTION_TYPES).map(([value, label]) => (react_1.default.createElement("option", { key: value, value: value }, label))))),
+                react_1.default.createElement("p", null, "Korekta jest gotowa. Mo\u017Cesz przej\u015B\u0107 do jej szczeg\u00F3\u0142\u00F3w i stamt\u0105d wykona\u0107 dalsze akcje, w tym wysy\u0142k\u0119 do KSeF.")))),
         react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: handleClose, disabled: loading }, "Anuluj"),
             step === "create" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleCreateCorrection, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                 "Tworzenie...")) : ("Utwórz korektę"))),
-            step === "send" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
-                "Wysy\u0142anie...")) : ("Wyślij do KSeF"))))));
+            step === "created" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleGoToDetails }, "Przejd\u017A do szczeg\u00F3\u0142\u00F3w korekty")))));
 }

@@ -3,7 +3,7 @@ import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { Invoice } from "../../../../Typings/bussinesTypes";
-import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoiceIssueModalBody({ initialData }: ModalBodyProps<Invoice>) {
     const {
@@ -35,14 +35,6 @@ export function InvoiceIssueModalBody({ initialData }: ModalBodyProps<Invoice>) 
                     {...register("number")}
                 />
                 <ErrorMessage name="number" errors={errors} />
-            </Form.Group>
-            <Form.Group controlId="file">
-                <Form.Label>Plik</Form.Label>
-                <FileInput
-                    acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"
-                    {...register("file")}
-                    multiple={false}
-                />
             </Form.Group>
         </>
     );

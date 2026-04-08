@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Alert, Spinner, Row, Col, Table } from "react-bootstrap";
+import { Modal, Button, Form, Alert, Spinner, Table } from "react-bootstrap";
 import { Invoice, InvoiceItem } from "../../../../Typings/bussinesTypes";
 import MainSetup from "../../../React/MainSetupReact";
 import Tools from "../../../React/Tools/Tools";
-import { invoiceItemsRepository, invoicesRepository } from "../InvoicesController";
+import { invoiceItemsRepository } from "../InvoicesController";
 
 interface CorrectionModalProps {
     show: boolean;
@@ -21,12 +21,11 @@ interface CustomItem {
 
 type CorrectionType = "zero" | "custom";
 
-// Typy korekty KSeF
 const KSEF_CORRECTION_TYPES = {
-    1: "Skutek w dacie faktury pierwotnej (błąd rachunkowy)",
-    2: "Skutek w dacie korekty (rabat, zwrot)",
-    3: "Inna data",
-};
+    1: "Korekta skutkująca w dacie ujęcia faktury pierwotnej",
+    2: "Korekta skutkująca w dacie wystawienia faktury korygującej",
+    3: "Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne",
+} as const;
 
 export default function CorrectionModal({
     show,
@@ -36,22 +35,25 @@ export default function CorrectionModal({
 }: CorrectionModalProps) {
     const [correctionType, setCorrectionType] = useState<CorrectionType>("zero");
     const [correctionReason, setCorrectionReason] = useState("");
-    const [ksefCorrectionType, setKsefCorrectionType] = useState<1 | 2 | 3>(2);
+    const [issueDate, setIssueDate] = useState(invoice.issueDate || new Date().toISOString().slice(0, 10));
+    const [sentDate, setSentDate] = useState(new Date().toISOString().slice(0, 10));
+    const [ksefCorrectionType, setKsefCorrectionType] = useState<1 | 2 | 3 | null>(null);
     const [customItems, setCustomItems] = useState<CustomItem[]>([
         { description: "", quantity: "1", unitPrice: "0", vatTax: 23 },
     ]);
-    const [attachment, setAttachment] = useState<File | null>(null);
     const [originalItems, setOriginalItems] = useState<InvoiceItem[]>([]);
     const [loadingItems, setLoadingItems] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [step, setStep] = useState<"create" | "send">("create");
+    const [step, setStep] = useState<"create" | "created">("create");
     const [createdCorrection, setCreatedCorrection] = useState<Invoice | null>(null);
 
     const resetForm = () => {
         setCorrectionType("zero");
         setCorrectionReason("");
-        setKsefCorrectionType(2);
+        setIssueDate(invoice.issueDate || new Date().toISOString().slice(0, 10));
+        setSentDate(new Date().toISOString().slice(0, 10));
+        setKsefCorrectionType(null);
         setCustomItems([{ description: "", quantity: 1, unitPrice: 0, vatTax: 23 }]);
         setOriginalItems([]);
         setError(null);
@@ -65,6 +67,13 @@ export default function CorrectionModal({
             loadOriginalItems();
         }
     }, [show, correctionType]);
+
+    useEffect(() => {
+        if (show) {
+            setIssueDate(invoice.issueDate || new Date().toISOString().slice(0, 10));
+            setSentDate(new Date().toISOString().slice(0, 10));
+        }
+    }, [show, invoice.id, invoice.issueDate]);
 
     const loadOriginalItems = async () => {
         setLoadingItems(true);
@@ -139,12 +148,16 @@ export default function CorrectionModal({
                 correctionType,
                 correctionTypeType: typeof correctionType,
                 correctionReason,
+                issueDate,
+                sentDate,
                 ownerId: currentPerson?.id,
             });
             
             const formData = new FormData();
             formData.append("correctionType", correctionType);
             formData.append("correctionReason", correctionReason.trim());
+            formData.append("issueDate", issueDate);
+            formData.append("sentDate", sentDate);
             if (currentPerson?.id) formData.append("ownerId", String(currentPerson.id));
 
             if (correctionType === "custom") {
@@ -166,10 +179,6 @@ export default function CorrectionModal({
                 formData.append("customItems", JSON.stringify(converted));
             }
 
-            if (attachment) {
-                formData.append("file", attachment);
-            }
-
             const response = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/correction`, {
                 method: "POST",
                 credentials: "include",
@@ -189,17 +198,7 @@ export default function CorrectionModal({
                 return;
             }
             setCreatedCorrection(result.correctionInvoice);
-
-            
-
-            // Jeśli oryginalna faktura ma numer KSeF, przejdź do kroku wysyłki
-            if (invoice.ksefNumber) {
-                setStep("send");
-            } else {
-                // Faktura bez KSeF - zakończ
-                onCorrectionCreated(result.correctionInvoice);
-                handleClose();
-            }
+            setStep("created");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Błąd tworzenia korekty");
         } finally {
@@ -207,59 +206,57 @@ export default function CorrectionModal({
         }
     };
 
-    // Krok 2: Wyślij korektę do KSeF
-    const handleSendToKsef = async () => {
-        if (!createdCorrection || !invoice.ksefNumber) return;
+    const handleGoToDetails = async () => {
+        if (!createdCorrection) return;
 
-        setLoading(true);
-        setError(null);
+        if (!createdCorrection.id) {
+            setError("Brak ID korekty - nie można przejść do szczegółów.");
+            return;
+        }
+
+        if (ksefCorrectionType === null) {
+            onCorrectionCreated(createdCorrection);
+            handleClose();
+            return;
+        }
 
         try {
-            
+            setLoading(true);
+            const saveResponse = await fetch(`${MainSetup.serverUrl}invoice/${createdCorrection.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    ...createdCorrection,
+                    ksefCorrectionType,
+                    _fieldsToUpdate: ["ksefCorrectionType"],
+                }),
+            });
 
-            const response = await fetch(
-                `${MainSetup.serverUrl}invoice/${createdCorrection.id}/ksef/correction`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({
-                        originalKsefNumber: invoice.ksefNumber,
-                        correctionReason: correctionReason.trim(),
-                        correctionType: ksefCorrectionType,
-                    }),
-                }
-            );
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || errorData.message || "Błąd wysyłki do KSeF");
+            if (!saveResponse.ok) {
+                const errorData = await saveResponse.json().catch(() => ({}));
+                throw new Error(
+                    errorData.error
+                        || errorData.errorMessage
+                        || errorData.message
+                        || "Nie udało się zapisać typu korekty",
+                );
             }
 
-            const result = await response.json();
-
-            // Zaktualizuj korektę z danymi KSeF
-            const updatedCorrection: Invoice = {
+            const updatedCorrection = await saveResponse.json();
+            onCorrectionCreated({
                 ...createdCorrection,
-                ksefStatus: "PENDING_CORRECTION",
-                ksefSessionId: result.referenceNumber,
-            };
-
-            onCorrectionCreated(updatedCorrection);
+                ...updatedCorrection,
+                ksefCorrectionType,
+            });
             handleClose();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Błąd wysyłki do KSeF");
+            setError(err instanceof Error ? err.message : "Nie udało się zapisać typu korekty");
         } finally {
             setLoading(false);
         }
-    };
-
-    // Pomiń wysyłkę do KSeF
-    const handleSkipKsef = () => {
-        if (createdCorrection) {
-            onCorrectionCreated(createdCorrection);
-        }
-        handleClose();
     };
 
     return (
@@ -336,6 +333,33 @@ export default function CorrectionModal({
                                 value={correctionReason}
                                 onChange={(e) => setCorrectionReason(e.target.value)}
                                 placeholder="Np. Błąd w cenie, Zwrot towaru, Rabat..."
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                <strong>Data sprzedaży</strong>
+                            </Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={issueDate}
+                                onChange={(e) => setIssueDate(e.target.value)}
+                                required
+                            />
+                            <Form.Text className="text-muted">
+                                Domyślnie ustawiona data sprzedaży z faktury źródłowej.
+                            </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                <strong>Data wysłania korekty</strong>
+                            </Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={sentDate}
+                                onChange={(e) => setSentDate(e.target.value)}
                                 required
                             />
                         </Form.Group>
@@ -465,60 +489,38 @@ export default function CorrectionModal({
                             </Form.Group>
                         )}
 
-                        {/* Załącznik PDF (opcjonalnie) */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>
-                                <strong>Załącznik PDF (opcjonalnie)</strong>
-                            </Form.Label>
-                            <Form.Control
-                                type="file"
-                                accept="application/pdf"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    const f = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-                                    setAttachment(f);
-                                }}
-                            />
-                            {attachment && (
-                                <Form.Text className="text-muted">Wybrany plik: {attachment.name}</Form.Text>
-                            )}
-                        </Form.Group>
                     </>
                 )}
 
-                {step === "send" && createdCorrection && (
+                {step === "created" && createdCorrection && (
                     <>
                         <Alert variant="success">
                             ✅ Korekta została utworzona: <strong>{createdCorrection.number || `#${createdCorrection.id}`}</strong>
                         </Alert>
-
-                        <p>
-                            Oryginalna faktura ma numer KSeF. Czy chcesz wysłać korektę do KSeF?
-                        </p>
 
                         <Form.Group className="mb-3">
                             <Form.Label>
                                 <strong>Typ korekty KSeF</strong>
                             </Form.Label>
                             <Form.Select
-                                value={ksefCorrectionType}
-                                onChange={(e) => setKsefCorrectionType(Number(e.target.value) as 1 | 2 | 3)}
+                                value={ksefCorrectionType ?? ""}
+                                onChange={(e) => {
+                                    const rawValue = e.target.value;
+                                    setKsefCorrectionType(rawValue ? (Number(rawValue) as 1 | 2 | 3) : null);
+                                }}
                             >
+                                <option value="">Wybierz</option>
                                 {Object.entries(KSEF_CORRECTION_TYPES).map(([value, label]) => (
                                     <option key={value} value={value}>
                                         {label}
                                     </option>
                                 ))}
                             </Form.Select>
-                            <Form.Text className="text-muted">
-                                Najczęściej wybierany: typ 2 (skutek w dacie korekty)
-                            </Form.Text>
                         </Form.Group>
 
-                        <Alert variant="secondary">
-                            <strong>Nr KSeF faktury źródłowej:</strong>
-                            <br />
-                            <code>{invoice.ksefNumber}</code>
-                        </Alert>
+                        <p>
+                            Korekta jest gotowa. Możesz przejść do jej szczegółów i stamtąd wykonać dalsze akcje, w tym wysyłkę do KSeF.
+                        </p>
                     </>
                 )}
             </Modal.Body>
@@ -540,16 +542,9 @@ export default function CorrectionModal({
                     </Button>
                 )}
 
-                {step === "send" && (
-                    <Button variant="primary" onClick={handleSendToKsef} disabled={loading}>
-                        {loading ? (
-                            <>
-                                <Spinner animation="border" size="sm" className="me-2" />
-                                Wysyłanie...
-                            </>
-                        ) : (
-                            "Wyślij do KSeF"
-                        )}
+                {step === "created" && (
+                    <Button variant="primary" onClick={handleGoToDetails}>
+                        Przejdź do szczegółów korekty
                     </Button>
                 )}
             </Modal.Footer>
