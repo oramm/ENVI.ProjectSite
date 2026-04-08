@@ -8,6 +8,17 @@ type PreviewParty = {
     nip: string;
     line1: string;
     line2: string;
+    jst: string;
+    gv: string;
+};
+
+type PreviewThirdParty = {
+    name: string;
+    nip: string;
+    internalId: string;
+    line1: string;
+    line2: string;
+    role: string;
 };
 
 type PreviewItem = {
@@ -32,6 +43,7 @@ type PreviewDocument = {
     bankName: string;
     seller: PreviewParty;
     buyer: PreviewParty;
+    thirdParties: PreviewThirdParty[];
     items: PreviewItem[];
 };
 
@@ -70,6 +82,42 @@ function findChildrenByLocalName(parent: Element, localName: string): Element[] 
     return result;
 }
 
+function findAllByLocalName(root: Element | Document, localName: string): Element[] {
+    const result: Element[] = [];
+    const all = root.getElementsByTagName("*");
+    for (let i = 0; i < all.length; i++) {
+        if (all[i].localName === localName) {
+            result.push(all[i]);
+        }
+    }
+    return result;
+}
+
+function mapKsefFlagToTakNie(value: string): string {
+    if (value === "1") return "TAK";
+    if (value === "2") return "NIE";
+    return "-";
+}
+
+const THIRD_PARTY_ROLE_LABELS: Record<string, string> = {
+    "1": "Faktor - w przypadku gdy na fakturze występują dane faktora",
+    "2": "Odbiorca - w przypadku gdy na fakturze występują dane jednostek wewnętrznych, oddziałów, wyodrębnionych w ramach nabywcy, które same nie stanowią nabywcy w rozumieniu ustawy",
+    "3": "Podmiot pierwotny - w przypadku gdy na fakturze występują dane podmiotu będącego w stosunku do podatnika podmiotem przejętym lub przekształconym, który dokonywał dostawy lub świadczył usługę",
+    "4": "Dodatkowy nabywca - w przypadku gdy na fakturze występują dane kolejnych (innych niż wymieniony w części Podmiot2) nabywców",
+    "5": "Wystawca faktury - w przypadku gdy na fakturze występują dane podmiotu wystawiającego fakturę w imieniu podatnika",
+    "6": "Dokonujący płatności - w przypadku gdy na fakturze występują dane podmiotu regulującego zobowiązanie w miejsce nabywcy",
+    "7": "Jednostka samorządu terytorialnego - wystawca",
+    "8": "Jednostka samorządu terytorialnego - odbiorca",
+    "9": "Członek grupy VAT - wystawca",
+    "10": "Członek grupy VAT - odbiorca",
+    "11": "Pracownik",
+};
+
+function getThirdPartyRoleLabel(role: string): string {
+    if (!role) return "";
+    return THIRD_PARTY_ROLE_LABELS[role] || `Rola ${role}`;
+}
+
 function getChildText(parent: Element | null, localName: string): string {
     if (!parent) return "";
     const child = findChildrenByLocalName(parent, localName)[0];
@@ -87,6 +135,7 @@ function parsePreviewXml(xml: string): PreviewDocument {
 
     const podmiot1 = findFirstByLocalName(doc, "Podmiot1");
     const podmiot2 = findFirstByLocalName(doc, "Podmiot2");
+    const podmiot3List = findAllByLocalName(doc, "Podmiot3");
     const fa = findFirstByLocalName(doc, "Fa");
     const platnosc = findFirstByLocalName(doc, "Platnosc");
 
@@ -116,6 +165,19 @@ function parsePreviewXml(xml: string): PreviewDocument {
         }
     }
 
+    const thirdParties: PreviewThirdParty[] = podmiot3List.map((podmiot3) => {
+        const podmiot3Id = findFirstByLocalName(podmiot3, "DaneIdentyfikacyjne");
+        const podmiot3Adr = findFirstByLocalName(podmiot3, "Adres");
+        return {
+            name: getChildText(podmiot3Id, "Nazwa"),
+            nip: getChildText(podmiot3Id, "NIP"),
+            internalId: getChildText(podmiot3Id, "IDWew"),
+            line1: getChildText(podmiot3Adr, "AdresL1"),
+            line2: getChildText(podmiot3Adr, "AdresL2"),
+            role: getChildText(podmiot3, "Rola"),
+        };
+    });
+
     return {
         invoiceNumber: getChildText(fa, "P_2"),
         issueDate: getChildText(fa, "P_1"),
@@ -131,13 +193,18 @@ function parsePreviewXml(xml: string): PreviewDocument {
             nip: getChildText(podmiot1Id, "NIP"),
             line1: getChildText(podmiot1Adr, "AdresL1"),
             line2: getChildText(podmiot1Adr, "AdresL2"),
+            jst: "",
+            gv: "",
         },
         buyer: {
             name: getChildText(podmiot2Id, "Nazwa"),
             nip: getChildText(podmiot2Id, "NIP"),
             line1: getChildText(podmiot2Adr, "AdresL1"),
             line2: getChildText(podmiot2Adr, "AdresL2"),
+            jst: mapKsefFlagToTakNie(getChildText(podmiot2, "JST")),
+            gv: mapKsefFlagToTakNie(getChildText(podmiot2, "GV")),
         },
+        thirdParties,
         items,
     };
 }
@@ -242,7 +309,16 @@ export default function InvoicePdfPreview() {
                         size: A4;
                         margin: 10mm;
                     }
+                    body > #root .navbar.sticky-top,
+                    body > #root .navbar.mt-auto,
+                    body > .good-tip-toast-wrapper,
+                    body > .toast-container {
+                        display: none !important;
+                    }
                     .no-print { display: none !important; }
+                    .invoice-preview-page > :not(.invoice-sheet) {
+                        display: none !important;
+                    }
                     body { background: #fff !important; }
                     .invoice-preview-page { padding: 0 !important; }
                     .invoice-sheet {
@@ -334,10 +410,39 @@ export default function InvoicePdfPreview() {
                                     <div>NIP: <span className="invoice-mono">{parsed.buyer.nip || "-"}</span></div>
                                     <div>{parsed.buyer.line1 || "-"}</div>
                                     <div>{parsed.buyer.line2 || ""}</div>
+                                    <div className="mt-2 small">
+                                        <div>Faktura dotyczy jednostki podrzędnej JST: {parsed.buyer.jst}</div>
+                                        <div>Faktura dotyczy członka grupy GV: {parsed.buyer.gv}</div>
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </Row>
+
+                    {parsed.thirdParties.length > 0 && (
+                        <Row className="mb-3">
+                            <Col>
+                                <Card>
+                                    <Card.Header className="py-2"><strong>Podmioty trzecie (Podmiot3)</strong></Card.Header>
+                                    <Card.Body className="py-2">
+                                        {parsed.thirdParties.map((thirdParty, index) => (
+                                            <div key={`third-party-${index}`} className={index > 0 ? "mt-3 pt-3 border-top" : ""}>
+                                                <div><strong>Podmiot {index + 1}</strong>{thirdParty.role ? ` (Rola: ${getThirdPartyRoleLabel(thirdParty.role)})` : ""}</div>
+                                                <div><strong>{thirdParty.name || "-"}</strong></div>
+                                                <div>
+                                                    {thirdParty.nip
+                                                        ? <>NIP: <span className="invoice-mono">{thirdParty.nip}</span></>
+                                                        : <>ID wew.: <span className="invoice-mono">{thirdParty.internalId || "-"}</span></>}
+                                                </div>
+                                                {thirdParty.line1 && <div>{thirdParty.line1}</div>}
+                                                {thirdParty.line2 && <div>{thirdParty.line2}</div>}
+                                            </div>
+                                        ))}
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        </Row>
+                    )}
 
                     <div className="mb-2"><strong>Pozycje faktury</strong></div>
                     <Table bordered size="sm" responsive>
