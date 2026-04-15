@@ -138,7 +138,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             </Form.Group>
             <Row>
                 <Form.Group as={Col} controlId="issueDate">
-                    <Form.Label>Data utworzenia</Form.Label>
+                    <Form.Label>Data sprzedaży</Form.Label>
                     <Form.Control
                         type="date"
                         isValid={!errors.issueDate}

@@ -126,7 +126,7 @@ function InvoiceSetAsSentModalButton() {
             initialData: invoice,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceSetAsSentValidationSchema,
         }, buttonProps: {
-            buttonCaption: "Ustaw jako 'Wysłana'",
+            buttonCaption: "Nadaj datę wystawienia",
             buttonVariant: "primary",
         } }));
 }

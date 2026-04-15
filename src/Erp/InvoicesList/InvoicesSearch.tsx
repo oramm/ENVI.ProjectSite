@@ -53,7 +53,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
                 { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
                 { header: "Dane faktury", renderTdBody: renderRow, colMd: 4 },
                 { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
-                { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
+                { header: "Data wystawienia", objectAttributeToShow: "sentDate", colMd: 1 },
                 { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
                 { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
                 {

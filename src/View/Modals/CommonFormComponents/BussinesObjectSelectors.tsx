@@ -1506,7 +1506,9 @@ export function LetterSelector({ name, label, _contract, showValidationInfo = tr
                     return (
                         <Typeahead
                             id={`${name}-typeahead`}
-                            labelKey="number"
+                            labelKey={(option: any) =>
+                                option.number != null ? String(option.number) : ""
+                            }
                             options={options}
                             onChange={(selected) => {
                                 handleOnChange(selected, field);

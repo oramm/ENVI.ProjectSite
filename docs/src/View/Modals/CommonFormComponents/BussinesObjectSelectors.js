@@ -732,7 +732,7 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 const normalizedFieldValue = normalizeComparableValue(field.value);
                 const currentSelection = options.find((option) => normalizeComparableValue(option.number) === normalizedFieldValue);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => {
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: (option) => option.number != null ? String(option.number) : "", options: options, onChange: (selected) => {
                         handleOnChange(selected, field);
                         setIsOpen(false);
                     }, selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, open: isOpen, onFocus: () => setIsOpen(true), onBlur: () => setTimeout(() => setIsOpen(false), 150), renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,

@@ -148,7 +148,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
             react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data sprzeda\u017Cy"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.issueDate, isInvalid: !!errors.issueDate, ...register("issueDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "issueDate", errors: errors })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "daysToPay" },

@@ -105881,7 +105881,7 @@ function InvoicesSearch({ title }) {
             { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
             { header: "Dane faktury", renderTdBody: renderRow, colMd: 4 },
             { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
-            { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
+            { header: "Data wystawienia", objectAttributeToShow: "sentDate", colMd: 1 },
             { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
             { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
             {
@@ -106730,7 +106730,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
             react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data sprzeda\u017Cy"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.issueDate, isInvalid: !!errors.issueDate, ...register("issueDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "issueDate", errors: errors })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "daysToPay" },
@@ -106922,7 +106922,7 @@ function InvoiceSetAsSentModalButton() {
             initialData: invoice,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceSetAsSentValidationSchema,
         }, buttonProps: {
-            buttonCaption: "Ustaw jako 'Wysłana'",
+            buttonCaption: "Nadaj datę wystawienia",
             buttonVariant: "primary",
         } }));
 }
@@ -119683,7 +119683,7 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 const normalizedFieldValue = normalizeComparableValue(field.value);
                 const currentSelection = options.find((option) => normalizeComparableValue(option.number) === normalizedFieldValue);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => {
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: (option) => option.number != null ? String(option.number) : "", options: options, onChange: (selected) => {
                         handleOnChange(selected, field);
                         setIsOpen(false);
                     }, selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, open: isOpen, onFocus: () => setIsOpen(true), onBlur: () => setTimeout(() => setIsOpen(false), 150), renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,

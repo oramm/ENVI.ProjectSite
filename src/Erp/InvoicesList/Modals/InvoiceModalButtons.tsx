@@ -172,13 +172,13 @@ export function InvoiceSetAsSentModalButton() {
                 onEdit: setInvoice,
                 specialActionRoute: "setAsSentInvoice",
                 ModalBodyComponent: InvoiceSetAsSentModalBody,
-                modalTitle: "Ustaw jako Wysłana",
+                modalTitle: "Nadaj datę wystawienia",
                 repository: invoicesRepository,
                 initialData: invoice,
                 makeValidationSchema: makeInvoiceSetAsSentValidationSchema,
             }}
             buttonProps={{
-                buttonCaption: "Ustaw jako 'Wysłana'",
+                buttonCaption: "Nadaj datę wystawienia",
                 buttonVariant: "primary",
             }}
         />
