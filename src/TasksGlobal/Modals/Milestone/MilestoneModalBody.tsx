@@ -46,6 +46,7 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
             _contract,
             _type: initialData?._type,
             name: initialData?.name,
+            number: initialData?.number,
             description: initialData?.description || "",
             _dates: processedDates,
             status: initialData?.status,
@@ -117,6 +118,7 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
 
     return (
         <>
+            <input type="hidden" {...register("number", { valueAsNumber: true })} />
             {!isEditing && <MilestoneTypeSelector contractType={_contract._type} />}
 
             {shouldShowNameField() && (

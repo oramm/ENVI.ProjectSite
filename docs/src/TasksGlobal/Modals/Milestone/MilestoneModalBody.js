@@ -66,6 +66,7 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
             _contract,
             _type: initialData?._type,
             name: initialData?.name,
+            number: initialData?.number,
             description: initialData?.description || "",
             _dates: processedDates,
             status: initialData?.status,
@@ -105,6 +106,7 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
                 react_1.default.createElement("button", { type: "button", className: "btn btn-outline-danger", onClick: () => remove(index) }, "Usu\u0144")))));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("input", { type: "hidden", ...register("number", { valueAsNumber: true }) }),
         !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.MilestoneTypeSelector, { contractType: _contract._type }),
         shouldShowNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name", className: "mb-2" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
