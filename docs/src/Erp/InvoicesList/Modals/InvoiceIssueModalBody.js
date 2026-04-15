@@ -32,14 +32,19 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceIssueModalBody = InvoiceIssueModalBody;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
+const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const ToolsFetch_1 = __importDefault(require("../../../React/Tools/ToolsFetch"));
 function InvoiceIssueModalBody({ initialData }) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, reset, setValue, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
@@ -47,7 +52,43 @@ function InvoiceIssueModalBody({ initialData }) {
         };
         reset(resetData);
         trigger();
-    }, [initialData, reset]);
+    }, [initialData, reset, trigger]);
+    (0, react_1.useEffect)(() => {
+        let isCancelled = false;
+        async function loadNextNumber() {
+            try {
+                if (initialData?.number) {
+                    return;
+                }
+                const response = await ToolsFetch_1.default.fetchWithRetry(`${MainSetupReact_1.default.serverUrl}invoice/nextNumber`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        year: typeof initialData?.issueDate === "string"
+                            ? Number(initialData.issueDate.slice(0, 4))
+                            : undefined,
+                    }),
+                    credentials: "include",
+                });
+                const nextNumber = response?.number;
+                if (!isCancelled && typeof nextNumber === "string" && nextNumber.trim()) {
+                    setValue("number", nextNumber, {
+                        shouldDirty: false,
+                        shouldValidate: true,
+                    });
+                }
+            }
+            catch (error) {
+                console.error("Nie udało się pobrać kolejnego numeru faktury", error);
+            }
+        }
+        loadNextNumber();
+        return () => {
+            isCancelled = true;
+        };
+    }, [initialData?.id, initialData?.issueDate, initialData?.number, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer"),
