@@ -71,7 +71,7 @@ export function ProjectSelector({
                 },
                 name: "projectSelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: unknown) {
@@ -128,7 +128,7 @@ export function CitySelector({
                 },
                 name: "citySelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: any) {
@@ -251,7 +251,7 @@ export function OfferSelector({
                 },
                 name: "offerSelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: any) {
@@ -380,7 +380,7 @@ export function FocusAreaSelector({
                 },
                 name: "focusAreaSelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: any) {
@@ -530,7 +530,7 @@ export function ApplicationCallSelector({
                 },
                 name: "applicationCallSelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: unknown) {
@@ -598,7 +598,7 @@ export function ClientNeedSelector({
                 },
                 name: "clientNeedSelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: any) {
@@ -670,7 +670,7 @@ export function ContractSelector({
                 },
                 name: "contractSelector_temp",
             }),
-        []
+        [],
     );
 
     function renderOption(option: unknown) {
@@ -757,7 +757,7 @@ export function ContractRangeSelector({
                 render={({ field }) => {
                     const formValue = (field.value || []) as any[];
                     const currentSelection = options.filter((option) =>
-                        formValue.some((item: any) => (item?._contractRange?.id || item?.id) === option.id)
+                        formValue.some((item: any) => (item?._contractRange?.id || item?.id) === option.id),
                     );
 
                     return (
@@ -1156,7 +1156,7 @@ export function PersonSelector({
                       },
                       name: "personSelector_temp",
                   }),
-        [repository]
+        [repository],
     );
 
     function renderOption(option: any) {
@@ -1272,7 +1272,7 @@ function renderCaseMenu(
     menuProps: any,
     state: TypeaheadManagerChildProps,
     groupedResults: Record<string, Case[]>,
-    milestoneNames: string[]
+    milestoneNames: string[],
 ) {
     let index = 0;
 
@@ -1348,16 +1348,12 @@ export function CaseSelectMenuElement({
                     { contractId: _contract.id, milestoneParentType: "CONTRACT" },
                 ]);
                 setOptions(
-                    repository.items.map((item) =>
-                        ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)
-                    )
+                    repository.items.map((item) => ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)),
                 );
             } else if (_offer) {
                 await repository.loadItemsFromServerPOST([{ offerId: _offer.id, milestoneParentType: "OFFER" }]);
                 setOptions(
-                    repository.items.map((item) =>
-                        ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)
-                    )
+                    repository.items.map((item) => ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)),
                 );
             } else {
                 repository.clearData();
@@ -1379,9 +1375,7 @@ export function CaseSelectMenuElement({
         }
 
         const selectedValues = multiple ? (value as Case[]) : [value as Case];
-        return selectedValues.map((item) =>
-            ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)
-        );
+        return selectedValues.map((item) => ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`));
     }
 
     return (
@@ -1485,7 +1479,7 @@ export function LetterSelector({ name, label, _contract, showValidationInfo = tr
                 },
                 name: "letterSelector_temp",
             }),
-        []
+        [],
     );
 
     useEffect(() => {
@@ -1522,15 +1516,13 @@ export function LetterSelector({ name, label, _contract, showValidationInfo = tr
                 render={({ field }) => {
                     const normalizedFieldValue = normalizeComparableValue(field.value);
                     const currentSelection = options.find(
-                        (option) => normalizeComparableValue(option.number) === normalizedFieldValue
+                        (option) => normalizeComparableValue(option.number) === normalizedFieldValue,
                     );
 
                     return (
                         <Typeahead
                             id={`${name}-typeahead`}
-                            labelKey={(option: any) =>
-                                option.number != null ? String(option.number) : ""
-                            }
+                            labelKey={(option: any) => (option.number != null ? String(option.number) : "")}
                             options={options}
                             onChange={(selected) => {
                                 handleOnChange(selected, field);
@@ -1593,7 +1585,7 @@ export function SkillSelector({
                       },
                       name: "skillSelector_temp",
                   }),
-        [repository]
+        [repository],
     );
 
     useEffect(() => {
@@ -1608,7 +1600,10 @@ export function SkillSelector({
     function handleOnChange(selected: SkillDictionaryRecord[], field: ControllerRenderProps<any, string>) {
         const valueToBeSent = multiple ? selected : selected[0];
         setValue(name, valueToBeSent);
-        setValue("skillIds", selected.map((s) => s.id));
+        setValue(
+            "skillIds",
+            selected.map((s) => s.id),
+        );
         field.onChange(valueToBeSent);
     }
 
@@ -1646,7 +1641,9 @@ export function SkillSelector({
                             return (
                                 <div>
                                     <span>{skill.name}</span>
-                                    <div className="text-muted small text-wrap">{skill.description || "Brak opisu"}</div>
+                                    <div className="text-muted small text-wrap">
+                                        {skill.description || "Brak opisu"}
+                                    </div>
                                 </div>
                             );
                         }}
