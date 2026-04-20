@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import { MeetingData } from "../../../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../../../View/Resultsets/CommonComponents";
@@ -13,6 +13,7 @@ export default function Meetings() {
     const { contract } = useContractDetails();
     const [meetings, setMeetings] = useState<MeetingData[] | undefined>(undefined);
     const [selectedMeeting, setSelectedMeeting] = useState<MeetingData | undefined>(undefined);
+    const fixedCriteria = useMemo(() => ({ contractId: contract?.id }), [contract?.id]);
 
     useEffect(() => {
         let isMounted = true;
@@ -61,6 +62,7 @@ export default function Meetings() {
                                         title="Spotkania"
                                         initialObjects={meetings}
                                         repository={meetingsRepository}
+                                        fixedCriteria={fixedCriteria}
                                         AddNewButtonComponents={[MeetingAddNewModalButton]}
                                         EditButtonComponent={MeetingEditModalButton}
                                         FilterBodyComponent={MeetingsFilterBody}

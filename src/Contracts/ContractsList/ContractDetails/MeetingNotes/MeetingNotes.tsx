@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "react-bootstrap";
 import { ContractMeetingNoteData } from "../../../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../../../View/Resultsets/CommonComponents";
@@ -12,6 +12,7 @@ import { MeetingNotesFilterBody } from "./MeetingNotesFilterBody";
 export default function MeetingNotes() {
     const { contract } = useContractDetails();
     const [notes, setNotes] = useState<ContractMeetingNoteData[] | undefined>(undefined);
+    const fixedCriteria = useMemo(() => ({ contractId: contract?.id }), [contract?.id]);
 
     useEffect(() => {
         let isMounted = true;
@@ -59,6 +60,7 @@ export default function MeetingNotes() {
                         title="Notatki ze spotkań"
                         initialObjects={notes}
                         repository={meetingNotesRepository}
+                        fixedCriteria={fixedCriteria}
                         AddNewButtonComponents={[MeetingNoteAddNewModalButton]}
                         tableStructure={[
                             { header: "#", objectAttributeToShow: "sequenceNumber" },

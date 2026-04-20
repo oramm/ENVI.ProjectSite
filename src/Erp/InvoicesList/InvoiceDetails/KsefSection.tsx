@@ -71,7 +71,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
     const [alert, setAlert] = useState<AlertState>(null);
     const [statusDetails, setStatusDetails] = useState<KsefStatusResponse | null>(null);
     const [ksefCorrectionType, setKsefCorrectionType] = useState<1 | 2 | 3 | null>(null);
-    const pollingRef = useRef<NodeJS.Timeout | null>(null);
+    const pollingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const activeInvoiceIdRef = useRef<number | null>(invoice.id ?? null);
 
     // Faktura jest korektą jeśli ma ustawione correctedInvoiceId
@@ -122,10 +122,10 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(
-                    errorData.error
-                        || errorData.errorMessage
-                        || errorData.message
-                        || `Błąd zapisu typu korekty (${response.status})`,
+                    errorData.error ||
+                        errorData.errorMessage ||
+                        errorData.message ||
+                        `Błąd zapisu typu korekty (${response.status})`,
                 );
             }
 
@@ -199,9 +199,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         }
 
         const originalInvoices = await originalResponse.json();
-        const originalInvoice: Invoice | undefined = Array.isArray(originalInvoices)
-            ? originalInvoices[0]
-            : undefined;
+        const originalInvoice: Invoice | undefined = Array.isArray(originalInvoices) ? originalInvoices[0] : undefined;
 
         const originalKsefNumber = originalInvoice?.ksefNumber || null;
         if (!originalKsefNumber) {
@@ -249,10 +247,10 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                 }
 
                 throw new Error(
-                    errorData.error
-                        || errorData.errorMessage
-                        || errorData.message
-                        || `Błąd serwera (${response.status})`,
+                    errorData.error ||
+                        errorData.errorMessage ||
+                        errorData.message ||
+                        `Błąd serwera (${response.status})`,
                 );
             }
 
@@ -323,13 +321,12 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     const detailsList = errorData.details.join("\n• ");
                     throw new Error(`Błąd walidacji:\n• ${detailsList}`);
                 }
-                const errorMessage = errorData.error 
-                    || errorData.errorMessage 
-                    || errorData.message 
-                    || `Błąd serwera (${sendResponse.status})`;
-                const details = errorData.details 
-                    ? `\n\nSzczegóły:\n• ${errorData.details.join("\n• ")}`
-                    : "";
+                const errorMessage =
+                    errorData.error ||
+                    errorData.errorMessage ||
+                    errorData.message ||
+                    `Błąd serwera (${sendResponse.status})`;
+                const details = errorData.details ? `\n\nSzczegóły:\n• ${errorData.details.join("\n• ")}` : "";
                 throw new Error(errorMessage + details);
             }
 
@@ -340,7 +337,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                 setLoadingMessage("");
                 return;
             }
-            
+
             const updatedInvoice: Invoice = {
                 ...invoice,
                 ksefStatus: isCorrectionInvoice ? "PENDING_CORRECTION" : "PENDING",
@@ -355,7 +352,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
             setLoadingMessage("Sprawdzanie statusu w KSeF...");
             startStatusPolling();
-
         } catch (error) {
             setLoading(false);
             setLoadingMessage("");
@@ -400,7 +396,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     stopPolling();
                     setLoading(false);
                     setLoadingMessage("");
-                    
+
                     const updatedInvoice: Invoice = {
                         ...invoice,
                         ksefNumber: statusResult.ksefNumber,
@@ -420,7 +416,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     stopPolling();
                     setLoading(false);
                     setLoadingMessage("");
-                    
+
                     const originalNumber = statusResult.status.extensions?.originalKsefNumber;
                     setAlert({
                         type: "warning",
@@ -438,10 +434,10 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     setLoadingMessage("");
                     setAlert({
                         type: "info",
-                        message: "Przetwarzanie trwa dłużej niż zwykle.\nSprawdź status później przyciskiem 'Odśwież status'.",
+                        message:
+                            "Przetwarzanie trwa dłużej niż zwykle.\nSprawdź status później przyciskiem 'Odśwież status'.",
                     });
                 }
-
             } catch (error) {
                 stopPolling();
                 setLoading(false);
@@ -518,7 +514,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     message: `Status: ${statusResult.status?.description || "Nieznany"}`,
                 });
             }
-
         } catch (error) {
             setAlert({
                 type: "danger",
@@ -580,10 +575,11 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                const errorMessage = errorData.error
-                    || errorData.errorMessage
-                    || errorData.message
-                    || `Błąd pobierania UPO (${response.status})`;
+                const errorMessage =
+                    errorData.error ||
+                    errorData.errorMessage ||
+                    errorData.message ||
+                    `Błąd pobierania UPO (${response.status})`;
                 throw new Error(errorMessage);
             }
 
@@ -632,7 +628,9 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         <Container className="mt-3 p-0">
             <Row className="align-items-center mb-2">
                 <Col>
-                    <h6 className="mb-0"><strong>KSeF - Krajowy System e-Faktur</strong></h6>
+                    <h6 className="mb-0">
+                        <strong>KSeF - Krajowy System e-Faktur</strong>
+                    </h6>
                 </Col>
             </Row>
             <Row className="bg-light p-3 rounded-3">
@@ -664,7 +662,9 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                             <br />
                             Koryguje fakturę:{" "}
                             <Link to={`/invoice/${invoice.correctedInvoiceId}`}>
-                                {invoice._correctedInvoice?.number || correctedInvoiceNumber || `#${invoice.correctedInvoiceId}`}
+                                {invoice._correctedInvoice?.number ||
+                                    correctedInvoiceNumber ||
+                                    `#${invoice.correctedInvoiceId}`}
                             </Link>
                             {invoice.correctionReason && (
                                 <>
@@ -688,9 +688,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                             <Col md={3}>
                                 <strong>Status KSeF:</strong>
                             </Col>
-                            <Col md={9}>
-                                {renderStatus()}
-                            </Col>
+                            <Col md={9}>{renderStatus()}</Col>
                         </Row>
 
                         {invoice.ksefNumber && (
@@ -752,9 +750,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                                 <Col md={3}>
                                     <strong>Data przyjęcia:</strong>
                                 </Col>
-                                <Col md={9}>
-                                    {formatDate(statusDetails.acquisitionDate)}
-                                </Col>
+                                <Col md={9}>{formatDate(statusDetails.acquisitionDate)}</Col>
                             </Row>
                         )}
                     </div>
@@ -790,11 +786,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                                         >
                                             Otwórz link
                                         </Button>
-                                        <Button
-                                            variant="outline-secondary"
-                                            size="sm"
-                                            onClick={copyQrLink}
-                                        >
+                                        <Button variant="outline-secondary" size="sm" onClick={copyQrLink}>
                                             Kopiuj link
                                         </Button>
                                     </div>
@@ -814,11 +806,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                         </Button>
 
                         {canSendToKsef() && (
-                            <Button
-                                variant="primary"
-                                onClick={sendToKsef}
-                                disabled={loading}
-                            >
+                            <Button variant="primary" onClick={sendToKsef} disabled={loading}>
                                 {loading ? (
                                     <>
                                         <Spinner animation="border" size="sm" className="me-2" />
@@ -831,21 +819,13 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                         )}
 
                         {(invoice.ksefStatus || invoice.ksefSessionId) && (
-                            <Button
-                                variant="outline-secondary"
-                                onClick={refreshStatus}
-                                disabled={loading}
-                            >
+                            <Button variant="outline-secondary" onClick={refreshStatus} disabled={loading}>
                                 Odśwież status
                             </Button>
                         )}
 
                         {canDownloadUpo && (
-                            <Button
-                                variant="outline-success"
-                                onClick={downloadUpo}
-                                disabled={loading}
-                            >
+                            <Button variant="outline-success" onClick={downloadUpo} disabled={loading}>
                                 📄 Pobierz UPO
                             </Button>
                         )}

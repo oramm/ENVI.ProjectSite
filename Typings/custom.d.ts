@@ -28,6 +28,11 @@ declare module "*.ico" {
     export = value;
 }
 
+declare module "*.css" {
+    const value: Record<string, string>;
+    export default value;
+}
+
 declare namespace google {
     namespace picker {
         class PickerBuilder {

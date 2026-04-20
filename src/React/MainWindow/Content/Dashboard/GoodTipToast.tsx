@@ -1,38 +1,69 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Badge, Toast, ToastContainer } from 'react-bootstrap';
-import { createPortal } from 'react-dom';
-import MainSetup from '../../../MainSetupReact';
-import './GoodTipToast.css';
+import React, { useState, useEffect, useRef } from "react";
+import { Badge, Toast, ToastContainer } from "react-bootstrap";
+import { createPortal } from "react-dom";
+import MainSetup from "../../../MainSetupReact";
+import "./GoodTipToast.css";
 
 interface Tip {
     text: string;
     isNew?: boolean;
-    category?: 'general' | 'lettersAi' | 'invoices' | 'costInvoices';
+    category?: "general" | "lettersAi" | "invoices" | "costInvoices";
 }
 
-const tipCategoryLabels: Record<NonNullable<Tip['category']>, string> = {
-    general: 'Ogólne',
-    lettersAi: 'Rozpoznawanie pism AI',
-    invoices: 'Faktury',
-    costInvoices: 'Faktury kosztowe',
+const tipCategoryLabels: Record<NonNullable<Tip["category"]>, string> = {
+    general: "Ogólne",
+    lettersAi: "Rozpoznawanie pism AI",
+    invoices: "Faktury",
+    costInvoices: "Faktury kosztowe",
 };
 
 const tips: Tip[] = [
     // Ogólne porady
-    { text: "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.", category: 'general' },
-    { text: "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.", category: 'general' },
-    { text: "Aktualizuj daty zakończenia kamieni i kontraktów.", category: 'general' },
+    {
+        text: "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.",
+        category: "general",
+    },
+    { text: "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.", category: "general" },
+    { text: "Aktualizuj daty zakończenia kamieni i kontraktów.", category: "general" },
 
     // Porady o analizie AI pism
-    { text: "Rozpoznawanie pism AI uzupełnia: numer pisma, daty, opis, kontrakt. Zawsze sprawdź żółte pola (średnia pewność)!" , isNew: true, category: 'lettersAi' },
-    { text: "Aby poprawnie zaimportować dane z pisma, załączaj czytelne PDF - AI nie rozpozna słabych kopii i zeskanowanych dokumentów." , isNew: true, category: 'lettersAi' },
-    { text: "Pola zielone = wysoka pewność AI. Pola żółte = sprawdź. Pola szare = brakuje danych, wypełnij.", isNew: true, category: 'lettersAi' },
+    {
+        text: "Rozpoznawanie pism AI uzupełnia: numer pisma, daty, opis, kontrakt. Zawsze sprawdź żółte pola (średnia pewność)!",
+        isNew: true,
+        category: "lettersAi",
+    },
+    {
+        text: "Aby poprawnie zaimportować dane z pisma, załączaj czytelne PDF - AI nie rozpozna słabych kopii i zeskanowanych dokumentów.",
+        isNew: true,
+        category: "lettersAi",
+    },
+    {
+        text: "Pola zielone = wysoka pewność AI. Pola żółte = sprawdź. Pola szare = brakuje danych, wypełnij.",
+        isNew: true,
+        category: "lettersAi",
+    },
 
     // Faktury i KSeF
-    { text: "Po ustawieniu statusu \"Wysłana\" możliwe będzie wysłanie faktury do KSeF. Po pomyślnym przesłaniu możesz pobrać UPO jako potwierdzenie przyjęcia.", isNew: true, category: 'invoices' },
-    { text: "Kliknij \"Pobierz z KSeF\" aby pobrać nowe faktury kosztowe. Wybierz tryb przyrostowy (zostaną pobrane faktury, od ostatniej aktualizacji) lub weryfikacyjny (wybrany zakres dat), aby upewnić się, czy żadna faktura nie została pominięta.", isNew: true, category: 'costInvoices' },
-    { text: "Każdej fakturze kosztowej możesz przypisać kategorię kosztową oraz określić procent odliczenia VAT.", isNew: true, category: 'costInvoices' },
-    { text: "W sekcji \"Raport miesięczny\" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.", isNew: true, category: 'costInvoices' },
+    {
+        text: 'Po ustawieniu statusu "Wysłana" możliwe będzie wysłanie faktury do KSeF. Po pomyślnym przesłaniu możesz pobrać UPO jako potwierdzenie przyjęcia.',
+        isNew: true,
+        category: "invoices",
+    },
+    {
+        text: 'Kliknij "Pobierz z KSeF" aby pobrać nowe faktury kosztowe. Wybierz tryb przyrostowy (zostaną pobrane faktury, od ostatniej aktualizacji) lub weryfikacyjny (wybrany zakres dat), aby upewnić się, czy żadna faktura nie została pominięta.',
+        isNew: true,
+        category: "costInvoices",
+    },
+    {
+        text: "Każdej fakturze kosztowej możesz przypisać kategorię kosztową oraz określić procent odliczenia VAT.",
+        isNew: true,
+        category: "costInvoices",
+    },
+    {
+        text: 'W sekcji "Raport miesięczny" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.',
+        isNew: true,
+        category: "costInvoices",
+    },
 ];
 
 interface GoodTipToastProps {
@@ -41,32 +72,32 @@ interface GoodTipToastProps {
 
 export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
     const [isVisible, setIsVisible] = useState(false);
-    const [tip, setTip] = useState<Tip>({ text: '' });
+    const [tip, setTip] = useState<Tip>({ text: "" });
     const [isPaused, setIsPaused] = useState(false);
-    const toastWrapperRef = useRef<HTMLDivElement>(null); 
+    const toastWrapperRef = useRef<HTMLDivElement>(null);
     const systemRoleName = MainSetup.currentUserOrNull?.systemRoleName;
 
     const canViewInvoices = !!systemRoleName && ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName);
     const canViewCostInvoices = !!systemRoleName && ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
     const tipCategoryLabel = tip.category ? tipCategoryLabels[tip.category] : null;
     const displayDuration = tip.isNew ? delay * 2 : delay;
-    
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
-    const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const progressIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const startTimeRef = useRef(0);
     const remainingTimeRef = useRef(displayDuration);
 
     useEffect(() => {
         const availableTips = tips.filter((currentTip) => {
-            if (currentTip.category === 'invoices') return canViewInvoices;
-            if (currentTip.category === 'costInvoices') return canViewCostInvoices;
+            if (currentTip.category === "invoices") return canViewInvoices;
+            if (currentTip.category === "costInvoices") return canViewCostInvoices;
             return true;
         });
 
         const randomTip = availableTips[Math.floor(Math.random() * availableTips.length)] ?? tips[0];
         remainingTimeRef.current = randomTip.isNew ? delay * 2 : delay;
         setTip(randomTip);
-        setTimeout(() => setIsVisible(true), 100); 
+        setTimeout(() => setIsVisible(true), 100);
     }, [canViewCostInvoices, canViewInvoices, delay]);
 
     useEffect(() => {
@@ -81,7 +112,7 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
             if (timerRef.current) clearTimeout(timerRef.current);
             timerRef.current = setTimeout(() => setIsVisible(false), remainingTimeRef.current);
         }
-        
+
         return () => {
             if (timerRef.current) clearTimeout(timerRef.current);
         };
@@ -93,14 +124,14 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
             return;
         }
 
-        const intervalTime = 50; 
+        const intervalTime = 50;
         progressIntervalRef.current = setInterval(() => {
             const elapsedTime = Date.now() - startTimeRef.current;
-            const totalElapsedTime = (displayDuration - remainingTimeRef.current) + elapsedTime;
+            const totalElapsedTime = displayDuration - remainingTimeRef.current + elapsedTime;
             const percentage = (totalElapsedTime / displayDuration) * 100;
-            
+
             if (toastWrapperRef.current) {
-                toastWrapperRef.current.style.setProperty('--progress-width', `${Math.min(percentage, 100)}%`);
+                toastWrapperRef.current.style.setProperty("--progress-width", `${Math.min(percentage, 100)}%`);
             }
 
             if (totalElapsedTime >= displayDuration) {
@@ -113,22 +144,18 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
         };
     }, [displayDuration, isPaused, isVisible]);
 
-
-    if (typeof document === 'undefined') return null;
+    if (typeof document === "undefined") return null;
 
     return createPortal(
         <ToastContainer
             position="bottom-end"
             className="p-3"
-            style={{ zIndex: 1050, overflowX: 'hidden', position: 'fixed', right: 0, bottom: 0 }}
+            style={{ zIndex: 1050, overflowX: "hidden", position: "fixed", right: 0, bottom: 0 }}
         >
-            <div 
-                ref={toastWrapperRef} 
-                className={`good-tip-toast-wrapper ${isVisible ? 'show' : 'hide'}`}
-            >
+            <div ref={toastWrapperRef} className={`good-tip-toast-wrapper ${isVisible ? "show" : "hide"}`}>
                 <Toast
                     onClose={() => setIsVisible(false)}
-                    show={true} 
+                    show={true}
                     autohide={false}
                     onMouseEnter={() => setIsPaused(true)}
                     onMouseLeave={() => setIsPaused(false)}

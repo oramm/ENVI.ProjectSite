@@ -11,6 +11,7 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
     FilterBodyComponent,
     repository,
     validationSchema = undefined,
+    fixedCriteria = {},
 }: FilterPanelProps) {
     const [error, setError] = useState<string | null>(null);
     const [isReady, setIsReady] = useState(true);
@@ -27,21 +28,31 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
 
     const { reset } = formMethods;
 
+    function mergeFixedCriteria(criteria: FieldValues = {}) {
+        return { ...criteria, ...fixedCriteria };
+    }
+
     //odtwórz stan z sessionStorage
     useEffect(() => {
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot) return;
 
         const { criteria } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
-        if (!criteria) return;
-        for (let key in criteria) {
-            (formMethods.setValue as (name: string, value: any) => void)(key, criteria[key]);
+        const initialCriteria = mergeFixedCriteria(criteria);
+        for (let key in initialCriteria) {
+            (formMethods.setValue as (name: string, value: any) => void)(key, initialCriteria[key]);
         }
-    }, []);
+    }, [snapshotName, fixedCriteria]);
 
-    function saveSnapshotToStorage(result?: DataItemType[]) {
+    useEffect(() => {
+        for (let key in fixedCriteria) {
+            (formMethods.setValue as (name: string, value: any) => void)(key, fixedCriteria[key]);
+        }
+    }, [fixedCriteria]);
+
+    function saveSnapshotToStorage(criteria: FieldValues = formMethods.getValues(), result?: DataItemType[]) {
         const filterableTableSnapshot: FilterableTableSnapShot<DataItemType> = {
-            criteria: formMethods.getValues(),
+            criteria: mergeFixedCriteria(criteria),
             ...(snapshotMode !== "criteria-only" ? { storedObjects: result || [] } : {}),
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
@@ -51,9 +62,10 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
-            const result = (await repository.loadItemsFromServerPOST([data])) as DataItemType[];
+            const criteria = mergeFixedCriteria(data);
+            const result = (await repository.loadItemsFromServerPOST([criteria])) as DataItemType[];
             setObjects(result);
-            saveSnapshotToStorage(result);
+            saveSnapshotToStorage(criteria, result);
         } catch (err) {
             if (err instanceof Error)
                 setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
@@ -67,9 +79,10 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         setIsReady(false);
         setError(null);
         try {
-            const newSections = await sectionsFilterHandlers.onSubmitSections(data);
+            const criteria = mergeFixedCriteria(data);
+            const newSections = await sectionsFilterHandlers.onSubmitSections(criteria);
             setSections(newSections);
-            saveSnapshotToStorage();
+            saveSnapshotToStorage(criteria);
         } catch (err) {
             if (err instanceof Error)
                 setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
@@ -83,10 +96,10 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         return handleSubmitSearchFlat(data);
     }
 
-    const handleReset = () => {
+    const handleReset = async () => {
         const allFields = formMethods.getValues();
         const resetValues = Object.keys(allFields).reduce((acc: any, curr) => {
-            acc[curr] = "";
+            acc[curr] = curr in fixedCriteria ? fixedCriteria[curr] : "";
             return acc;
         }, {});
 
@@ -96,8 +109,11 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         if (sectionsFilterHandlers) {
             const newSections = sectionsFilterHandlers.onResetSections();
             setSections(newSections);
-            saveSnapshotToStorage();
+            saveSnapshotToStorage(resetValues);
+            return;
         }
+
+        await handleSubmitSearchFlat(resetValues);
     };
 
     return (

@@ -5,7 +5,7 @@ import { useFormContext } from "../../../../View/Modals/FormContext";
 export function MeetingsFilterBody() {
     const { register } = useFormContext();
     return (
-        <Row xl={5} md={3} xs={1}>
+        <Row xl={12} md={12} xs={12}>
             <Form.Group as={Col}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />

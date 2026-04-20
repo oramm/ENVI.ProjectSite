@@ -1339,27 +1339,49 @@ export function CaseSelectMenuElement({
         formState: { errors },
     } = useFormContext();
 
+    const labelKey = "_typeFolderNumber_TypeName_Number_Name";
+
     useEffect(() => {
         const fetchData = async () => {
             if (_contract) {
                 await repository.loadItemsFromServerPOST([
                     { contractId: _contract.id, milestoneParentType: "CONTRACT" },
                 ]);
-                setOptions(repository.items);
+                setOptions(
+                    repository.items.map((item) =>
+                        ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)
+                    )
+                );
             } else if (_offer) {
                 await repository.loadItemsFromServerPOST([{ offerId: _offer.id, milestoneParentType: "OFFER" }]);
-                setOptions(repository.items);
+                setOptions(
+                    repository.items.map((item) =>
+                        ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)
+                    )
+                );
             } else {
                 repository.clearData();
+                setOptions([]);
             }
         };
         fetchData();
-    }, [_contract, _offer]);
+    }, [_contract, _offer, labelKey, name, repository]);
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
+    }
+
+    function getValidatedSelected(value: unknown) {
+        if (!value) {
+            return [];
+        }
+
+        const selectedValues = multiple ? (value as Case[]) : [value as Case];
+        return selectedValues.map((item) =>
+            ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`)
+        );
     }
 
     return (
@@ -1369,7 +1391,7 @@ export function CaseSelectMenuElement({
             render={({ field }) => (
                 <Typeahead
                     id={`${name}-typeahead`}
-                    labelKey="_typeFolderNumber_TypeName_Number_Name"
+                    labelKey={labelKey}
                     multiple={multiple}
                     options={options}
                     onChange={(items) => handleOnChange(items, field)}
@@ -1378,7 +1400,7 @@ export function CaseSelectMenuElement({
                         const milestoneNames = Object.keys(groupedResults).sort();
                         return renderCaseMenu(results as Case[], menuProps, state, groupedResults, milestoneNames);
                     }}
-                    selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                    selected={getValidatedSelected(field.value)}
                     placeholder="-- Wybierz sprawę --"
                     isValid={showValidationInfo ? !errors?.[name] : undefined}
                     isInvalid={showValidationInfo ? !!errors?.[name] : undefined}

@@ -37,6 +37,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     externalUpdate = 0,
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
+    fixedCriteria,
     snapshotMode = "criteria+objects",
     sectionsFilterHandlers,
 }: FilterableTableProps<LeafDataItemType>) {
@@ -267,7 +268,11 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                 </Row>
                 {FilterBodyComponent && showFilter() && (
                     <Row className="bg-light p-3 rounded-3 mb-3">
-                        <FilterPanel FilterBodyComponent={FilterBodyComponent} repository={repository} />
+                        <FilterPanel
+                            FilterBodyComponent={FilterBodyComponent}
+                            repository={repository}
+                            fixedCriteria={fixedCriteria}
+                        />
                     </Row>
                 )}
                 {!isReady && (
