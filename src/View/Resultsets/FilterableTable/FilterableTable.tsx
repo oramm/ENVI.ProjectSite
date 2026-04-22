@@ -148,6 +148,30 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         updateSnapshot();
     }
 
+    async function refreshSectionsFromHandlers(): Promise<boolean> {
+        if (!sectionsFilterHandlers?.onSubmitSections) {
+            return false;
+        }
+
+        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        const parsedSnapshot = storedSnapshot
+            ? (JSON.parse(storedSnapshot) as FilterableTableSnapShot<LeafDataItemType>)
+            : undefined;
+        const criteria = parsedSnapshot?.criteria || {};
+
+        setIsReady(false);
+        try {
+            const refreshedSections = await sectionsFilterHandlers.onSubmitSections(criteria);
+            setSections(refreshedSections);
+            return true;
+        } catch (error) {
+            console.error("Nie udało się odświeżyć sekcji po zmianie", error);
+            return false;
+        } finally {
+            setIsReady(true);
+        }
+    }
+
     function removeLeafFromSections(
         nodes: SectionNode<LeafDataItemType>[],
         leafId: number
@@ -160,15 +184,30 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
-        setSections(addNode(sections, activeSectionId, sectionDataObject));
+        void (async () => {
+            const wasRefreshed = await refreshSectionsFromHandlers();
+            if (wasRefreshed) return;
+
+            setSections(addNode(sections, activeSectionId, sectionDataObject));
+        })();
     }
 
     function handleEditSection(sectionDataObject: RepositoryDataItem) {
-        setSections(editNode(sections, activeSectionId, sectionDataObject));
+        void (async () => {
+            const wasRefreshed = await refreshSectionsFromHandlers();
+            if (wasRefreshed) return;
+
+            setSections(editNode(sections, activeSectionId, sectionDataObject));
+        })();
     }
 
     function handleDeleteSection(sectionDataObject: number) {
-        setSections(deleteNode(sections, activeSectionId));
+        void (async () => {
+            const wasRefreshed = await refreshSectionsFromHandlers();
+            if (wasRefreshed) return;
+
+            setSections(deleteNode(sections, activeSectionId));
+        })();
     }
 
     function handleHeaderClick(sectionNode: SectionNode<LeafDataItemType>) {

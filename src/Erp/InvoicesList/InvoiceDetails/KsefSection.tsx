@@ -795,41 +795,51 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                         </div>
                     )}
 
-                    {/* Przyciski akcji */}
-                    <div className="d-flex gap-2 flex-wrap">
-                        <Button variant="outline-secondary" onClick={openPdfPreview} disabled={loading || copyingXml}>
-                            Podgląd PDF
-                        </Button>
-
-                        <Button variant="outline-primary" onClick={copyCurrentXml} disabled={loading || copyingXml}>
-                            {copyingXml ? "Kopiowanie XML..." : "Kopiuj XML"}
-                        </Button>
-
-                        {canSendToKsef() && (
-                            <Button variant="primary" onClick={sendToKsef} disabled={loading}>
-                                {loading ? (
-                                    <>
-                                        <Spinner animation="border" size="sm" className="me-2" />
-                                        Wysyłanie...
-                                    </>
-                                ) : (
-                                    "Wyślij do KSeF"
-                                )}
+                    {/* Przyciski akcji lub komunikat informacyjny */}
+                    {(invoice.status === MainSetup.InvoiceStatuses.SENT ||
+                        invoice.status === MainSetup.InvoiceStatuses.PAID) &&
+                    invoice.number &&
+                    invoice.sentDate ? (
+                        <div className="d-flex gap-2 flex-wrap">
+                            <Button variant="outline-secondary" onClick={openPdfPreview} disabled={loading || copyingXml}>
+                                Podgląd PDF
                             </Button>
-                        )}
 
-                        {(invoice.ksefStatus || invoice.ksefSessionId) && (
-                            <Button variant="outline-secondary" onClick={refreshStatus} disabled={loading}>
-                                Odśwież status
+                            <Button variant="outline-primary" onClick={copyCurrentXml} disabled={loading || copyingXml}>
+                                {copyingXml ? "Kopiowanie XML..." : "Kopiuj XML"}
                             </Button>
-                        )}
 
-                        {canDownloadUpo && (
-                            <Button variant="outline-success" onClick={downloadUpo} disabled={loading}>
-                                📄 Pobierz UPO
-                            </Button>
-                        )}
-                    </div>
+                            {canSendToKsef() && (
+                                <Button variant="primary" onClick={sendToKsef} disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" />
+                                            Wysyłanie...
+                                        </>
+                                    ) : (
+                                        "Wyślij do KSeF"
+                                    )}
+                                </Button>
+                            )}
+
+                            {(invoice.ksefStatus || invoice.ksefSessionId) && (
+                                <Button variant="outline-secondary" onClick={refreshStatus} disabled={loading}>
+                                    Odśwież status
+                                </Button>
+                            )}
+
+                            {canDownloadUpo && (
+                                <Button variant="outline-success" onClick={downloadUpo} disabled={loading}>
+                                    📄 Pobierz UPO
+                                </Button>
+                            )}
+                        </div>
+                    ) : (
+                        <Alert variant="info" className="my-3">
+                            Faktura przed wysłaniem musi mieć <strong>numer</strong> i <strong>datę wysłania</strong>.<br />
+                            Przycisk do wysłania faktury do KSEF, oraz przyciski podglądu i generowania XML będą dostępne po uzupełnieniu tych danych i zmianie statusu na <strong>Wysłana</strong> lub <strong>Zapłacona</strong>.
+                        </Alert>
+                    )}
                 </Col>
             </Row>
         </Container>
