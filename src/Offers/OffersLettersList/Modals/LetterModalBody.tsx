@@ -12,7 +12,12 @@ import { IncomingLetterOffer, OurLetterOffer, OurOffer } from "../../../../Typin
 import { casesRepository, offersRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetterOffer | IncomingLetterOffer>) {
+type LetterModalBodyProps = ModalBodyProps<OurLetterOffer | IncomingLetterOffer> & {
+    getConfidenceClass?: (fieldName: string) => string;
+    fileInputRef?: React.RefObject<HTMLInputElement>;
+};
+
+export function LetterModalBody({ isEditing, initialData, getConfidenceClass = () => '', fileInputRef }: LetterModalBodyProps) {
     const {
         register,
         reset,
@@ -27,13 +32,22 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
     const registrationDate = watch("registrationDate");
 
     useEffect(() => {
+        let defaultEditor;
+        if (!isEditing) {
+            const currentUser = MainSetup.currentUser;
+            if (currentUser && MainSetup.personsEnviRepository.items.length > 0) {
+                defaultEditor = MainSetup.personsEnviRepository.items.find(
+                    (person) => person.email === currentUser.systemEmail
+                );
+            }
+        }
         const resetData: any = {
             _offer: initialData?._offer,
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
             registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
-            _editor: initialData?._editor,
+            _editor: initialData?._editor || defaultEditor,
         };
         reset(resetData);
 
@@ -82,6 +96,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}
                     {...register("description")}
+                    className={getConfidenceClass("description")}
                 />
                 <ErrorMessage name="description" errors={errors} />
             </Form.Group>
@@ -93,6 +108,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                         isValid={!errors.creationDate}
                         isInvalid={!!errors.creationDate}
                         {...register("creationDate")}
+                        className={getConfidenceClass("creationDate")}
                     />
                     <ErrorMessage name="creationDate" errors={errors} />
                 </Form.Group>
@@ -116,7 +132,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
             </Form.Group>
             <Form.Group controlId="file">
                 <Form.Label>Plik</Form.Label>
-                <FileInput {...register("file")} />
+                <FileInput {...register("file")} inputRef={fileInputRef} />
                 {isEditing && (
                     <Form.Text className="text-muted small">
                         Wcześniej załączone pliki są widoczne na dysku w folderze pisma. System nie zapamiętuje tych
