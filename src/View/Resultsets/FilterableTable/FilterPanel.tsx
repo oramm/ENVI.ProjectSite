@@ -1,17 +1,20 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, Button, Col, Form, Row, Spinner } from "react-bootstrap";
-import { FieldValues, set, useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FormProvider } from "../../Modals/FormContext";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { FilterableTableSnapShot, FilterPanelProps } from "./FilterableTableTypes";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+const EMPTY_FIXED_CRITERIA: FieldValues = {};
+
 export function FilterPanel<DataItemType extends RepositoryDataItem>({
     FilterBodyComponent,
     repository,
     validationSchema = undefined,
-    fixedCriteria = {},
+    fixedCriteria,
+    autoSearchOnReset = false,
 }: FilterPanelProps) {
     const [error, setError] = useState<string | null>(null);
     const [isReady, setIsReady] = useState(true);
@@ -25,30 +28,40 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
     });
 
     const snapshotName = `filtersableTableSnapshot_${id}`;
+    const effectiveFixedCriteria = fixedCriteria ?? EMPTY_FIXED_CRITERIA;
+    const fixedCriteriaKey = JSON.stringify(effectiveFixedCriteria);
 
     const { reset } = formMethods;
 
     function mergeFixedCriteria(criteria: FieldValues = {}) {
-        return { ...criteria, ...fixedCriteria };
+        return { ...criteria, ...effectiveFixedCriteria };
+    }
+
+    function applyCriteriaToForm(criteria: FieldValues = {}) {
+        for (let key in criteria) {
+            const nextValue = criteria[key];
+            const currentValue = formMethods.getValues(key);
+            if (Object.is(currentValue, nextValue)) continue;
+            (formMethods.setValue as (name: string, value: any) => void)(key, nextValue);
+        }
     }
 
     //odtwórz stan z sessionStorage
     useEffect(() => {
         const storedSnapshot = sessionStorage.getItem(snapshotName);
-        if (!storedSnapshot) return;
-
-        const { criteria } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
-        const initialCriteria = mergeFixedCriteria(criteria);
-        for (let key in initialCriteria) {
-            (formMethods.setValue as (name: string, value: any) => void)(key, initialCriteria[key]);
+        if (storedSnapshot) {
+            const { criteria } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
+            const initialCriteria = mergeFixedCriteria(criteria);
+            applyCriteriaToForm(initialCriteria);
         }
-    }, [snapshotName, fixedCriteria]);
+
+        // fixed criteria must always win over snapshot values
+        applyCriteriaToForm(effectiveFixedCriteria);
+    }, [snapshotName, fixedCriteriaKey]);
 
     useEffect(() => {
-        for (let key in fixedCriteria) {
-            (formMethods.setValue as (name: string, value: any) => void)(key, fixedCriteria[key]);
-        }
-    }, [fixedCriteria]);
+        applyCriteriaToForm(effectiveFixedCriteria);
+    }, [fixedCriteriaKey]);
 
     function saveSnapshotToStorage(criteria: FieldValues = formMethods.getValues(), result?: DataItemType[]) {
         const filterableTableSnapshot: FilterableTableSnapShot<DataItemType> = {
@@ -99,7 +112,7 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
     const handleReset = async () => {
         const allFields = formMethods.getValues();
         const resetValues = Object.keys(allFields).reduce((acc: any, curr) => {
-            acc[curr] = curr in fixedCriteria ? fixedCriteria[curr] : "";
+            acc[curr] = curr in effectiveFixedCriteria ? effectiveFixedCriteria[curr] : "";
             return acc;
         }, {});
 
@@ -113,7 +126,12 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
             return;
         }
 
-        await handleSubmitSearchFlat(resetValues);
+        if (autoSearchOnReset) {
+            await handleSubmitSearchFlat(resetValues);
+            return;
+        }
+
+        saveSnapshotToStorage(resetValues);
     };
 
     return (

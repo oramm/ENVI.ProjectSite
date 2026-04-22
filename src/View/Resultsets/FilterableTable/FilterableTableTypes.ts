@@ -31,6 +31,7 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
     fixedCriteria?: FieldValues;
+    autoSearchOnReset?: boolean;
 
     snapshotMode?: SnapshotMode;
     sectionsFilterHandlers?: SectionsFilterHandlers<DataItemType>;
@@ -46,6 +47,7 @@ export type FilterPanelProps = {
     repository: RepositoryReact;
     validationSchema?: yup.ObjectSchema<any> | undefined;
     fixedCriteria?: FieldValues;
+    autoSearchOnReset?: boolean;
 };
 
 export type FilterBodyProps = {};

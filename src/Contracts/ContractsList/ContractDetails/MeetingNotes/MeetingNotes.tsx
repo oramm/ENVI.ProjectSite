@@ -61,6 +61,7 @@ export default function MeetingNotes() {
                         initialObjects={notes}
                         repository={meetingNotesRepository}
                         fixedCriteria={fixedCriteria}
+                        autoSearchOnReset={true}
                         AddNewButtonComponents={[MeetingNoteAddNewModalButton]}
                         tableStructure={[
                             { header: "#", objectAttributeToShow: "sequenceNumber" },

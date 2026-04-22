@@ -63,6 +63,7 @@ export default function Meetings() {
                                         initialObjects={meetings}
                                         repository={meetingsRepository}
                                         fixedCriteria={fixedCriteria}
+                                        autoSearchOnReset={true}
                                         AddNewButtonComponents={[MeetingAddNewModalButton]}
                                         EditButtonComponent={MeetingEditModalButton}
                                         FilterBodyComponent={MeetingsFilterBody}

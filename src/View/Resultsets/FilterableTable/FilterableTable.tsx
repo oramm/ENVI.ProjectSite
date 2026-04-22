@@ -38,6 +38,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
     fixedCriteria,
+    autoSearchOnReset = false,
     snapshotMode = "criteria+objects",
     sectionsFilterHandlers,
 }: FilterableTableProps<LeafDataItemType>) {
@@ -272,6 +273,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                             FilterBodyComponent={FilterBodyComponent}
                             repository={repository}
                             fixedCriteria={fixedCriteria}
+                            autoSearchOnReset={autoSearchOnReset}
                         />
                     </Row>
                 )}
