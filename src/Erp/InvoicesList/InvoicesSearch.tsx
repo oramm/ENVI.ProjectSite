@@ -72,7 +72,8 @@ export default function InvoicesSearch({ title }: { title: string }) {
                         </Badge>
                     )}
                 </div>
-                <div>{invoice._entity.name} </div>
+                <div>{invoice._entity.name}</div>
+                {invoice._entity.address && <div className="text-muted small">{invoice._entity.address}</div>}
                 {invoice.description && <div className="text-muted small"> {invoice.description}</div>}
                 {isActive && <div className="mt-2"></div>}
             </>
