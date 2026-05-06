@@ -55,7 +55,7 @@ export function MilestoneDateModalBody(props: ModalBodyProps<MilestoneDateData>)
                             type="date"
                             isInvalid={hasAnyDateError(errors)}
                             isValid={!hasAnyDateError(errors)}
-                            {...register(`startDate`)}
+                            {...register(`startDate`, { onChange: () => trigger(`endDate`) })}
                         />
                         <ErrorMessage name={`startDate`} errors={errors} />
                     </Form.Group>
@@ -67,7 +67,7 @@ export function MilestoneDateModalBody(props: ModalBodyProps<MilestoneDateData>)
                             type="date"
                             isInvalid={hasAnyDateError(errors)}
                             isValid={!hasAnyDateError(errors)}
-                            {...register(`endDate`)}
+                            {...register(`endDate`, { onChange: () => trigger(`startDate`) })}
                         />
                         <ErrorMessage name={`endDate`} errors={errors} />
                     </Form.Group>

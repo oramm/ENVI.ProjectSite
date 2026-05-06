@@ -76,7 +76,7 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                             type="date"
                             isInvalid={hasAnyDateError(errors, index)}
                             isValid={!hasAnyDateError(errors, index)}
-                            {...register(`_dates.${index}.startDate`)}
+                            {...register(`_dates.${index}.startDate`, { onChange: () => trigger(`_dates.${index}.endDate`) })}
                         />
                         <ErrorMessage name={`_dates.${index}.startDate`} errors={errors} />
                     </Form.Group>
@@ -88,7 +88,7 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                             type="date"
                             isInvalid={hasAnyDateError(errors, index)}
                             isValid={!hasAnyDateError(errors, index)}
-                            {...register(`_dates.${index}.endDate`)}
+                            {...register(`_dates.${index}.endDate`, { onChange: () => trigger(`_dates.${index}.startDate`) })}
                         />
                         <ErrorMessage name={`_dates.${index}.endDate`} errors={errors} />
                     </Form.Group>
