@@ -190,6 +190,12 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
         case MainSetup.InvoiceStatuses.SENT:
             variant = "info";
             break;
+        case MainSetup.InvoiceStatuses.READY_FOR_KSEF:
+            variant = "primary";
+            break;
+        case MainSetup.InvoiceStatuses.SENT_TO_KSEF:
+            variant = "success";
+            break;
         case MainSetup.InvoiceStatuses.PAID:
             variant = "success";
             break;

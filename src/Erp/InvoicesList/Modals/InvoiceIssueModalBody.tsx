@@ -20,6 +20,7 @@ export function InvoiceIssueModalBody({ initialData }: ModalBodyProps<Invoice>) 
         console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
             number: initialData?.number,
+            sentDate: initialData?.sentDate || new Date().toISOString().slice(0, 10),
         };
         reset(resetData);
         trigger();
@@ -81,6 +82,16 @@ export function InvoiceIssueModalBody({ initialData }: ModalBodyProps<Invoice>) 
                     {...register("number")}
                 />
                 <ErrorMessage name="number" errors={errors} />
+            </Form.Group>
+            <Form.Group controlId="sentDate" className="mt-3">
+                <Form.Label>Data wysłania</Form.Label>
+                <Form.Control
+                    type="date"
+                    isValid={!errors?.sentDate}
+                    isInvalid={!!errors?.sentDate}
+                    {...register("sentDate")}
+                />
+                <ErrorMessage name="sentDate" errors={errors} />
             </Form.Group>
         </>
     );

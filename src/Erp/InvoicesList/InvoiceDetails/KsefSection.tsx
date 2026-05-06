@@ -73,6 +73,10 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
     const [ksefCorrectionType, setKsefCorrectionType] = useState<1 | 2 | 3 | null>(null);
     const pollingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const activeInvoiceIdRef = useRef<number | null>(invoice.id ?? null);
+    // Zawsze aktualny snapshot faktury — pozwala pollingowi używać najnowszego stanu
+    // bez ponownego tworzenia useCallback przy każdej zmianie invoice
+    const latestInvoiceRef = useRef<Invoice>(invoice);
+    latestInvoiceRef.current = invoice;
 
     // Faktura jest korektą jeśli ma ustawione correctedInvoiceId
     const isCorrectionInvoice = !!invoice.correctedInvoiceId;
@@ -156,8 +160,12 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         // Nie pokazuj jeśli faktura ma już sessionId (była wysłana)
         if (invoice.ksefSessionId) return false;
 
-        // Pokaż tylko gdy faktura jest ustawiona jako "Wysłana" (SENT)
-        return invoice.status === MainSetup.InvoiceStatuses.SENT;
+        // Pokaż dla statusów: "Wysłana" (legacy), "Gotowa do wysłania KSeF", "Wysłana do KSeF"
+        return (
+            invoice.status === MainSetup.InvoiceStatuses.SENT ||
+            invoice.status === MainSetup.InvoiceStatuses.READY_FOR_KSEF ||
+            invoice.status === MainSetup.InvoiceStatuses.SENT_TO_KSEF
+        );
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status]);
 
     const resolveCorrectionSendPayload = async (): Promise<CorrectionSendPayload> => {
@@ -340,6 +348,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
             const updatedInvoice: Invoice = {
                 ...invoice,
+                status: MainSetup.InvoiceStatuses.SENT_TO_KSEF,
                 ksefStatus: isCorrectionInvoice ? "PENDING_CORRECTION" : "PENDING",
                 ksefSessionId: sendResult.referenceNumber,
             };
@@ -398,7 +407,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     setLoadingMessage("");
 
                     const updatedInvoice: Invoice = {
-                        ...invoice,
+                        ...latestInvoiceRef.current,
                         ksefNumber: statusResult.ksefNumber,
                         ksefStatus: String(statusResult.status?.code || "200"),
                     };
@@ -797,6 +806,8 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
 
                     {/* Przyciski akcji lub komunikat informacyjny */}
                     {(invoice.status === MainSetup.InvoiceStatuses.SENT ||
+                        invoice.status === MainSetup.InvoiceStatuses.READY_FOR_KSEF ||
+                        invoice.status === MainSetup.InvoiceStatuses.SENT_TO_KSEF ||
                         invoice.status === MainSetup.InvoiceStatuses.PAID) &&
                     invoice.number &&
                     invoice.sentDate ? (
@@ -837,7 +848,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     ) : (
                         <Alert variant="info" className="my-3">
                             Faktura przed wysłaniem musi mieć <strong>numer</strong> i <strong>datę wysłania</strong>.<br />
-                            Przycisk do wysłania faktury do KSEF, oraz przyciski podglądu i generowania XML będą dostępne po uzupełnieniu tych danych i zmianie statusu na <strong>Wysłana</strong> lub <strong>Zapłacona</strong>.
+                            Przyciski podglądu i wysyłki do KSeF będą dostępne po wystawieniu faktury.
                         </Alert>
                     )}
                 </Col>

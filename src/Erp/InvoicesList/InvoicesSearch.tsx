@@ -5,7 +5,7 @@ import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTab
 import { InvoicesFilterBody } from "./InvoiceFilterBody";
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from "./Modals/InvoiceModalButtons";
 import { Invoice } from "../../../Typings/bussinesTypes";
-import { InvoiceStatusBadge, KsefStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { InvoiceStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { invoicesRepository } from "./InvoicesController";
 import Tools from "../../React/Tools/Tools";
 
@@ -105,14 +105,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
                 {
                     header: "Status",
                     renderTdBody: (invoice: Invoice) => <InvoiceStatusBadge status={invoice.status} />,
-                    colMd: 1,
-                },
-                {
-                    header: "KSeF",
-                    renderTdBody: (invoice: Invoice) => (
-                        <KsefStatusBadge ksefNumber={invoice.ksefNumber} ksefStatus={invoice.ksefStatus} />
-                    ),
-                    colMd: 1,
+                    colMd: 2,
                 },
             ]}
             AddNewButtonComponents={[InvoiceAddNewModalButton]}

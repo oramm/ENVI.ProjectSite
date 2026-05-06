@@ -12,7 +12,9 @@
       "Bash(git commit:*)",
       "Bash(yarn build:*)",
       "Bash(echo:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(ls \"D:\\\\GitHub\\\\PS-nodeJS\\\\src\")",
+      "Read(//d/GitHub/PS-nodeJS/src/**)"
     ]
   }
 }

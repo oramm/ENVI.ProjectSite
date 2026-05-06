@@ -199,8 +199,10 @@ export function ActionButton() {
         case MainSetup.InvoiceStatuses.TO_DO:
             return <InvoiceIssueModalButton />;
         case MainSetup.InvoiceStatuses.DONE:
+            // Zachowanie dla starych faktur w statusie "Zrobiona"
             return <InvoiceSetAsSentModalButton />;
         case MainSetup.InvoiceStatuses.SENT:
+        case MainSetup.InvoiceStatuses.SENT_TO_KSEF:
             return (
                 <ChangeStatusButton specialActionRoute="setAsPaidInvoice" newStatus={MainSetup.InvoiceStatuses.PAID} />
             );
