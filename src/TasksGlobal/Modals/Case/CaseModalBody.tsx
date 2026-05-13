@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, Col, Form, Row } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Form } from "react-bootstrap";
 import { Case, MilestoneData } from "../../../../Typings/bussinesTypes";
 import { CaseTypeSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../../View/Modals/FormContext";
@@ -68,3 +68,4 @@ export function CaseModalBody({ isEditing, initialData, contextData: contextData
         </>
     );
 }
+

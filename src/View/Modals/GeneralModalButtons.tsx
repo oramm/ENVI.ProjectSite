@@ -37,6 +37,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
         additionalModalBodyProps,
         modalTitle,
         modalSubtitle,
+        headerBadge,
         initialData,
         repository,
         makeValidationSchema,
@@ -64,6 +65,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                 isEditing={true}
                 title={modalTitle}
                 subtitle={modalSubtitle}
+                headerBadge={headerBadge}
                 repository={repository}
                 onEdit={onEdit}
                 specialActionRoute={specialActionRoute}
@@ -130,6 +132,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         additionalModalBodyProps,
         modalTitle,
         modalSubtitle,
+        headerBadge,
         repository,
         makeValidationSchema: validationSchema,
         size,
@@ -168,6 +171,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
                 isEditing={false}
                 title={modalTitle}
                 subtitle={modalSubtitle}
+                headerBadge={headerBadge}
                 repository={repository}
                 onAddNew={onAddNew}
                 ModalBodyComponent={ModalBodyComponent}

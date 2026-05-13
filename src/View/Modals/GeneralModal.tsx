@@ -19,6 +19,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     show: boolean;
     title: string;
     subtitle?: string;
+    headerBadge?: React.ReactNode;
     isEditing: boolean;
     onEdit?: (object: DataItemType) => void;
     specialActionRoute?: string;
@@ -38,6 +39,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     show,
     title,
     subtitle,
+    headerBadge,
     isEditing,
     specialActionRoute,
     specialRetrieveActionRoute,
@@ -290,7 +292,10 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         return (
             <Row>
                 <Col>
-                    <h5>{title}</h5>
+                    <div className="d-flex flex-wrap align-items-center gap-2">
+                        <h5 className="mb-0">{title}</h5>
+                        {headerBadge}
+                    </div>
                     {subtitle && <div className="text-muted small" dangerouslySetInnerHTML={{ __html: subtitle }} />}
                 </Col>
             </Row>

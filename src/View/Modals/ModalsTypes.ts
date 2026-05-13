@@ -5,6 +5,7 @@
  * @param additionalProps - dodatkowe właściwości przekazywane do body - np. inne komponenty - patrz OurContractAddNewModalButton
  */
 
+import type { ReactNode } from "react";
 import RepositoryReact from "../../React/RepositoryReact";
 import * as yup from "yup";
 import { ButtonProps } from "react-bootstrap";
@@ -23,6 +24,7 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
     additionalModalBodyProps?: any;
     modalTitle: string;
     modalSubtitle?: string;
+    headerBadge?: ReactNode;
     repository: RepositoryReact<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     contextData?: unknown;
