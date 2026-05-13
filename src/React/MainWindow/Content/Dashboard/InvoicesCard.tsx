@@ -16,6 +16,8 @@ const sectionIcons: Record<string, string> = {
     "Do zrobienia": "📝",
     Zrobiona: "✅",
     Wysłana: "📤",
+    "Gotowa do wysłania KSeF": "📋",
+    "Wysłana do KSeF": "🏛️",
     Zapłacona: "💸",
     "Do korekty": "✏️",
     Wycofana: "🚫",
