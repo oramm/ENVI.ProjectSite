@@ -884,3 +884,62 @@ export interface CostInvoiceMonthlyReport {
     };
     invoices: CostInvoice[];
 }
+
+export type MatchingStatus = 'UNMATCHED' | 'PROPOSED' | 'CONFIRMED' | 'MANUAL';
+export type TransferDirection = 'IN' | 'OUT';
+
+export interface BankTransfer extends RepositoryDataItem {
+    id: number;
+    bankStatementId: number;
+    execDate: string;
+    amount: number;
+    currency: string;
+    direction: TransferDirection;
+    counterpartyName: string | null;
+    counterpartyAccount: string | null;
+    description: string | null;
+    matchingStatus: MatchingStatus;
+    operationHash: string;
+}
+
+export interface BankStatement {
+    id: number;
+    fileName: string;
+    fileHash: string;
+    uploadedAt: string;
+    periodFrom: string | null;
+    periodTo: string | null;
+    uploadedBy: number | null;
+}
+
+export interface PaymentAllocation extends RepositoryDataItem {
+    id: number;
+    bankTransferId: number;
+    invoiceId: number | null;
+    costInvoiceId: number | null;
+    allocatedAmount: number;
+    allocatedPercentage: number;
+    source: 'AUTO' | 'MANUAL';
+    confidence: number | null;
+    createdAt: string;
+    createdBy: number | null;
+}
+
+export interface DuplicateGroup {
+    type: 'COUNTERPARTY' | 'INVOICE_NUMBER';
+    signal: string;
+    transfers: BankTransfer[];
+}
+
+export interface WadiumMatchResult {
+    bond: {
+        id: number;
+        offerId: number;
+        offerAlias: string | null;
+        value: number;
+        status: string;
+        expiryDate: string | null;
+    };
+    matchingTransfers: BankTransfer[];
+    isReturned: boolean;
+}

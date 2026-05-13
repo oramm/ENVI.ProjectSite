@@ -125,6 +125,14 @@ export default function MainMenu() {
                                             >
                                                 Raport miesięczny
                                             </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={Link}
+                                                to="/bankSync"
+                                                className={isActive("/bankSync")}
+                                            >
+                                                Wyciągi bankowe
+                                            </NavDropdown.Item>
                                         </NavDropdown>
                                     );
                                 }
