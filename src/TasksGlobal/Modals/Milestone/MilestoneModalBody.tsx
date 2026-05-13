@@ -118,7 +118,7 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
 
     return (
         <>
-            <input type="hidden" {...register("number", { valueAsNumber: true })} />
+            <input type="hidden" {...register("number", { setValueAs: (v: string) => v !== "" ? Number(v) : undefined })} />
             {!isEditing && <MilestoneTypeSelector contractType={_contract._type} />}
 
             {shouldShowNameField() && (
