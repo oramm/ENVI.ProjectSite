@@ -58,6 +58,12 @@ export function LetterModalBody({
                 );
             }
         }
+        const toDateInput = (value: string | undefined | null): string => {
+            if (!value) return "";
+            const iso = value.match(/^(\d{4}-\d{2}-\d{2})/);
+            return iso ? iso[1] : "";
+        };
+
         const resetData: any = {
             id: initialData?.id,
             _contract: getContractFromCases(initialData?._cases),
@@ -67,7 +73,7 @@ export function LetterModalBody({
             registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor || defaultEditor,
             relatedLetterNumber: initialData?.relatedLetterNumber || "",
-            responseDueDate: initialData?.responseDueDate || "",
+            responseDueDate: toDateInput(initialData?.responseDueDate),
         };
         if (!isEditing) resetData._project = _project;
         reset(resetData);
@@ -85,8 +91,8 @@ export function LetterModalBody({
     }, [trigger, watch, creationDate, registrationDate, responseDueDate]);
 
     useEffect(() => {
-        setValue("registrationDate", creationDate);
-    }, [setValue, creationDate]);
+        if (!isEditing) setValue("registrationDate", creationDate);
+    }, [setValue, creationDate, isEditing]);
 
     return (
         <>

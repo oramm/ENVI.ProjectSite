@@ -59,6 +59,6 @@ export function makeOtherLetterValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
-        resopnseIKNumber: Yup.string().max(40, "Numer odpowiedzi IK może mieć maksymalnie 40 znaków"),
+        responseIKNumber: Yup.string().max(40, "Numer odpowiedzi IK może mieć maksymalnie 40 znaków"),
     });
 }
