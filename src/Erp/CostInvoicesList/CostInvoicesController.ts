@@ -110,6 +110,17 @@ export const PaymentStatuses = {
 
 export type PaymentStatus = typeof PaymentStatuses[keyof typeof PaymentStatuses];
 
+export type CostInvoiceQrData = {
+    qrVerificationUrl: string;
+    qrLabel: string;
+    qrPayload: {
+        environment: string;
+        sellerNip: string;
+        issueDate: string;
+        invoiceHash: string;
+    };
+};
+
 /**
  * Repozytorium faktur kosztowych
  * Dane pobierane z KSeF i przechowywane lokalnie
@@ -222,6 +233,23 @@ export async function fetchCostInvoiceDetails(id: number): Promise<CostInvoice> 
 
     if (!response.ok) {
         await throwCostInvoiceApiError(response, "Błąd pobierania szczegółów faktury");
+    }
+
+    const result = await response.json();
+    return result.data || result;
+}
+
+/**
+ * Pobiera dane QR dla faktury kosztowej (KSeF)
+ */
+export async function fetchCostInvoiceQr(id: number): Promise<CostInvoiceQrData> {
+    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/${id}/qr`, {
+        method: "GET",
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        await throwCostInvoiceApiError(response, "Błąd pobierania danych QR");
     }
 
     const result = await response.json();

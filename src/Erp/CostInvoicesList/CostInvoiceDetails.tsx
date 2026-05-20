@@ -14,11 +14,13 @@ import {
 import { CostInvoice, CostInvoiceCategory, CostInvoiceItem } from "../../../Typings/bussinesTypes";
 import {
     fetchCostInvoiceDetails,
+    fetchCostInvoiceQr,
     fetchCategories,
     updateCostInvoice,
     updateCostInvoiceItem,
     bookCostInvoice,
     CostInvoiceApiError,
+    CostInvoiceQrData,
     CostInvoiceStatus,
     CostInvoiceStatuses,
     PaymentStatus,
@@ -28,6 +30,7 @@ import { CostInvoiceStatusBadge, PaymentMethodBadge, InvoiceTypeBadge } from "./
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function CostInvoiceDetails() {
     const { id } = useParams();
@@ -40,6 +43,9 @@ export default function CostInvoiceDetails() {
     const [error, setError] = useState<string | null>(null);
     const [validationDetails, setValidationDetails] = useState<string[]>([]);
     const [success, setSuccess] = useState<string | null>(null);
+    const [qrData, setQrData] = useState<CostInvoiceQrData | null>(null);
+    const [qrLoading, setQrLoading] = useState(false);
+    const [qrError, setQrError] = useState<string | null>(null);
 
     // Edytowalne pola faktury
     const [categoryId, setCategoryId] = useState<number | null>(null);
@@ -140,6 +146,29 @@ export default function CostInvoiceDetails() {
         }
     }, [id]);
 
+    useEffect(() => {
+        if (!invoice?.id) return;
+
+        setQrLoading(true);
+        setQrError(null);
+        setQrData(null);
+
+        fetchCostInvoiceQr(invoice.id)
+            .then((data) => {
+                setQrData(data);
+            })
+            .catch((err) => {
+                if (err instanceof CostInvoiceApiError) {
+                    setQrError(err.message);
+                    return;
+                }
+                setQrError(err instanceof Error ? err.message : "Błąd pobierania danych QR");
+            })
+            .finally(() => {
+                setQrLoading(false);
+            });
+    }, [invoice?.id]);
+
     const handleCategoryChange = (newCategoryId: number | null) => {
         setCategoryId(newCategoryId);
 
@@ -217,6 +246,28 @@ export default function CostInvoiceDetails() {
         }
 
         setEditedItems(new Map());
+    };
+
+    const copyQrLink = async (qrLink: string) => {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(qrLink);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = qrLink;
+                textarea.setAttribute("readonly", "true");
+                textarea.style.position = "absolute";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+
+            setSuccess("Link QR został skopiowany do schowka.");
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Nie udało się skopiować linku QR");
+        }
     };
 
     const handleBook = async () => {
@@ -515,6 +566,74 @@ export default function CostInvoiceDetails() {
                             <code className="small">{invoice.ksefNumber}</code>
                         </Col>
                     </Row>
+                </Card.Body>
+            </Card>
+
+            <Card className="mb-3">
+                <Card.Header>
+                    <h5 className="mb-0">KSeF - kod QR</h5>
+                </Card.Header>
+                <Card.Body>
+                    {qrLoading && (
+                        <div className="mb-3">
+                            <Spinner animation="border" size="sm" className="me-2" />
+                            Ładowanie danych QR...
+                        </div>
+                    )}
+
+                    {qrError && (
+                        <Alert variant="info" className="mb-0">
+                            {qrError}
+                        </Alert>
+                    )}
+
+                    {!qrLoading && !qrError && qrData && (
+                        <Row className="align-items-center g-3">
+                            <Col md={4} className="text-center">
+                                <div className="d-inline-flex p-2 bg-white border rounded-3 shadow-sm">
+                                    <QRCodeSVG
+                                        value={qrData.qrVerificationUrl}
+                                        size={176}
+                                        level="M"
+                                        includeMargin
+                                    />
+                                </div>
+                                <div className="mt-2 small text-muted">Kod QR dla faktury kosztowej</div>
+                                <div className="fw-bold">{qrData.qrLabel}</div>
+                            </Col>
+                            <Col md={8}>
+                                <div className="fw-semibold mb-2">Link weryfikacyjny KSeF</div>
+                                <div className="small text-break mb-3">
+                                    <code>{qrData.qrVerificationUrl}</code>
+                                </div>
+                                <div className="d-flex gap-2 flex-wrap">
+                                    <Button
+                                        as="a"
+                                        href={qrData.qrVerificationUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        variant="outline-primary"
+                                        size="sm"
+                                    >
+                                        Otwórz link
+                                    </Button>
+                                    <Button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        onClick={() => copyQrLink(qrData.qrVerificationUrl)}
+                                    >
+                                        Kopiuj link
+                                    </Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    )}
+
+                    {!qrLoading && !qrError && !qrData && (
+                        <Alert variant="info" className="mb-0">
+                            Brak danych do wygenerowania kodu QR.
+                        </Alert>
+                    )}
                 </Card.Body>
             </Card>
 
