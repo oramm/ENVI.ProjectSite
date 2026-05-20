@@ -254,7 +254,21 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         }
 
         const newObject = await repository.addNewItem(data, undefined, handleProgress);
-        if (onAddNew) onAddNew(newObject);
+        if (onAddNew) {
+            // Merge form data into server response so callbacks retain form fields
+            // (e.g. systemRoleId, systemEmail) that the backend strips before saving.
+            // Server values take precedence; _contextData is stripped to avoid leaking
+            // internal modal state into domain callbacks.
+            if (data instanceof FormData) {
+                onAddNew(newObject);
+            } else {
+                const { _contextData: _stripped, ...cleanFormData } = data as any;
+                const enriched = { ...cleanFormData, ...newObject } as DataItemType;
+                // Keep repository.items in sync so FilterableTable reads enriched data
+                if (newObject.id) repository.replaceItemById(newObject.id, enriched);
+                onAddNew(enriched);
+            }
+        }
     }
 
     function renderFormBody() {

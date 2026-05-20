@@ -15,12 +15,11 @@ export function PersonEditModalButton({
         // Pola account (systemRoleId, systemEmail) sa zakomentowane w formularzu Persons
         // Wysylamy puste payloady -- endpointy v2 tworza/aktualizuja rekordy
         if (editedObject?.id) {
-            await savePersonV2AccountAndProfile(
-                editedObject.id,
-                {},
-                {},
-                "Persons"
-            );
+            try {
+                await savePersonV2AccountAndProfile(editedObject.id, {}, {}, "Persons");
+            } catch (err) {
+                console.error("[Persons] savePersonV2: błąd przy edycji osoby id=%d", editedObject.id, err);
+            }
         }
         onEdit(editedObject);
     }
@@ -43,10 +42,21 @@ export function PersonEditModalButton({
 }
 
 export function PersonAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<PersonData>) {
+    async function handleAddNew(newObject: PersonData) {
+        if (newObject?.id) {
+            try {
+                await savePersonV2AccountAndProfile(newObject.id, {}, {}, "Persons");
+            } catch (err) {
+                console.error("[Persons] savePersonV2: błąd po dodaniu osoby id=%d", newObject.id, err);
+            }
+        }
+        onAddNew(newObject);
+    }
+
     return (
         <GeneralAddNewModalButton<PersonData>
             modalProps={{
-                onAddNew: onAddNew,
+                onAddNew: handleAddNew,
                 ModalBodyComponent: PersonModalBody,
                 modalTitle: "Dodaj osobę",
                 repository: personsRepository,

@@ -37,12 +37,12 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
     replaceCurrentItemById(id: number, editedItem: DataItemType) {
         const index = this.currentItems.findIndex((item) => item.id === id);
-        this.currentItems.splice(index, 1, editedItem);
+        if (index !== -1) this.currentItems.splice(index, 1, editedItem);
     }
 
     replaceItemById(id: number, editedItem: DataItemType) {
         const index = this.items.findIndex((item) => item.id === id);
-        this.items.splice(index, 1, editedItem);
+        if (index !== -1) this.items.splice(index, 1, editedItem);
     }
 
     saveToSessionStorage() {
