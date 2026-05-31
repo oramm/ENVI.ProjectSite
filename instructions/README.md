@@ -28,15 +28,22 @@ instructions/              -- architektura i wzorce (canonical)
 ├── ui-browser-loop.md (iteracyjne dopracowanie UI ze screenshotami)
 └── TasksGlobalView.md
 
-documentation/operations/  -- plany, postepy, logi operacyjne
-├── contract-meeting-notes/   (pointer → PS-nodeJS)
-├── hr-module/                (pointer → PS-nodeJS)
+documentation/operations/  -- UI-only plany albo pointery do PS-nodeJS
+├── contract-meeting-notes/   (pointer -> PS-nodeJS)
+├── documentation-structure-reorg/ (pointer -> PS-nodeJS)
 ├── persons-v2-refactor/      (FE plan/progress/checklist)
 ├── persons-v2-ui/            (FE UI plan/progress)
-└── public-profile-submission/ (plan/progress/flow/api-contract)
+└── public-profile-submission/ (pointer -> PS-nodeJS)
 ```
 
-Rozdzielenie: `instructions/` = architektura i wzorce, `documentation/` = plany i postepy.
+Rozdzielenie: `instructions/` = architektura i wzorce, `documentation/operations/` = aktywne UI-only plany albo pojedynczy pointer do backendowego huba.
+
+Klasyfikacja:
+
+- `frontend-only`: lokalny `plan.md`, `progress.md`, `activity-log.md`.
+- `cross-repo`: tylko lokalny `plan.md` typu pointer; canonical plan/progress/log sa w `C:\Apache24\htdocs\PS-nodeJS\documentation\team\operations\`.
+- `deploy/db/env`: zawsze backend-owned.
+- `docs/`: artefakt builda GitHub Pages, nie dokumentacja zrodlowa.
 
 ---
 
@@ -123,7 +130,7 @@ Kazdy plik jest podzielony na sekcje, ktore mozna czytac niezaleznie:
 
 ## Docs operacyjne
 
-Plany, postepy i logi operacyjne znajduja sie w `documentation/operations/`.
-Kazda operacja (feature/refaktor) ma osobny katalog z plikami `plan.md`, `progress.md`, `activity-log.md`.
+Plany, postepy i logi operacyjne dla prac frontend-only znajduja sie w `documentation/operations/`.
+Dla prac cross-repo ten folder zawiera tylko pointer do `PS-nodeJS`.
 
 > [documentation/operations/](../documentation/operations/) - wszystkie operacje
