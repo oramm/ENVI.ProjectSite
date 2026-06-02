@@ -116,6 +116,9 @@ Kazdy plik jest podzielony na sekcje, ktore mozna czytac niezaleznie:
 **Debugujesz istniejacy selektor?**
 > [business-object-selectors.md - Debugging](./business-object-selectors.md#debugging) - typowe problemy
 
+**Tworzysz obiekt "w miejscu" z poziomu selektora (pick-or-create)?**
+> [business-object-selectors.md - Pick-or-Create](./business-object-selectors.md#wzorzec-pick-or-create-inline-tworzenie-w-panelu-bocznym) - `InlineCreateDrawer` (Offcanvas), wiring, haki TODO(graf)
+
 **Tworzysz nowy modul CRUD?**
 > [crud-module-guide.md](./crud-module-guide.md) - receptura + szablony kodu (lub uzyj `/new-crud-module`)
 

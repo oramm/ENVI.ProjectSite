@@ -1,9 +1,9 @@
 # Inline Create Case in Letter — Progress
 
 ## Status Snapshot
-- **Active phase:** N5 — Docs + future-hook notes (flow complete; uniqueness icon unified)
-- **Last completed checkpoint:** N4 (wired into LetterModalBody + onCreated auto-select + uniqueness-icon unification, build-verified 2026-06-02)
-- **Next checkpoint:** N5
+- **Active phase:** COMPLETE — all checkpoints (N0–N5) closed
+- **Last completed checkpoint:** N5 (docs + future-hook notes, 2026-06-02)
+- **Next checkpoint:** none — PR1 plan fully executed
 
 ## Checkpoint Index
 | ID | Title | Status |
@@ -13,7 +13,7 @@
 | N2 | MilestoneSelector | CLOSED |
 | N3 | Extend CaseSelectMenuElement + CaseModalBody reuse | CLOSED |
 | N4 | Wire into LetterModalBody + onCreated auto-select | CLOSED |
-| N5 | Docs + future-hook notes | OPEN |
+| N5 | Docs + future-hook notes | CLOSED |
 
 ## Sessions
 
@@ -127,3 +127,31 @@
   `MilestoneSelector` for inline Milestone create; generic `InlineCreateDrawer` reuse for other
   pick-or-create selectors) in the plan/docs, attach the icon screenshots, and close N5.
 - **Checkpoint status:** N4 CLOSED; N5 OPEN.
+
+### Session 6 — N5 Docs + future-hook notes (CLOSED)
+- **Scope:** Document the pick-or-create pattern (`InlineCreateDrawer`) in the selectors docs; confirm
+  the `TODO(graf)` future-hook markers; index the new section in `instructions/README.md`.
+- **Completed:**
+  - **Doc section** "Wzorzec: Pick-or-Create (inline tworzenie w panelu bocznym)" added to
+    `instructions/business-object-selectors.md` (before FAQ). Covers: the 4 pattern elements with file
+    paths (`InlineCreateDrawer<T>`, `CaseSelectMenuElement.onRequestCreate`, `CaseInlineCreateBody`
+    composition, `LetterModalBody` host); RepositoryReact wiring rules (SAME repo instance for
+    drawer+selector, `onCreated` reads from `repository.items` + dedup-guarded `setValue`,
+    `refreshToken` option-rebuild, `mode:"onChange"` validation); and the `TODO(graf)` future hooks
+    (recursive Milestone create, drawer nesting, generic reuse for Contract/Project/Person in PR2).
+  - **Index entry** added to `instructions/README.md` Quick Links ("Tworzysz obiekt w miejscu z poziomu
+    selektora (pick-or-create)?" → anchor to the new section).
+  - **TODO(graf) markers confirmed present** (no code change needed — already landed in N1/N2):
+    `InlineCreateDrawer.tsx:21` (drawer nesting) and `BussinesObjectSelectors.tsx:1510`
+    (`MilestoneSelector.onRequestCreate` inline Milestone create).
+- **Evidence:**
+  - `grep TODO(graf) src/` → 2 hits: `InlineCreateDrawer.tsx:21`, `BussinesObjectSelectors.tsx:1510`.
+  - Docs are markdown (no build step); links/anchors verified by inspection.
+  - No `src/` production code changed in N5 (docs + already-present markers only).
+- **Design notes / deviations:** Optional cosmetic icon screenshots (expanded "Typ Sprawy" list,
+  TasksGlobal tree) from the N4 handoff were not attached — purely cosmetic evidence, not an acceptance
+  criterion for N5; the feature flow and icons were already verified end-to-end in N4.
+- **Risks/Blockers:** None. PR1 plan (N0–N5) fully executed.
+- **Next session exact actions:** None — plan complete. Optional follow-ups live as `TODO(graf)` hooks
+  for a future PR2 (recursive Milestone inline-create; generalize `InlineCreateDrawer` to other selectors).
+- **Checkpoint status:** N5 CLOSED. Plan COMPLETE.

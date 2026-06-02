@@ -82,3 +82,15 @@
   - `src/TasksGlobal/Modals/Case/CaseInlineCreateBody.tsx` (`makeInlineCaseValidationSchema` consumed by host)
 - **Impact type:** Code (feature wired live + cross-domain icon unification)
 - **Notes:** Offcanvas-over-modal z-index/focus risk (N0→N3) validated visually (`backdrop={false}`). Screenshots: `n4-03-before-letter-form-with-button.png`, `n4-04-drawer-open-save-disabled.png`. Next is N5 — future-hook notes (`MilestoneSelector.onRequestCreate`, generic `InlineCreateDrawer` reuse) + optional icon screenshots.
+
+## 2026-06-02 — N5 Docs + future-hook notes (CLOSED)
+- **Checkpoint:** N5
+- **Summary:**
+  - Added "Wzorzec: Pick-or-Create (inline tworzenie w panelu bocznym)" section to `instructions/business-object-selectors.md` — documents `InlineCreateDrawer<T>` Offcanvas pattern, the 4 pattern elements (drawer / `CaseSelectMenuElement.onRequestCreate` / `CaseInlineCreateBody` composition / `LetterModalBody` host), RepositoryReact wiring rules (shared repo instance, `onCreated` from `repository.items`, `refreshToken`, onChange validation), and the `TODO(graf)` future hooks.
+  - Indexed the new section in `instructions/README.md` Quick Links.
+  - Confirmed `TODO(graf)` markers already present (no code change): `InlineCreateDrawer.tsx:21` (drawer nesting), `BussinesObjectSelectors.tsx:1510` (`MilestoneSelector.onRequestCreate`).
+- **Files touched:**
+  - `instructions/business-object-selectors.md` (new pick-or-create section)
+  - `instructions/README.md` (Quick Links index entry)
+- **Impact type:** Docs (no `src/` production changes)
+- **Notes:** PR1 plan (N0–N5) fully executed. Optional follow-ups (recursive Milestone inline-create, generic drawer reuse for other selectors) remain as `TODO(graf)` hooks for a future PR2.

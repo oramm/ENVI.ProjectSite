@@ -681,6 +681,51 @@ Każdy selektor powinien mieć komentarz JSDoc:
 export function ContractSelector({ ... }: ContractSelectorProps) { ... }
 ````
 
+## Wzorzec: Pick-or-Create (inline tworzenie w panelu bocznym)
+
+Selektor zwykle tylko **wybiera** istniejące obiekty. Czasem brakującego obiektu nie
+da się dodać bez opuszczenia formularza (np. Sprawa, której CRUD żyje tylko w
+`TasksGlobal`). Wzorzec **pick-or-create** pozwala stworzyć obiekt **w miejscu**, w
+panelu bocznym (Offcanvas), bez zamykania nadrzędnego modala, i auto-zaznaczyć go w
+selektorze. Pierwsza implementacja: tworzenie Sprawy z formularza pisma (PR1).
+
+### Elementy wzorca
+
+| Element | Plik | Rola |
+| --- | --- | --- |
+| `InlineCreateDrawer<T>` (generyczny) | `src/View/Modals/InlineCreateDrawer.tsx` | Panel `Offcanvas` (`placement="end"`, `backdrop={false}`, 420px, `zIndex 1060`) z własnym `FormProvider` + Zapisz/Anuluj. Lustro ścieżki dodawania z `GeneralModal`. |
+| `+ Nowa sprawa` w selektorze | `CaseSelectMenuElement` (`BussinesObjectSelectors.tsx`) | Opcjonalny prop `onRequestCreate?: () => void`. Gdy podany — przycisk obok Typeahead; gdy pominięty — render IDENTYCZNY jak dotychczas (żadne istniejące wywołanie nie zmienia zachowania). |
+| Treść panelu (kompozycja) | `src/TasksGlobal/Modals/Case/CaseInlineCreateBody.tsx` | `MilestoneSelector` (pisze `_parent`) + **niezmieniony** `CaseModalBody`, montowany dopiero po wybraniu kamienia milowego (przekazanego jako `contextData`). |
+| Host / wiring | `src/Letters/LettersList/Modals/LetterModalBody.tsx` | `useState(showCreateCase)`, `onRequestCreate`, mount `<InlineCreateDrawer<Case>>`, `onCreated` auto-select. |
+
+### Zasady wiring (RepositoryReact)
+
+- **Ta sama instancja repository** dla panelu i selektora. Drawer dostaje
+  `repository={casesRepository}` — dokładnie tę instancję, z której selektor czyta opcje.
+  Inaczej nowy obiekt nie pojawi się na liście.
+- **`onCreated(created)`** czyta świeży obiekt z `repository.items` (źródło prawdy), po czym
+  `setValue("_cases", [...current, created], { shouldValidate: true })` (z deduplikacją).
+  Żadnej bezpośredniej mutacji stanu.
+- **Odświeżenie opcji selektora** przez licznik `refreshToken` (prop na `CaseSelectMenuElement`,
+  dodany do zależności `useEffect` ładującego opcje). Bump tokena ⇒ opcje przebudowane z
+  `repository.items`. Pominięty ⇒ bez zmian.
+- **Walidacja**: drawer działa w `mode: "onChange"` + `yupResolver`, więc warunkowe pola
+  (np. „Nazwa sprawy" tylko dla typu wielokrotnego) re-walidują się natychmiast po zmianie typu.
+
+### Przyszłe haki (TODO(graf))
+
+PR1 świadomie ogranicza się do poziomu Sprawy i jednego call-site (pismo). Punkty rozszerzeń
+oznaczone w kodzie markerem `TODO(graf)`:
+
+- **Rekurencyjne tworzenie Kamienia milowego** — `MilestoneSelector.onRequestCreate`
+  (`BussinesObjectSelectors.tsx`): hook do otwierania zagnieżdżonego panelu tworzenia Milestone,
+  gdy dla kontraktu brak kamieni. Dziś stan „brak kamieni" = link do `TasksGlobal`.
+- **Zagnieżdżanie paneli** — `InlineCreateDrawer.tsx`: panele mogą się stackować (panel Milestone
+  otwarty z wnętrza panelu Sprawy).
+- **Reużycie dla innych selektorów** — `InlineCreateDrawer<T>` jest generyczny; ten sam wzorzec
+  (`onRequestCreate` + drawer + `onCreated` auto-select) można dołożyć do Contract/Project/Person
+  (przyszły PR2).
+
 ## FAQ
 
 **Q: Czy lokalne repository jest wydajne? Czy to nie powoduje zbyt wielu instancji?**  
