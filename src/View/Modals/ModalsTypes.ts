@@ -29,6 +29,12 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     contextData?: unknown;
     size?: "sm" | "lg" | "xl" | undefined;
+    /**
+     * Czy modal ma wymuszać utrzymanie focusu w swoim obrębie (Bootstrap `enforceFocus`).
+     * Domyślnie `true`. Ustaw `false`, gdy modal hostuje panel boczny (`InlineCreateDrawer`)
+     * renderowany poza DOM modala — inaczej trap focusu blokuje wpisywanie w panelu.
+     */
+    enforceFocus?: boolean;
 };
 
 export type GeneralModalButtonButtonProps = {

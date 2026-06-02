@@ -52,8 +52,11 @@ export const milestonesRepository = new RepositoryReact<MilestoneData>({
 
 export const casesRepository = new RepositoryReact<Case>({
     actionRoutes: {
+        // addNewRoute: "case" pozwala tworzyć Sprawę "w miejscu" z formularza pisma
+        // (InlineCreateDrawer). Ta SAMA instancja jest czytana przez CaseSelectMenuElement,
+        // dzięki czemu po utworzeniu nowa sprawa trafia do repository.items i odświeża opcje.
         getRoute: "cases",
-        addNewRoute: "",
+        addNewRoute: "case",
         editRoute: "",
         deleteRoute: "",
     },

@@ -36,6 +36,8 @@ export function OurLetterEditModalButton({
                 repository: lettersRepository,
                 initialData: initialData,
                 makeValidationSchema: ourLetterValidationSchema,
+                // panel "Nowa sprawa" (InlineCreateDrawer) działa też w edycji pisma
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -56,6 +58,8 @@ export function OurLetterAddNewModalButton({
                 modalTitle: "Rejestruj pismo wychodzące",
                 repository: lettersRepository,
                 makeValidationSchema: ourLetterValidationSchema,
+                // host modala pisma musi puścić focus do panelu "Nowa sprawa" (InlineCreateDrawer)
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj wychodzące",
@@ -77,6 +81,8 @@ export function IncomingLetterEditModalButton({
                 repository: lettersRepository,
                 initialData: initialData,
                 makeValidationSchema: makeOtherLetterValidationSchema,
+                // panel "Nowa sprawa" (InlineCreateDrawer) działa też w edycji pisma
+                enforceFocus: false,
             }}
             buttonProps={{}}
         />
@@ -95,6 +101,8 @@ export function IncomingLetterAddNewModalButton({
                 modalTitle: "Nowe pismo przychodzące",
                 repository: lettersRepository,
                 makeValidationSchema: makeOtherLetterValidationSchema,
+                // host modala pisma musi puścić focus do panelu "Nowa sprawa" (InlineCreateDrawer)
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj przychodzące",

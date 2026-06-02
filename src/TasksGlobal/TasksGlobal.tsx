@@ -24,7 +24,7 @@ import {
 } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
-import { getSymbolByUniqueness } from "../View/Symbols";
+import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { CaseAddNewModalButton, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
@@ -325,15 +325,17 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
 }
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
-    const uniqueicon = getSymbolByUniqueness(milestone._type.isUniquePerContract);
-    const titleText = `Kamień: ${uniqueicon} ${milestone._type._folderNumber} ${milestone._type.name} ${
+    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${
         milestone.name || ""
     }`;
 
     return (
         <div className="d-flex gap-3 align-items-center justify-content-between">
             <div className="d-flex flex-column gap-1">
-                <span>{titleText}</span>
+                <span>
+                    {titleText}
+                    <UniquenessIcon isUnique={milestone._type.isUniquePerContract} />
+                </span>
                 {milestone._dates && milestone._dates.length > 0 && (
                     <div className="d-flex align-items-center gap-2 text-secondary small" style={{ lineHeight: "1" }}>
                         <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
@@ -355,8 +357,12 @@ function makeMilestoneTitleLabel(milestone: MilestoneData) {
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
-    const uniqueicon = getSymbolByUniqueness(caseItem._type.isUniquePerMilestone);
-    return `Sprawa: ${uniqueicon} ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
+    return (
+        <>
+            {`Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`}
+            <UniquenessIcon isUnique={caseItem._type.isUniquePerMilestone} />
+        </>
+    );
 }
 
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {

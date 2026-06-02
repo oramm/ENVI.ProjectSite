@@ -1,7 +1,9 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
+import { Button, ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
 import { Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from "react-hook-form/dist/types";
 import "../../../Css/styles.css";
 
@@ -901,6 +903,51 @@ type CaseTypeSelectorProps = {
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
+/**
+ * Mała ikona obok typu sprawy informująca o krotności typu (zgodnie z regułą
+ * `CaseType.isUniquePerMilestone`):
+ * - `faLock` (kłódka) — typ UNIKALNY per kamień: max jedna sprawa tego typu, bez nazwy,
+ * - `faLayerGroup` (warstwy) — typ WIELOKROTNY: wiele spraw tego typu odróżnianych nazwą.
+ *
+ * Dzięki temu użytkownik widzi w selektorze, czy dana sprawa jest "pojedyncza" czy jedną
+ * z wielu — spójnie z polem "Nazwa sprawy", które pojawia się tylko dla typów wielokrotnych.
+ */
+/** Ogólna ikona unikalności — używana wszędzie tam, gdzie chcemy pokazać,
+ *  czy dany typ jest unikalny (kłódka) czy wielokrotny (warstwy). */
+export function UniquenessIcon({
+    isUnique,
+    title,
+}: {
+    isUnique: boolean;
+    title?: string;
+}) {
+    const defaultTitle = isUnique
+        ? "Typ unikalny"
+        : "Typ wielokrotny";
+    return (
+        <FontAwesomeIcon
+            icon={isUnique ? faLock : faLayerGroup}
+            className={`ms-1 ${isUnique ? "text-secondary" : "text-primary"}`}
+            size="sm"
+            title={title ?? defaultTitle}
+        />
+    );
+}
+
+export function CaseMultiplicityIcon({ caseType }: { caseType?: CaseType }) {
+    if (!caseType) return null;
+    return (
+        <UniquenessIcon
+            isUnique={caseType.isUniquePerMilestone}
+            title={
+                caseType.isUniquePerMilestone
+                    ? "Typ unikalny — jedna sprawa tego typu na kamieniu (bez nazwy)"
+                    : "Typ wielokrotny — wiele spraw tego typu, odróżnianych nazwą"
+            }
+        />
+    );
+}
+
 export function CaseTypeSelector({
     milestoneType,
     required = false,
@@ -955,7 +1002,10 @@ export function CaseTypeSelector({
                                 const myOption = option as CaseType;
                                 return (
                                     <div>
-                                        <span>{myOption.name}</span>
+                                        <span>
+                                            {myOption.name}
+                                            <CaseMultiplicityIcon caseType={myOption} />
+                                        </span>
                                         <div className="text-muted small text-wrap">{myOption.description}</div>
                                     </div>
                                 );
@@ -1313,6 +1363,18 @@ interface CaseSelectMenuElementProps {
     readonly?: boolean;
     showValidationInfo?: boolean;
     multiple?: boolean;
+    /**
+     * Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest
+     * przycisk `+ Nowa sprawa` (host otwiera InlineCreateDrawer). Gdy pominięty —
+     * zachowanie BEZ ZMIAN (brak przycisku), więc istniejące call-site są nietknięte.
+     */
+    onRequestCreate?: () => void;
+    /**
+     * Opcjonalny token odświeżenia opcji. Gdy host zmieni jego wartość (np. po utworzeniu
+     * nowej sprawy przez InlineCreateDrawer), selektor przebuduje listę opcji ze ŹRÓDŁA
+     * PRAWDY (`repository.items`, które addNewItem już zaktualizował). Pominięty ⇒ bez zmian.
+     */
+    refreshToken?: number;
 }
 
 /**
@@ -1333,6 +1395,8 @@ export function CaseSelectMenuElement({
     repository,
     showValidationInfo = true,
     multiple = true,
+    onRequestCreate,
+    refreshToken,
 }: CaseSelectMenuElementProps) {
     const [options, setOptions] = useState<any[]>([]);
 
@@ -1364,7 +1428,7 @@ export function CaseSelectMenuElement({
             }
         };
         fetchData();
-    }, [_contract, _offer, labelKey, name, repository]);
+    }, [_contract, _offer, labelKey, name, repository, refreshToken]);
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
@@ -1381,7 +1445,7 @@ export function CaseSelectMenuElement({
         return selectedValues.map((item) => ensureLabelKey(item, labelKey, `CaseSelectMenuElement[${name}]`));
     }
 
-    return (
+    const selector = (
         <Controller
             name={name}
             control={control}
@@ -1405,7 +1469,10 @@ export function CaseSelectMenuElement({
                         const myOption = option as Case;
                         return (
                             <div>
-                                <span>{myOption._typeFolderNumber_TypeName_Number_Name}</span>
+                                <span>
+                                    {myOption._typeFolderNumber_TypeName_Number_Name}
+                                    <CaseMultiplicityIcon caseType={myOption._type} />
+                                </span>
                                 <div className="text-muted small text-wrap">{myOption.description}</div>
                             </div>
                         );
@@ -1413,6 +1480,167 @@ export function CaseSelectMenuElement({
                 />
             )}
         />
+    );
+
+    // Bez `onRequestCreate` zachowanie jest IDENTYCZNE jak dotychczas (sam Typeahead),
+    // więc wszystkie istniejące call-site pozostają nietknięte.
+    if (!onRequestCreate) return selector;
+
+    return (
+        <div className="d-flex align-items-start gap-2">
+            <div className="flex-grow-1">{selector}</div>
+            <Button
+                variant="outline-success"
+                size="sm"
+                className="text-nowrap"
+                disabled={readonly}
+                onClick={onRequestCreate}
+            >
+                + Nowa sprawa
+            </Button>
+        </div>
+    );
+}
+
+interface MilestoneSelectorProps {
+    name?: string;
+    _contract?: Contract;
+    readOnly?: boolean;
+    showValidationInfo?: boolean;
+    // TODO(graf): onRequestCreate?: () => void — przyszły hook do inline tworzenia Kamienia
+    // milowego z poziomu selektora (analogicznie do `+ Nowa sprawa` w CaseSelectMenuElement).
+    // PR1 zostaje na poziomie Sprawy; rekurencyjne tworzenie Kamienia jest odroczone.
+    onRequestCreate?: () => void;
+    /**
+     * Opcjonalny callback po załadowaniu opcji — przekazuje liczbę kamieni milowych
+     * dla wybranego kontraktu. Host (np. CaseInlineCreateBody) używa go do obsługi stanu
+     * "brak kamieni milowych" (link do TasksGlobal). Pominięty ⇒ bez zmian.
+     */
+    onOptionsLoaded?: (count: number) => void;
+}
+
+/**
+ * Pole wyboru Kamienia milowego (Milestone) dla danego kontraktu.
+ * Kamień milowy jest rodzicem Sprawy (`Case._parent`), więc selektor jest potrzebny
+ * przy inline tworzeniu Sprawy w piśmie.
+ *
+ * Wzorowane na CaseSelectMenuElement, ale:
+ * - single-select (Sprawa ma dokładnie jednego rodzica),
+ * - używa WŁASNEJ lokalnej instancji repository z sufiksem `_temp` (useMemo) — nie
+ *   przekazujemy repository przez propsy, aby nie zanieczyszczać globalnych repo.
+ *
+ * @param name nazwa pola formularza (domyślnie "_parent" — zgodnie z `Case._parent`)
+ * @param _contract kontrakt, dla którego ładowane są kamienie milowe
+ * @param readOnly czy pole jest tylko do odczytu (domyślnie false)
+ * @param showValidationInfo czy wyświetlać informacje o walidacji (domyślnie true)
+ */
+export function MilestoneSelector({
+    name = "_parent",
+    _contract,
+    readOnly = false,
+    showValidationInfo = true,
+    onRequestCreate,
+    onOptionsLoaded,
+}: MilestoneSelectorProps) {
+    const [options, setOptions] = useState<MilestoneData[]>([]);
+
+    const {
+        control,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+
+    const labelKey = "_FolderNumber_TypeName_Name";
+
+    // ✅ Lokalna instancja repository tylko dla tego selektora (sufiks `_temp`)
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<MilestoneData>({
+                actionRoutes: {
+                    getRoute: "milestones",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "milestoneSelector_temp",
+            }),
+        [],
+    );
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (_contract?.id) {
+                // Backend `/milestones` czyta `orConditions` (warunki AND/OR) oraz top-level
+                // `parentType` (domyślnie "CONTRACT"). Pole `milestoneParentType` w warunku jest
+                // ignorowane przez endpoint milestones, ale trzymamy je dla spójności z
+                // CaseSelectMenuElement (ten sam kształt zapytania po kontrakcie).
+                await localRepository.loadItemsFromServerPOST([
+                    { contractId: _contract.id, milestoneParentType: "CONTRACT" },
+                ]);
+                setOptions(
+                    localRepository.items.map((item) =>
+                        ensureLabelKey(item, labelKey, `MilestoneSelector[${name}]`),
+                    ),
+                );
+                onOptionsLoaded?.(localRepository.items.length);
+            } else {
+                localRepository.clearData();
+                setOptions([]);
+                onOptionsLoaded?.(0);
+            }
+        };
+        fetchData();
+    }, [_contract, labelKey, name, localRepository]);
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
+        const valueToBeSent = selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    function getValidatedSelected(value: unknown) {
+        if (!value) {
+            return [];
+        }
+        return [ensureLabelKey(value as MilestoneData, labelKey, `MilestoneSelector[${name}]`)];
+    }
+
+    return (
+        <Form.Group controlId={name}>
+            <Form.Label>Kamień milowy</Form.Label>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => (
+                    <Typeahead
+                        id={`${name}-typeahead`}
+                        labelKey={labelKey}
+                        multiple={false}
+                        disabled={readOnly}
+                        options={options}
+                        onChange={(items) => handleOnChange(items, field)}
+                        selected={getValidatedSelected(field.value)}
+                        placeholder="-- Wybierz kamień milowy --"
+                        isValid={showValidationInfo ? !errors?.[name] : undefined}
+                        isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                        renderMenuItemChildren={(option) => {
+                            const myOption = option as MilestoneData;
+                            return (
+                                <div>
+                                    <span>{myOption._FolderNumber_TypeName_Name}</span>
+                                    {myOption.description ? (
+                                        <div className="text-muted small text-wrap">
+                                            {myOption.description}
+                                        </div>
+                                    ) : null}
+                                </div>
+                            );
+                        }}
+                    />
+                )}
+            />
+            <ErrorMessage name={name} errors={errors} />
+        </Form.Group>
     );
 }
 

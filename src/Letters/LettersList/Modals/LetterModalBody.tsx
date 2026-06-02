@@ -19,6 +19,11 @@ import {
 } from "../../../../Typings/bussinesTypes";
 import { casesRepository, projectsRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { InlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawer";
+import {
+    CaseInlineCreateBody,
+    makeInlineCaseValidationSchema,
+} from "../../../TasksGlobal/Modals/Case/CaseInlineCreateBody";
 
 export function LetterModalBody({
     isEditing,
@@ -36,6 +41,11 @@ export function LetterModalBody({
     } = useFormContext();
     const _project = isEditing ? undefined : (watch("_project") as ProjectData | undefined);
 
+    // Panel inline-tworzenia Sprawy (Offcanvas) + token wymuszający odświeżenie opcji
+    // selektora ze źródła prawdy (casesRepository.items) po utworzeniu nowej sprawy.
+    const [showCreateCase, setShowCreateCase] = useState(false);
+    const [caseOptionsRefreshToken, setCaseOptionsRefreshToken] = useState(0);
+
     const _contract = watch("_contract");
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
@@ -44,6 +54,18 @@ export function LetterModalBody({
     function getContractFromCases(_cases: Case[] | undefined) {
         if (!_cases || _cases.length === 0) return undefined;
         return _cases[0]._parent?._contract as Contract;
+    }
+
+    // Po utworzeniu sprawy w panelu: addNewItem dopisał ją już do casesRepository.items
+    // (źródło prawdy). Auto-zaznaczamy ją w `_cases` i podbijamy token, by selektor
+    // przebudował opcje z repository.items. Nie mutujemy stanu poza setValue/setState.
+    function handleCaseCreated(newCase: Case) {
+        const created = casesRepository.items.find((item) => item.id === newCase.id) ?? newCase;
+        const current = (watch("_cases") as Case[] | undefined) ?? [];
+        const alreadySelected = current.some((item) => item.id === created.id);
+        const nextCases = alreadySelected ? current : [...current, created];
+        setValue("_cases", nextCases, { shouldValidate: true });
+        setCaseOptionsRefreshToken((token) => token + 1);
     }
 
     useEffect(() => {
@@ -109,11 +131,26 @@ export function LetterModalBody({
                         _project={_project}
                         _contract={_contract}
                         readonly={!_contract}
+                        onRequestCreate={() => setShowCreateCase(true)}
+                        refreshToken={caseOptionsRefreshToken}
                     />
                 ) : (
                     <Alert variant="warning">Wybierz kontrakt, by przypisać do spraw</Alert>
                 )}
             </Form.Group>
+
+            {/* Panel boczny tworzenia Sprawy "w miejscu" — ta SAMA instancja casesRepository
+                co selektor, więc utworzona sprawa odświeża jego opcje. */}
+            <InlineCreateDrawer<Case>
+                show={showCreateCase}
+                onHide={() => setShowCreateCase(false)}
+                title="Nowa sprawa"
+                repository={casesRepository}
+                ModalBodyComponent={CaseInlineCreateBody}
+                additionalModalBodyProps={{ _contract }}
+                makeValidationSchema={makeInlineCaseValidationSchema}
+                onCreated={handleCaseCreated}
+            />
 
             <Form.Group controlId="description">
                 <Form.Label>Opis</Form.Label>

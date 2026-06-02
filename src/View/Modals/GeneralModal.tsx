@@ -33,6 +33,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     fieldsToUpdate?: string[];
     shouldRetrieveDataBeforeEdit?: boolean;
     size?: "sm" | "lg" | "xl" | undefined;
+    enforceFocus?: boolean;
 };
 
 export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
@@ -53,6 +54,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     fieldsToUpdate,
     shouldRetrieveDataBeforeEdit = false,
     size = "lg",
+    enforceFocus = true,
 }: GeneralModalProps<DataItemType>) {
     const [dataObjectFromServer, setDataObjectFromServer] = useState<DataItemType | undefined>(undefined);
     const [isLoadingData, setIsLoadingData] = useState(false);
@@ -354,6 +356,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             size={size}
             show={show}
             onHide={onClose}
+            enforceFocus={enforceFocus}
             onClick={(e: any) => e.stopPropagation()}
             onDoubleClick={(e: any) => e.stopPropagation()}
         >

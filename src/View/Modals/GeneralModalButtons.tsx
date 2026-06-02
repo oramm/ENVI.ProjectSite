@@ -45,6 +45,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
         shouldRetrieveDataBeforeEdit,
         contextData,
         size,
+        enforceFocus,
     },
 }: GeneralEditModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
@@ -81,6 +82,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                 fieldsToUpdate={fieldsToUpdate}
                 shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
                 size={size}
+                enforceFocus={enforceFocus}
             />
         </>
     );
@@ -136,6 +138,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         repository,
         makeValidationSchema: validationSchema,
         size,
+        enforceFocus,
     },
     buttonProps: {
         buttonCaption,
@@ -182,6 +185,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
                     additionalProps: additionalModalBodyProps,
                 }}
                 size={size}
+                enforceFocus={enforceFocus}
             />
         </>
     );
