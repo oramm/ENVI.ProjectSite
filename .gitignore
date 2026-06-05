@@ -4,10 +4,16 @@ Server/
 yarn-error.log
 docs/
 
-# Puppeteer / Testing artifacts
+# Środowisko / sekrety — NIGDY nie commitować
+.env
+.env.local
+.env.*.local
+
+# Puppeteer / Playwright / Testing artifacts
 screenshot*.png
 test-results/
-tmp/ui-browser-loop/
+tmp/
+.playwright-mcp/
 
 # Claude AI artifacts
 .claude/
