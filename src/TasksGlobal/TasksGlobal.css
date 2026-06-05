@@ -25,9 +25,18 @@
     font-size: var(--section-text-10) !important;
 }
 
-.contract-contractors {
-    font-size: var(--section-text-sm) !important;
-    color: var(--section-text-secondary);
+/* L1 — HERO: alias · wykonawca (kotwica pamięciowa, element dominujący) */
+.contract-hero {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--section-text-primary);
+    line-height: 1.2;
+}
+
+/* L3 — zdegradowana nazwa kontraktu (drugi plan, bez pogrubienia) */
+.contract-name-demoted {
+    font-size: var(--section-text-base); /* 1rem */
+    color: #495057;
 }
 
 .contract-metadata {
@@ -42,4 +51,26 @@
 
 .contract-metadata strong {
     color: var(--section-text-primary);
+}
+
+/* ===== Zadania (liście) — muszą być wizualnie PODRZĘDNE wobec Sprawy =====
+   Sprawa to nagłówek sekcji poziomu 3 (font 1rem, lekki). Zadanie jest pod nią,
+   więc nie może być wyraźniejsze: mniejszy tekst, gęściej, wcięcie + linia
+   podrzędności. Kolumny zostają (porządkują widok). */
+.task-leaf-row {
+    font-size: var(--section-text-sm); /* 0.875rem < tytuł sprawy (1rem) */
+    line-height: 1.25;
+    padding: 0.1rem 0 0.1rem 1.5rem; /* gęsto + wcięcie pod sprawę */
+    margin-left: 0.25rem;
+    border-left: 2px solid #e9ecef; /* delikatne zakotwiczenie pod sprawą */
+    color: var(--section-text-secondary);
+}
+
+.task-leaf-row .task-name {
+    color: var(--section-text-primary); /* nazwa czytelna, ale bez pogrubienia */
+}
+
+.task-leaf-row .task-description {
+    font-size: var(--section-text-xs);
+    line-height: 1.15;
 }

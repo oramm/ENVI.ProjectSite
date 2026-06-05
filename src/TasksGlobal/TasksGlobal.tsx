@@ -87,11 +87,12 @@ export default function TasksGlobal() {
 
     function renderTaskRowInCaseSection(task: Task) {
         return (
-            <Row>
+            <Row className="task-leaf-row align-items-center g-1">
                 <Col md={5}>
-                    {task.name}
-                    <br />
-                    {task.description && <span className="text-secondary small">{task.description}</span>}
+                    <span className="task-name">{task.name}</span>
+                    {task.description && (
+                        <span className="d-block text-secondary task-description">{task.description}</span>
+                    )}
                 </Col>
                 <Col md={2}>{task.deadline && `${task.deadline}`} </Col>
                 <Col md={2}>
@@ -247,37 +248,35 @@ function makeOurContractTitleHeader(contract: OurContract) {
 
 function makeOtherContractTitleHeader(contract: OtherContract) {
     const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
-    const identifier = `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`;
+    const identifier = `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`; // NO alias — alias lives in the hero
     const contractName = truncateText(contract.name, 200);
-    const hasAlias = !!contract.alias;
-    const contractors = contract._contractors;
-    const hasContractors = contractors && contractors.length > 0;
+    const contractorNames = (contract._contractors ?? []).map((c) => c.name);
+    const heroParts = [contract.alias, ...contractorNames].filter(Boolean);
+    const hasAnchor = heroParts.length > 0;
+    const heroText = hasAnchor ? heroParts.join(" · ") : contractName;
     const hasDates = contract.startDate || contract.endDate;
 
     const manager = contract._ourContract?._manager;
 
     return (
         <div className="d-flex flex-column gap-2">
-            {/* Linia #1: Type + Number + Alias + Status Badge */}
-            <div className="d-flex align-items-center gap-2">
-                <span className="contract-id">
-                    {identifier}
-                    {hasAlias && ` | ${contract.alias}`}
-                </span>
+            {/* L1 — HERO: alias · wykonawca (kotwica pamięciowa) + status inline.
+                Status zostaje w lewym bloku (NIE justify-content-between), aby na
+                stanie ACTIVE nie kolidował z menu akcji po prawej. */}
+            <div className="d-flex align-items-center flex-wrap gap-2">
+                <span className="contract-hero">{heroText}</span>
                 <ContractStatusBadge status={contract.status} className="contract-status-badge" />
             </div>
 
-            {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
-            <h6 className="contract-title">{contractName}</h6>
+            {/* L2 — identyfikator (bez aliasu — alias jest w hero) */}
+            <span className="contract-id">{identifier}</span>
 
-            {/* Linia #3: Wykonawcy */}
-            {hasContractors && (
-                <div className="d-flex align-items-center gap-2">
-                    <span className="contract-contractors">{contractors.map((c) => c.name).join(", ")}</span>
-                </div>
-            )}
+            {/* L3 — zdegradowana nazwa kontraktu (drugi plan).
+                Renderowana tylko gdy hero jest kotwicą — w fallbacku hero = nazwa,
+                więc pominięcie unika duplikatu. */}
+            {hasAnchor && <div className="contract-name-demoted">{contractName}</div>}
 
-            {/* Linia #4: Daty + Koordynator */}
+            {/* L4 — Daty + Koordynator (bez zmian) */}
             <div className="contract-metadata d-flex flex-wrap gap-4 align-items-center">
                 {hasDates && (
                     <div className="d-flex align-items-center gap-2">
