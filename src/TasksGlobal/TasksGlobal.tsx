@@ -253,7 +253,21 @@ function makeOtherContractTitleHeader(contract: OtherContract) {
     const contractorNames = (contract._contractors ?? []).map((c) => c.name);
     const heroParts = [contract.alias, ...contractorNames].filter(Boolean);
     const hasAnchor = heroParts.length > 0;
-    const heroText = hasAnchor ? heroParts.join(" · ") : contractName;
+    // Hero z jasnym, cienkim separatorem „·" (jak na zatwierdzonej makiecie B2-a):
+    // separator ma być delikatny i NIE dziedziczyć pogrubienia hero, aby wizualnie
+    // oddzielać alias od wykonawcy. Fallback (brak kotwicy) => sama nazwa kontraktu.
+    const heroNodes: React.ReactNode = hasAnchor
+        ? heroParts.flatMap((part, idx) =>
+              idx === 0
+                  ? [<React.Fragment key={`p${idx}`}>{part}</React.Fragment>]
+                  : [
+                        <span key={`s${idx}`} className="contract-hero-sep">
+                            {" · "}
+                        </span>,
+                        <React.Fragment key={`p${idx}`}>{part}</React.Fragment>,
+                    ],
+          )
+        : contractName;
     const hasDates = contract.startDate || contract.endDate;
 
     const manager = contract._ourContract?._manager;
@@ -264,7 +278,7 @@ function makeOtherContractTitleHeader(contract: OtherContract) {
                 Status zostaje w lewym bloku (NIE justify-content-between), aby na
                 stanie ACTIVE nie kolidował z menu akcji po prawej. */}
             <div className="d-flex align-items-center flex-wrap gap-2">
-                <span className="contract-hero">{heroText}</span>
+                <span className="contract-hero">{heroNodes}</span>
                 <ContractStatusBadge status={contract.status} className="contract-status-badge" />
             </div>
 

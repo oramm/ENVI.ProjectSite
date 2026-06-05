@@ -33,9 +33,19 @@
     line-height: 1.2;
 }
 
-/* L3 — zdegradowana nazwa kontraktu (drugi plan, bez pogrubienia) */
+/* Separator „·" między aliasem a wykonawcą — jasny i cienki (jak na makiecie B2-a),
+   delikatnie oddziela kotwicę, nie dziedziczy pogrubienia hero. */
+.contract-hero-sep {
+    color: #c7ccd1;
+    font-weight: 400;
+}
+
+/* L3 — zdegradowana nazwa kontraktu (drugi plan, bez pogrubienia).
+   font-weight: 400 jawnie — inaczej dziedziczy bold z przycisku nagłówka akordeonu
+   i nazwa wychodzi pogrubiona zamiast schodzić na drugi plan. */
 .contract-name-demoted {
     font-size: var(--section-text-base); /* 1rem */
+    font-weight: 400;
     color: #495057;
 }
 

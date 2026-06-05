@@ -2,12 +2,12 @@
 
 ## Current Status
 
-- **Active phase:** FULLY COMPLETE — N1+N2 done, fallback screenshot captured,
-  all evidence in `tmp/ui-browser-loop/`. Optional outstanding item: commit B2-a
-  (Task B, needs explicit user request).
-- **Last completed checkpoint:** Optional Task A — fallback screenshot captured
-  from project JLA.GWS.01.NFOS, contract K.1 OŚ (Id=773).
-- **Next checkpoint:** None remaining. Optional commit (Task B) on user request.
+- **Active phase:** N3 COMPLETE — hero separator aligned to approved mockup,
+  `tsc` green, visually verified on real data. Pending: optional commit.
+- **Last completed checkpoint:** N3 — light `·` separator (`.contract-hero-sep`)
+  verified in the running app (computed `color:#c7ccd1`, `font-weight:400`); no
+  collision with ACTIVE action menu; OurContract regression clean.
+- **Next checkpoint:** None. Optional commit on user request.
 
 ## Checkpoint Index
 
@@ -16,9 +16,55 @@
 | N1 | Implement B2-a (code + CSS) + typecheck | DONE |
 | N2 | Visual verification + regression | DONE |
 | OPT-A | Fallback screenshot (`b2a-fallback.png`) | DONE |
-| OPT-B | Commit B2-a on branch | PENDING (awaits user request) |
+| OPT-B | Commit B2-a on branch | DONE (committed 175c124) |
+| N3 | Hero separator fidelity to approved mockup | DONE (code + visual verify) |
+
+## Mockup fidelity note (source of truth)
+
+The approved visual is the mockup reconstructed at
+`tmp/ui-browser-loop/header-B2a-approved.html` (originally
+`header-B2-status.png`). Hero = `alias · wykonawca`, where the middle `·` is a
+**light, thin separator** (`#c7ccd1`, weight 400) — NOT bold/dark like the rest
+of the hero. The user confirmed: "Energetyka" = alias, "ESIX Sp. z o.o" =
+contractor; OurContract (ENVI) intentionally has no contractor and stays as-is.
+
+**Identifier line — RESOLVED (2026-06-05):** user confirmed the identifier must be
+`${_type.name} ${number} ➔ ${ourId}` — i.e. KEEP the type-name prefix (plan wins
+over the simplified mockup). Code already matches
+(`TasksGlobal.tsx` → `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`);
+no change needed. No longer an open deviation.
 
 ## Sessions
+
+### Session 4 — N3 Hero separator fidelity to mockup (2026-06-05)
+
+- **Scope:** The committed B2-a (175c124) differed visually from the approved
+  mockup: the `·` between alias and contractor was rendered via
+  `heroParts.join(" · ")`, so it inherited the hero's bold/dark style instead of
+  the mockup's light thin separator. Reconstructed the approved mockup from the
+  prior session transcript and aligned the live code to it.
+- **Completed:**
+  - Recovered approved mockup → `tmp/ui-browser-loop/header-B2a-approved.html`
+    (was `header-B2-status.png`, since cleaned from `tmp/`).
+  - `makeOtherContractTitleHeader` (`src/TasksGlobal/TasksGlobal.tsx`): replaced
+    `heroText` string join with `heroNodes` that interleaves a
+    `<span className="contract-hero-sep"> · </span>` between anchor parts; fallback
+    (no anchor) still renders the plain contract name.
+  - `TasksGlobal.css`: added `.contract-hero-sep { color:#c7ccd1; font-weight:400 }`.
+  - Confirmed `React` namespace already imported (Fragments/spans used).
+- **Evidence:** `npx tsc --noEmit` → exit 0.
+- **Risks/Blockers:** Visual verification in the running app still pending (start
+  frontend :9000 + backend :3000, mock-login, `#/tasksGlobal` → Europark →
+  ESIX/Energetyka header; compare hero separator to
+  `header-B2a-approved.html`).
+- **Next session exact actions:**
+  1. Visual verify N3 on real data (Europark ESIX/Energetyka), capture
+     `b2a-hero-sep.png`; confirm the `·` is light/thin and the OurContract header
+     is still unchanged.
+  2. ID-line deviation — RESOLVED: keep `${_type.name} ${number} ➔ ${ourId}`
+     (already in code, no change).
+  3. Commit on a branch off `master` if approved.
+- **Checkpoint status:** N3 CODE DONE; visual verify OPEN.
 
 ### Session 0 — Planning (2026-06-04)
 
