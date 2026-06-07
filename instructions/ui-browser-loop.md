@@ -16,11 +16,15 @@ Gdy napiszesz to hasło + opis zadania, pracujemy iteracyjnie według kroków po
 
 1. **Ty** opisujesz cel UI + zakres (gdzie / co zmienić) i uzgadniamy plan.
 2. **Agent** analizuje kod i wprowadza zmiany.
-3. **Agent** sprawdza efekt w przeglądarce (automatycznie przez Puppeteer).
-4. **Agent** ocenia, czy UI wygląda dobrze (czytelność, układ, spójność z Bootstrap, responsywność).
-5. Jeśli jest OK → koniec.
-6. Jeśli jest źle → agent poprawia i wraca do kroku 3.
-7. Jeśli agent nie jest pewien (brak kryteriów / zależność od backendu/danych) → dopytuje o decyzję i dopiero potem poprawia.
+3. **Agent** uruchamia środowisko lokalne: backend `http://localhost:3000` i frontend `http://localhost:9000/docs/`.
+4. **Agent** potwierdza, że frontend jest skompilowany po zmianach.
+5. **Weryfikacja UI** odbywa się w jednym z dwóch trybów:
+    - automatycznie przez Puppeteer i screenshoty,
+    - półmanualnie: agent otwiera właściwy ekran, a użytkownik sam klika i zgłasza wynik.
+6. **Agent** ocenia efekt na podstawie screenshotów, obserwacji w przeglądarce albo informacji zwrotnej od użytkownika.
+7. Jeśli jest OK → koniec.
+8. Jeśli jest źle → agent poprawia i wraca do kroku 4.
+9. Jeśli agent nie jest pewien (brak kryteriów / zależność od backendu/danych) → dopytuje o decyzję i dopiero potem poprawia.
 
 ---
 
@@ -41,6 +45,40 @@ Wklej i uzupełnij:
 ## Automatyczna weryfikacja UI (Puppeteer)
 
 Projekt ma skrypt do screenshotów. Agent może go używać do szybkiej weryfikacji.
+
+## Bramka kompilacji klienta
+
+Zanim agent odda ekran do testu albo zrobi screenshot, musi potwierdzić, że zmiany są obecne w kliencie:
+
+- jeśli działa `yarn start`, agent czeka na zakończony rebuild webpacka bez błędów,
+- jeśli sytuacja jest niejednoznaczna albo zmiana jest większa, agent uruchamia dodatkowo `yarn build`,
+- test UI nie jest wiarygodny, jeśli frontend nie został przebudowany po ostatniej zmianie.
+
+## Start środowiska z backend workspace
+
+Jeśli agent pracuje z repo `PS-nodeJS`, preferowany start lokalnego środowiska to:
+
+- `yarn dev:status` - sprawdza, czy backend i frontend już działają
+- `yarn dev:up` - uruchamia backend i frontend razem
+- `yarn dev:logs` - pokazuje logi obu procesów
+- `yarn dev:down` - zatrzymuje oba procesy
+
+To jest preferowana ścieżka, gdy użytkownik chce sam klikać w UI po ręcznym otwarciu ekranu.
+
+## Tryb półmanualny: agent uruchamia, użytkownik klika
+
+Ten tryb stosuj, gdy użytkownik chce samodzielnie testować UI po stronie przeglądarki.
+
+Przebieg:
+
+1. Agent uruchamia środowisko lokalne (`yarn dev:up` z repo `PS-nodeJS`, o ile serwery jeszcze nie działają).
+2. Agent potwierdza, że frontend po zmianach zdążył się skompilować lub przebudować.
+3. Agent otwiera odpowiedni adres `http://localhost:9000/docs/#/...`.
+4. Użytkownik wykonuje kliknięcia, wybory i wpisywanie danych ręcznie.
+5. Agent w tym czasie analizuje kod, logi albo czeka na opis wyniku.
+6. Jeśli trzeba, agent robi poprawkę, znowu czeka na kompilację frontendu i ponownie otwiera ten sam ekran do retestu.
+
+Ten wariant jest szczególnie przydatny dla ekranów zależnych od danych, uprawnień lub trudnych do stabilnej automatyzacji.
 
 ### Ustalony kontekst środowiska
 

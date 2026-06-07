@@ -680,14 +680,29 @@ export function ContractSelector({
 
     function renderOption(option: unknown) {
         const optionTyped = option as OurContract | OtherContract;
-        // _ourIdOrNumber_Name powinno być zwrócone przez backend
-        const mainLabel = safeGetFirstField<string>(optionTyped, ["ourId", "number"], "[Brak numeru]");
-        const subLabel = safeGetFirstField<string>(optionTyped, ["alias", "name"], "[Brak nazwy]");
+        const isOurContract = "ourId" in optionTyped;
+
+        if (isOurContract) {
+            const ourContract = optionTyped as OurContract;
+            const secondaryParts = [ourContract.alias, ourContract._ourType, ourContract.status].filter(Boolean);
+
+            return (
+                <div>
+                    <span>{ourContract.ourId || "[Brak numeru]"}</span>
+                    <div className="text-muted small text-wrap">{secondaryParts.join(" | ") || "[Brak danych]"}</div>
+                </div>
+            );
+        }
+
+        const otherContract = optionTyped as OtherContract;
+        const contractorsLabel = (otherContract._contractors ?? []).map((contractor) => contractor.name).filter(Boolean).join(", ");
+        const primaryParts = [otherContract.alias, contractorsLabel].filter(Boolean);
+        const secondaryParts = [`${otherContract._type?.name || "[Brak typu]"} ${otherContract.number || "[Brak numeru]"}`.trim(), otherContract.status].filter(Boolean);
 
         return (
             <div>
-                <span>{mainLabel}</span>
-                <div className="text-muted small text-wrap">{subLabel}</div>
+                <span>{primaryParts.join(" | ") || otherContract.name || "[Brak danych]"}</span>
+                <div className="text-muted small text-wrap">{secondaryParts.join(" | ") || "[Brak danych]"}</div>
             </div>
         );
     }
