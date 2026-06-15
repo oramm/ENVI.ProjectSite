@@ -3,13 +3,12 @@ import {
     CaseSelectMenuElement,
     ContractSelector,
     LetterSelector,
-    PersonSelectorPreloaded,
     ProjectSelector,
+    RegisteringEditorSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Alert, Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import MainSetup from "../../../React/MainSetupReact";
 import {
     Case,
     Contract,
@@ -70,16 +69,6 @@ export function LetterModalBody({
 
     useEffect(() => {
         const nowUTC = new Date().toISOString().split("T")[0];
-        let defaultEditor;
-        if (!isEditing) {
-            const currentUser = MainSetup.currentUser;
-            if (currentUser && MainSetup.personsEnviRepository.items.length > 0) {
-                // Znajdź obiekt PersonData na podstawie emaila zalogowanego użytkownika
-                defaultEditor = MainSetup.personsEnviRepository.items.find(
-                    (person) => person.email === currentUser.systemEmail
-                );
-            }
-        }
         const toDateInput = (value: string | undefined | null): string => {
             if (!value) return "";
             const iso = value.match(/^(\d{4}-\d{2}-\d{2})/);
@@ -93,7 +82,7 @@ export function LetterModalBody({
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || nowUTC,
             registrationDate: initialData?.registrationDate || nowUTC,
-            _editor: initialData?._editor || defaultEditor,
+            _editor: initialData?._editor,
             relatedLetterNumber: initialData?.relatedLetterNumber || "",
             responseDueDate: toDateInput(initialData?.responseDueDate),
         };
@@ -188,10 +177,9 @@ export function LetterModalBody({
                 </Form.Group>
             </Row>
             <Form.Group controlId="_editor">
-                <PersonSelectorPreloaded
+                <RegisteringEditorSelector
                     label="Osoba rejestrująca"
                     name="_editor"
-                    repository={MainSetup.personsEnviRepository}
                 />
             </Form.Group>
             <Form.Group controlId="file">

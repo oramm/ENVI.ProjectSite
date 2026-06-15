@@ -1324,6 +1324,105 @@ export function PersonSelectorPreloaded({
     );
 }
 
+export function RegisteringEditorSelector({
+    label = "Osoba rejestrująca",
+    name = "_editor",
+    showValidationInfo = true,
+}: {
+    label?: string;
+    name?: string;
+    showValidationInfo?: boolean;
+}) {
+    const {
+        control,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const [editors, setEditors] = useState<PersonData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchRegisteringEditors = async () => {
+            try {
+                const response = await fetch(`${MainSetup.serverUrl}persons/registering-editors`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setEditors(data);
+
+                    // Ustaw domyślnie pierwszą osobę (zalogowany użytkownik)
+                    if (data.length > 0) {
+                        setValue(name, data[0], { shouldValidate: true });
+                    }
+                }
+            } catch (error) {
+                console.error("Błąd pobierania osób rejestrujących:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchRegisteringEditors();
+    }, [name, setValue]);
+
+    function makeOptions(items: PersonData[]) {
+        return items.map((item) => ({
+            ...item,
+            _nameSurname: `${item.name} ${item.surname}`,
+        }));
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
+        const valueToBeSent = selectedOptions.length > 0 ? selectedOptions[0] : null;
+        setValue(name, valueToBeSent, { shouldValidate: true });
+        field.onChange(valueToBeSent);
+    }
+
+    function handleSelected(field: ControllerRenderProps<any, string>) {
+        if (!field.value) return [];
+        const selected = field.value as PersonData;
+        // Typeahead wymaga labelKey (_nameSurname) na każdym elemencie, także w selected
+        return [{
+            ...selected,
+            _nameSurname: `${selected.name} ${selected.surname}`,
+        }];
+    }
+
+    if (isLoading) {
+        return (
+            <>
+                <Form.Label>{label}</Form.Label>
+                <Form.Control placeholder="Ładowanie..." disabled />
+            </>
+        );
+    }
+
+    return (
+        <>
+            <Form.Label>{label}</Form.Label>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => (
+                    <Typeahead
+                        id={`${label}-controlled`}
+                        labelKey="_nameSurname"
+                        options={makeOptions(editors)}
+                        onChange={(items) => handleOnChange(items, field)}
+                        selected={handleSelected(field)}
+                        placeholder="-- Wybierz osobę --"
+                        isValid={showValidationInfo ? !errors?.[name] : undefined}
+                        isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                    />
+                )}
+            />
+            <ErrorMessage errors={errors} name={name} />
+        </>
+    );
+}
+
 function groupByMilestone(cases: Case[]) {
     return cases.reduce<Record<string, Case[]>>((groups, item) => {
         const key = item._parent?._FolderNumber_TypeName_Name ?? "Brak danych";
