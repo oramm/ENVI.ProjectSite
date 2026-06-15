@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Alert, Button, Spinner, Modal, Form, Row, Col } from "react-bootstrap";
+import { Alert, Button, Spinner, Modal, Form, Row, Col, Table } from "react-bootstrap";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { CostInvoicesFilterBody } from "./CostInvoicesFilterBody";
 import { CostInvoice } from "../../../Typings/bussinesTypes";
@@ -7,6 +7,9 @@ import {
     costInvoicesRepository,
     CostInvoiceStatuses,
     syncFromKsef,
+    fetchCostInvoiceReparsePreview,
+    applyCostInvoiceReparse,
+    CostInvoiceReparsePreviewItem,
 } from "./CostInvoicesController";
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
@@ -29,10 +32,23 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
     const [syncType, setSyncType] = useState<"INCREMENTAL" | "VERIFICATION">("INCREMENTAL");
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
+    const [reparseEnabled, setReparseEnabled] = useState(false);
+    const [showReparseModal, setShowReparseModal] = useState(false);
+    const [reparseLoading, setReparseLoading] = useState(false);
+    const [reparseError, setReparseError] = useState<string | null>(null);
+    const [reparseSuccess, setReparseSuccess] = useState<string | null>(null);
+    const [reparsePreview, setReparsePreview] = useState<CostInvoiceReparsePreviewItem[]>([]);
+    const [reparseSelection, setReparseSelection] = useState<Set<number>>(new Set());
+
+    const REPARSE_TOOL_FLAG = "costInvoicesReparseTool";
 
     useEffect(() => {
         document.title = title;
     }, [title]);
+
+    useEffect(() => {
+        setReparseEnabled(sessionStorage.getItem(REPARSE_TOOL_FLAG) === "1");
+    }, []);
 
     const toNumber = (value: unknown): number => {
         if (typeof value === "number") return value;
@@ -97,6 +113,70 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
             setIsSyncing(false);
         }
     }, [syncType, dateFrom, dateTo]);
+
+    const hideReparseTool = () => {
+        sessionStorage.removeItem(REPARSE_TOOL_FLAG);
+        setReparseEnabled(false);
+        setShowReparseModal(false);
+        setReparsePreview([]);
+        setReparseSelection(new Set());
+    };
+
+    const refreshReparsePreview = useCallback(async () => {
+        setReparseLoading(true);
+        setReparseError(null);
+        setReparseSuccess(null);
+
+        try {
+            const result = await fetchCostInvoiceReparsePreview();
+            const invoices = result.invoices || [];
+            setReparsePreview(invoices);
+            setReparseSelection(new Set(invoices.map((item) => item.id)));
+        } catch (error) {
+            setReparseError(error instanceof Error ? error.message : "Błąd podglądu reparse");
+        } finally {
+            setReparseLoading(false);
+        }
+    }, []);
+
+    const openReparseModal = async () => {
+        setShowReparseModal(true);
+        await refreshReparsePreview();
+    };
+
+    const toggleReparseSelection = (id: number) => {
+        setReparseSelection((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+    };
+
+    const handleApplyReparse = async () => {
+        if (reparseSelection.size === 0) return;
+
+        setReparseLoading(true);
+        setReparseError(null);
+        setReparseSuccess(null);
+
+        try {
+            const ids = Array.from(reparseSelection);
+            const result = await applyCostInvoiceReparse(ids);
+            setReparseSuccess(
+                `Zastosowano reparse: ${result.updated} zaktualizowanych, ${result.errors.length} błędów`
+            );
+            await costInvoicesRepository.loadItemsFromServerPOST([]);
+            await refreshReparsePreview();
+        } catch (error) {
+            setReparseError(error instanceof Error ? error.message : "Błąd zastosowania reparse");
+        } finally {
+            setReparseLoading(false);
+        }
+    };
 
     function renderInvoiceCard(invoice: CostInvoice, isActive?: boolean) {
         void isActive;
@@ -217,6 +297,25 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         </Button>
     );
 
+    const ReparseToolButton = () => (
+        <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={openReparseModal}
+            disabled={reparseLoading}
+            className="me-2"
+        >
+            {reparseLoading ? (
+                <>
+                    <Spinner animation="border" size="sm" className="me-1" />
+                    Reparse...
+                </>
+            ) : (
+                "Reparse XML"
+            )}
+        </Button>
+    );
+
     return (
         <>
             {syncError && (
@@ -244,6 +343,16 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                     </ul>
                 </Alert>
             )}
+            {reparseError && (
+                <Alert variant="danger" onClose={() => setReparseError(null)} dismissible className="mx-3 mt-3">
+                    {reparseError}
+                </Alert>
+            )}
+            {reparseSuccess && (
+                <Alert variant="success" onClose={() => setReparseSuccess(null)} dismissible className="mx-3 mt-3">
+                    {reparseSuccess}
+                </Alert>
+            )}
             <div className="cost-invoices-search">
             <FilterableTable<CostInvoice>
                 id="costInvoices"
@@ -252,7 +361,7 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                 tableStructure={[
                     { header: undefined, renderTdBody: renderInvoiceCard },
                 ]}
-                AddNewButtonComponents={[SyncKsefButton]}
+                AddNewButtonComponents={reparseEnabled ? [SyncKsefButton, ReparseToolButton] : [SyncKsefButton]}
                 isDeletable={false}
                 isCopyable={false}
                 repository={costInvoicesRepository}
@@ -319,6 +428,115 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                         disabled={syncType === "VERIFICATION" && (!dateFrom || !dateTo)}
                     >
                         Synchronizuj
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal
+                show={showReparseModal}
+                onHide={() => setShowReparseModal(false)}
+                size="lg"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Reparse XML - podgląd zmian</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="text-muted">
+                            Wybierz faktury do zastosowania zmian. Pozycje (_items) nie są modyfikowane.
+                        </div>
+                        <Button variant="outline-secondary" size="sm" onClick={hideReparseTool}>
+                            Ukryj narzędzie
+                        </Button>
+                    </div>
+
+                    {reparseLoading ? (
+                        <div className="text-center py-4">
+                            <Spinner animation="border" />
+                        </div>
+                    ) : reparsePreview.length === 0 ? (
+                        <Alert variant="info">Brak faktur ze zmianami.</Alert>
+                    ) : (
+                        <Table striped bordered hover size="sm">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: 40 }}>
+                                        <Form.Check
+                                            type="checkbox"
+                                            checked={reparseSelection.size === reparsePreview.length}
+                                            onChange={(event) => {
+                                                const next = event.target.checked
+                                                    ? new Set(reparsePreview.map((item) => item.id))
+                                                    : new Set<number>();
+                                                setReparseSelection(next);
+                                            }}
+                                        />
+                                    </th>
+                                    <th>Nr faktury</th>
+                                    <th>KSeF</th>
+                                    <th>Liczba zmian</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {reparsePreview.map((item) => (
+                                    <tr key={item.id}>
+                                        <td>
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={reparseSelection.has(item.id)}
+                                                onChange={() => toggleReparseSelection(item.id)}
+                                            />
+                                        </td>
+                                        <td>{item.invoiceNumber || "-"}</td>
+                                        <td>{item.ksefNumber || "-"}</td>
+                                        <td>{Object.keys(item.changes || {}).length}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    )}
+
+                    {reparsePreview.length > 0 && reparseSelection.size > 0 && (
+                        <div className="mt-3">
+                            <div className="fw-semibold">Podgląd zmian (pierwsza wybrana faktura):</div>
+                            {(() => {
+                                const firstId = Array.from(reparseSelection)[0];
+                                const current = reparsePreview.find((item) => item.id === firstId);
+                                if (!current) return null;
+                                return (
+                                    <Table striped bordered size="sm" className="mt-2">
+                                        <thead>
+                                            <tr>
+                                                <th>Pole</th>
+                                                <th>Przed</th>
+                                                <th>Po</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Object.entries(current.changes || {}).map(([key, value]) => (
+                                                <tr key={key}>
+                                                    <td>{key}</td>
+                                                    <td>{String(value.before ?? "")}</td>
+                                                    <td>{String(value.after ?? "")}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                );
+                            })()}
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowReparseModal(false)}>
+                        Zamknij
+                    </Button>
+                    <Button
+                        variant="primary"
+                        onClick={handleApplyReparse}
+                        disabled={reparseLoading || reparseSelection.size === 0}
+                    >
+                        Zastosuj zmiany
                     </Button>
                 </Modal.Footer>
             </Modal>

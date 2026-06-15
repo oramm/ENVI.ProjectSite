@@ -121,6 +121,22 @@ export type CostInvoiceQrData = {
     };
 };
 
+export type CostInvoiceReparsePreviewItem = {
+    id: number;
+    ksefNumber: string;
+    invoiceNumber: string;
+    changes: Record<string, { before: unknown; after: unknown }>;
+    before: Record<string, unknown>;
+    after: Record<string, unknown>;
+};
+
+export type CostInvoiceReparsePreviewResponse = {
+    scanned: number;
+    changed: number;
+    errors: string[];
+    invoices: CostInvoiceReparsePreviewItem[];
+};
+
 /**
  * Repozytorium faktur kosztowych
  * Dane pobierane z KSeF i przechowywane lokalnie
@@ -383,4 +399,42 @@ export async function downloadMonthlyReport(
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
+}
+
+/**
+ * Podgląd zmian reparse (nagłówek faktury, bez pozycji)
+ */
+export async function fetchCostInvoiceReparsePreview(): Promise<CostInvoiceReparsePreviewResponse> {
+    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/reparse-preview`, {
+        method: "POST",
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        await throwCostInvoiceApiError(response, "Błąd podglądu reparse");
+    }
+
+    const result = await response.json();
+    return result.data || result;
+}
+
+/**
+ * Zastosuj reparse dla wybranych faktur
+ */
+export async function applyCostInvoiceReparse(ids: number[]): Promise<{ updated: number; errors: string[] }> {
+    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/reparse-apply`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids }),
+    });
+
+    if (!response.ok) {
+        await throwCostInvoiceApiError(response, "Błąd zastosowania reparse");
+    }
+
+    const result = await response.json();
+    return result.data || result;
 }
