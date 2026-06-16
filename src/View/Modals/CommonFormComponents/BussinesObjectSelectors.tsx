@@ -1765,7 +1765,7 @@ type SystemRoleSelectorProps = {
 
 export function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }: SystemRoleSelectorProps) {
     const {
-        register,
+        control,
         formState: { errors },
     } = useFormContext();
 
@@ -1774,18 +1774,37 @@ export function SystemRoleSelector({ name = "systemRoleId", showValidationInfo =
     return (
         <Form.Group controlId={name}>
             <Form.Label>Rola w systemie</Form.Label>
-            <Form.Select
-                isInvalid={!!errors?.[name]}
-                isValid={showValidationInfo ? !errors?.[name] : undefined}
-                {...register(name)}
-            >
-                <option value="">-- Wybierz rolę --</option>
-                {systemRolesOptions.map((role) => (
-                    <option key={role.id} value={role.id}>
-                        {role.systemName}
-                    </option>
-                ))}
-            </Form.Select>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => {
+                    const selected = systemRolesOptions.filter((r) => r.id === Number(field.value));
+                    return (
+                        <Typeahead
+                            id={`${name}-typeahead`}
+                            labelKey="systemName"
+                            options={systemRolesOptions}
+                            selected={selected}
+                            onChange={(items) => {
+                                const item = items[0] as (typeof systemRolesOptions)[0] | undefined;
+                                field.onChange(item ? item.id : "");
+                            }}
+                            placeholder="-- Wybierz rolę --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={!!errors?.[name]}
+                            renderMenuItemChildren={(option) => {
+                                const role = option as (typeof systemRolesOptions)[0];
+                                return (
+                                    <div>
+                                        <span>{role.systemName}</span>
+                                        <div className="text-muted small text-wrap">{role.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    );
+                }}
+            />
             <ErrorMessage name={name} errors={errors} />
         </Form.Group>
     );

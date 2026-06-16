@@ -278,22 +278,27 @@ export default class MainSetup {
         ADMIN: {
             id: 1,
             systemName: "ADMIN",
+            description: "Pełny dostęp do systemu",
         },
         ENVI_MANAGER: {
             id: 2,
             systemName: "ENVI_MANAGER",
+            description: "Rozszerzone uprawnienia pracownika ENVI – zarządzanie projektami, zadaniami, ofertami i fakturami",
         },
         ENVI_EMPLOYEE: {
             id: 3,
             systemName: "ENVI_EMPLOYEE",
+            description: "Pracownik ENVI – praca z projektami i zadaniami",
         },
         ENVI_COOPERATOR: {
             id: 4,
             systemName: "ENVI_COOPERATOR",
+            description: "Współpracownik zewnętrzny – dostęp tylko do pism",
         },
         EXTERNAL_USER: {
             id: 5,
             systemName: "EXTERNAL_USER",
+            description: "Użytkownik zewnętrzny – domyślnie osoba bez dostępu do wirtyny, po dodaniu maila systemowego dostęp tylko do pism",
         },
     };
 

@@ -6,6 +6,7 @@ export type SystemRoleName = "ADMIN" | "ENVI_MANAGER" | "ENVI_EMPLOYEE" | "ENVI_
 export type SystemRole = {
     id: number;
     systemName: SystemRoleName;
+    description: string;
 };
 
 export interface User {

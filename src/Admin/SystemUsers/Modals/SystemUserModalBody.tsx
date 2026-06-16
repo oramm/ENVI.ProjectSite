@@ -156,7 +156,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                 <Form.Label>Email systemowy</Form.Label>
                 <Form.Control
                     type="email"
-                    placeholder="Podaj gmail do logowania"
+                    placeholder="Podaj gmail do logowania potrzebny do utworzenia konta na witrynie"
                     isInvalid={!!errors?.systemEmail}
                     isValid={!errors?.systemEmail}
                     {...register("systemEmail")}
