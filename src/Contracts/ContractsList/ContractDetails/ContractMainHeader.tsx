@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Col, Container, Row } from "react-bootstrap";
-import { EntityData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import { Alert, Button, Col, Container, Modal, Row, Spinner } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import { EntityData, OtherContract, OurContract, ProjectData } from "../../../../Typings/bussinesTypes";
+import MainSetup from "../../../React/MainSetupReact";
 import ToolsDate from "../../../React/Tools/ToolsDate";
+import { FormProvider } from "../../../View/Modals/FormContext";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
+import { ProjectSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import {
     ContractModalBodyDates,
     ContractModalBodyName,
@@ -92,6 +96,9 @@ export function ContractMainHeader() {
                     </PartialEditTrigger>
                 </Col>
                 <Col sm={1}>{contract._gdFolderUrl && <GDFolderIconLink folderUrl={contract._gdFolderUrl} />}</Col>
+                <Col sm={12} md={6} className="d-flex align-items-center">
+                    <MoveContractButton />
+                </Col>
                 <Col sm={12} md={6}>
                     <PartialEditTrigger
                         modalProps={{
@@ -126,6 +133,89 @@ export function ContractMainHeader() {
                 </Col>
             </Row>
         </Container>
+    );
+}
+
+function MoveContractButton() {
+    const { contract, setContract, contractsRepository } = useContractDetails();
+    const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const methods = useForm();
+    const newProject = methods.watch("_newProject") as ProjectData | undefined;
+
+    if (!contract || !("ourId" in contract) || !setContract) return null;
+
+    async function handleMove() {
+        if (!newProject?.ourId || !setContract) return;
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(
+                `${MainSetup.serverUrl}contract/${contract!.id}/move`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ newProjectOurId: newProject.ourId }),
+                    credentials: "include",
+                }
+            );
+            if (!response.ok) {
+                const msg = await response.text();
+                throw new Error(msg || `Błąd serwera: ${response.status}`);
+            }
+            const updated: OurContract = await response.json();
+            setContract(updated);
+            if (contractsRepository) {
+                contractsRepository.items = contractsRepository.items.map((o) =>
+                    o.id === updated.id ? updated : o
+                );
+            }
+            setShow(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err));
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    return (
+        <>
+            <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={() => {
+                    methods.reset({ _newProject: undefined });
+                    setError(null);
+                    setShow(true);
+                }}
+            >
+                Przenieś kontrakt
+            </Button>
+            <Modal show={show} onHide={() => setShow(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Przenieś kontrakt do innego projektu</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <FormProvider value={methods}>
+                        <ProjectSelector name="_newProject" showValidationInfo={false} />
+                    </FormProvider>
+                    {error && <Alert variant="danger" className="mt-2">{error}</Alert>}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShow(false)}>
+                        Anuluj
+                    </Button>
+                    <Button
+                        variant="primary"
+                        onClick={handleMove}
+                        disabled={!newProject?.ourId || isLoading}
+                    >
+                        {isLoading ? <Spinner size="sm" animation="border" /> : "Przenieś"}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 }
 
