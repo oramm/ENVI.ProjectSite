@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import {
     CaseSelectMenuElement,
     ContractSelector,
+    EntitySelector,
     ProjectSelector,
 } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
@@ -56,13 +57,21 @@ export function LettersFilterBody() {
                 </Form.Group>
             </Row>
             <Row>
-                <Form.Group as={Col} md={12}>
+                <Form.Group as={Col} md={6}>
                     <Form.Label>Kontrakt</Form.Label>
                     <ContractSelector
                         name="_contract"
                         typesToInclude="all"
                         showValidationInfo={false}
                         _project={_project}
+                    />
+                </Form.Group>
+                <Form.Group as={Col} md={6}>
+                    <Form.Label>Odbiorca (DO / DW)</Form.Label>
+                    <EntitySelector
+                        name="_entities"
+                        multiple={true}
+                        showValidationInfo={false}
                     />
                 </Form.Group>
             </Row>
