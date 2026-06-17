@@ -236,7 +236,7 @@ export default class MainSetup {
     };
 
     static LettersFilterInitState = {
-        CREATION_DATE_FROM: ToolsDate.addDays(new Date(), -180).toISOString().slice(0, 10),
+        CREATION_DATE_FROM: ToolsDate.addDays(new Date(), -120).toISOString().slice(0, 10),
         CREATION_DATE_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
     };
 

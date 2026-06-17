@@ -108,7 +108,14 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             ...parsedSnapshot,
             storedObjects: repository.items,
         };
-        sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+        try {
+            sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+        } catch (error) {
+            console.warn(
+                `Nie udało się zapisać pełnego snapshotu tabeli ${snapshotName} w sessionStorage. Pamiętane zostaną tylko bieżące wyniki.`,
+                error
+            );
+        }
     }
 
     useEffect(() => {

@@ -46,7 +46,14 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
     saveToSessionStorage() {
-        sessionStorage.setItem(this.name, JSON.stringify(this));
+        try {
+            sessionStorage.setItem(this.name, JSON.stringify(this));
+        } catch (error) {
+            console.warn(
+                `Nie udało się zapisać repozytorium ${this.name} w sessionStorage. Wyniki zostaną pokazane, ale nie będą pamiętane po odświeżeniu strony.`,
+                error
+            );
+        }
     }
     /**pobiera obiekt z repozytorim na podstawie Id w adresie url
      * - jeżeli nie ma obiektów w repozytorium, to ładuje je z sessionstorage

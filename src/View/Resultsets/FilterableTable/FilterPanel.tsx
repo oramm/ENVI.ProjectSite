@@ -68,7 +68,15 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
             criteria: mergeFixedCriteria(criteria),
             ...(snapshotMode !== "criteria-only" ? { storedObjects: result || [] } : {}),
         };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+
+        try {
+            sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+        } catch (storageError) {
+            console.warn(`Nie udało się zapisać stanu filtra ${snapshotName} w sessionStorage`, storageError);
+            setError(
+                "Zbyt dużo wyników. Zawęź kryteria wyszukiwania."
+            );
+        }
     }
 
     async function handleSubmitSearchFlat(data: FieldValues) {
