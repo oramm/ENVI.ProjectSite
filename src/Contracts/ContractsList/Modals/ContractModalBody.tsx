@@ -82,6 +82,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                 <Form.Control
                     type="text"
                     placeholder="Podaj alias"
+                    required
                     isValid={!errors?.alias}
                     isInvalid={!!errors?.alias}
                     {...register("alias")}

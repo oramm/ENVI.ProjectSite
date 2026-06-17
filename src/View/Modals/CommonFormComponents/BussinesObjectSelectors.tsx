@@ -198,12 +198,14 @@ export function EntitySelector({
     function renderOption(option: any, props: any) {
         const typedOption = option as EntityData;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const shortName = safeGetFirstField<string>(typedOption, ["shortName"], "");
         const address = safeGetFirstField<string>(typedOption, ["address"], "[Brak adresu]");
         const taxNumber = safeGetFirstField<string>(typedOption, ["taxNumber"], "[Brak NIP]");
 
         return (
             <div>
                 <span>{typedOption.name}</span>
+                {shortName ? <div className="text-muted small text-wrap">{shortName}</div> : null}
                 <div className="text-muted small text-wrap">
                     {address} | {taxNumber}
                 </div>

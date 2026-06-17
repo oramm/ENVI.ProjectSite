@@ -41,7 +41,10 @@ const commonFields = {
     ...dateFields,
     _type: Yup.object().required("Typ kontraktu jest wymagany"), //przy walidacji jest wpsólny, ale w formularzu jest osobno dla każdego typu
     number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
-    alias: Yup.string().max(30, "Alias może mieć maksymalnie 30 znaków"),
+    alias: Yup.string()
+        .trim()
+        .required("Alias jest wymagany")
+        .max(30, "Alias może mieć maksymalnie 30 znaków"),
     comment: Yup.string().max(1000, "Komentarz może mieć maksymalnie 1000 znaków"),
 };
 

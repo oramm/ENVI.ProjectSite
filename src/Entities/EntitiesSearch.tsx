@@ -16,7 +16,20 @@ export default function EntitiesSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={EntitiesFilterBody}
             tableStructure={[
-                { header: "Nazwa", objectAttributeToShow: "name", colMd: 4 },
+                {
+                    header: "Nazwa",
+                    renderTdBody: (entity: EntityData) => (
+                        <div>
+                            <div>{entity.name}</div>
+                            {entity.shortName && (
+                                <div className="text-muted small text-wrap" style={{ opacity: 0.8 }}>
+                                    {entity.shortName}
+                                </div>
+                            )}
+                        </div>
+                    ),
+                    colMd: 4,
+                },
                 { header: "Adres", objectAttributeToShow: "address", colMd: 3 },
                 { header: "NIP", objectAttributeToShow: "taxNumber", colMd: 2 },
                 { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },

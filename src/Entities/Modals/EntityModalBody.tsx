@@ -16,6 +16,7 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
     useEffect(() => {
         const resetData: any = {
             name: initialData?.name,
+            shortName: initialData?.shortName,
             address: initialData?.address,
             taxNumber: initialData?.taxNumber,
             www: initialData?.www,
@@ -39,6 +40,18 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     {...register("name")}
                 />
                 <ErrorMessage name="name" errors={errors} />
+            </Form.Group>
+
+            <Form.Group controlId="shortName">
+                <Form.Label>Skrócona nazwa</Form.Label>
+                <Form.Control
+                    placeholder="Podaj skróconą nazwę (max 15 znaków)"
+                    maxLength={15}
+                    isInvalid={!!errors?.shortName}
+                    isValid={!errors?.shortName}
+                    {...register("shortName")}
+                />
+                <ErrorMessage name="shortName" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="address">
