@@ -134,7 +134,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | I
                 setAiMeta({ _model: result._model, _usage: result._usage });
             }
             try {
-                await trigger();
+                await trigger(["creationDate", "registrationDate", "responseDueDate"] as any);
             } catch (e) {
                 // ignore
             }

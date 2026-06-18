@@ -147,9 +147,8 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
             if (result._model || result._usage) {
                 setAiMeta({ _model: result._model, _usage: result._usage });
             }
-            // Re-run validation so errors like responseDueDate are cleared when AI provided valid/empty values
             try {
-                await trigger();
+                await trigger(["creationDate", "registrationDate", "responseDueDate"] as any);
             } catch (e) {
                 // ignore
             }
