@@ -19,6 +19,8 @@ export function NeedEditModalButton({
                 initialData: initialData,
                 makeValidationSchema: makeNeedValidationSchema,
                 shouldRetrieveDataBeforeEdit,
+                // NeedModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -36,6 +38,8 @@ export function NeedAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddN
                 modalTitle: "Dodaj potrzebę",
                 repository: needsRepository,
                 makeValidationSchema: makeNeedValidationSchema,
+                // NeedModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj potrzebę",

@@ -9,8 +9,9 @@ import { ContractModalBody } from "./ContractModalBody";
 import { entitiesRepository } from "../ContractsController";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import { EntityData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
@@ -28,12 +29,18 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
 
     const { setValue, watch } = useFormContext();
     const _project = watch("_project");
+    const [showCreateContractor, setShowCreateContractor] = useState(false);
 
     useEffect(() => {
         setValue("_type", initialData?._type, { shouldValidate: true });
         setValue("_contractors", initialData?._contractors || [], { shouldValidate: true });
         setValue("_ourContract", initialData?._ourContract, { shouldValidate: true });
     }, [initialData, setValue]);
+
+    function handleContractorCreated(created: EntityData) {
+        const current = (watch("_contractors") as EntityData[]) || [];
+        setValue("_contractors", [...current, created], { shouldValidate: true });
+    }
 
     return (
         <>
@@ -42,7 +49,7 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
             <ContractModalBody {...props} />
             <Form.Group>
                 <Form.Label>Wykonawcy</Form.Label>
-                <EntitySelector name="_contractors" multiple={true} />
+                <EntitySelector name="_contractors" multiple={true} onRequestCreate={() => setShowCreateContractor(true)} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Powiązana usługa IK lub PT</Form.Label>
@@ -62,6 +69,13 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
                     )}
                 />
             </Form.Group>
+            <EntityInlineCreateDrawer
+                show={showCreateContractor}
+                onHide={() => setShowCreateContractor(false)}
+                title="Nowy podmiot (wykonawca)"
+                repository={entitiesRepository}
+                onCreated={handleContractorCreated}
+            />
         </>
     );
 }

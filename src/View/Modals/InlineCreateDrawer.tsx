@@ -113,7 +113,7 @@ export function InlineCreateDrawer<T extends RepositoryDataItem>({
             style={{ width: 420, zIndex: 1060 }}
         >
             <ErrorBoundary>
-                <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>
+                <Form onSubmit={(e) => { e.stopPropagation(); formMethods.handleSubmit(handleSubmitRepository)(e); }}>
                     <Offcanvas.Header closeButton>
                         <Offcanvas.Title>{title}</Offcanvas.Title>
                     </Offcanvas.Header>

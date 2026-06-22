@@ -110,6 +110,11 @@ export type CitySelectorProps = {
     showValidationInfo?: boolean;
     multiple?: boolean;
     allowNew?: boolean;
+    /**
+     * Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest
+     * przycisk `+ Nowe miasto`. Gdy pominięty — zachowanie BEZ ZMIAN.
+     */
+    onRequestCreate?: () => void;
 };
 
 export function CitySelector({
@@ -117,6 +122,7 @@ export function CitySelector({
     showValidationInfo = true,
     multiple = false,
     allowNew = false,
+    onRequestCreate,
 }: CitySelectorProps) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = useMemo(
@@ -146,19 +152,32 @@ export function CitySelector({
         );
     }
 
+    const selector = (
+        <MyAsyncTypeahead
+            name={name}
+            labelKey="name"
+            searchKey="searchText"
+            repository={localRepository}
+            renderMenuItemChildren={renderOption}
+            multiple={multiple}
+            allowNew={allowNew}
+            showValidationInfo={showValidationInfo}
+        />
+    );
+
+    if (!onRequestCreate) return <>{selector}</>;
+
     return (
-        <>
-            <MyAsyncTypeahead
-                name={name}
-                labelKey="name"
-                searchKey="searchText"
-                repository={localRepository}
-                renderMenuItemChildren={renderOption}
-                multiple={multiple}
-                allowNew={allowNew}
-                showValidationInfo={showValidationInfo}
-            />
-        </>
+        <div className="d-flex align-items-start gap-2">
+            <div className="flex-grow-1">{selector}</div>
+            <Button
+                variant="outline-success"
+                className="text-nowrap"
+                onClick={onRequestCreate}
+            >
+                + Nowe miasto
+            </Button>
+        </div>
     );
 }
 
@@ -168,6 +187,8 @@ export type EntitySelectorProps = {
     multiple?: boolean;
     allowNew?: boolean;
     repository?: RepositoryReact<EntityData>;
+    /** Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest przycisk `+ Nowy podmiot`. */
+    onRequestCreate?: () => void;
 };
 
 export function EntitySelector({
@@ -176,6 +197,7 @@ export function EntitySelector({
     multiple = false,
     allowNew = false,
     repository,
+    onRequestCreate,
 }: EntitySelectorProps) {
     const {
         formState: { errors },
@@ -213,19 +235,28 @@ export function EntitySelector({
         );
     }
 
+    const selector = (
+        <MyAsyncTypeahead
+            name={name}
+            labelKey="name"
+            searchKey="searchText"
+            repository={localRepository}
+            renderMenuItemChildren={renderOption}
+            multiple={multiple}
+            allowNew={allowNew}
+            showValidationInfo={showValidationInfo}
+        />
+    );
+
+    if (!onRequestCreate) return <>{selector}</>;
+
     return (
-        <>
-            <MyAsyncTypeahead
-                name={name}
-                labelKey="name"
-                searchKey="searchText"
-                repository={localRepository}
-                renderMenuItemChildren={renderOption}
-                multiple={multiple}
-                allowNew={allowNew}
-                showValidationInfo={showValidationInfo}
-            />
-        </>
+        <div className="d-flex align-items-start gap-2">
+            <div className="flex-grow-1">{selector}</div>
+            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
+                + Nowy podmiot
+            </Button>
+        </div>
     );
 }
 
@@ -304,6 +335,8 @@ export type FinancialAidProgrammeSelectorProps = {
     multiple?: boolean;
     allowNew?: boolean;
     repository?: RepositoryReact<FinancialAidProgrammeData>;
+    /** Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest przycisk `+ Nowy program`. */
+    onRequestCreate?: () => void;
 };
 
 export function FinancialAidProgrammeSelector({
@@ -312,6 +345,7 @@ export function FinancialAidProgrammeSelector({
     multiple = false,
     allowNew = false,
     repository,
+    onRequestCreate,
 }: FinancialAidProgrammeSelectorProps) {
     const {
         formState: { errors },
@@ -340,19 +374,28 @@ export function FinancialAidProgrammeSelector({
         );
     }
 
+    const selector = (
+        <MyAsyncTypeahead
+            name={name}
+            labelKey="name"
+            searchKey="searchText"
+            repository={localRepository}
+            renderMenuItemChildren={renderOption}
+            multiple={multiple}
+            allowNew={allowNew}
+            showValidationInfo={showValidationInfo}
+        />
+    );
+
+    if (!onRequestCreate) return <>{selector}</>;
+
     return (
-        <>
-            <MyAsyncTypeahead
-                name={name}
-                labelKey="name"
-                searchKey="searchText"
-                repository={localRepository}
-                renderMenuItemChildren={renderOption}
-                multiple={multiple}
-                allowNew={allowNew}
-                showValidationInfo={showValidationInfo}
-            />
-        </>
+        <div className="d-flex align-items-start gap-2">
+            <div className="flex-grow-1">{selector}</div>
+            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
+                + Nowy program
+            </Button>
+        </div>
     );
 }
 
@@ -362,6 +405,8 @@ export type FocusAreaSelectorProps = {
     multiple?: boolean;
     allowNew?: boolean;
     _financialAidProgramme?: FinancialAidProgrammeData;
+    /** Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest przycisk `+ Nowe działanie`. */
+    onRequestCreate?: () => void;
 };
 
 export function FocusAreaSelector({
@@ -370,6 +415,7 @@ export function FocusAreaSelector({
     multiple = false,
     allowNew = false,
     _financialAidProgramme,
+    onRequestCreate,
 }: FocusAreaSelectorProps) {
     const {
         formState: { errors },
@@ -399,22 +445,31 @@ export function FocusAreaSelector({
         );
     }
 
+    const selector = (
+        <MyAsyncTypeahead
+            name={name}
+            labelKey="name"
+            searchKey="searchText"
+            contextSearchParams={{
+                _financialAidProgramme,
+            }}
+            repository={localRepository}
+            renderMenuItemChildren={renderOption}
+            multiple={multiple}
+            allowNew={allowNew}
+            showValidationInfo={showValidationInfo}
+        />
+    );
+
+    if (!onRequestCreate) return <>{selector}</>;
+
     return (
-        <>
-            <MyAsyncTypeahead
-                name={name}
-                labelKey="name"
-                searchKey="searchText"
-                contextSearchParams={{
-                    _financialAidProgramme,
-                }}
-                repository={localRepository}
-                renderMenuItemChildren={renderOption}
-                multiple={multiple}
-                allowNew={allowNew}
-                showValidationInfo={showValidationInfo}
-            />
-        </>
+        <div className="d-flex align-items-start gap-2">
+            <div className="flex-grow-1">{selector}</div>
+            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
+                + Nowe działanie
+            </Button>
+        </div>
     );
 }
 
@@ -907,6 +962,7 @@ export function ContractTypeSelector({
 
 type CaseTypeSelectorProps = {
     milestoneType?: MilestoneType;
+    filterFn?: (item: CaseType) => boolean;
     showValidationInfo?: boolean;
     required?: boolean;
     multiple?: boolean;
@@ -967,6 +1023,7 @@ export function CaseMultiplicityIcon({ caseType }: { caseType?: CaseType }) {
 
 export function CaseTypeSelector({
     milestoneType,
+    filterFn,
     required = false,
     showValidationInfo = true,
     multiple = false,
@@ -982,11 +1039,12 @@ export function CaseTypeSelector({
     const repository = caseTypesRepository;
 
     function makeoptions(repositoryDataItems: CaseType[]) {
-        const filteredItems = repositoryDataItems.filter((item) => {
+        let filteredItems = repositoryDataItems.filter((item) => {
             if (!milestoneType) return true;
             if (milestoneType.id === item._milestoneType.id) return true;
             return false;
         });
+        if (filterFn) filteredItems = filteredItems.filter(filterFn);
         return filteredItems;
     }
 
@@ -1607,7 +1665,6 @@ export function CaseSelectMenuElement({
             <div className="flex-grow-1">{selector}</div>
             <Button
                 variant="outline-success"
-                size="sm"
                 className="text-nowrap"
                 disabled={readonly}
                 onClick={onRequestCreate}

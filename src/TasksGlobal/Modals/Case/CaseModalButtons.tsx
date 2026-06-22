@@ -1,10 +1,12 @@
 import React from "react";
 import { Badge } from "react-bootstrap";
-import { Case, MilestoneData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import { Case, MilestoneData, OtherContract, OurContract, Task } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { casesRepository } from "../../TasksGlobalController";
+import { TaskAddNewModalButton } from "../TasksGlobalModalButtons";
 import { CaseModalBody } from "./CaseModalBody";
+import { SubCaseModalBody } from "./SubCaseModalBody";
 import { makeCaseValidationSchema } from "./CaseValidationSchema";
 
 export function CaseEditModalButton({
@@ -56,6 +58,52 @@ export function CaseAddNewModalButton({
                 ...buttonProps,
             }}
         />
+    );
+}
+
+export function SubCaseAddNewModalButton({
+    modalProps: { onAddNew, contextData },
+    buttonProps,
+}: SpecificAddNewModalButtonProps<Case>) {
+    const parentCase = contextData as Case | undefined;
+    const headerBadge = buildCaseHeaderBadge(parentCase?._parent as MilestoneData | undefined);
+
+    return (
+        <GeneralAddNewModalButton
+            modalProps={{
+                onAddNew: onAddNew,
+                contextData,
+                ModalBodyComponent: SubCaseModalBody,
+                additionalModalBodyProps: {},
+                modalTitle: "Nowa podsprawa",
+                headerBadge,
+                repository: casesRepository,
+                makeValidationSchema: makeCaseValidationSchema,
+            }}
+            buttonProps={{
+                buttonCaption: "Dodaj podsprawę",
+                buttonVariant: "outline-primary",
+                ...buttonProps,
+            }}
+        />
+    );
+}
+
+export function CaseAndSubCaseAddButtonGroup({
+    modalProps: { onAddNew, contextData },
+    buttonProps,
+}: SpecificAddNewModalButtonProps<Case>) {
+    return (
+        <div className="d-flex gap-2">
+            <SubCaseAddNewModalButton
+                modalProps={{ onAddNew, contextData }}
+                buttonProps={buttonProps}
+            />
+            <TaskAddNewModalButton
+                modalProps={{ onAddNew: onAddNew as any, contextData }}
+                buttonProps={buttonProps}
+            />
+        </div>
     );
 }
 

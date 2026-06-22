@@ -39,6 +39,8 @@ export function OurOfferEditModalButton({
                 repository: repository as RepositoryReact<OurOffer>,
                 initialData: initialData as OurOffer,
                 makeValidationSchema: makeOurOfferValidationSchema,
+                // OfferModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -62,6 +64,8 @@ export function OurOfferAddNewModalButton({
                 repository: repository as RepositoryReact<OurOffer>,
                 makeValidationSchema: makeOurOfferValidationSchema,
                 contextData,
+                // OfferModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj ENVI",
@@ -85,6 +89,8 @@ export function ExternalOfferEditModalButton({
                 repository: repository as RepositoryReact<ExternalOffer>,
                 initialData: initialData as ExternalOffer,
                 makeValidationSchema: makeOtherOfferValidationSchema,
+                // OfferModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 ...buttonProps,
@@ -105,6 +111,8 @@ export function ExternalOfferAddNewModalButton({
                 modalTitle: "Nowa oferta - formularz Zamawiającego",
                 repository: repository as RepositoryReact<ExternalOffer>,
                 makeValidationSchema: makeOtherOfferValidationSchema,
+                // OfferModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj ofertę",

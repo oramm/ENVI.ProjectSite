@@ -289,7 +289,11 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
     const cardContentStyle: React.CSSProperties = hasCustomBorder ? { padding: "0 1rem 1rem 1rem" } : {};
 
     // ZAGNIEŻDŻONE SEKCJE: Wcięcie (indentation) TYLKO dla dzieci (nested sections), NIE dla liści (tabeli tasków)
-    const indentationStyle: React.CSSProperties = !hasCustomBorder ? { paddingLeft: "1.5rem" } : {};
+    // Dla sekcji niebędących akordeоnem (np. podsprawy w przypadku spraw z podsprawami) dodajemy
+    // marginTop, żeby oddzielić blok dzieci od nagłówka rodzica bez zależności od stanu expand/collapse.
+    const indentationStyle: React.CSSProperties = !hasCustomBorder
+        ? { paddingLeft: "1.5rem", ...(!sectionNode.isInAccordion ? { marginTop: "0.5rem" } : {}) }
+        : {};
 
     return (
         <div style={cardContentStyle}>

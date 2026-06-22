@@ -8,6 +8,10 @@ export interface ContractsWithChildren {
         casesWithTasks: {
             caseItem: Case;
             tasks: Task[];
+            subCasesWithTasks: {
+                caseItem: Case;
+                tasks: Task[];
+            }[];
         }[];
     }[];
 }

@@ -11,8 +11,9 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import { Col, Form, Row } from "react-bootstrap";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { citiesRepository, entitiesRepository } from "../ContractsController";
-import { OurContract } from "../../../../Typings/bussinesTypes";
+import { CityData, EntityData, OurContract } from "../../../../Typings/bussinesTypes";
 import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { CityInlineCreateDrawer, EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 
 export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
     const { initialData, isEditing } = props;
@@ -25,6 +26,8 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
         control,
     } = useFormContext();
     const _type = watch("_type");
+    const [showCreateCity, setShowCreateCity] = useState(false);
+    const [showCreateEmployer, setShowCreateEmployer] = useState(false);
 
     useEffect(() => {
         setValue("_type", initialData?._type, { shouldValidate: true });
@@ -35,12 +38,21 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
         setValue("_employers", initialData?._employers, { shouldValidate: true });
     }, [initialData, setValue]);
 
+    function handleCityCreated(created: CityData) {
+        setValue("_city", created, { shouldValidate: true });
+    }
+
+    function handleEmployerCreated(created: EntityData) {
+        const current = (watch("_employers") as EntityData[]) || [];
+        setValue("_employers", [...current, created], { shouldValidate: true });
+    }
+
     return (
         <>
             <Row>
                 <Form.Group as={Col} controlId="_city">
                     <Form.Label>Miasto</Form.Label>
-                    <CitySelector showValidationInfo={true} />
+                    <CitySelector showValidationInfo={true} onRequestCreate={() => setShowCreateCity(true)} />
                 </Form.Group>
                 {!isEditing && (
                     <Form.Group as={Col} controlId="_type">
@@ -66,9 +78,23 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Zamawiający</Form.Label>
-                    <EntitySelector name="_employers" multiple={true} />
+                    <EntitySelector name="_employers" multiple={true} onRequestCreate={() => setShowCreateEmployer(true)} />
                 </Form.Group>
             </Row>
+            <CityInlineCreateDrawer
+                show={showCreateCity}
+                onHide={() => setShowCreateCity(false)}
+                title="Nowe miasto"
+                repository={citiesRepository}
+                onCreated={handleCityCreated}
+            />
+            <EntityInlineCreateDrawer
+                show={showCreateEmployer}
+                onHide={() => setShowCreateEmployer(false)}
+                title="Nowy podmiot (zamawiający)"
+                repository={entitiesRepository}
+                onCreated={handleEmployerCreated}
+            />
         </>
     );
 }

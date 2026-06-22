@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     ApplicationCallSelector,
+    EntitySelector,
     FocusAreaSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Form } from "react-bootstrap";
@@ -8,15 +9,16 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { FocusAreaData, NeedData } from "../../../../Typings/bussinesTypes";
 import { clientsRepository } from "../../FinancialAidProgrammesController";
-import { focusAreasRepository } from "../../FocusAreas/FocusAreasController";
 import { applicationCallsRepository } from "../../FocusAreas/ApplicationCalls/ApplicationCallsController";
 import { ClientNeedStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
-import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntityInlineCreateDrawer, FocusAreaInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 
 export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedData>) {
     const {
         register,
         reset,
+        setValue,
         formState: { errors },
         trigger,
         watch,
@@ -40,17 +42,24 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
     }, [watch("_applicationCall")]);
 
     const _focusAreas = watch("_focusAreas") as FocusAreaData[] | undefined;
+    const [showCreateClient, setShowCreateClient] = useState(false);
+    const [showCreateFocusArea, setShowCreateFocusArea] = useState(false);
+
+    function handleFocusAreaCreated(created: FocusAreaData) {
+        const current = (_focusAreas) || [];
+        setValue("_focusAreas", [...current, created], { shouldValidate: true });
+    }
 
     return (
         <>
             <Form.Group>
                 <Form.Label>Klient</Form.Label>
-                <MyAsyncTypeahead
+                <EntitySelector
                     name="_client"
-                    labelKey="name"
                     repository={clientsRepository}
                     multiple={false}
                     showValidationInfo={true}
+                    onRequestCreate={() => setShowCreateClient(true)}
                 />
                 <ErrorMessage errors={errors} name={"_client"} />
             </Form.Group>
@@ -80,7 +89,7 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
             <ClientNeedStatusSelector />
             <Form.Group controlId="_focusAreas">
                 <Form.Label>Przypisz działania</Form.Label>
-                <FocusAreaSelector name="_focusAreas" multiple={true} />
+                <FocusAreaSelector name="_focusAreas" multiple={true} onRequestCreate={() => setShowCreateFocusArea(true)} />
             </Form.Group>
             {_focusAreas && (
                 <Form.Group controlId="_applicationCall">
@@ -88,6 +97,19 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
                     <ApplicationCallSelector name="_applicationCall" multiple={false} _focusArea={_focusAreas} />
                 </Form.Group>
             )}
+            <EntityInlineCreateDrawer
+                show={showCreateClient}
+                onHide={() => setShowCreateClient(false)}
+                title="Nowy klient"
+                repository={clientsRepository}
+                onCreated={(created) => setValue("_client", created, { shouldValidate: true })}
+            />
+            <FocusAreaInlineCreateDrawer
+                show={showCreateFocusArea}
+                onHide={() => setShowCreateFocusArea(false)}
+                title="Nowe działanie"
+                onCreated={handleFocusAreaCreated}
+            />
         </>
     );
 }

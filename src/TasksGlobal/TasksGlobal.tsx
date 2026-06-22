@@ -1,4 +1,4 @@
-import { faCalendarAlt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
@@ -25,7 +25,7 @@ import {
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
-import { CaseAddNewModalButton, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
+import { CaseAddNewModalButton, CaseAndSubCaseAddButtonGroup, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
@@ -370,10 +370,19 @@ function makeMilestoneTitleLabel(milestone: MilestoneData) {
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
+    const isParentCase = Boolean(caseItem._type.allowsSubCases) && !caseItem.parentCaseId;
     return (
         <>
             {`Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`}
             <UniquenessIcon isUnique={caseItem._type.isUniquePerMilestone} />
+            {isParentCase && (
+                <FontAwesomeIcon
+                    icon={faSitemap}
+                    className="ms-1 text-primary"
+                    size="sm"
+                    title="Sprawa może mieć podsprawy"
+                />
+            )}
         </>
     );
 }
@@ -433,7 +442,9 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             };
             contractNode.children.push(milestoneNode);
 
-            for (const { caseItem, tasks } of casesWithTasks || []) {
+            for (const { caseItem, tasks, subCasesWithTasks } of casesWithTasks || []) {
+                const allowsSubCases = Boolean(caseItem._type.allowsSubCases);
+                const caseTasks = tasks ?? [];
                 const caseNode = {
                     id: "case" + caseItem.id,
                     level: 3,
@@ -441,26 +452,51 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     repository: casesRepository,
                     dataItem: caseItem,
                     title: <>{makeCaseTitleLabel(caseItem)}</>,
-                    children: [],
-                    leaves: [] as Task[],
+                    children: [] as SectionNode<Task>[],
+                    leaves: caseTasks.length > 0 ? caseTasks : [],
                     isDeletable: true,
-                    AddNewButtonComponent: TaskAddNewModalButton as unknown as ComponentType<
+                    AddNewButtonComponent: (allowsSubCases
+                        ? CaseAndSubCaseAddButtonGroup
+                        : TaskAddNewModalButton) as unknown as ComponentType<
                         SpecificAddNewModalButtonProps<RepositoryDataItem>
-                    >, // Dostosuj do Twojego komponentu
+                    >,
                     EditButtonComponent: CaseEditModalButton as unknown as ComponentType<
                         SpecificEditModalButtonProps<RepositoryDataItem>
-                    >, // Dostosuj do Twojego komponentu
+                    >,
                     editHandler: (node: SectionNode<Task>) => {
                         node.title = <>{makeCaseTitleLabel(node.dataItem as Case)}</>;
-                    }, // Dostosuj do Twojej metody
+                    },
                 };
                 milestoneNode.children.push(caseNode);
+                allTasks.push(...caseTasks);
 
-                for (const task of tasks || []) {
-                    if (!caseNode.leaves) caseNode.leaves = [];
-                    caseNode.leaves.push(task);
+                if (allowsSubCases) {
+                    for (const { caseItem: subCase, tasks: subTasks } of subCasesWithTasks || []) {
+                        const subCaseTasks = subTasks ?? [];
+                        const subCaseNode = {
+                            id: "subcase" + subCase.id,
+                            level: 4,
+                            type: "subcase",
+                            repository: casesRepository,
+                            dataItem: subCase,
+                            title: <>{makeCaseTitleLabel(subCase)}</>,
+                            children: [] as SectionNode<Task>[],
+                            leaves: subCaseTasks as Task[],
+                            isDeletable: true,
+                            AddNewButtonComponent: TaskAddNewModalButton as unknown as ComponentType<
+                                SpecificAddNewModalButtonProps<RepositoryDataItem>
+                            >,
+                            EditButtonComponent: CaseEditModalButton as unknown as ComponentType<
+                                SpecificEditModalButtonProps<RepositoryDataItem>
+                            >,
+                            editHandler: (node: SectionNode<Task>) => {
+                                node.title = <>{makeCaseTitleLabel(node.dataItem as Case)}</>;
+                            },
+                        };
+                        caseNode.children.push(subCaseNode);
+                        allTasks.push(...subCaseTasks);
+                    }
                 }
-                allTasks.push(...(caseNode.leaves || []));
             }
         }
     }

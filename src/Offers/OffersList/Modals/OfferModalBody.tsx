@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { CityData, ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import {
@@ -7,6 +7,8 @@ import {
     EntitySelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
+import { entitiesRepository } from "../../../Entities/EntitiesController";
 import {
     OfferBidProcedureSelectFormElement,
     OfferFormSelectFormElement,
@@ -26,6 +28,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
     } = useFormContext();
 
     const _city: CityData | string | undefined = watch("_city");
+    const [showCreateEmployer, setShowCreateEmployer] = useState(false);
 
     useEffect(() => {
         const resetData: any = {
@@ -68,7 +71,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
             )}
             <Form.Group>
                 <Form.Label>Zamawiający</Form.Label>
-                <EntitySelector name="_employer" multiple={false} allowNew={true} />
+                <EntitySelector name="_employer" multiple={false} allowNew={true} onRequestCreate={() => setShowCreateEmployer(true)} />
             </Form.Group>
             <Form.Group controlId="alias">
                 <Form.Label>Alias</Form.Label>
@@ -132,6 +135,13 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
                 <OfferFormSelectFormElement as={Col} />
             </Row>
             <OfferStatusSelector multiple={false} />
+            <EntityInlineCreateDrawer
+                show={showCreateEmployer}
+                onHide={() => setShowCreateEmployer(false)}
+                title="Nowy podmiot (zamawiający)"
+                repository={entitiesRepository}
+                onCreated={(created) => setValue("_employer", created, { shouldValidate: true })}
+            />
         </>
     );
 }

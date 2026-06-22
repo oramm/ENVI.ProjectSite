@@ -31,6 +31,8 @@ export function InvoiceEditModalButton({
                 initialData: initialData,
                 makeValidationSchema: makeInvoiceValidationSchema,
                 shouldRetrieveDataBeforeEdit,
+                // InvoiceModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 ...buttonProps,
@@ -52,6 +54,8 @@ export function InvoiceAddNewModalButton({
                 repository: invoicesRepository,
                 makeValidationSchema: makeInvoiceValidationSchema,
                 contextData,
+                // InvoiceModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj fakturę",

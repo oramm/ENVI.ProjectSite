@@ -45,7 +45,7 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
             <Form.Group controlId="shortName">
                 <Form.Label>Skrócona nazwa</Form.Label>
                 <Form.Control
-                    placeholder="Podaj skróconą nazwę (max 15 znaków)"
+                    placeholder="Podaj skróconą nazwę (max 15 znaków) (Potrzebna do utworzenia nazwy folderu kontraktu na dysku)"
                     maxLength={15}
                     isInvalid={!!errors?.shortName}
                     isValid={!errors?.shortName}

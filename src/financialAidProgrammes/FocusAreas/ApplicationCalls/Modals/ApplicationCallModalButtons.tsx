@@ -18,6 +18,8 @@ export function ApplicationCallEditModalButton({
                 repository: applicationCallsRepository,
                 initialData: initialData,
                 makeValidationSchema: makeApplicationCallValidationSchema,
+                // ApplicationCallModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -37,6 +39,8 @@ export function ApplicationCallAddNewModalButton({
                 modalTitle: "Dodaj nabór",
                 repository: applicationCallsRepository,
                 makeValidationSchema: makeApplicationCallValidationSchema,
+                // ApplicationCallModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj nabór",

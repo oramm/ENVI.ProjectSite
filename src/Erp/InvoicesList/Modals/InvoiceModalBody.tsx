@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     ContractSelector,
     EntitySelector,
@@ -10,6 +10,8 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
 import { Invoice, InvoiceThirdParty, OurContract } from "../../../../Typings/bussinesTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
+import { entitiesRepository } from "../InvoicesController";
 
 const THIRD_PARTY_ROLE_OPTIONS = [
     { value: 1, label: "1 - Faktor" },
@@ -48,6 +50,9 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
     const thirdParties = (watch("_thirdParties") || []) as InvoiceThirdParty[];
     const prevIsJstSubordinateRef = useRef<boolean>(false);
     const prevIsGvMemberRef = useRef<boolean>(false);
+    const [showCreateEntity, setShowCreateEntity] = useState(false);
+    const [showCreateThirdParty, setShowCreateThirdParty] = useState(false);
+    const activeThirdPartyIndexRef = useRef<number>(0);
 
     function setInitialOwner() {
         if (isEditing) return initialData?._owner;
@@ -174,7 +179,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             </Form.Group>
             <Form.Group>
                 <Form.Label>Nabywca</Form.Label>
-                <EntitySelector name="_entity" multiple={false} />
+                <EntitySelector name="_entity" multiple={false} onRequestCreate={() => setShowCreateEntity(true)} />
             </Form.Group>
             <Row className="mt-2 g-3 flex-nowrap overflow-auto pb-1">
                 <Form.Group as={Col} xs="auto" className="mb-0" controlId="isJstSubordinate">
@@ -211,7 +216,14 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         <Row className="mt-2" key={`third-party-${index}`}>
                             <Form.Group as={Col} md={6} controlId={`_thirdParties.${index}._entity`}>
                                 <Form.Label>{`Podmiot 3 #${index + 1}`}</Form.Label>
-                                <EntitySelector name={`_thirdParties.${index}._entity`} multiple={false} />
+                                <EntitySelector
+                                    name={`_thirdParties.${index}._entity`}
+                                    multiple={false}
+                                    onRequestCreate={() => {
+                                        activeThirdPartyIndexRef.current = index;
+                                        setShowCreateThirdParty(true);
+                                    }}
+                                />
                             </Form.Group>
                             <Form.Group as={Col} md={4} controlId={`_thirdParties.${index}.role`}>
                                 <Form.Label>Rola</Form.Label>
@@ -276,6 +288,24 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                 />
                 <ErrorMessage name="description" errors={errors} />
             </Form.Group>
+            <EntityInlineCreateDrawer
+                show={showCreateEntity}
+                onHide={() => setShowCreateEntity(false)}
+                title="Nowy podmiot (nabywca)"
+                repository={entitiesRepository}
+                onCreated={(created) => setValue("_entity", created, { shouldValidate: true })}
+            />
+            <EntityInlineCreateDrawer
+                show={showCreateThirdParty}
+                onHide={() => setShowCreateThirdParty(false)}
+                title="Nowy podmiot 3"
+                repository={entitiesRepository}
+                onCreated={(created) =>
+                    setValue(`_thirdParties.${activeThirdPartyIndexRef.current}._entity` as any, created, {
+                        shouldValidate: true,
+                    })
+                }
+            />
         </>
     );
 }

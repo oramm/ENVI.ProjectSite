@@ -26,6 +26,8 @@ export function ContractEditModalButtonGeneric({
                 makeValidationSchema: ourContractValidationSchema,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                // OurContractModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 ...buttonProps,
@@ -43,6 +45,8 @@ export function ContractEditModalButtonGeneric({
                 makeValidationSchema: otherContractValidationSchema,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                // OtherContractModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{ ...buttonProps }}
         />
@@ -81,6 +85,8 @@ export function OurContractAddNewModalButtonGeneric({
                 modalTitle: "Nowa umowa ENVI",
                 repository: repository,
                 makeValidationSchema: ourContractValidationSchema,
+                // OurContractModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę ENVI",
@@ -119,6 +125,8 @@ export function OtherContractAddNewModalButtonGeneric({
                 modalTitle: "Nowa umowa zewnętrzna",
                 repository: repository,
                 makeValidationSchema: otherContractValidationSchema,
+                // OtherContractModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę zewnętrzną",

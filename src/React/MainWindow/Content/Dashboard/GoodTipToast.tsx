@@ -23,45 +23,55 @@ const tips: Tip[] = [
         text: "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.",
         category: "general",
     },
-    { text: "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.", category: "general" },
-    { text: "Aktualizuj daty zakończenia kamieni i kontraktów.", category: "general" },
+    { 
+        text: "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.", 
+        category: "general" 
+    },
+    { 
+        text: "Aktualizuj daty zakończenia kamieni i kontraktów.", 
+        category: "general" 
+    },
+    {
+        text: "Do formularzy zostały dodane nowe przyciski pozwalające na dodawanie nowych elementów (np. sprawy, kontrahentów, miasta) bezpośrednio z poziomu formularza. Szukaj przycisku z ikoną plusa obok pól wyboru.",
+        isNew: true,
+        category: "general",
+    },
+    {
+        text: "Jeżeli podwykonawca ma własnego podwykonawcę, możesz to odzwierciedlić zakładając podsprawę.",
+        isNew: true,
+        category: "general",
+    },
 
     // Porady o analizie AI pism
     {
         text: "Rozpoznawanie pism AI uzupełnia: numer pisma, daty, opis, kontrakt. Zawsze sprawdź żółte pola (średnia pewność)!",
-        isNew: true,
         category: "lettersAi",
     },
     {
-        text: "Aby poprawnie zaimportować dane z pisma, załączaj czytelne PDF - AI nie rozpozna słabych kopii i zeskanowanych dokumentów.",
+        text: "Analiza pism AI rozpoznaje już skany. Wszystkie pisma które załączysz powinny być poprawnie rozpoznane.",
         isNew: true,
         category: "lettersAi",
     },
     {
         text: "Pola zielone = wysoka pewność AI. Pola żółte = sprawdź. Pola szare = brakuje danych, wypełnij.",
-        isNew: true,
         category: "lettersAi",
     },
 
     // Faktury i KSeF
     {
         text: 'Po ustawieniu statusu "Wysłana" możliwe będzie wysłanie faktury do KSeF. Po pomyślnym przesłaniu możesz pobrać UPO jako potwierdzenie przyjęcia.',
-        isNew: true,
         category: "invoices",
     },
     {
         text: 'Kliknij "Pobierz z KSeF" aby pobrać nowe faktury kosztowe. Wybierz tryb przyrostowy (zostaną pobrane faktury, od ostatniej aktualizacji) lub weryfikacyjny (wybrany zakres dat), aby upewnić się, czy żadna faktura nie została pominięta.',
-        isNew: true,
         category: "costInvoices",
     },
     {
         text: "Każdej fakturze kosztowej możesz przypisać kategorię kosztową oraz określić procent odliczenia VAT.",
-        isNew: true,
         category: "costInvoices",
     },
     {
         text: 'W sekcji "Raport miesięczny" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.',
-        isNew: true,
         category: "costInvoices",
     },
 ];

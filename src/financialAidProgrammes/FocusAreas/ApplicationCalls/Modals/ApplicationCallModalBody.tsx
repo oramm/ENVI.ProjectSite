@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     FinancialAidProgrammeSelector,
     FocusAreaSelector,
@@ -9,20 +9,22 @@ import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { ApplicationCallData, FinancialAidProgrammeData } from "../../../../../Typings/bussinesTypes";
 import { focusAreasRepository } from "../../FocusAreasController";
-import { financialAidProgrammesRepository } from "../../../FinancialAidProgrammesController";
 import { ApplicationCallStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
+import { FinancialAidProgrammeInlineCreateDrawer } from "../../../../View/Modals/InlineCreateDrawers";
 
 export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyProps<ApplicationCallData>) {
     const {
         register,
         reset,
+        setValue,
         formState: { errors },
         trigger,
         watch,
     } = useFormContext();
 
     const _financialAidProgramme = watch("_financialAidProgramme") as FinancialAidProgrammeData | undefined;
+    const [showCreateProgramme, setShowCreateProgramme] = useState(false);
 
     useEffect(() => {
         const resetData: any = {
@@ -42,7 +44,7 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
             {!isEditing && (
                 <Form.Group controlId="_financialAidProgramme">
                     <Form.Label>Program wsparcia</Form.Label>
-                    <FinancialAidProgrammeSelector showValidationInfo={true} />
+                    <FinancialAidProgrammeSelector showValidationInfo={true} onRequestCreate={() => setShowCreateProgramme(true)} />
                 </Form.Group>
             )}
             {_financialAidProgramme && (
@@ -101,6 +103,12 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
                 </Form.Group>
             </Row>
             <ApplicationCallStatusSelector showValidationInfo={true} />
+            <FinancialAidProgrammeInlineCreateDrawer
+                show={showCreateProgramme}
+                onHide={() => setShowCreateProgramme(false)}
+                title="Nowy program wsparcia"
+                onCreated={(created) => setValue("_financialAidProgramme", created, { shouldValidate: true })}
+            />
         </>
     );
 }
