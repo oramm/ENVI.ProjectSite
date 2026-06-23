@@ -80,6 +80,7 @@ export interface Contract extends RepositoryDataItem {
     _contractRanges?: ContractRangeData[];
     _contractRangesNames?: string[];
     _contractRangesPerContract?: any[];
+    lettersShortcutsInSubfolder?: boolean;
 }
 
 export interface OurContract extends Contract {

@@ -46,6 +46,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
+        setValue("lettersShortcutsInSubfolder", initialData?.lettersShortcutsInSubfolder ?? false, { shouldValidate: true });
         setValue("startDate", startDateSugestion, { shouldValidate: true });
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
@@ -169,6 +170,13 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                 </Form.Group>
             </Row>
             <ContractStatusSelector />
+            <Form.Group controlId="lettersShortcutsInSubfolder" className="mt-2">
+                <Form.Check
+                    type="checkbox"
+                    label="Czy chcesz aby skróty do pism były dostępne w podfolderze &quot;Pisma&quot;?"
+                    {...register("lettersShortcutsInSubfolder")}
+                />
+            </Form.Group>
         </>
     );
 }
