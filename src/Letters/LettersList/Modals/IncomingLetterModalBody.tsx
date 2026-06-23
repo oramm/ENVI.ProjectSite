@@ -10,6 +10,8 @@ import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericC
 import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { IncomingLetterStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import MainSetup from "../../../React/MainSetupReact";
+import { EntityData } from "../../../../Typings/bussinesTypes";
+import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract | IncomingLetterContract>) {
@@ -32,6 +34,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
         _model?: string;
         _usage?: AiUsageInfo;
     } | null>(null);
+    const [showCreateSender, setShowCreateSender] = useState(false);
 
     const currentStatus = watch("status");
 
@@ -211,9 +214,19 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
             )}
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
-                <EntitySelector name="_entitiesMain" multiple={true} />
+                <EntitySelector name="_entitiesMain" multiple={true} onRequestCreate={() => setShowCreateSender(true)} />
             </Form.Group>
             <input type="hidden" {...register("isOur")} value="false" />
+            <EntityInlineCreateDrawer
+                show={showCreateSender}
+                onHide={() => setShowCreateSender(false)}
+                title="Nowy podmiot (nadawca)"
+                repository={entitiesRepository}
+                onCreated={(created: EntityData) => {
+                    const current = (watch("_entitiesMain") as EntityData[]) || [];
+                    setValue("_entitiesMain", [...current, created], { shouldValidate: true });
+                }}
+            />
         </>
     );
 }

@@ -1614,7 +1614,7 @@ export function CaseSelectMenuElement({
             }
         };
         fetchData();
-    }, [_contract, _offer, labelKey, name, repository, refreshToken]);
+    }, [_contract?.id, _offer?.id, labelKey, name, repository, refreshToken]);
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];

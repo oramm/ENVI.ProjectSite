@@ -61,7 +61,6 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
                     showValidationInfo={true}
                     onRequestCreate={() => setShowCreateClient(true)}
                 />
-                <ErrorMessage errors={errors} name={"_client"} />
             </Form.Group>
             <Form.Group controlId="name">
                 <Form.Label>Nazwa</Form.Label>

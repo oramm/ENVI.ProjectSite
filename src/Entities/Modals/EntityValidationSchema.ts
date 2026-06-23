@@ -6,8 +6,7 @@ const commonFields = {
         .min(3, "Nazwa musi mieć co najmniej 3 znaki")
         .max(150, "Nazwa może mieć maksymalnie 150 znaków"),
     shortName: Yup.string()
-        .nullable()
-        .min(1, "Skrócona nazwa nie może być pusta")
+        .required("Podaj skróconą nazwę")
         .max(15, "Skrócona nazwa może mieć maksymalnie 15 znaków"),
     address: Yup.string().max(250, "Adres może mieć maksymalnie 250 znaków"),
     taxNumber: Yup.string()

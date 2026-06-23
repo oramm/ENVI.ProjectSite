@@ -60,5 +60,12 @@ export function makeOtherLetterValidationSchema(isEditing: boolean) {
         ...commonFields,
         number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
         responseIKNumber: Yup.string().max(40, "Numer odpowiedzi IK może mieć maksymalnie 40 znaków"),
+        file: isEditing
+            ? Yup.mixed()
+            : Yup.mixed().test(
+                  "file-required",
+                  "Dodaj plik pisma",
+                  (value) => value instanceof FileList && value.length > 0
+              ),
     });
 }

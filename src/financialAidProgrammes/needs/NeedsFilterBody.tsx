@@ -9,12 +9,11 @@ import {
 import { clientsRepository, financialAidProgrammesRepository } from "../FinancialAidProgrammesController";
 import { applicationCallsRepository } from "../FocusAreas/ApplicationCalls/ApplicationCallsController";
 import { focusAreasRepository } from "../FocusAreas/FocusAreasController";
-import { ErrorMessage, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents/GenericComponents";
+import { MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function NeedsFilterBody() {
     const {
         register,
-        formState: { errors },
         watch,
     } = useFormContext();
 
@@ -33,7 +32,6 @@ export function NeedsFilterBody() {
                     repository={clientsRepository}
                     showValidationInfo={false}
                 />
-                <ErrorMessage errors={errors} name={"_client"} />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>

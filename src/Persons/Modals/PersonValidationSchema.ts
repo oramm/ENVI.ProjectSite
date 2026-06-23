@@ -6,7 +6,7 @@ const commonFields = {
 
     surname: Yup.string().required("Podaj nazwisko").max(50, "Nazwisko może mieć maksymalnie 50 znaków"),
 
-    position: Yup.string().required().max(200, "Stanowisko może mieć maksymalnie 200 znaków"),
+    position: Yup.string().required("Podaj stanowisko").max(200, "Stanowisko może mieć maksymalnie 200 znaków"),
 
     email: Yup.string()
         .default("")

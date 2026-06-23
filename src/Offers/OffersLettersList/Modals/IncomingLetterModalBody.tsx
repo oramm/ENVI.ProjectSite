@@ -9,6 +9,8 @@ import { entitiesRepository } from "../LettersController";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import MainSetup from "../../../React/MainSetupReact";
+import { EntityData } from "../../../../Typings/bussinesTypes";
+import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | IncomingLetterOffer>) {
@@ -31,6 +33,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | I
         _model?: string;
         _usage?: AiUsageInfo;
     } | null>(null);
+    const [showCreateSender, setShowCreateSender] = useState(false);
 
     useEffect(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
@@ -183,9 +186,19 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | I
             <LetterModalBody {...props} fileInputRef={fileInputRef} getConfidenceClass={getConfidenceClass} />
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
-                <EntitySelector name="_entitiesMain" multiple={true} />
+                <EntitySelector name="_entitiesMain" multiple={true} onRequestCreate={() => setShowCreateSender(true)} />
             </Form.Group>
             <input type="hidden" {...register("isOur")} value="false" />
+            <EntityInlineCreateDrawer
+                show={showCreateSender}
+                onHide={() => setShowCreateSender(false)}
+                title="Nowy podmiot (nadawca)"
+                repository={entitiesRepository}
+                onCreated={(created: EntityData) => {
+                    const current = (watch("_entitiesMain") as EntityData[]) || [];
+                    setValue("_entitiesMain", [...current, created], { shouldValidate: true });
+                }}
+            />
         </>
     );
 }

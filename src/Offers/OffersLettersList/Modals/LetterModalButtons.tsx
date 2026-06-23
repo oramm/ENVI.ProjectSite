@@ -77,6 +77,7 @@ export function IncomingLetterEditModalButton({
                 repository: lettersRepository,
                 initialData: initialData,
                 makeValidationSchema: makeOtherLetterValidationSchema,
+                enforceFocus: false,
             }}
             buttonProps={{}}
         />
@@ -94,6 +95,7 @@ export function IncomingLetterAddNewModalButton({
                 modalTitle: "Nowe pismo przychodzące",
                 repository: lettersRepository,
                 makeValidationSchema: makeOtherLetterValidationSchema,
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj przychodzące",
