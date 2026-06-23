@@ -1,5 +1,5 @@
 import React from "react";
-import { CityData, EntityData, FinancialAidProgrammeData, FocusAreaData } from "../../../Typings/bussinesTypes";
+import { CityData, EntityData, FinancialAidProgrammeData, FocusAreaData, PersonData } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 import { InlineCreateDrawer } from "./InlineCreateDrawer";
 import { EntityModalBody } from "../../Entities/Modals/EntityModalBody";
@@ -12,6 +12,8 @@ import { FocusAreaModalBody } from "../../financialAidProgrammes/FocusAreas/Moda
 import { makeFocusAreaValidationSchema } from "../../financialAidProgrammes/FocusAreas/FocusAreaValidationSchema";
 import { financialAidProgrammesRepository } from "../../financialAidProgrammes/FinancialAidProgrammesController";
 import { focusAreasRepository } from "../../financialAidProgrammes/FocusAreas/FocusAreasController";
+import { PersonModalBody } from "../../Persons/Modals/PersonModalBody";
+import { makePersonValidationSchema } from "../../Persons/Modals/PersonValidationSchema";
 
 interface DrawerBaseProps<T> {
     show: boolean;
@@ -65,6 +67,20 @@ export function FocusAreaInlineCreateDrawer(props: DrawerBaseProps<FocusAreaData
             repository={focusAreasRepository}
             ModalBodyComponent={FocusAreaModalBody}
             makeValidationSchema={makeFocusAreaValidationSchema}
+            {...props}
+        />
+    );
+}
+
+export function PersonInlineCreateDrawer({
+    repository,
+    ...props
+}: DrawerBaseProps<PersonData> & { repository: RepositoryReact<PersonData> }) {
+    return (
+        <InlineCreateDrawer<PersonData>
+            repository={repository}
+            ModalBodyComponent={PersonModalBody}
+            makeValidationSchema={makePersonValidationSchema}
             {...props}
         />
     );

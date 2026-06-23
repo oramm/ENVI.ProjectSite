@@ -71,7 +71,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
             )}
             <Form.Group>
                 <Form.Label>Zamawiający</Form.Label>
-                <EntitySelector name="_employer" multiple={false} allowNew={true} onRequestCreate={() => setShowCreateEmployer(true)} />
+                <EntitySelector name="_employer" multiple={false} onRequestCreate={() => setShowCreateEmployer(true)} />
             </Form.Group>
             <Form.Group controlId="alias">
                 <Form.Label>Alias</Form.Label>

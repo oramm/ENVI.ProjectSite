@@ -6,16 +6,20 @@ import { ErrorMessage } from "../../View/Modals/CommonFormComponents/GenericComp
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { fetchPersonAccountV2, fetchPersonProfileV2 } from "../personsV2Helpers";
+import { EntityInlineCreateDrawer } from "../../View/Modals/InlineCreateDrawers";
+import { entitiesRepository } from "../PersonsController";
 
 export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<PersonData>) {
     const {
         register,
         reset,
+        setValue,
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
 
     const [v2Loading, setV2Loading] = useState(false);
+    const [showCreateEntity, setShowCreateEntity] = useState(false);
     const [accountV2, setAccountV2] = useState<PersonAccountV2Payload | null>(null);
     const [profileV2, setProfileV2] = useState<PersonProfileV2Payload | null>(null);
 
@@ -76,7 +80,7 @@ export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Perso
             )}
             <Form.Group>
                 <Form.Label>Podmiot</Form.Label>
-                <EntitySelector name="_entity" multiple={false} />
+                <EntitySelector name="_entity" multiple={false} onRequestCreate={() => setShowCreateEntity(true)} />
             </Form.Group>
             <Form.Group controlId="name">
                 <Form.Label>Imię</Form.Label>
@@ -144,6 +148,13 @@ export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Perso
                 />
                 <ErrorMessage name="phone" errors={errors} />
             </Form.Group>
+            <EntityInlineCreateDrawer
+                show={showCreateEntity}
+                onHide={() => setShowCreateEntity(false)}
+                title="Nowy podmiot"
+                repository={entitiesRepository}
+                onCreated={(created) => setValue("_entity", created, { shouldValidate: true })}
+            />
         </>
     );
 }

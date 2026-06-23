@@ -20,6 +20,8 @@ export function SendOfferModalButton({ modalProps: { initialData } }: SpecificEd
                 initialData,
                 makeValidationSchema: makeSendOfferValidationSchema,
                 specialActionRoute: "sendOffer",
+                // SendOfferModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Wyślij mailem",
@@ -41,6 +43,8 @@ export function SendAnotherOfferModalButton({ modalProps: { initialData } }: Spe
                 initialData,
                 makeValidationSchema: makeSendAnotherOfferValidationSchema,
                 specialActionRoute: "sendOffer",
+                // SendOfferModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Wyślij kolejną wersję mailem",

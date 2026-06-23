@@ -35,6 +35,7 @@ export function OurLetterEditModalButton({
                 repository: lettersRepository,
                 initialData: initialData,
                 makeValidationSchema: ourLetterValidationSchema,
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -54,6 +55,7 @@ export function OurLetterAddNewModalButton({
                 modalTitle: "Rejestruj pismo wychodzące",
                 repository: lettersRepository,
                 makeValidationSchema: ourLetterValidationSchema,
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj wychodzące",

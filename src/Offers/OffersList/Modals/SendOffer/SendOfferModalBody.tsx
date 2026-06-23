@@ -1,23 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "../../../../View/Modals/FormContext";
-import { OfferEventData, OurOffer } from "../../../../../Typings/bussinesTypes";
+import { OfferEventData, OurOffer, PersonData } from "../../../../../Typings/bussinesTypes";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { Form } from "react-bootstrap";
 import { ErrorMessage } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
 import { GdFilesSelector } from "../../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
 import { PersonSelector } from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { personsRepository } from "../../OffersController";
+import { personsRepository as personsCreateRepository } from "../../../../Persons/PersonsController";
 import MainSetup from "../../../../React/MainSetupReact";
 import { hasError } from "../../../../View/Resultsets/CommonComponentsController";
+import { PersonInlineCreateDrawer } from "../../../../View/Modals/InlineCreateDrawers";
 
 export function SendOfferModalBody({ initialData }: ModalBodyProps<OurOffer>) {
     const {
         register,
         reset,
+        setValue,
+        watch,
         formState: { errors },
         trigger,
     } = useFormContext();
 
+    const [showCreatePerson, setShowCreatePerson] = useState(false);
     const isAnotherOffer = initialData?._lastEvent?.eventType === MainSetup.OfferEventType.SEND;
 
     useEffect(() => {
@@ -60,6 +65,7 @@ export function SendOfferModalBody({ initialData }: ModalBodyProps<OurOffer>) {
                     name="_newEvent._recipients"
                     multiple={true}
                     allowNew={false}
+                    onRequestCreate={() => setShowCreatePerson(true)}
                 />
                 <Form.Text muted>
                     <div>
@@ -129,6 +135,16 @@ export function SendOfferModalBody({ initialData }: ModalBodyProps<OurOffer>) {
                     </div>
                 )}
             </Form.Text>
+            <PersonInlineCreateDrawer
+                show={showCreatePerson}
+                onHide={() => setShowCreatePerson(false)}
+                title="Nowa osoba (adresat maila)"
+                repository={personsCreateRepository}
+                onCreated={(created: PersonData) => {
+                    const current = (watch("_newEvent._recipients") as PersonData[]) || [];
+                    setValue("_newEvent._recipients", [...current, created], { shouldValidate: true });
+                }}
+            />
         </>
     );
 }

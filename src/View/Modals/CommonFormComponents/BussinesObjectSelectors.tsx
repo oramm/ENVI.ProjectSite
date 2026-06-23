@@ -1261,6 +1261,8 @@ export type PersonSelectorProps = {
     multiple?: boolean;
     allowNew?: boolean;
     repository?: RepositoryReact<PersonData>;
+    /** Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest przycisk `+ Nowa osoba`. */
+    onRequestCreate?: () => void;
 };
 
 export function PersonSelector({
@@ -1269,6 +1271,7 @@ export function PersonSelector({
     multiple = false,
     allowNew = false,
     repository,
+    onRequestCreate,
 }: PersonSelectorProps) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = useMemo(
@@ -1300,19 +1303,28 @@ export function PersonSelector({
         );
     }
 
+    const selector = (
+        <MyAsyncTypeahead
+            name={name}
+            labelKey="_nameSurnameEmail"
+            searchKey="searchText"
+            repository={localRepository}
+            renderMenuItemChildren={renderOption}
+            multiple={multiple}
+            allowNew={allowNew}
+            showValidationInfo={showValidationInfo}
+        />
+    );
+
+    if (!onRequestCreate) return <>{selector}</>;
+
     return (
-        <>
-            <MyAsyncTypeahead
-                name={name}
-                labelKey="_nameSurnameEmail"
-                searchKey="searchText"
-                repository={localRepository}
-                renderMenuItemChildren={renderOption}
-                multiple={multiple}
-                allowNew={allowNew}
-                showValidationInfo={showValidationInfo}
-            />
-        </>
+        <div className="d-flex align-items-start gap-2">
+            <div className="flex-grow-1">{selector}</div>
+            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
+                + Nowa osoba
+            </Button>
+        </div>
     );
 }
 

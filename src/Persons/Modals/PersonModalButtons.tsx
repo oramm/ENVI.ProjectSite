@@ -33,6 +33,8 @@ export function PersonEditModalButton({
                 repository: personsRepository,
                 initialData: initialData,
                 makeValidationSchema: makePersonValidationSchema,
+                // PersonModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -61,6 +63,8 @@ export function PersonAddNewModalButton({ modalProps: { onAddNew } }: SpecificAd
                 modalTitle: "Dodaj osobę",
                 repository: personsRepository,
                 makeValidationSchema: makePersonValidationSchema,
+                // PersonModalBody używa InlineCreateDrawer — modal musi puścić focus do panelu
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj osobę",
