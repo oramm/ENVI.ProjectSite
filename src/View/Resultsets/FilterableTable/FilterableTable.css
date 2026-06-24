@@ -143,3 +143,19 @@
 
 
 /* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */
+
+/* ===== Scroll-target highlight animation ===== */
+@keyframes section-highlight-pulse {
+    0%   { box-shadow: 0 0 0 0   rgba(50, 130, 50, 0.0); }
+    20%  { box-shadow: 0 0 0 6px rgba(50, 130, 50, 0.55); }
+    50%  { box-shadow: 0 0 0 2px rgba(50, 130, 50, 0.15); }
+    70%  { box-shadow: 0 0 0 6px rgba(50, 130, 50, 0.45); }
+    100% { box-shadow: 0 0 0 0   rgba(50, 130, 50, 0.0); }
+}
+
+.section-scroll-highlight {
+    animation: section-highlight-pulse 1.8s ease-out forwards;
+    border-radius: 0.25rem;
+    position: relative;
+    z-index: 1;
+}

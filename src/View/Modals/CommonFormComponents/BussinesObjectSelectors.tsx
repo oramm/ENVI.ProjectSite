@@ -1617,7 +1617,11 @@ export function CaseSelectMenuElement({
     }, [_contract?.id, _offer?.id, labelKey, name, repository, refreshToken]);
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        // Przy pustym wyborze wysyłamy null/[] (NIE undefined) — react-hook-form traktuje
+        // setValue(undefined) jako brak zmiany i nie czyści pola kontrolowanego, przez co
+        // Typeahead odbija kasowanie. Spójne z MyAsyncTypeahead.
+        const valueToBeSent =
+            selectedOptions.length > 0 ? (multiple ? selectedOptions : selectedOptions[0]) : multiple ? [] : null;
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
     }

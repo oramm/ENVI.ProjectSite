@@ -1,6 +1,6 @@
 import { faCalendarAlt, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { ComponentType, useEffect, useState } from "react";
+import React, { ComponentType, useEffect, useRef, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
 import {
@@ -49,6 +49,9 @@ export default function TasksGlobal() {
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [dataLoaded, setDataLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<ProjectData | undefined>(undefined);
+    const [scrollTrigger, setScrollTrigger] = useState(0);
+    const pendingScrollIdRef = useRef<string | null>(null);
+    const filterVersionRef = useRef(0);
 
     useEffect(() => {
         if (!selectedProject) return;
@@ -103,19 +106,50 @@ export default function TasksGlobal() {
         );
     }
 
+    useEffect(() => {
+        if (!pendingScrollIdRef.current) return;
+        const targetId = pendingScrollIdRef.current;
+        const timeoutId = setTimeout(() => {
+            const el = document.getElementById(targetId);
+            if (el) {
+                const navbarHeight = document.querySelector("nav.sticky-top")?.getBoundingClientRect().height ?? 0;
+                const y = el.getBoundingClientRect().top + window.scrollY - navbarHeight - 8;
+                window.scrollTo({ top: y, behavior: "smooth" });
+                el.classList.remove("section-scroll-highlight");
+                void el.offsetWidth; // force reflow so animation restarts if triggered twice
+                el.classList.add("section-scroll-highlight");
+                el.addEventListener("animationend", () => el.classList.remove("section-scroll-highlight"), { once: true });
+            }
+            pendingScrollIdRef.current = null;
+        }, 100);
+        return () => clearTimeout(timeoutId);
+    }, [scrollTrigger]);
+
     async function handleSubmitTasksSections(criteria: FieldValues): Promise<SectionNode<Task>[]> {
         if (!selectedProject) return buildTree(contractsWithChildren);
+
+        const targetCaseId = (criteria._case as Case | undefined)?.id;
+        // _case jest obsługiwany wyłącznie fronendowo (collapse/scroll) — nie trafia do backendu
+        const { _case: _unused, ...backendCriteria } = criteria;
+
         const [filteredContractsWithChildren] = await Promise.all([
             contractsWithChildrenRepository.loadItemsFromServerPOST([
                 {
-                    ...criteria,
+                    ...backendCriteria,
                     _project: selectedProject,
-                    statusType: criteria.statuses?.length ? undefined : "active",
+                    statusType: backendCriteria.statuses?.length ? undefined : "active",
                 },
             ]),
         ]);
 
-        return buildTree(filteredContractsWithChildren as ContractsWithChildren[]);
+        let version: number | undefined;
+        if (targetCaseId) {
+            version = ++filterVersionRef.current;
+            pendingScrollIdRef.current = `case${targetCaseId}_v${version}`;
+            setScrollTrigger((t) => t + 1);
+        }
+
+        return buildTree(filteredContractsWithChildren as ContractsWithChildren[], targetCaseId, version);
     }
 
     function handleResetTasksSections(): SectionNode<Task>[] {
@@ -152,7 +186,7 @@ export default function TasksGlobal() {
                             <LoadingMessage selectedProject={selectedProject} />
                         ) : (
                             <FilterableTable<Task>
-                                id="tasks"
+                                id={`tasks_${selectedProject.id}`}
                                 title="Zadania"
                                 showTableHeader={false}
                                 repository={tasksGlobalRepository}
@@ -387,7 +421,12 @@ function makeCaseTitleLabel(caseItem: Case) {
     );
 }
 
-function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
+function buildTree(
+    contractsWithChildrenInput: ContractsWithChildren[],
+    targetCaseId?: number,
+    version?: number
+): SectionNode<Task>[] {
+    const sfx = version !== undefined ? `_v${version}` : "";
     const contractNodes: SectionNode<Task>[] = [];
     const allTasks: Task[] = [];
 
@@ -396,8 +435,9 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
         const borderColor = isOurContract ? "var(--section-border-our)" : "var(--section-border-other)";
 
         const contractNode: SectionNode<Task> = {
-            id: "contract" + contract.id,
+            id: "contract" + contract.id + sfx,
             isInAccordion: true,
+            initialExpanded: true,
             borderColor: borderColor,
             level: 1,
             type: "contract",
@@ -421,15 +461,24 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
         contractNodes.push(contractNode);
 
         for (const { milestone, casesWithTasks } of milestonesWithCases || []) {
+            const milestoneContainsTarget =
+                !targetCaseId ||
+                (casesWithTasks || []).some(
+                    ({ caseItem, subCasesWithTasks }) =>
+                        caseItem.id === targetCaseId ||
+                        (subCasesWithTasks || []).some(({ caseItem: sc }) => sc.id === targetCaseId),
+                );
+
             const milestoneNode = {
-                id: "milestone" + milestone.id,
+                id: "milestone" + milestone.id + sfx,
                 isInAccordion: true,
+                initialExpanded: milestoneContainsTarget,
                 level: 2,
                 type: "milestone",
                 childrenNodesType: "case",
-                repository: milestonesRepository, // Dostosuj do Twojego repozytorium kamieni milowych
+                repository: milestonesRepository,
                 dataItem: milestone,
-                title: <>{makeMilestoneTitleLabel(milestone)}</>, // Dostosuj do Twojej metody
+                title: <>{makeMilestoneTitleLabel(milestone)}</>,
                 children: [] as SectionNode<Task>[],
                 AddNewButtonComponent: CaseAddNewModalButton as unknown as ComponentType<
                     SpecificAddNewModalButtonProps<RepositoryDataItem>
@@ -446,7 +495,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 const allowsSubCases = Boolean(caseItem._type.allowsSubCases);
                 const caseTasks = tasks ?? [];
                 const caseNode = {
-                    id: "case" + caseItem.id,
+                    id: "case" + caseItem.id + sfx,
                     level: 3,
                     type: "case",
                     repository: casesRepository,
@@ -474,7 +523,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     for (const { caseItem: subCase, tasks: subTasks } of subCasesWithTasks || []) {
                         const subCaseTasks = subTasks ?? [];
                         const subCaseNode = {
-                            id: "subcase" + subCase.id,
+                            id: "subcase" + subCase.id + sfx,
                             level: 4,
                             type: "subcase",
                             repository: casesRepository,

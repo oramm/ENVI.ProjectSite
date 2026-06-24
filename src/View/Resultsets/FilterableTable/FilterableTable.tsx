@@ -234,9 +234,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     function showFilter() {
         if (!FilterBodyComponent) return false;
-        // Tryb sekcji: wymaga min. 5 sekcji i gotowości komponentu
-        if (sections.length > 0) return sections.length >= 5 && isReady;
-        // Tryb płaski: zawsze pokazuj
+        if (sections.length > 0) return isReady;
         return true;
     }
 
@@ -378,7 +376,7 @@ function Sections<DataItemType extends RepositoryDataItem>({
                 if (isSelfContainedCard) {
                     return (
                         <Section<DataItemType>
-                            key={section.dataItem.id + section.type}
+                            key={section.id}
                             sectionNode={section}
                             resulsetTableProps={resulsetTableProps}
                             onClick={onClick}
@@ -388,9 +386,9 @@ function Sections<DataItemType extends RepositoryDataItem>({
 
                 // Initial behavior for standard sections
                 return (
-                    <Card key={section.dataItem.id + section.type} bg="light" border="light">
+                    <Card key={section.id} bg="light" border="light">
                         <Section<DataItemType>
-                            key={section.dataItem.id + section.type}
+                            key={section.id}
                             sectionNode={section}
                             resulsetTableProps={resulsetTableProps}
                             onClick={onClick}

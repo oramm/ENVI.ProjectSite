@@ -29,6 +29,8 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>;
     leaves?: LeafDataItemType[];
     isInAccordion?: boolean;
+    /** Kontroluje stan akordeonu przy montowaniu — domyślnie true (rozwinięty) */
+    initialExpanded?: boolean;
     isDeletable?: boolean;
     editHandler?: (node: SectionNode<LeafDataItemType>) => void;
     shouldRetrieveDataBeforeEdit?: boolean;
@@ -56,7 +58,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
     const isOnActivePath = activePathSet.has(sectionNode.id);
     // Menu: czy to jest aktualnie edytowana sekcja
     const isEditing = editingSectionId === sectionNode.id;
-    const [activeKey, setActiveKey] = useState<string[]>(["0"]);
+    const [activeKey, setActiveKey] = useState<string[]>(sectionNode.initialExpanded !== false ? ["0"] : []);
     const [localExpandTrigger, setLocalExpandTrigger] = useState<ExpandTrigger>(null);
 
     useEffect(() => {
@@ -81,6 +83,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
 
     return sectionNode.isInAccordion ? (
         <Accordion
+            id={sectionNode.id}
             className={accordionClassName}
             style={hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined}
             key={sectionNode.id}
@@ -110,7 +113,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
             </Accordion.Item>
         </Accordion>
     ) : (
-        <>
+        <div id={sectionNode.id}>
             <SectionHeader
                 sectionNode={sectionNode}
                 isOnActivePath={isOnActivePath}
@@ -125,7 +128,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
                 onClick={onClick}
                 localExpandTrigger={localExpandTrigger}
             />
-        </>
+        </div>
     );
 }
 type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
@@ -302,7 +305,7 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
                 <div style={indentationStyle}>
                     {sectionNode.children.map((childNode, index) => (
                         <Section<DataItemType>
-                            key={childNode.dataItem.id + childNode.type}
+                            key={childNode.id}
                             sectionNode={childNode}
                             resulsetTableProps={resulsetTableProps}
                             onClick={onClick}
