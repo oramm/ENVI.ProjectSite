@@ -75,7 +75,7 @@ const _employersAqmRule = Yup.array().when("_type", {
                         });
                     }
                     const normalized = normalizeNip(raw);
-                    if (!validateNipChecksum(normalized)) {
+                    if (!validateNipChecksum(raw)) {
                         return this.createError({
                             message: `NIP Zamawiającego (${normalized}) jest niepoprawny (błąd sumy kontrolnej) — wymagany dla integracji AQM.`,
                         });
