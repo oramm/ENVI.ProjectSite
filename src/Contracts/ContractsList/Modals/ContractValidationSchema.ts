@@ -1,5 +1,6 @@
 import * as Yup from "yup";
 import { valueValidation } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { validateNipChecksum, normalizeNip } from "./nipValidator";
 
 const name = Yup.string()
     .required("Nazwa jest wymagana")
@@ -48,13 +49,50 @@ const commonFields = {
     comment: Yup.string().max(1000, "Komentarz może mieć maksymalnie 1000 znaków"),
 };
 
+/**
+ * Yup rule for _employers when _type.name === 'AQM' (WS10/L10, O2).
+ * Uniformly applied on create AND edit (owner decision 2026-06-25).
+ * Strictly conditional — no regression on other contract types.
+ */
+const _employersAqmRule = Yup.array().when("_type", {
+    is: (type: { name?: string } | null | undefined) => type?.name === "AQM",
+    then: (schema) =>
+        schema
+            .required("Zamawiający jest wymagany dla umowy AQM")
+            .min(1, "Umowa AQM wymaga dokładnie 1 Zamawiającego")
+            .max(1, "Umowa AQM może mieć tylko 1 Zamawiającego")
+            .test(
+                "aqm-employer-nip-checksum",
+                "Zamawiający musi mieć poprawny NIP (10 cyfr, suma kontrolna) — wymagane dla integracji AQM",
+                function (employers: unknown) {
+                    const list = employers as Array<{ taxNumber?: string | null }> | null | undefined;
+                    if (!list || list.length !== 1) return true; // length already caught by min/max
+                    const raw = list[0]?.taxNumber;
+                    if (!raw) {
+                        return this.createError({
+                            message:
+                                "Zamawiający nie ma uzupełnionego NIP — wymagany dla integracji AQM. Edytuj podmiot i dodaj poprawny NIP.",
+                        });
+                    }
+                    const normalized = normalizeNip(raw);
+                    if (!validateNipChecksum(normalized)) {
+                        return this.createError({
+                            message: `NIP Zamawiającego (${normalized}) jest niepoprawny (błąd sumy kontrolnej) — wymagany dla integracji AQM.`,
+                        });
+                    }
+                    return true;
+                },
+            ),
+    otherwise: (schema) => schema.required("Wybierz Zamawiającego"),
+});
+
 export function ourContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         _city: Yup.object().required("Wybierz miasto"),
         _admin: Yup.object().required("Wybierz administratora"),
         _manager: Yup.object().required("Wybierz koordynatora"),
-        _employers: Yup.array().required("Wybierz Zamawiającego"),
+        _employers: _employersAqmRule,
     });
 }
 
