@@ -173,10 +173,10 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Zamawiający</Form.Label>
-                    {/* AQM: single employer (multiple=false); other types: multiple allowed */}
+                    {/* AQM stays array-shaped; schema enforces exactly one employer. */}
                     <EntitySelector
                         name="_employers"
-                        multiple={!isAqm}
+                        multiple={true}
                         onRequestCreate={() => setShowCreateEmployer(true)}
                     />
 
