@@ -967,6 +967,7 @@ type CaseTypeSelectorProps = {
     required?: boolean;
     multiple?: boolean;
     name?: "_type" | "_caseType";
+    label?: string;
 };
 
 /**
@@ -1028,6 +1029,7 @@ export function CaseTypeSelector({
     showValidationInfo = true,
     multiple = false,
     name = "_type",
+    label = "Typ Sprawy",
 }: CaseTypeSelectorProps) {
     const {
         control,
@@ -1035,7 +1037,6 @@ export function CaseTypeSelector({
         setValue,
         formState: { errors },
     } = useFormContext();
-    const label = "Typ Sprawy";
     const repository = caseTypesRepository;
 
     function makeoptions(repositoryDataItems: CaseType[]) {

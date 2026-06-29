@@ -47,6 +47,7 @@ export function SubCaseModalBody({ isEditing, initialData, contextData }: ModalB
                         Boolean(item.id) &&
                         (parentCase?._type?._allowedSubCaseTypeIds ?? []).includes(item.id!)
                     }
+                    label="Typ podsprawy"
                 />
             )}
             {shouldShowNameField() && (
