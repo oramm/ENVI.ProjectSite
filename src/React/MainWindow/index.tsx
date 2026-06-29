@@ -22,6 +22,7 @@ import CitiesSearch from "../../Admin/Cities/CitiesSearch";
 import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
+import BankSyncSearch from "../../Erp/BankSyncList/BankSyncSearch";
 import CostInvoicesSearch from "../../Erp/CostInvoicesList/CostInvoicesSearch";
 import CostInvoiceDetails from "../../Erp/CostInvoicesList/CostInvoiceDetails";
 import CostInvoicesReport from "../../Erp/CostInvoicesList/CostInvoicesReport";
@@ -208,11 +209,12 @@ function AppRoutes() {
                             element={<SystemUsersSearch title="Dodawanie użytkowników" />}
                         />
                     </Route>
-                    {/* Faktury kosztowe - tylko dla ENVI_MANAGER i ADMIN */}
+                    {/* Faktury kosztowe i bank - tylko dla ENVI_MANAGER i ADMIN */}
                     <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER"]} />}>
                         <Route path="/costInvoices" element={<CostInvoicesSearch title="Faktury kosztowe" />} />
                         <Route path="/cost-invoice/:id" element={<CostInvoiceDetails />} />
                         <Route path="/costInvoices/report" element={<CostInvoicesReport />} />
+                        <Route path="/bankSync" element={<BankSyncSearch title="Wyciągi bankowe" />} />
                     </Route>
                     {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
                 </Routes>
