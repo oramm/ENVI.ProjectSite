@@ -23,6 +23,12 @@ import {
     CaseInlineCreateBody,
     makeInlineCaseValidationSchema,
 } from "../../../TasksGlobal/Modals/Case/CaseInlineCreateBody";
+import { CaseModalBody } from "../../../TasksGlobal/Modals/Case/CaseModalBody";
+import { makeCaseValidationSchema } from "../../../TasksGlobal/Modals/Case/CaseValidationSchema";
+import {
+    buildCaseHeaderBadge,
+    buildContractHeaderBadge,
+} from "../../../TasksGlobal/Modals/Case/CaseModalButtons";
 
 export function LetterModalBody({
     isEditing,
@@ -41,8 +47,10 @@ export function LetterModalBody({
     const _project = isEditing ? undefined : (watch("_project") as ProjectData | undefined);
 
     // Panel inline-tworzenia Sprawy (Offcanvas) + token wymuszający odświeżenie opcji
-    // selektora ze źródła prawdy (casesRepository.items) po utworzeniu nowej sprawy.
+    // selektora ze źródła prawdy (casesRepository.items) po utworzeniu/edycji sprawy.
     const [showCreateCase, setShowCreateCase] = useState(false);
+    const [showEditCase, setShowEditCase] = useState(false);
+    const [caseToEdit, setCaseToEdit] = useState<Case | undefined>(undefined);
     const [caseOptionsRefreshToken, setCaseOptionsRefreshToken] = useState(0);
 
     const _contract = watch("_contract");
@@ -63,6 +71,16 @@ export function LetterModalBody({
         const current = (watch("_cases") as Case[] | undefined) ?? [];
         const alreadySelected = current.some((item) => item.id === created.id);
         const nextCases = alreadySelected ? current : [...current, created];
+        setValue("_cases", nextCases, { shouldValidate: true });
+        setCaseOptionsRefreshToken((token) => token + 1);
+    }
+
+    // Po edycji sprawy: editItem zaktualizował casesRepository.items (źródło prawdy).
+    // Zastępujemy edytowaną sprawę w `_cases` i podbijamy token, by selektor odświeżył opcje.
+    function handleCaseEdited(editedCase: Case) {
+        const updated = casesRepository.items.find((item) => item.id === editedCase.id) ?? editedCase;
+        const current = (watch("_cases") as Case[] | undefined) ?? [];
+        const nextCases = current.map((item) => (item.id === updated.id ? updated : item));
         setValue("_cases", nextCases, { shouldValidate: true });
         setCaseOptionsRefreshToken((token) => token + 1);
     }
@@ -121,6 +139,10 @@ export function LetterModalBody({
                         _contract={_contract}
                         readonly={!_contract}
                         onRequestCreate={() => setShowCreateCase(true)}
+                        onRequestEdit={(caseItem) => {
+                            setCaseToEdit(caseItem);
+                            setShowEditCase(true);
+                        }}
                         refreshToken={caseOptionsRefreshToken}
                     />
                 ) : (
@@ -134,11 +156,32 @@ export function LetterModalBody({
                 show={showCreateCase}
                 onHide={() => setShowCreateCase(false)}
                 title="Nowa sprawa"
+                headerBadge={buildContractHeaderBadge(_contract as any)}
                 repository={casesRepository}
                 ModalBodyComponent={CaseInlineCreateBody}
                 additionalModalBodyProps={{ _contract }}
                 makeValidationSchema={makeInlineCaseValidationSchema}
                 onCreated={handleCaseCreated}
+            />
+
+            {/* Panel boczny edycji Sprawy "w miejscu" — ta SAMA instancja casesRepository
+                co selektor, więc po edycji token odświeży dane sprawy. */}
+            <InlineCreateDrawer<Case>
+                show={showEditCase}
+                onHide={() => setShowEditCase(false)}
+                title="Edytuj sprawę"
+                headerBadge={buildCaseHeaderBadge(
+                    caseToEdit?._parent,
+                    caseToEdit?.parentCaseId
+                        ? casesRepository.items.find((c) => c.id === caseToEdit.parentCaseId)
+                        : undefined
+                )}
+                repository={casesRepository}
+                ModalBodyComponent={CaseModalBody}
+                makeValidationSchema={makeCaseValidationSchema}
+                isEditing={true}
+                initialData={caseToEdit}
+                onEdited={handleCaseEdited}
             />
 
             <Form.Group controlId="description">

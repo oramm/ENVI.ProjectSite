@@ -57,7 +57,7 @@ export const casesRepository = new RepositoryReact<Case>({
         // dzięki czemu po utworzeniu nowa sprawa trafia do repository.items i odświeża opcje.
         getRoute: "cases",
         addNewRoute: "case",
-        editRoute: "",
+        editRoute: "case",
         deleteRoute: "",
     },
     name: "cases",

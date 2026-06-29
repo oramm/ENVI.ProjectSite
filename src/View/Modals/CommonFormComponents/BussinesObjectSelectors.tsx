@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Button, ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
-import { Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
+import { Menu, MenuItem, Token, Typeahead } from "react-bootstrap-typeahead";
+import { RenderTokenProps } from "react-bootstrap-typeahead/types/types";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faLayerGroup, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from "react-hook-form/dist/types";
 import "../../../Css/styles.css";
 
@@ -1540,6 +1541,44 @@ function renderCaseMenu(
     return <Menu {...menuProps}>{items}</Menu>;
 }
 
+/** Token wybranej sprawy z ikoną ołówka pojawiającą się po kliknięciu (focus). */
+function CaseEditableToken({
+    option,
+    tokenProps,
+    onEdit,
+}: {
+    option: any;
+    tokenProps: RenderTokenProps;
+    onEdit: (item: Case) => void;
+}) {
+    const [focused, setFocused] = useState(false);
+    const caseItem = option as Case;
+
+    return (
+        <Token
+            onRemove={tokenProps.onRemove}
+            option={option}
+            tabIndex={tokenProps.tabIndex}
+            disabled={tokenProps.disabled}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+        >
+            {focused && (
+                <FontAwesomeIcon
+                    icon={faPencil}
+                    size="xs"
+                    className="me-1"
+                    style={{ cursor: "pointer" }}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => { e.stopPropagation(); onEdit(caseItem); }}
+                    title="Edytuj sprawę"
+                />
+            )}
+            {caseItem._typeFolderNumber_TypeName_Number_Name}
+        </Token>
+    );
+}
+
 interface CaseSelectMenuElementProps {
     name?: string;
     repository: RepositoryReact<Case>;
@@ -1562,6 +1601,11 @@ interface CaseSelectMenuElementProps {
      * PRAWDY (`repository.items`, które addNewItem już zaktualizował). Pominięty ⇒ bez zmian.
      */
     refreshToken?: number;
+    /**
+     * Opcjonalny hook edycji: gdy przekazany, każdy token wybranej sprawy zyskuje ikonę
+     * ołówka otwierającą InlineCreateDrawer w trybie edycji. Pominięty ⇒ bez zmian.
+     */
+    onRequestEdit?: (caseItem: Case) => void;
 }
 
 /**
@@ -1580,6 +1624,7 @@ export function CaseSelectMenuElement({
     _contract,
     _offer,
     repository,
+    onRequestEdit,
     showValidationInfo = true,
     multiple = true,
     onRequestCreate,
@@ -1668,6 +1713,14 @@ export function CaseSelectMenuElement({
                             </div>
                         );
                     }}
+                    renderToken={onRequestEdit ? (option, tokenProps, idx) => (
+                        <CaseEditableToken
+                            key={idx}
+                            option={option}
+                            tokenProps={tokenProps}
+                            onEdit={onRequestEdit}
+                        />
+                    ) : undefined}
                 />
             )}
         />

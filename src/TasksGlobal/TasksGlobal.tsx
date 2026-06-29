@@ -522,12 +522,13 @@ function buildTree(
                 if (allowsSubCases) {
                     for (const { caseItem: subCase, tasks: subTasks } of subCasesWithTasks || []) {
                         const subCaseTasks = subTasks ?? [];
+                        const subCaseWithParent = { ...subCase, _parentCase: caseItem };
                         const subCaseNode = {
                             id: "subcase" + subCase.id + sfx,
                             level: 4,
                             type: "subcase",
                             repository: casesRepository,
-                            dataItem: subCase,
+                            dataItem: subCaseWithParent,
                             title: <>{makeCaseTitleLabel(subCase)}</>,
                             children: [] as SectionNode<Task>[],
                             leaves: subCaseTasks as Task[],

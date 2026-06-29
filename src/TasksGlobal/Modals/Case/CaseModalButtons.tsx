@@ -1,6 +1,6 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Badge } from "react-bootstrap";
-import { Case, MilestoneData, OtherContract, OurContract, Task } from "../../../../Typings/bussinesTypes";
+import { Case, MilestoneData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { casesRepository } from "../../TasksGlobalController";
@@ -13,7 +13,8 @@ export function CaseEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
 }: SpecificEditModalButtonProps<Case>) {
-    const headerBadge = buildCaseHeaderBadge(initialData?._parent as MilestoneData | undefined);
+    const parentCase = initialData?._parentCase;
+    const headerBadge = buildCaseHeaderBadge(initialData?._parent as MilestoneData | undefined, parentCase);
 
     return (
         <GeneralEditModalButton<Case>
@@ -66,7 +67,7 @@ export function SubCaseAddNewModalButton({
     buttonProps,
 }: SpecificAddNewModalButtonProps<Case>) {
     const parentCase = contextData as Case | undefined;
-    const headerBadge = buildCaseHeaderBadge(parentCase?._parent as MilestoneData | undefined);
+    const headerBadge = buildCaseHeaderBadge(parentCase?._parent as MilestoneData | undefined, parentCase);
 
     return (
         <GeneralAddNewModalButton
@@ -107,8 +108,9 @@ export function CaseAndSubCaseAddButtonGroup({
     );
 }
 
-function buildCaseHeaderBadge(milestone?: MilestoneData) {
-    const label = buildContractMilestoneLabel(milestone);
+/** Badge z kontekstem: kontrakt | kamień milowy [| sprawa-rodzic dla podspraw] */
+export function buildCaseHeaderBadge(milestone?: MilestoneData, parentCase?: Case): ReactNode {
+    const label = buildCaseBreadcrumbLabel(milestone, parentCase);
     if (!label) return undefined;
 
     return (
@@ -118,25 +120,46 @@ function buildCaseHeaderBadge(milestone?: MilestoneData) {
     );
 }
 
-function buildContractMilestoneLabel(milestone?: MilestoneData) {
-    if (!milestone) return "";
-
-    const contractLabel = buildContractFirstLineLabel(milestone._contract);
+/** Buduje czytelną ścieżkę: kontrakt | kamień milowy [| sprawa-rodzic] */
+export function buildCaseBreadcrumbLabel(milestone?: MilestoneData, parentCase?: Case): string {
+    const contractLabel = buildContractFirstLineLabel(milestone?._contract);
     const milestoneLabel = buildMilestoneNameLabel(milestone);
-    return [contractLabel, milestoneLabel].filter(Boolean).join(" | ").trim();
+    const parentCaseLabel = parentCase
+        ? (parentCase.name || parentCase._type?.name || parentCase._typeFolderNumber_TypeName_Number_Name || "")
+        : "";
+    return [contractLabel, milestoneLabel, parentCaseLabel].filter(Boolean).join(" | ").trim();
+}
+
+/** Badge z samym kontraktem — używana gdy kamień milowy nie jest jeszcze znany */
+export function buildContractHeaderBadge(contract?: OurContract | OtherContract): ReactNode {
+    const label = buildContractFirstLineLabel(contract);
+    if (!label) return undefined;
+
+    return (
+        <Badge bg="secondary" text="light" pill className="text-break" style={{ whiteSpace: "normal" }}>
+            {label}
+        </Badge>
+    );
 }
 
 function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
     if (!contract) return "";
 
+    // Pola obliczeniowe serwera — dostępne na pełnych obiektach, obsługują oba typy kontraktów
+    const computed = (contract as any)._ourIdOrNumber_Alias || (contract as any)._ourIdOrNumber_Name;
+    if (computed) return computed;
+
     const aliasPart = contract.alias;
-    if ("ourId" in contract) {
+    if ("ourId" in contract && contract.ourId) {
         return [contract.ourId, aliasPart].filter(Boolean).join(" | ").trim();
     }
 
-    const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
-    const identifier = `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`;
-    return [identifier, aliasPart].filter(Boolean).join(" | ").trim();
+    // OtherContract — pomiń "Brak powiązania" gdy _ourContract niedostępny
+    const ourRelatedId = (contract as OtherContract)._ourContract?.ourId ?? "";
+    const contractId = [`${contract._type?.name ?? ""} ${contract.number}`.trim(), ourRelatedId ? `➔ ${ourRelatedId}` : ""]
+        .filter(Boolean)
+        .join(" ");
+    return [contractId, aliasPart].filter(Boolean).join(" | ").trim();
 }
 
 function buildMilestoneNameLabel(milestone?: MilestoneData) {

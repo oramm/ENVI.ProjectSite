@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Offcanvas, Button, Form, Alert, Spinner } from "react-bootstrap";
 import { useForm, FieldValues } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -32,7 +32,15 @@ interface InlineCreateDrawerProps<T extends RepositoryDataItem> {
     contextData?: unknown;
     additionalModalBodyProps?: Record<string, unknown>;
     /** rodzic dopisuje obiekt do opcji selektora i auto-zaznacza go */
-    onCreated: (created: T) => void;
+    onCreated?: (created: T) => void;
+    /** tryb edycji: gdy true, formularz jest pre-wypełniony danymi initialData */
+    isEditing?: boolean;
+    /** dane obiektu do edycji — pre-wypełniają formularz i są scalane z danymi formularza przy zapisie */
+    initialData?: T;
+    /** wywołany po pomyślnej edycji */
+    onEdited?: (edited: T) => void;
+    /** Badge wyświetlany obok tytułu — pokazuje ścieżkę kontekstu (kontrakt | kamień milowy | ...) */
+    headerBadge?: ReactNode;
 }
 
 export function InlineCreateDrawer<T extends RepositoryDataItem>({
@@ -45,6 +53,10 @@ export function InlineCreateDrawer<T extends RepositoryDataItem>({
     contextData,
     additionalModalBodyProps,
     onCreated,
+    isEditing = false,
+    initialData,
+    onEdited,
+    headerBadge,
 }: InlineCreateDrawerProps<T>) {
     const [errorMessage, setErrorMessage] = useState("");
     const [requestPending, setRequestPending] = useState(false);
@@ -52,14 +64,16 @@ export function InlineCreateDrawer<T extends RepositoryDataItem>({
     const formMethods = useForm({
         defaultValues: {},
         mode: "onChange",
-        resolver: makeValidationSchema ? yupResolver(makeValidationSchema(false)) : undefined,
+        resolver: makeValidationSchema ? yupResolver(makeValidationSchema(isEditing)) : undefined,
     });
 
     // Czyść stan formularza i komunikaty przy każdym otwarciu/zamknięciu panelu.
+    // W trybie tworzenia reset do pustego; w trybie edycji body-component sam
+    // wypełni formularz przez swój własny useEffect z initialData.
     useEffect(() => {
         setErrorMessage("");
         setRequestPending(false);
-        if (show) formMethods.reset({});
+        if (show && !isEditing) formMethods.reset({});
     }, [show]);
 
     async function handleSubmitRepository(data: FieldValues) {
@@ -68,6 +82,16 @@ export function InlineCreateDrawer<T extends RepositoryDataItem>({
 
             setErrorMessage("");
             setRequestPending(true);
+
+            if (isEditing) {
+                // Scala initialData (zawiera id i pola nie pokazywane w formularzu)
+                // z danymi formularza (zmiany wprowadzone przez użytkownika).
+                const itemToEdit = { ...initialData, ...data } as T;
+                const editedItem = (await repository.editItem(itemToEdit)) as T;
+                onEdited?.(editedItem);
+                onHide();
+                return;
+            }
 
             // Traktuj pole pliku jako "obecne" tylko gdy faktycznie wybrano plik
             // (zgodnie z logiką GeneralModal).
@@ -86,13 +110,13 @@ export function InlineCreateDrawer<T extends RepositoryDataItem>({
             }
 
             const newItem = (await repository.addNewItem(requestData)) as T;
-            onCreated(newItem);
+            onCreated?.(newItem);
             onHide();
         } catch (error) {
             if (error instanceof Error) setErrorMessage(error.message);
             ToolsFetch.sendClientErrorReport(error, {
                 repositoryName: repository?.name,
-                action: "InlineCreateDrawer_handleSubmit_add",
+                action: isEditing ? "InlineCreateDrawer_handleSubmit_edit" : "InlineCreateDrawer_handleSubmit_add",
                 drawerTitle: title,
             });
         } finally {
@@ -115,12 +139,16 @@ export function InlineCreateDrawer<T extends RepositoryDataItem>({
             <ErrorBoundary>
                 <Form onSubmit={(e) => { e.stopPropagation(); formMethods.handleSubmit(handleSubmitRepository)(e); }}>
                     <Offcanvas.Header closeButton>
-                        <Offcanvas.Title>{title}</Offcanvas.Title>
+                        <div className="d-flex flex-wrap align-items-center gap-2">
+                            <Offcanvas.Title>{title}</Offcanvas.Title>
+                            {headerBadge}
+                        </div>
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <FormProvider value={formMethods}>
                             <ModalBodyComponent
-                                isEditing={false}
+                                isEditing={isEditing}
+                                initialData={initialData}
                                 contextData={contextData}
                                 additionalProps={additionalModalBodyProps}
                             />
