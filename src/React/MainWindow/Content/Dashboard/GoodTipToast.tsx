@@ -41,6 +41,11 @@ const tips: Tip[] = [
         isNew: true,
         category: "general",
     },
+    {
+        text: "Przy sprawach są widoczne ikony, po najechaniu kursorem myszy wyświetla się podpowiedź z informacją o tym, co oznacza dana ikona.",
+        isNew: true,
+        category: "general",
+    },
 
     // Porady o analizie AI pism
     {
@@ -63,6 +68,11 @@ const tips: Tip[] = [
         category: "invoices",
     },
     {
+        text: 'Przy dodawaniu nabywcy sprawdź poprawność jego danych. Dane nabywcy widoczne przez witrynę będą widoczne na fakturze w KSeF.',
+        isNew: true,
+        category: "invoices",
+    },
+    {
         text: 'Kliknij "Pobierz z KSeF" aby pobrać nowe faktury kosztowe. Wybierz tryb przyrostowy (zostaną pobrane faktury, od ostatniej aktualizacji) lub weryfikacyjny (wybrany zakres dat), aby upewnić się, czy żadna faktura nie została pominięta.',
         category: "costInvoices",
     },
@@ -70,10 +80,10 @@ const tips: Tip[] = [
         text: "Każdej fakturze kosztowej możesz przypisać kategorię kosztową oraz określić procent odliczenia VAT.",
         category: "costInvoices",
     },
-    {
-        text: 'W sekcji "Raport miesięczny" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.',
-        category: "costInvoices",
-    },
+    // {
+    //     text: 'W sekcji "Raport miesięczny" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.',
+    //     category: "costInvoices",
+    // },
 ];
 
 interface GoodTipToastProps {
