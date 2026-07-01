@@ -30,3 +30,11 @@
 .is-warning {
     border-color: #ffc107 !important; /* yellow */
 }
+
+/* EntitySelector: menu rozwijane może być szersze niż wąskie pole wpisu,
+   żeby 3-liniowe pozycje (nazwa / skrót / adres | NIP) mieściły się bez łamania. */
+.entity-selector-wrapper .rbt-menu {
+    min-width: 24rem;
+    max-width: 42rem;
+    width: max-content;
+}

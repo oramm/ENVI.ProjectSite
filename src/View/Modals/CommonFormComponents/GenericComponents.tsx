@@ -49,6 +49,8 @@ type MyAsyncTypeaheadProps = {
     showValidationInfo?: boolean;
     renderMenuItemChildren?: RenderMenuItemChildren;
     renderMenu?: (results: any[], menuProps: any, state: TypeaheadManagerChildProps) => JSX.Element;
+    /** Wyrównanie/rozmiar menu rozwijanego. "justify" (domyślne) zrównuje szerokość menu z polem; "left"/"right" pozwalają menu dopasować szerokość do treści. */
+    align?: "justify" | "left" | "right";
     readOnly?: boolean;
 };
 /** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
@@ -69,6 +71,7 @@ export function MyAsyncTypeahead({
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     renderMenu,
+    align = "justify",
     multiple = false,
     allowNew = false,
     showValidationInfo = true,
@@ -170,6 +173,7 @@ export function MyAsyncTypeahead({
                     return (
                         <AsyncTypeahead
                             renderMenu={renderMenu ? renderMenu : undefined}
+                            align={align}
                             filterBy={filterBy}
                             id={`${name}-asyncTypeahead`}
                             allowNew={allowNew}

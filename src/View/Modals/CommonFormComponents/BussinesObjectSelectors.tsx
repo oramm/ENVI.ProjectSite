@@ -49,6 +49,41 @@ type ProjectSelectorProps = {
 };
 
 /**
+ * Opakowanie selektora z opcjonalnym przyciskiem "+ Nowy…" (pick-or-create).
+ * Gdy pojedynczy (single) selektor ma już wybraną wartość, przycisk znika,
+ * a input dostaje pełną szerokość. Bez `onRequestCreate` renderuje sam selektor.
+ */
+function SelectorWithCreate({
+    selector,
+    caption,
+    name,
+    multiple,
+    onRequestCreate,
+    wrapperClassName,
+}: {
+    selector: JSX.Element;
+    caption: string;
+    name: string;
+    multiple?: boolean;
+    onRequestCreate?: () => void;
+    wrapperClassName?: string;
+}) {
+    const { watch } = useFormContext();
+    const hideCreate = !onRequestCreate || (!multiple && !!watch(name));
+    if (hideCreate) {
+        return wrapperClassName ? <div className={wrapperClassName}>{selector}</div> : <>{selector}</>;
+    }
+    return (
+        <div className={`${wrapperClassName ? wrapperClassName + " " : ""}d-flex align-items-start gap-2`}>
+            <div className="flex-grow-1">{selector}</div>
+            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
+                {caption}
+            </Button>
+        </div>
+    );
+}
+
+/**
  * Komponent formularza wyboru projektu
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
@@ -166,19 +201,14 @@ export function CitySelector({
         />
     );
 
-    if (!onRequestCreate) return <>{selector}</>;
-
     return (
-        <div className="d-flex align-items-start gap-2">
-            <div className="flex-grow-1">{selector}</div>
-            <Button
-                variant="outline-success"
-                className="text-nowrap"
-                onClick={onRequestCreate}
-            >
-                + Nowe miasto
-            </Button>
-        </div>
+        <SelectorWithCreate
+            selector={selector}
+            caption="+ Nowe miasto"
+            name={name}
+            multiple={multiple}
+            onRequestCreate={onRequestCreate}
+        />
     );
 }
 
@@ -243,21 +273,22 @@ export function EntitySelector({
             searchKey="searchText"
             repository={localRepository}
             renderMenuItemChildren={renderOption}
+            align="left"
             multiple={multiple}
             allowNew={allowNew}
             showValidationInfo={showValidationInfo}
         />
     );
 
-    if (!onRequestCreate) return <>{selector}</>;
-
     return (
-        <div className="d-flex align-items-start gap-2">
-            <div className="flex-grow-1">{selector}</div>
-            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
-                + Nowy podmiot
-            </Button>
-        </div>
+        <SelectorWithCreate
+            selector={selector}
+            caption="+ Nowy podmiot"
+            name={name}
+            multiple={multiple}
+            onRequestCreate={onRequestCreate}
+            wrapperClassName="entity-selector-wrapper"
+        />
     );
 }
 
@@ -388,15 +419,14 @@ export function FinancialAidProgrammeSelector({
         />
     );
 
-    if (!onRequestCreate) return <>{selector}</>;
-
     return (
-        <div className="d-flex align-items-start gap-2">
-            <div className="flex-grow-1">{selector}</div>
-            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
-                + Nowy program
-            </Button>
-        </div>
+        <SelectorWithCreate
+            selector={selector}
+            caption="+ Nowy program"
+            name={name}
+            multiple={multiple}
+            onRequestCreate={onRequestCreate}
+        />
     );
 }
 
@@ -462,15 +492,14 @@ export function FocusAreaSelector({
         />
     );
 
-    if (!onRequestCreate) return <>{selector}</>;
-
     return (
-        <div className="d-flex align-items-start gap-2">
-            <div className="flex-grow-1">{selector}</div>
-            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
-                + Nowe działanie
-            </Button>
-        </div>
+        <SelectorWithCreate
+            selector={selector}
+            caption="+ Nowe działanie"
+            name={name}
+            multiple={multiple}
+            onRequestCreate={onRequestCreate}
+        />
     );
 }
 
@@ -1318,15 +1347,14 @@ export function PersonSelector({
         />
     );
 
-    if (!onRequestCreate) return <>{selector}</>;
-
     return (
-        <div className="d-flex align-items-start gap-2">
-            <div className="flex-grow-1">{selector}</div>
-            <Button variant="outline-success" className="text-nowrap" onClick={onRequestCreate}>
-                + Nowa osoba
-            </Button>
-        </div>
+        <SelectorWithCreate
+            selector={selector}
+            caption="+ Nowa osoba"
+            name={name}
+            multiple={multiple}
+            onRequestCreate={onRequestCreate}
+        />
     );
 }
 

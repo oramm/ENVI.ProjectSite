@@ -48,6 +48,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
     const isGvMember = watch("isGvMember");
     const addAnotherThirdParty = watch("addAnotherThirdParty");
     const thirdParties = (watch("_thirdParties") || []) as InvoiceThirdParty[];
+    const buyer = watch("_entity") as { taxNumber?: string; address?: string } | undefined;
     const prevIsJstSubordinateRef = useRef<boolean>(false);
     const prevIsGvMemberRef = useRef<boolean>(false);
     const [showCreateEntity, setShowCreateEntity] = useState(false);
@@ -180,6 +181,16 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             <Form.Group>
                 <Form.Label>Nabywca</Form.Label>
                 <EntitySelector name="_entity" multiple={false} onRequestCreate={() => setShowCreateEntity(true)} />
+                {buyer && !buyer.taxNumber && (
+                    <div className="small text-warning mt-1">
+                        ⚠ Nabywca nie ma NIP — KSeF odrzuci fakturę przy wysyłce. Uzupełnij NIP podmiotu.
+                    </div>
+                )}
+                {buyer && !buyer.address && (
+                    <div className="small text-warning mt-1">
+                        ⚠ Nabywca nie ma adresu — na zwykłej fakturze adres jest obowiązkowy, KSeF odrzuci fakturę bez niego.
+                    </div>
+                )}
             </Form.Group>
             <Row className="mt-2 g-3 flex-nowrap overflow-auto pb-1">
                 <Form.Group as={Col} xs="auto" className="mb-0" controlId="isJstSubordinate">
@@ -213,8 +224,9 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             {includeThirdParty && (
                 <>
                     {thirdParties.map((item, index) => (
-                        <Row className="mt-2" key={`third-party-${index}`}>
-                            <Form.Group as={Col} md={6} controlId={`_thirdParties.${index}._entity`}>
+                        <React.Fragment key={`third-party-${index}`}>
+                        <Row className="mt-2 flex-md-nowrap">
+                            <Form.Group as={Col} md={7} controlId={`_thirdParties.${index}._entity`}>
                                 <Form.Label>{`Podmiot 3 #${index + 1}`}</Form.Label>
                                 <EntitySelector
                                     name={`_thirdParties.${index}._entity`}
@@ -242,7 +254,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                                 </Form.Control>
                                 <ErrorMessage name={`_thirdParties.${index}.role`} errors={errors} />
                             </Form.Group>
-                            <Form.Group as={Col} md={2} controlId={`removeThirdParty${index}`}>
+                            <Form.Group as={Col} xs="auto" className="ms-auto px-0" controlId={`removeThirdParty${index}`}>
                                 <Form.Label className="invisible d-block">Akcja</Form.Label>
                                 <Button
                                     variant="outline-danger"
@@ -254,6 +266,13 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                                 </Button>
                             </Form.Group>
                         </Row>
+                        {item?._entity && !item._entity.taxNumber && (
+                            <div className="small text-info mb-1">
+                                ℹ Podmiot bez NIP — w KSeF zostanie zidentyfikowany przez ID wewnętrzny: {item._entity.id} <br/>
+                                Jeśli chcesz, aby podmiot miał NIP na fakturze, edytuj jego dane w zakładce Podmioty.
+                            </div>
+                        )}
+                        </React.Fragment>
                     ))}
                     <ErrorMessage name="_thirdParties" errors={errors} />
                 </>

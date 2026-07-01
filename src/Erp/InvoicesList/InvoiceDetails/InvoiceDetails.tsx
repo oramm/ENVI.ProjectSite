@@ -214,8 +214,8 @@ export default function InvoiceDetails() {
                             <Col sm={12} md={8}>
                                 <div>Nabywca</div>
                                 <h5>{invoice._entity.name}</h5>
-                                <h5>{invoice._entity.address}</h5>
-                                <h5>NIP: {invoice._entity.taxNumber}</h5>
+                                <h5>{invoice._entity.address || <span className="text-warning">⚠ Brak adresu</span>}</h5>
+                                <h5>NIP: {invoice._entity.taxNumber || <span className="text-warning">⚠ Brak NIP</span>}</h5>
                             </Col>
                             {invoice.includeThirdParty && invoice._thirdParties && invoice._thirdParties.length > 0 && (
                                 <Col sm={12} md={8}>
@@ -240,7 +240,10 @@ export default function InvoiceDetails() {
                                                             : "-"}
                                                     </td>
                                                     <td>{thirdParty._entity?.name || "-"}</td>
-                                                    <td>{thirdParty._entity?.taxNumber || "-"}</td>
+                                                    <td>
+                                                        {thirdParty._entity?.taxNumber
+                                                            || (thirdParty._entity ? `ID wew: ${thirdParty._entity.id}` : "-")}
+                                                    </td>
                                                     <td>{thirdParty._entity?.address || "-"}</td>
                                                 </tr>
                                             ))}
