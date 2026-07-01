@@ -506,12 +506,6 @@ function buildTree(
             contractNode.children.push(milestoneNode);
 
             const allCasesWithTasks = casesWithTasks || [];
-            const uniqueCasesWithTasks = allCasesWithTasks.filter(
-                (c) => c.caseItem._type.isUniquePerMilestone
-            );
-            const nonUniqueCasesWithTasks = allCasesWithTasks.filter(
-                (c) => !c.caseItem._type.isUniquePerMilestone
-            );
 
             const addCaseNode = (
                 caseItem: Case,
@@ -578,41 +572,37 @@ function buildTree(
                 }
             };
 
-            // Sprawy unikatowe — bezpośrednio pod kamieniem milowym (poziom 3)
-            for (const { caseItem, tasks, subCasesWithTasks } of uniqueCasesWithTasks) {
-                addCaseNode(caseItem, tasks, subCasesWithTasks, 3, milestoneNode);
-            }
-
-            // Sprawy wielokrotne — grupowane po typie, pod węzłem CaseType (poziom 3 → Case poziom 4)
-            const groupsByTypeId = new Map<
-                number,
-                { caseItem: Case; tasks: Task[]; subCasesWithTasks: { caseItem: Case; tasks: Task[] }[] }[]
-            >();
-            for (const cwt of nonUniqueCasesWithTasks) {
-                const tid = cwt.caseItem._type.id;
-                if (!groupsByTypeId.has(tid)) groupsByTypeId.set(tid, []);
-                groupsByTypeId.get(tid)!.push(cwt);
-            }
-
-            for (const [typeId, cases] of groupsByTypeId) {
-                const caseType = cases[0].caseItem._type;
-                const caseTypeNode: SectionNode<Task> = {
-                    id: `casetype${milestone.id}_${typeId}${sfx}`,
-                    isInAccordion: true,
-                    initialExpanded: true,
-                    level: 3,
-                    type: "casetype",
-                    repository: caseTypesRepository,
-                    dataItem: caseType,
-                    title: <>{makeCaseTypeTitleLabel(caseType)}</>,
-                    children: [],
-                    isDeletable: false,
-                };
-                milestoneNode.children.push(caseTypeNode);
-
-                for (const { caseItem, tasks, subCasesWithTasks } of cases) {
-                    addCaseNode(caseItem, tasks, subCasesWithTasks, 4, caseTypeNode, true);
+            // Iterujemy sprawy w oryginalnej kolejności z backendu (wg folderNumber).
+            // Sprawy unikatowe trafiają wprost pod kamień (poziom 3); sprawy wielokrotne — do
+            // folderu typu tworzonego w miejscu PIERWSZEGO wystąpienia danego typu, dzięki czemu
+            // foldery i sprawy unikatowe zachowują wspólną, alfabetyczną kolejność.
+            const caseTypeFolderNodes = new Map<number, SectionNode<Task>>();
+            for (const { caseItem, tasks, subCasesWithTasks } of allCasesWithTasks) {
+                if (caseItem._type.isUniquePerMilestone) {
+                    addCaseNode(caseItem, tasks, subCasesWithTasks, 3, milestoneNode);
+                    continue;
                 }
+
+                const typeId = caseItem._type.id;
+                let caseTypeNode = caseTypeFolderNodes.get(typeId);
+                if (!caseTypeNode) {
+                    caseTypeNode = {
+                        id: `casetype${milestone.id}_${typeId}${sfx}`,
+                        isInAccordion: true,
+                        initialExpanded: true,
+                        level: 3,
+                        type: "casetype",
+                        repository: caseTypesRepository,
+                        dataItem: caseItem._type,
+                        title: <>{makeCaseTypeTitleLabel(caseItem._type)}</>,
+                        children: [],
+                        isDeletable: false,
+                    };
+                    caseTypeFolderNodes.set(typeId, caseTypeNode);
+                    milestoneNode.children.push(caseTypeNode);
+                }
+
+                addCaseNode(caseItem, tasks, subCasesWithTasks, 4, caseTypeNode, true);
             }
         }
     }
