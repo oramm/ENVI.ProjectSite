@@ -239,7 +239,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                                 mt-2 mt-md-0
                             "
                 >
-                    {sectionNode.children.length > 0 && (
+                    {sectionNode.children.length > 0 && sectionNode.type !== "casetype" && (
                         <ToggleExpandButton
                             expandTrigger={localExpandTrigger}
                             setExpandTrigger={setLocalExpandTrigger}
@@ -300,7 +300,16 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
 
     return (
         <div style={cardContentStyle}>
-            {/* Zagnieżdżone sekcje - z wcięciem */}
+            {/* Liście (Tabela) - BEZ wcięcia (indentation), ale ewentualnie z paddingiem karty.*/}
+            {sectionNode.leaves && (
+                <div className="mt-2">
+                    <ResultSetTable<DataItemType>
+                        {...resulsetTableProps}
+                        filteredObjects={sectionNode.leaves}
+                        parentSectionId={sectionNode.id}
+                    />
+                </div>
+            )}
             {sectionNode.children.length > 0 && (
                 <div style={indentationStyle}>
                     {sectionNode.children.map((childNode, index) => (
@@ -312,17 +321,6 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
                             childrenExpandTrigger={localExpandTrigger}
                         />
                     ))}
-                </div>
-            )}
-
-            {/* Liście (Tabela) - BEZ wcięcia (indentation), ale ewentualnie z paddingiem karty */}
-            {sectionNode.leaves && (
-                <div className="mt-2">
-                    <ResultSetTable<DataItemType>
-                        {...resulsetTableProps}
-                        filteredObjects={sectionNode.leaves}
-                        parentSectionId={sectionNode.id}
-                    />
                 </div>
             )}
         </div>

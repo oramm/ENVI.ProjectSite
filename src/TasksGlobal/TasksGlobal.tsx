@@ -1,10 +1,11 @@
-import { faCalendarAlt, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFolderOpen, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useRef, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
 import {
     Case,
+    CaseType,
     MilestoneData,
     OtherContract,
     OurContract,
@@ -403,11 +404,15 @@ function makeMilestoneTitleLabel(milestone: MilestoneData) {
     );
 }
 
-function makeCaseTitleLabel(caseItem: Case) {
+function makeCaseTitleLabel(caseItem: Case, isInTypeFolder = false) {
     const isParentCase = Boolean(caseItem._type.allowsSubCases) && !caseItem.parentCaseId;
+    // W folderze typu nazwa typu jest już w nagłówku folderu — pokazujemy tylko numer i nazwę sprawy
+    const label = isInTypeFolder
+        ? `${caseItem._displayNumber || ""} ${caseItem.name || ""}`.trim()
+        : `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
     return (
         <>
-            {`Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`}
+            {label}
             <UniquenessIcon isUnique={caseItem._type.isUniquePerMilestone} />
             {isParentCase && (
                 <FontAwesomeIcon
@@ -417,6 +422,15 @@ function makeCaseTitleLabel(caseItem: Case) {
                     title="Sprawa może mieć podsprawy"
                 />
             )}
+        </>
+    );
+}
+
+function makeCaseTypeTitleLabel(caseType: CaseType) {
+    return (
+        <>
+            <FontAwesomeIcon icon={faFolderOpen} className="me-2 text-warning" />
+            {`${caseType.folderNumber} ${caseType.name}`}
         </>
     );
 }
@@ -491,16 +505,31 @@ function buildTree(
             };
             contractNode.children.push(milestoneNode);
 
-            for (const { caseItem, tasks, subCasesWithTasks } of casesWithTasks || []) {
+            const allCasesWithTasks = casesWithTasks || [];
+            const uniqueCasesWithTasks = allCasesWithTasks.filter(
+                (c) => c.caseItem._type.isUniquePerMilestone
+            );
+            const nonUniqueCasesWithTasks = allCasesWithTasks.filter(
+                (c) => !c.caseItem._type.isUniquePerMilestone
+            );
+
+            const addCaseNode = (
+                caseItem: Case,
+                tasks: Task[],
+                subCasesWithTasks: { caseItem: Case; tasks: Task[] }[] | undefined,
+                level: number,
+                parentNode: SectionNode<Task>,
+                isInTypeFolder = false
+            ) => {
                 const allowsSubCases = Boolean(caseItem._type.allowsSubCases);
                 const caseTasks = tasks ?? [];
                 const caseNode = {
                     id: "case" + caseItem.id + sfx,
-                    level: 3,
+                    level,
                     type: "case",
                     repository: casesRepository,
                     dataItem: caseItem,
-                    title: <>{makeCaseTitleLabel(caseItem)}</>,
+                    title: <>{makeCaseTitleLabel(caseItem, isInTypeFolder)}</>,
                     children: [] as SectionNode<Task>[],
                     leaves: caseTasks.length > 0 ? caseTasks : [],
                     isDeletable: true,
@@ -513,10 +542,10 @@ function buildTree(
                         SpecificEditModalButtonProps<RepositoryDataItem>
                     >,
                     editHandler: (node: SectionNode<Task>) => {
-                        node.title = <>{makeCaseTitleLabel(node.dataItem as Case)}</>;
+                        node.title = <>{makeCaseTitleLabel(node.dataItem as Case, isInTypeFolder)}</>;
                     },
                 };
-                milestoneNode.children.push(caseNode);
+                parentNode.children.push(caseNode);
                 allTasks.push(...caseTasks);
 
                 if (allowsSubCases) {
@@ -525,11 +554,11 @@ function buildTree(
                         const subCaseWithParent = { ...subCase, _parentCase: caseItem };
                         const subCaseNode = {
                             id: "subcase" + subCase.id + sfx,
-                            level: 4,
+                            level: level + 1,
                             type: "subcase",
                             repository: casesRepository,
                             dataItem: subCaseWithParent,
-                            title: <>{makeCaseTitleLabel(subCase)}</>,
+                            title: <>{makeCaseTitleLabel(subCase, isInTypeFolder)}</>,
                             children: [] as SectionNode<Task>[],
                             leaves: subCaseTasks as Task[],
                             isDeletable: true,
@@ -540,12 +569,49 @@ function buildTree(
                                 SpecificEditModalButtonProps<RepositoryDataItem>
                             >,
                             editHandler: (node: SectionNode<Task>) => {
-                                node.title = <>{makeCaseTitleLabel(node.dataItem as Case)}</>;
+                                node.title = <>{makeCaseTitleLabel(node.dataItem as Case, isInTypeFolder)}</>;
                             },
                         };
                         caseNode.children.push(subCaseNode);
                         allTasks.push(...subCaseTasks);
                     }
+                }
+            };
+
+            // Sprawy unikatowe — bezpośrednio pod kamieniem milowym (poziom 3)
+            for (const { caseItem, tasks, subCasesWithTasks } of uniqueCasesWithTasks) {
+                addCaseNode(caseItem, tasks, subCasesWithTasks, 3, milestoneNode);
+            }
+
+            // Sprawy wielokrotne — grupowane po typie, pod węzłem CaseType (poziom 3 → Case poziom 4)
+            const groupsByTypeId = new Map<
+                number,
+                { caseItem: Case; tasks: Task[]; subCasesWithTasks: { caseItem: Case; tasks: Task[] }[] }[]
+            >();
+            for (const cwt of nonUniqueCasesWithTasks) {
+                const tid = cwt.caseItem._type.id;
+                if (!groupsByTypeId.has(tid)) groupsByTypeId.set(tid, []);
+                groupsByTypeId.get(tid)!.push(cwt);
+            }
+
+            for (const [typeId, cases] of groupsByTypeId) {
+                const caseType = cases[0].caseItem._type;
+                const caseTypeNode: SectionNode<Task> = {
+                    id: `casetype${milestone.id}_${typeId}${sfx}`,
+                    isInAccordion: true,
+                    initialExpanded: true,
+                    level: 3,
+                    type: "casetype",
+                    repository: caseTypesRepository,
+                    dataItem: caseType,
+                    title: <>{makeCaseTypeTitleLabel(caseType)}</>,
+                    children: [],
+                    isDeletable: false,
+                };
+                milestoneNode.children.push(caseTypeNode);
+
+                for (const { caseItem, tasks, subCasesWithTasks } of cases) {
+                    addCaseNode(caseItem, tasks, subCasesWithTasks, 4, caseTypeNode, true);
                 }
             }
         }
