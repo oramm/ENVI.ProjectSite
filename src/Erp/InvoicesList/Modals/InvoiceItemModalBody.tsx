@@ -36,14 +36,14 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
             <Form.Group controlId="description">
                 <div className="d-flex justify-content-between align-items-center">
                     <Form.Label className="mb-0">Opis</Form.Label>
-                    <Form.Text className={`mb-0 ${descriptionLength >= 256 ? "text-danger" : "text-muted"}`}>
-                        {descriptionLength}/256 znaków
+                    <Form.Text className={`mb-0 ${descriptionLength >= 512 ? "text-danger" : "text-muted"}`}>
+                        {descriptionLength}/512 znaków
                     </Form.Text>
                 </div>
                 <Form.Control
                     as="textarea"
                     rows={4}
-                    maxLength={256}
+                    maxLength={512}
                     placeholder="Dodaj komentarz"
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}

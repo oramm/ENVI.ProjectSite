@@ -196,6 +196,9 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
         case MainSetup.InvoiceStatuses.SENT_TO_KSEF:
             variant = "success";
             break;
+        case MainSetup.InvoiceStatuses.KSEF_ERROR:
+            variant = "danger";
+            break;
         case MainSetup.InvoiceStatuses.PAID:
             variant = "success";
             break;

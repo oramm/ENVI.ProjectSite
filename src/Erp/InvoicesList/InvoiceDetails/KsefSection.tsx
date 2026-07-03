@@ -154,17 +154,21 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
         // Nie pokazuj jeśli faktura już ma numer KSeF
         if (invoice.ksefNumber) return false;
 
+        // Faktura odrzucona przez KSeF nie blokuje ponownej wysyłki (np. po poprawieniu danych)
+        const wasRejected = invoice.ksefStatus === "ERROR";
+
         // Nie pokazuj jeśli faktura została już wysłana do KSeF
-        if (invoice.ksefStatus) return false;
+        if (invoice.ksefStatus && !wasRejected) return false;
 
         // Nie pokazuj jeśli faktura ma już sessionId (była wysłana)
-        if (invoice.ksefSessionId) return false;
+        if (invoice.ksefSessionId && !wasRejected) return false;
 
-        // Pokaż dla statusów: "Wysłana" (legacy), "Gotowa do wysłania KSeF", "Wysłana do KSeF"
+        // Pokaż dla statusów: "Wysłana" (legacy), "Gotowa do wysłania KSeF", "Wysłana do KSeF", "Odrzucona przez KSeF"
         return (
             invoice.status === MainSetup.InvoiceStatuses.SENT ||
             invoice.status === MainSetup.InvoiceStatuses.READY_FOR_KSEF ||
-            invoice.status === MainSetup.InvoiceStatuses.SENT_TO_KSEF
+            invoice.status === MainSetup.InvoiceStatuses.SENT_TO_KSEF ||
+            invoice.status === MainSetup.InvoiceStatuses.KSEF_ERROR
         );
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status]);
 
@@ -434,6 +438,26 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     return;
                 }
 
+                // Błąd terminalny (np. odrzucenie semantyczne) - zapisz trwale, tak jak robi to backend
+                if (statusResult.status?.code && statusResult.status.code >= 400) {
+                    stopPolling();
+                    setLoading(false);
+                    setLoadingMessage("");
+
+                    const updatedInvoice: Invoice = {
+                        ...latestInvoiceRef.current,
+                        status: MainSetup.InvoiceStatuses.KSEF_ERROR,
+                        ksefStatus: "ERROR",
+                    };
+                    onInvoiceUpdate(updatedInvoice);
+
+                    setAlert({
+                        type: "danger",
+                        message: `Faktura odrzucona przez KSeF.\n${statusResult.status.description || ""}`,
+                    });
+                    return;
+                }
+
                 // Kontynuuj polling jeśli status 100 (w przetwarzaniu)
                 if (attempts < maxAttempts) {
                     pollingRef.current = setTimeout(checkStatus, pollingInterval);
@@ -516,6 +540,19 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                 setAlert({
                     type: "info",
                     message: "Faktura w trakcie przetwarzania. Spróbuj ponownie za chwilę.",
+                });
+            } else if (statusResult.status?.code && statusResult.status.code >= 400) {
+                // Błąd terminalny (np. odrzucenie semantyczne) - zapisz trwale, tak jak robi to backend
+                const updatedInvoice: Invoice = {
+                    ...invoice,
+                    status: MainSetup.InvoiceStatuses.KSEF_ERROR,
+                    ksefStatus: "ERROR",
+                };
+                onInvoiceUpdate(updatedInvoice);
+
+                setAlert({
+                    type: "danger",
+                    message: `Faktura odrzucona przez KSeF.\n${statusResult.status.description || ""}`,
                 });
             } else {
                 setAlert({
@@ -619,6 +656,9 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
     const renderStatus = () => {
         if (invoice.ksefNumber) {
             return <span className="text-success fw-bold">✅ Przyjęta</span>;
+        }
+        if (invoice.ksefStatus === "ERROR") {
+            return <span className="text-danger fw-bold">❌ Odrzucona przez KSeF</span>;
         }
         if (invoice.ksefStatus === "PENDING" || invoice.ksefStatus === "PENDING_CORRECTION") {
             return <span className="text-warning fw-bold">🟡 Wysłana - oczekuje na potwierdzenie</span>;
@@ -808,6 +848,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                     {(invoice.status === MainSetup.InvoiceStatuses.SENT ||
                         invoice.status === MainSetup.InvoiceStatuses.READY_FOR_KSEF ||
                         invoice.status === MainSetup.InvoiceStatuses.SENT_TO_KSEF ||
+                        invoice.status === MainSetup.InvoiceStatuses.KSEF_ERROR ||
                         invoice.status === MainSetup.InvoiceStatuses.PAID) &&
                     invoice.number &&
                     invoice.sentDate ? (
