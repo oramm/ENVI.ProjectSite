@@ -10,6 +10,7 @@ import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from "../Mod
 import { ActionButton, CopyButton, InvoiceEditModalButton } from "../Modals/InvoiceModalButtons";
 import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
 import Tools from "../../../React/Tools/Tools";
+import MainSetup from "../../../React/MainSetupReact";
 import KsefSection from "./KsefSection";
 import CorrectionModal from "../Modals/CorrectionModal";
 import { GeneralDeleteModalButton } from "../../../View/Modals/GeneralModalButtons";
@@ -160,7 +161,14 @@ export default function InvoiceDetails() {
                             </Col>
                             <Col sm={4} md={3} lg="3">
                                 <div>do Umowy:</div>
-                                <h5>{invoice._contract.ourId}</h5>
+                                <h5>
+                                    <Link
+                                        to={`/contract/${invoice._contract.id}`}
+                                        className="link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover"
+                                    >
+                                        {invoice._contract.ourId}
+                                    </Link>
+                                </h5>
                             </Col>
                             <Col sm={2}>
                                 <InvoiceStatusBadge status={invoice.status} />
@@ -198,6 +206,32 @@ export default function InvoiceDetails() {
                                     <h5>{ToolsDate.dateYMDtoDMY(invoice.paymentDeadline)}</h5>
                                 ) : (
                                     "Jeszcze nie okreśony"
+                                )}
+                                {invoice.status !== MainSetup.InvoiceStatuses.PAID && (
+                                    <div>
+                                        <div>Dni do zapłaty:</div>
+                                        <div className="d-flex align-items-baseline gap-2">
+                                        <h5 className="mb-0">{invoice.daysToPay ?? "nieokreślono"}</h5>
+                                        {invoice.sentDate &&
+                                            invoice.paymentDeadline &&
+                                            // w dniu wysłania "pozostało X dni" pokrywałoby się z "Dni do zapłaty" powyżej
+                                            invoice.sentDate !== ToolsDate.toUTC(new Date()) &&
+                                            (() => {
+                                                // liczone od dzisiejszej daty do paymentDeadline, nie od sentDate
+                                                const daysLeft = ToolsDate.countDaysLeftTo(invoice.paymentDeadline);
+                                                const dayWord = (n: number) => (Math.abs(n) === 1 ? "dzień" : "dni");
+                                                return daysLeft >= 0 ? (
+                                                    <span className="text-muted small text-nowrap">
+                                                        Pozostało: {daysLeft} {dayWord(daysLeft)}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-danger small text-nowrap">
+                                                        Termin minął {-daysLeft} {dayWord(daysLeft)} temu
+                                                    </span>
+                                                );
+                                            })()}
+                                        </div>
+                                    </div>
                                 )}
                             </Col>
                         </Row>

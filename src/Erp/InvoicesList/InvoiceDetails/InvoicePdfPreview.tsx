@@ -304,6 +304,12 @@ export default function InvoicePdfPreview() {
     }, [xml]);
 
     const parsed = parsedResult.data;
+    const daysToPay =
+        parsed?.issueDate && parsed?.paymentDeadline
+            ? Math.round(
+                  (new Date(parsed.paymentDeadline).getTime() - new Date(parsed.issueDate).getTime()) / 86400000,
+              )
+            : null;
     const isCorrectionInvoice = parsed?.invoiceType?.startsWith("KOR") || false;
     const hasKsefQr = Boolean(ksefPreviewStatus?.qrVerificationUrl);
     const ksefInvoiceNumber = ksefPreviewStatus?.ksefNumber || ksefPreviewStatus?.qrLabel || "";
@@ -556,7 +562,11 @@ export default function InvoicePdfPreview() {
                                     <Row>
                                         <Col md={4}>
                                             <div><strong>Termin płatności:</strong></div>
-                                            <div>{parsed.paymentDeadline || <span className="text-muted">(puste)</span>}</div>
+                                            <div>
+                                                {parsed.paymentDeadline || <span className="text-muted">(puste)</span>}
+                                                {daysToPay !== null &&
+                                                    ` (${daysToPay} ${daysToPay === 1 ? "dzień" : "dni"})`}
+                                            </div>
                                         </Col>
                                         <Col md={4}>
                                             <div><strong>Numer konta:</strong></div>

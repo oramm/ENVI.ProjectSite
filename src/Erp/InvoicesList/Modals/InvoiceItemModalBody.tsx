@@ -11,10 +11,12 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
     const {
         register,
         reset,
+        watch,
         formState: { errors },
         trigger,
     } = useFormContext();
     const { invoice } = useInvoice();
+    const descriptionLength = (watch("description") as string | undefined)?.length || 0;
     useEffect(() => {
         console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
@@ -32,10 +34,16 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
     return (
         <>
             <Form.Group controlId="description">
-                <Form.Label>Opis</Form.Label>
+                <div className="d-flex justify-content-between align-items-center">
+                    <Form.Label className="mb-0">Opis</Form.Label>
+                    <Form.Text className={`mb-0 ${descriptionLength >= 256 ? "text-danger" : "text-muted"}`}>
+                        {descriptionLength}/256 znaków
+                    </Form.Text>
+                </div>
                 <Form.Control
                     as="textarea"
                     rows={4}
+                    maxLength={256}
                     placeholder="Dodaj komentarz"
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}
