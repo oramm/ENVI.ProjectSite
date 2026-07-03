@@ -357,8 +357,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             show={show}
             onHide={onClose}
             enforceFocus={enforceFocus}
-            onClick={(e: any) => e.stopPropagation()}
-            onDoubleClick={(e: any) => e.stopPropagation()}
         >
             <ErrorBoundary>
                 <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>

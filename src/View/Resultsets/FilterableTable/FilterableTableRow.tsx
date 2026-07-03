@@ -52,10 +52,20 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         return "";
     }
 
+    // React bubbluje syntetyczne eventy przez drzewo komponentów, nie DOM — klik w modalu
+    // (Portal, poza wierszem w DOM) trafiłby tu mimo braku realnego zawierania.
+    function isRealRowClick(e: React.SyntheticEvent) {
+        return e.currentTarget.contains(e.target as Node);
+    }
+
     return (
         <Row
-            onClick={(e) => onRowClick(dataObject.id)}
-            onDoubleClick={() => {
+            onClick={(e) => {
+                if (!isRealRowClick(e)) return;
+                onRowClick(dataObject.id);
+            }}
+            onDoubleClick={(e) => {
+                if (!isRealRowClick(e)) return;
                 if (!selectedObjectRoute) return;
                 const target = buildDetailsPath(selectedObjectRoute, dataObject.id);
                 if (target) navigate(target, { state: { repository } });
