@@ -8,6 +8,7 @@ import { Invoice } from "../../../Typings/bussinesTypes";
 import { InvoiceStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { invoicesRepository } from "./InvoicesController";
 import Tools from "../../React/Tools/Tools";
+import MainSetup from "../../React/MainSetupReact";
 
 export default function InvoicesSearch({ title }: { title: string }) {
     const location = useLocation();
@@ -20,7 +21,11 @@ export default function InvoicesSearch({ title }: { title: string }) {
 
     const refreshFromSnapshot = useCallback(async () => {
         const snapshotKey = "filtersableTableSnapshot_invoices";
-        let criteria: Record<string, unknown> = {};
+        // Domyślne filtry zgodne z formularzem (InvoiceFilterBody) — użyte, gdy nie ma jeszcze snapshotu
+        let criteria: Record<string, unknown> = {
+            issueDateFrom: MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM,
+            issueDateTo: MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO,
+        };
 
         try {
             const snapshotRaw = sessionStorage.getItem(snapshotKey);
