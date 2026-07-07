@@ -166,8 +166,49 @@ export interface Task extends RepositoryDataItem {
     _parent: Case;
     _lastUpdated?: string;
     status: string;
+    estimatedHours?: number | null;
+    hoursMon?: number | null;
+    hoursTue?: number | null;
+    hoursWed?: number | null;
+    hoursThu?: number | null;
+    hoursFri?: number | null;
     ownerId?: number | null;
     _owner?: PersonData;
+}
+
+export interface ScrumboardContractStatus {
+    contractId: number;
+    discussed: boolean;
+    discussedAt?: string | null;
+    discussedByPersonId?: number | null;
+}
+
+export interface ScrumboardPlanningEntry {
+    id?: number;
+    personId: number;
+    workingDays: number;
+    hoursPerDay: number;
+    planningMeetingHours: number;
+    retroMeetingHours: number;
+    extraMeetingsHours: number;
+    _hoursAvailable?: number;
+    _person?: { id: number; name?: string; surname?: string; _alias?: string };
+}
+
+export interface ScrumboardPersonSummary {
+    personId: number;
+    personName: string;
+    personAlias: string;
+    available: number;
+    assigned: number;
+    mon: number;
+    tue: number;
+    wed: number;
+    thu: number;
+    fri: number;
+    meetings: number;
+    total: number;
+    remaining: number;
 }
 
 export interface ContractType extends RepositoryDataItem {

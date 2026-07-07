@@ -53,35 +53,20 @@ export default function MainMenu() {
                                     <NavDropdown.Item as={Link} to="/tasksGlobal" className={isActive("/tasksGlobal")}>
                                         Projekty i zadania
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item
-                                        as={Link}
-                                        to="/contracts/roles"
-                                        className={isActive("/contracts/roles")}
-                                    >
-                                        Role kontrakowe{" "}
+                                    <NavDropdown.Item as={Link} to="/scrumboard" className={isActive("/scrumboard")}>
+                                        Scrumboard{" "}
                                         <Badge bg="info" text="light">
                                             nowe
                                         </Badge>
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item
-                                        as={Link}
-                                        to="/contracts/dates"
-                                        className={isActive("/contracts/dates")}
-                                    >
-                                        Terminy{" "}
-                                        <Badge bg="info" text="light">
-                                            nowe
-                                        </Badge>
+                                    <NavDropdown.Item as={Link} to="/contracts/roles" className={isActive("/contracts/roles")}>
+                                        Role kontrakowe
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item
-                                        as={Link}
-                                        to="/contracts/znwu"
-                                        className={isActive("/contracts/znwu")}
-                                    >
-                                        ZNWU{" "}
-                                        <Badge bg="info" text="light">
-                                            nowe
-                                        </Badge>
+                                    <NavDropdown.Item as={Link} to="/contracts/dates" className={isActive("/contracts/dates")}>
+                                        Terminy
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/contracts/znwu" className={isActive("/contracts/znwu")}>
+                                        ZNWU
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             )}

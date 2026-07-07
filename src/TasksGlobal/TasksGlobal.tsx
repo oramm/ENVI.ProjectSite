@@ -16,6 +16,7 @@ import {
 import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import ToolsDate from "../React/Tools/ToolsDate";
+import RepositoryReact from "../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
 import {
     ContractStatusBadge,
@@ -435,10 +436,23 @@ function makeCaseTypeTitleLabel(caseType: CaseType) {
     );
 }
 
-function buildTree(
+/** true jeśli węzeł lub którekolwiek dziecko ma przypisane zadania (leaves) */
+function nodeHasTasks(node: SectionNode<Task>): boolean {
+    if (node.leaves && node.leaves.length > 0) return true;
+    return (node.children || []).some(nodeHasTasks);
+}
+
+/** Ustawia initialExpanded=false na gałęziach bez zadań (rekurencyjnie) */
+function collapseEmptyBranches(node: SectionNode<Task>) {
+    if (!nodeHasTasks(node)) node.initialExpanded = false;
+    (node.children || []).forEach(collapseEmptyBranches);
+}
+
+export function buildTree(
     contractsWithChildrenInput: ContractsWithChildren[],
     targetCaseId?: number,
-    version?: number
+    version?: number,
+    options?: { collapseEmpty?: boolean; leavesRepository?: RepositoryReact<Task> }
 ): SectionNode<Task>[] {
     const sfx = version !== undefined ? `_v${version}` : "";
     const contractNodes: SectionNode<Task>[] = [];
@@ -606,7 +620,7 @@ function buildTree(
             }
         }
     }
-    tasksGlobalRepository.items = allTasks;
-    console.log("contractNodes", contractNodes);
+    (options?.leavesRepository ?? tasksGlobalRepository).items = allTasks;
+    if (options?.collapseEmpty) contractNodes.forEach(collapseEmptyBranches);
     return contractNodes;
 }

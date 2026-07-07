@@ -28,6 +28,12 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
             deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
             status: initialData?.status || MainSetup.TaskStatus.BACKLOG,
             _owner: initialData?._owner || MainSetup.getCurrentUserAsPerson(),
+            estimatedHours: initialData?.estimatedHours ?? "",
+            hoursMon: initialData?.hoursMon ?? "",
+            hoursTue: initialData?.hoursTue ?? "",
+            hoursWed: initialData?.hoursWed ?? "",
+            hoursThu: initialData?.hoursThu ?? "",
+            hoursFri: initialData?.hoursFri ?? "",
         };
         reset(resetData);
         trigger();
@@ -77,6 +83,35 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
                     repository={MainSetup.personsEnviRepository}
                 />
             </Form.Group>
+            <Form.Group controlId="estimatedHours" className="mt-2">
+                <Form.Label>Szacowany czas [h]</Form.Label>
+                <Form.Control
+                    type="number"
+                    min={0}
+                    step={0.5}
+                    {...register("estimatedHours", { setValueAs: toNullableNumber })}
+                />
+            </Form.Group>
+            <Form.Group className="mt-2">
+                <Form.Label>Czas rzeczywisty [h] (PO / W / Ś / C / PT)</Form.Label>
+                <div className="d-flex gap-2">
+                    {(["hoursMon", "hoursTue", "hoursWed", "hoursThu", "hoursFri"] as const).map((field, i) => (
+                        <Form.Control
+                            key={field}
+                            type="number"
+                            min={0}
+                            step={0.5}
+                            placeholder={["PO", "W", "Ś", "C", "PT"][i]}
+                            {...register(field, { setValueAs: toNullableNumber })}
+                        />
+                    ))}
+                </div>
+            </Form.Group>
         </>
     );
+}
+
+/** Puste pole → null (czyści wartość), inaczej liczba. */
+function toNullableNumber(v: unknown): number | null {
+    return v === "" || v === null || v === undefined ? null : Number(v);
 }

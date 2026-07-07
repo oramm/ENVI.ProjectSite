@@ -1,0 +1,119 @@
+.scrumboard-view {
+    margin: 0 0.5rem;
+}
+
+/* Lewy panel - lista umów (scrollowana) */
+.scrum-contracts-list {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.scrum-contract-item {
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.25rem;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-left: 3px solid var(--section-border-our, #0d6efd);
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.scrum-contract-item:hover {
+    background-color: var(--bs-light, #f8f9fa);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.scrum-contract-item.active {
+    background-color: var(--bs-primary-bg-subtle, #cfe2ff);
+    border-left-width: 5px;
+}
+
+.scrum-contract-item.discussed {
+    opacity: 0.6;
+}
+
+.scrum-contract-label {
+    cursor: pointer;
+    min-width: 0;
+}
+
+.scrum-discussed-separator {
+    border-top: 2px dashed var(--bs-secondary, #6c757d);
+    margin: 0.5rem 0;
+}
+
+/* Akcje masowe na pasku kart (z prawej) */
+.scrum-tabbar-wrap {
+    position: relative;
+}
+
+.scrum-tab-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+}
+
+/* Na wąskich ekranach przyciski nad kartami, aby nie nachodziły na zakładki */
+@media (max-width: 991px) {
+    .scrum-tab-actions {
+        position: static;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Wiersz zadania i inline-edycja */
+.scrum-task-row {
+    padding: 0rem 0;
+}
+
+.scrum-task-name {
+    min-width: 4rem;
+}
+
+.scrum-task-owner {
+    max-width: 10rem;
+}
+
+.scrum-task-field {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.scrum-inline-value {
+    cursor: pointer;
+    border-bottom: 1px dotted var(--bs-secondary, #6c757d);
+}
+
+.scrum-inline-value:hover {
+    background-color: var(--bs-warning-bg-subtle, #fff3cd);
+}
+
+.scrum-inline-input {
+    display: inline-block;
+    width: 5rem;
+}
+
+/* Rozsuwanie pól godzin dziennych (animacja szerokości zamiast nagłego pojawienia) */
+.scrum-week-hours {
+    display: inline-flex;
+    gap: 0.25rem;
+    max-width: 0;
+    overflow: hidden;
+    transition: max-width 0.28s ease;
+    vertical-align: middle;
+}
+
+.scrum-week-hours.open {
+    max-width: 18rem;
+}
+
+.scrum-day-input {
+    width: 2.9rem;
+    text-align: center;
+    padding: 0.15rem 0.2rem;
+}
+
+.scrum-status-toggle {
+    cursor: pointer;
+}
