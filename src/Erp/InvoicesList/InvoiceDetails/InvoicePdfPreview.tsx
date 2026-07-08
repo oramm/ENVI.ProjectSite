@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Button, Card, Col, Container, Row, Spinner, Table } from "react-bootstrap";
+import { Alert, Button, Container, Spinner } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MainSetup from "../../../React/MainSetupReact";
 import { QRCodeSVG } from "qrcode.react";
@@ -46,6 +46,10 @@ type PreviewDocument = {
     totalGross: string;
     invoiceType: string;
     correctionType: string;
+    correctionReason: string;
+    correctedIssueDate: string;
+    correctedNumber: string;
+    correctedKsefNumber: string;
     paymentDeadline: string;
     bankAccount: string;
     bankName: string;
@@ -86,6 +90,13 @@ function formatAmount(value: number): string {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+}
+
+// Stawka pozycji (P_12): wartość liczbowa z "%", tokeny zw/np/oo bez zmian.
+function formatVatRate(rate: string): string {
+    const trimmed = (rate || "").trim();
+    if (!trimmed) return "";
+    return /^-?\d+([.,]\d+)?$/.test(trimmed) ? `${trimmed}%` : trimmed;
 }
 
 type KsefPreviewStatus = {
@@ -193,6 +204,7 @@ function parsePreviewXml(xml: string): PreviewDocument {
     const podmiot2Adr = podmiot2 ? findFirstByLocalName(podmiot2, "Adres") : null;
     const rachunekBankowy = platnosc ? findFirstByLocalName(platnosc, "RachunekBankowy") : null;
     const terminPlatnosci = platnosc ? findFirstByLocalName(platnosc, "TerminPlatnosci") : null;
+    const daneFaKorygowanej = fa ? findFirstByLocalName(fa, "DaneFaKorygowanej") : null;
 
     const items: PreviewItem[] = [];
     if (fa) {
@@ -254,6 +266,10 @@ function parsePreviewXml(xml: string): PreviewDocument {
         totalGross: getChildText(fa, "P_15"),
         invoiceType: getChildText(fa, "RodzajFaktury"),
         correctionType: getChildText(fa, "TypKorekty"),
+        correctionReason: getChildText(fa, "PrzyczynaKorekty"),
+        correctedIssueDate: getChildText(daneFaKorygowanej, "DataWystFaKorygowanej"),
+        correctedNumber: getChildText(daneFaKorygowanej, "NrFaKorygowanej"),
+        correctedKsefNumber: getChildText(daneFaKorygowanej, "NrKSeFFaKorygowanej"),
         paymentDeadline: getChildText(terminPlatnosci, "Termin"),
         bankAccount: getChildText(rachunekBankowy, "NrRB"),
         bankName: getChildText(rachunekBankowy, "NazwaBanku"),
@@ -437,11 +453,7 @@ export default function InvoicePdfPreview() {
                         margin: 0 auto !important;
                         box-sizing: border-box !important;
                         box-shadow: none !important;
-                        border: 1px solid #666 !important;
-                    }
-                    .invoice-party-row > [class*="col-"] {
-                        flex: 0 0 50% !important;
-                        max-width: 50% !important;
+                        border: none !important;
                     }
                     .invoice-qr-print-section {
                         break-before: page;
@@ -460,27 +472,64 @@ export default function InvoicePdfPreview() {
                     width: 100%;
                     max-width: 190mm;
                     margin: 0 auto;
-                    border: 1px solid #d0d0d0;
+                    padding: 24px 28px;
+                    background: #fff;
+                    color: #212529;
+                    border: 1px solid #e3e3e3;
                     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-                }
-                .invoice-party-row > [class*="col-"] {
-                    flex: 0 0 50%;
-                    max-width: 50%;
                 }
                 .invoice-ksef-title {
                     letter-spacing: 0.04em;
                     font-weight: 700;
+                    font-size: 1.3rem;
                 }
                 .preview-badge {
                     display: inline-block;
-                    padding: 0.2rem 0.5rem;
-                    border: 1px solid #999;
+                    padding: 0.2rem 0.6rem;
+                    border: 1px solid #adb5bd;
                     border-radius: 999px;
-                    font-size: 0.75rem;
+                    font-size: 0.72rem;
+                    letter-spacing: 0.03em;
                 }
-                .invoice-mono {
-                    font-family: Consolas, "Courier New", monospace;
+                .invoice-mono { font-family: Consolas, "Courier New", monospace; }
+                .inv-head {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: flex-start;
                 }
+                .inv-meta { white-space: nowrap; }
+                .inv-title { text-align: center; white-space: nowrap; margin-top: 6px; }
+                .inv-ksef-sub { text-align: center; font-size: 0.7rem; color: #868e96; white-space: nowrap; margin-top: 2px; }
+                .inv-correction { font-size: 0.55rem; }
+                .inv-account { white-space: nowrap; }
+                .inv-pay { display: flex; gap: 32px; flex-wrap: wrap; }
+                .inv-pay > div { flex: 0 1 auto; min-width: 0; }
+                .inv-section { margin-top: 22px; }
+                .inv-label {
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.06em;
+                    color: #868e96;
+                    font-weight: 600;
+                    margin-bottom: 4px;
+                }
+                .inv-cols { display: flex; gap: 32px; }
+                .inv-cols > div { flex: 1; min-width: 0; }
+                .inv-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+                .inv-table th, .inv-table td { padding: 6px 8px; }
+                .inv-table thead th {
+                    text-align: left;
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.03em;
+                    color: #868e96;
+                    border-bottom: 1.5px solid #343a40;
+                }
+                .inv-table tbody td { border-bottom: 1px solid #edeef0; }
+                .inv-table tfoot th { border-top: 1.5px solid #343a40; font-weight: 600; }
+                .inv-num { text-align: right; white-space: nowrap; }
+                .inv-total { text-align: right; }
+                .inv-total .amt { font-size: 1.3rem; font-weight: 700; margin-left: 10px; }
             `}</style>
 
             <div className="d-flex justify-content-between align-items-center mb-3 no-print">
@@ -498,96 +547,94 @@ export default function InvoicePdfPreview() {
                 </div>
             </div>
 
-            <Card className="invoice-sheet">
-                <Card.Body>
-                    <Row className="mb-3">
-                        <Col>
-                            <div className="invoice-ksef-title">FAKTURA (podgląd)</div>
-                            <div className="text-muted small">To nie jest dokument, tylko podgląd danych wysyłanych do KSeF</div>
-                        </Col>
-                        <Col className="text-end">
-                            <div className="mb-2">
-                                <span className="preview-badge">{parsed.invoiceType || "VAT"}</span>
-                            </div>
-                            <div><strong>Numer:</strong> <span className="invoice-mono">{parsed.invoiceNumber || "-"}</span></div>
-                            <div><strong>Data wystawienia:</strong> {parsed.issueDate || "-"}</div>
-                            <div><strong>Data sprzedaży:</strong> {parsed.saleDate || "-"}</div>
-                            {ksefInvoiceNumber && (
-                                <div><strong>Numer KSeF:</strong> <span className="invoice-mono">{ksefInvoiceNumber}</span></div>
+            <div className="invoice-sheet">
+                <div className="inv-head">
+                    <div className="text-end inv-meta">
+                        <div className="small"><strong>Data wystawienia:</strong> {parsed.issueDate || "-"}</div>
+                        <div className="small"><strong>Data sprzedaży:</strong> {parsed.saleDate || "-"}</div>
+                    </div>
+                </div>
+
+                <div className="invoice-ksef-title inv-title">
+                    FAKTURA {isCorrectionInvoice ? "korygująca" : "VAT"}{" "}
+                    {parsed.invoiceNumber || "-"}
+                </div>
+                {ksefInvoiceNumber && (
+                    <div className="inv-ksef-sub">Nr KSeF: {ksefInvoiceNumber}</div>
+                )}
+
+                <div className="inv-section inv-cols">
+                    <div>
+                        <div className="inv-label">Sprzedawca</div>
+                        <div><strong>{parsed.seller.name || "-"}</strong></div>
+                        <div>NIP: <span className="invoice-mono">{parsed.seller.nip || "-"}</span></div>
+                        <div>{parsed.seller.line1 || "-"}</div>
+                        {parsed.seller.line2 && <div>{parsed.seller.line2}</div>}
+                    </div>
+                    <div>
+                        <div className="inv-label">Nabywca</div>
+                        <div><strong>{parsed.buyer.name || "-"}</strong></div>
+                        <div>NIP: <span className="invoice-mono">{parsed.buyer.nip || "-"}</span></div>
+                        <div>{parsed.buyer.line1 || "-"}</div>
+                        {parsed.buyer.line2 && <div>{parsed.buyer.line2}</div>}
+                        <div className="small text-muted mt-1">
+                            <div>Jednostka podrzędna JST: {parsed.buyer.jst}</div>
+                            <div>Członek grupy VAT: {parsed.buyer.gv}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {isCorrectionInvoice && (
+                    <div className="inv-section inv-cols inv-correction">
+                        <div>
+                            <div className="inv-label">Dane faktury korygowanej</div>
+                            <div><strong>Przyczyna korekty dla faktur korygujących:</strong> {parsed.correctionReason || "-"}</div>
+                            {parsed.correctionType && (
+                                <div><strong>Typ skutku korekty:</strong> {getCorrectionTypeLabel(parsed.correctionType)}</div>
                             )}
-                            {isCorrectionInvoice && parsed.correctionType && (
+                        </div>
+                        <div>
+                            <div className="inv-label">Dane identyfikacyjne faktury korygowanej</div>
+                            <div><strong>Data wystawienia faktury, której dotyczy faktura korygująca:</strong> {parsed.correctedIssueDate || "-"}</div>
+                            <div><strong>Numer faktury korygowanej:</strong> {parsed.correctedNumber || "-"}</div>
+                            <div><strong>Numer KSeF faktury korygowanej:</strong> {parsed.correctedKsefNumber || "-"}</div>
+                        </div>
+                    </div>
+                )}
+
+                {parsed.thirdParties.length > 0 && (
+                    <div className="inv-section">
+                        <div className="inv-label">Podmioty trzecie</div>
+                        {parsed.thirdParties.map((thirdParty, index) => (
+                            <div key={`third-party-${index}`} className={index > 0 ? "mt-2" : ""}>
+                                {thirdParty.role && (
+                                    <div className="text-muted small">{getThirdPartyRoleLabel(thirdParty.role)}</div>
+                                )}
+                                <div><strong>{thirdParty.name || "-"}</strong></div>
                                 <div>
-                                    <strong>Typ korekty:</strong> {getCorrectionTypeLabel(parsed.correctionType)}
+                                    {thirdParty.nip
+                                        ? <>NIP: <span className="invoice-mono">{thirdParty.nip}</span></>
+                                        : <>ID wew.: <span className="invoice-mono">{thirdParty.internalId || "-"}</span></>}
                                 </div>
-                            )}
-                        </Col>
-                    </Row>
+                                {thirdParty.line1 && <div>{thirdParty.line1}</div>}
+                                {thirdParty.line2 && <div>{thirdParty.line2}</div>}
+                            </div>
+                        ))}
+                    </div>
+                )}
 
-                    <Row className="mb-3 invoice-party-row">
-                        <Col xs={6}>
-                            <Card>
-                                <Card.Header className="py-2"><strong>Sprzedawca</strong></Card.Header>
-                                <Card.Body className="py-2">
-                                    <div><strong>{parsed.seller.name || "-"}</strong></div>
-                                    <div>NIP: <span className="invoice-mono">{parsed.seller.nip || "-"}</span></div>
-                                    <div>{parsed.seller.line1 || "-"}</div>
-                                    <div>{parsed.seller.line2 || ""}</div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col xs={6}>
-                            <Card>
-                                <Card.Header className="py-2"><strong>Nabywca</strong></Card.Header>
-                                <Card.Body className="py-2">
-                                    <div><strong>{parsed.buyer.name || "-"}</strong></div>
-                                    <div>NIP: <span className="invoice-mono">{parsed.buyer.nip || "-"}</span></div>
-                                    <div>{parsed.buyer.line1 || "-"}</div>
-                                    <div>{parsed.buyer.line2 || ""}</div>
-                                    <div className="mt-2 small">
-                                        <div>Faktura dotyczy jednostki podrzędnej JST: {parsed.buyer.jst}</div>
-                                        <div>Faktura dotyczy członka grupy GV: {parsed.buyer.gv}</div>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-
-                    {parsed.thirdParties.length > 0 && (
-                        <Row className="mb-3">
-                            <Col>
-                                <Card>
-                                    <Card.Header className="py-2"><strong>Podmioty trzecie</strong></Card.Header>
-                                    <Card.Body className="py-2">
-                                        {parsed.thirdParties.map((thirdParty, index) => (
-                                            <div key={`third-party-${index}`} className={index > 0 ? "mt-3 pt-3 border-top" : ""}>
-                                                <div><strong>Podmiot {index + 1}</strong>{thirdParty.role ? ` (Rola: ${getThirdPartyRoleLabel(thirdParty.role)})` : ""}</div>
-                                                <div><strong>{thirdParty.name || "-"}</strong></div>
-                                                <div>
-                                                    {thirdParty.nip
-                                                        ? <>NIP: <span className="invoice-mono">{thirdParty.nip}</span></>
-                                                        : <>ID wew.: <span className="invoice-mono">{thirdParty.internalId || "-"}</span></>}
-                                                </div>
-                                                {thirdParty.line1 && <div>{thirdParty.line1}</div>}
-                                                {thirdParty.line2 && <div>{thirdParty.line2}</div>}
-                                            </div>
-                                        ))}
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        </Row>
-                    )}
-
-                    <div className="mb-2"><strong>Pozycje faktury</strong></div>
-                    <Table bordered size="sm" responsive>
+                <div className="inv-section">
+                    <div className="inv-label">Pozycje faktury</div>
+                    <table className="inv-table">
                         <thead>
                             <tr>
                                 <th>Lp.</th>
                                 <th>Nazwa</th>
-                                <th>Il.</th>
+                                <th className="inv-num">Il.</th>
                                 <th>JM</th>
-                                <th>Cena netto</th>
-                                <th>Wartość netto</th>
-                                <th>VAT</th>
+                                <th className="inv-num">Cena netto</th>
+                                <th className="inv-num">Wartość netto</th>
+                                <th className="inv-num">VAT</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -595,158 +642,122 @@ export default function InvoicePdfPreview() {
                                 <tr key={`preview-item-${idx}`}>
                                     <td>{item.lineNo || idx + 1}</td>
                                     <td>{item.name}</td>
-                                    <td className="text-end invoice-mono">{item.quantity}</td>
+                                    <td className="inv-num invoice-mono">{item.quantity}</td>
                                     <td>{item.unit}</td>
-                                    <td className="text-end invoice-mono">{item.unitPrice}</td>
-                                    <td className="text-end invoice-mono">{item.netValue}</td>
-                                    <td className="text-end invoice-mono">{item.vatRate}</td>
+                                    <td className="inv-num invoice-mono">{item.unitPrice}</td>
+                                    <td className="inv-num invoice-mono">{item.netValue}</td>
+                                    <td className="inv-num invoice-mono">{formatVatRate(item.vatRate)}</td>
                                 </tr>
                             ))}
                         </tbody>
-                    </Table>
+                    </table>
+                </div>
 
-                    {parsed.vatSummary.length > 0 && (
-                        <>
-                            <div className="mb-2"><strong>Podsumowanie VAT</strong></div>
-                            <Table bordered size="sm" responsive className="invoice-vat-summary">
-                                <thead>
-                                    <tr>
-                                        <th>Stawka VAT</th>
-                                        <th className="text-end">Netto</th>
-                                        <th className="text-end">VAT</th>
-                                        <th className="text-end">Brutto</th>
+                <div className="inv-section inv-total">
+                    Razem brutto<span className="amt invoice-mono">{parsed.totalGross || "0.00"} PLN</span>
+                </div>
+
+                {parsed.vatSummary.length > 0 && (
+                    <div className="inv-section">
+                        <div className="inv-label">Podsumowanie stawek podatku</div>
+                        <table className="inv-table">
+                            <thead>
+                                <tr>
+                                    <th>Stawka VAT</th>
+                                    <th className="inv-num">Netto</th>
+                                    <th className="inv-num">VAT</th>
+                                    <th className="inv-num">Brutto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {parsed.vatSummary.map((row, idx) => (
+                                    <tr key={`vat-summary-${idx}`}>
+                                        <td>{row.rateLabel}</td>
+                                        <td className="inv-num invoice-mono">{formatAmount(row.net)}</td>
+                                        <td className="inv-num invoice-mono">{formatAmount(row.vat)}</td>
+                                        <td className="inv-num invoice-mono">{formatAmount(row.gross)}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {parsed.vatSummary.map((row, idx) => (
-                                        <tr key={`vat-summary-${idx}`}>
-                                            <td>{row.rateLabel}</td>
-                                            <td className="text-end invoice-mono">{formatAmount(row.net)}</td>
-                                            <td className="text-end invoice-mono">{formatAmount(row.vat)}</td>
-                                            <td className="text-end invoice-mono">{formatAmount(row.gross)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Razem</th>
-                                        <th className="text-end invoice-mono">{formatAmount(parsed.vatSummaryTotals.net)}</th>
-                                        <th className="text-end invoice-mono">{formatAmount(parsed.vatSummaryTotals.vat)}</th>
-                                        <th className="text-end invoice-mono">{formatAmount(parsed.vatSummaryTotals.gross)}</th>
-                                    </tr>
-                                </tfoot>
-                            </Table>
-                        </>
-                    )}
+                                ))}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th className="inv-num">Razem</th>
+                                    <th className="inv-num invoice-mono">{formatAmount(parsed.vatSummaryTotals.net)}</th>
+                                    <th className="inv-num invoice-mono">{formatAmount(parsed.vatSummaryTotals.vat)}</th>
+                                    <th className="inv-num invoice-mono">{formatAmount(parsed.vatSummaryTotals.gross)}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                )}
 
-                    <Row>
-                        <Col md={{ span: 4, offset: 8 }}>
-                            <Card>
-                                <Card.Body className="py-2">
-                                    <div className="d-flex justify-content-between">
-                                        <strong>Razem brutto</strong>
-                                        <strong className="invoice-mono">{parsed.totalGross || "0.00"} PLN</strong>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
+                <div className="inv-section">
+                    <div className="inv-label">Płatność</div>
+                    <div className="inv-pay">
+                        <div>
+                            <div className="inv-label">Termin płatności</div>
+                            <div>
+                                {parsed.paymentDeadline || <span className="text-muted">(puste)</span>}
+                                {daysToPay !== null && ` (${daysToPay} ${daysToPay === 1 ? "dzień" : "dni"})`}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="inv-label">Numer konta</div>
+                            <div className="invoice-mono inv-account">{parsed.bankAccount || <span className="text-muted">(puste)</span>}</div>
+                        </div>
+                        <div>
+                            <div className="inv-label">Bank</div>
+                            <div>{parsed.bankName || <span className="text-muted">(puste)</span>}</div>
+                        </div>
+                    </div>
+                </div>
 
-                    <Row className="mt-3">
-                        <Col md={12}>
-                            <Card>
-                                <Card.Header className="py-2"><strong>Płatność</strong></Card.Header>
-                                <Card.Body className="py-2">
-                                    <Row>
-                                        <Col md={4}>
-                                            <div><strong>Termin płatności:</strong></div>
-                                            <div>
-                                                {parsed.paymentDeadline || <span className="text-muted">(puste)</span>}
-                                                {daysToPay !== null &&
-                                                    ` (${daysToPay} ${daysToPay === 1 ? "dzień" : "dni"})`}
-                                            </div>
-                                        </Col>
-                                        <Col md={4}>
-                                            <div><strong>Numer konta:</strong></div>
-                                            <div className="invoice-mono">{parsed.bankAccount || <span className="text-muted">(puste)</span>}</div>
-                                        </Col>
-                                        <Col md={4}>
-                                            <div><strong>Bank:</strong></div>
-                                            <div>{parsed.bankName || <span className="text-muted">(puste)</span>}</div>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-
-                    {hasKsefQr && (
-                        <Row className="mt-4 justify-content-center">
-                            <Col md={8} lg={6} className="text-center invoice-qr-preview-section">
-                                <Card className="shadow-sm">
-                                    <Card.Body className="text-center py-4">
-                                        <div className="fw-bold mb-2">Sprawdź, czy Twoja faktura znajduje się w KSeF!</div>
-                                        <div className="d-inline-flex p-3 bg-white border rounded-3">
-                                            <QRCodeSVG
-                                                value={ksefPreviewStatus?.qrVerificationUrl || ""}
-                                                size={180}
-                                                level="M"
-                                                includeMargin
-                                            />
-                                        </div>
-                                        {ksefInvoiceNumber && (
-                                            <div className="mt-2 small text-break">
-                                                <strong>Numer KSeF:</strong> <span className="invoice-mono">{ksefInvoiceNumber}</span>
-                                            </div>
-                                        )}
-                                        <div className="mt-3 d-flex gap-2 justify-content-center flex-wrap invoice-qr-preview-actions">
-                                            <Button
-                                                as="a"
-                                                href={ksefPreviewStatus?.qrVerificationUrl || ""}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                size="sm"
-                                                variant="outline-primary"
-                                            >
-                                                Otwórz link
-                                            </Button>
-                                        </div>
-                                        <div className="d-none d-print-block mt-3 small text-break">
-                                            <strong>Link weryfikacyjny:</strong>{" "}
-                                            <span className="invoice-mono">{ksefPreviewStatus?.qrVerificationUrl}</span>
-                                        </div>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        </Row>
-                    )}
-                </Card.Body>
-            </Card>
+                {hasKsefQr && (
+                    <div className="inv-section text-center invoice-qr-preview-section">
+                        <div className="fw-bold mb-2">Sprawdź, czy Twoja faktura znajduje się w KSeF!</div>
+                        <div className="d-inline-flex p-3 bg-white border rounded-3">
+                            <QRCodeSVG value={ksefPreviewStatus?.qrVerificationUrl || ""} size={180} level="M" includeMargin />
+                        </div>
+                        {ksefInvoiceNumber && (
+                            <div className="mt-2 small text-break">
+                                <strong>Numer KSeF:</strong> {ksefInvoiceNumber}
+                            </div>
+                        )}
+                        <div className="mt-3 invoice-qr-preview-actions">
+                            <Button
+                                as="a"
+                                href={ksefPreviewStatus?.qrVerificationUrl || ""}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                size="sm"
+                                variant="outline-primary"
+                            >
+                                Otwórz link
+                            </Button>
+                        </div>
+                        <div className="d-none d-print-block mt-3 small text-break">
+                            <strong>Link weryfikacyjny:</strong>{" "}
+                            <span className="invoice-mono">{ksefPreviewStatus?.qrVerificationUrl}</span>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {hasKsefQr && (
-                <div className="invoice-qr-print-section d-none d-print-block mt-4">
-                    <Card className="shadow-sm" style={{ maxWidth: 520, margin: '0 auto' }}>
-                        <Card.Body className="text-center py-4">
-                            <div className="fw-bold mb-2">Sprawdź, czy Twoja faktura znajduje się w KSeF!</div>
-                            <div className="d-inline-flex p-3 bg-white border rounded-3">
-                                <QRCodeSVG
-                                    value={ksefPreviewStatus?.qrVerificationUrl || ""}
-                                    size={180}
-                                    level="M"
-                                    includeMargin
-                                />
-                            </div>
-                            {ksefInvoiceNumber && (
-                                <div className="mt-2 small text-break">
-                                    <strong>Numer KSeF:</strong> <span className="invoice-mono">{ksefInvoiceNumber}</span>
-                                </div>
-                            )}
-                            <div className="mt-3 small text-break">
-                                <strong>Link weryfikacyjny:</strong>{" "}
-                                <span className="invoice-mono">{ksefPreviewStatus?.qrVerificationUrl}</span>
-                            </div>
-                        </Card.Body>
-                    </Card>
+                <div className="invoice-qr-print-section d-none d-print-block mt-4 text-center">
+                    <div className="fw-bold mb-2">Sprawdź, czy Twoja faktura znajduje się w KSeF!</div>
+                    <div className="d-inline-flex p-3 bg-white border rounded-3">
+                        <QRCodeSVG value={ksefPreviewStatus?.qrVerificationUrl || ""} size={180} level="M" includeMargin />
+                    </div>
+                    {ksefInvoiceNumber && (
+                        <div className="mt-2 small text-break">
+                            <strong>Numer KSeF:</strong> {ksefInvoiceNumber}
+                        </div>
+                    )}
+                    <div className="mt-3 small text-break">
+                        <strong>Link weryfikacyjny:</strong>{" "}
+                        <span className="invoice-mono">{ksefPreviewStatus?.qrVerificationUrl}</span>
+                    </div>
                 </div>
             )}
         </Container>
