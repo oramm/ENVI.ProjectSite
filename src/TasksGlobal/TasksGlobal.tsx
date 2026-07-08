@@ -357,9 +357,11 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
 }
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
-    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${
-        milestone.name || ""
-    }`;
+    // filter(Boolean): kamienie-koszyki (Oferty/Sprawy ogólne) nie mają typu — pomijamy puste człony,
+    // żeby nie wyświetlać "undefined". Dla normalnych kamieni wynik jest identyczny.
+    const titleText = `Kamień: ${[milestone._type._folderNumber, milestone._type.name, milestone.name]
+        .filter(Boolean)
+        .join(" ")}`;
 
     return (
         <div className="d-flex gap-3 align-items-center justify-content-between">
