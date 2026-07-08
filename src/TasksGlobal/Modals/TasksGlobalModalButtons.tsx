@@ -8,7 +8,7 @@ import { tasksGlobalRepository } from "../TasksGlobalController";
 
 /** przycisk i modal edycji Task */
 export function TaskEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, repository },
     buttonProps,
 }: SpecificEditModalButtonProps<Task>) {
     return (
@@ -17,7 +17,8 @@ export function TaskEditModalButton({
                 onEdit: onEdit,
                 ModalBodyComponent: TaskGlobalModalBody,
                 modalTitle: "Edycja zadania",
-                repository: tasksGlobalRepository,
+                // repo z FilterableTable (scrum ma własne) — tam ustawiane są currentItems z id
+                repository: repository ?? tasksGlobalRepository,
                 initialData: initialData,
                 makeValidationSchema: makeTaskGlobalValidationSchema,
             }}

@@ -17,13 +17,9 @@ import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import ToolsDate from "../React/Tools/ToolsDate";
 import RepositoryReact from "../React/RepositoryReact";
+import ScrumTaskRow from "../Scrumboard/CurrentSprint/ScrumTaskRow";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
-import {
-    ContractStatusBadge,
-    MilestoneStatusBadge,
-    SpinnerBootstrap,
-    TaskStatusBadge,
-} from "../View/Resultsets/CommonComponents";
+import { ContractStatusBadge, MilestoneStatusBadge, SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -90,23 +86,6 @@ export default function TasksGlobal() {
         );
     }
 
-    function renderTaskRowInCaseSection(task: Task) {
-        return (
-            <Row className="task-leaf-row align-items-center g-1">
-                <Col md={5}>
-                    <span className="task-name">{task.name}</span>
-                    {task.description && (
-                        <span className="d-block text-secondary task-description">{task.description}</span>
-                    )}
-                </Col>
-                <Col md={2}>{task.deadline && `${task.deadline}`} </Col>
-                <Col md={2}>
-                    <TaskStatusBadge status={task.status} />
-                </Col>
-                <Col md={3}>{task._owner && `${task._owner.name} ${task._owner.surname}`}</Col>
-            </Row>
-        );
-    }
 
     useEffect(() => {
         if (!pendingScrollIdRef.current) return;
@@ -201,7 +180,11 @@ export default function TasksGlobal() {
                                     onResetSections: handleResetTasksSections,
                                 }}
                                 tableStructure={[
-                                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                                    {
+                                        header: "Zadania",
+                                        renderTdBody: (task: Task) => <ScrumTaskRow task={task} />,
+                                        colLg: 11,
+                                    },
                                 ]}
                                 externalUpdate={externalUpdate}
                             />

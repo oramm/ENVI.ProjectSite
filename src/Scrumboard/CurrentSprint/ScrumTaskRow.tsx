@@ -8,10 +8,12 @@ interface Props {
     task: Task;
 }
 
+const toYmd = (d: Task["deadline"]) => (d ? String(d).slice(0, 10) : "");
+
 /**
- * Wiersz zadania w drzewie scrumboardu: nazwa | status | osoba | szac. czas | czas rzeczywisty.
- * Inline-edycja szac. czasu, godzin PO-PT i statusu. Mutuje obiekt task (współdzielony z drzewem)
- * oraz lokalny stan, aby zmiana była widoczna od razu bez przeładowania.
+ * Wiersz zadania: nazwa | termin | status | właściciel | szac. czas | czas rzeczywisty.
+ * Inline-edytowalne: status, szac. czas, godziny PO-PT. Termin i właściciel — tylko podgląd.
+ * Mutuje obiekt task (współdzielony z drzewem) + lokalny stan, by zmiana była widoczna od razu.
  */
 export default function ScrumTaskRow({ task }: Props) {
     const [, forceRender] = useState(0);
@@ -27,8 +29,8 @@ export default function ScrumTaskRow({ task }: Props) {
 
     return (
         <div className="scrum-task-row d-flex align-items-center gap-3">
-            {/* nazwa jest elastyczna i kurczy się, gdy edytor godzin się rozsuwa — wiersz zostaje w jednej linii */}
             <span className="scrum-task-name flex-grow-1 text-truncate">{task.name}</span>
+            <div className="scrum-task-field text-secondary small">{toYmd(task.deadline)}</div>
             <div className="scrum-task-field">
                 <InlineStatusDropdown task={task} onSaved={(status) => applyChange({ status })} />
             </div>

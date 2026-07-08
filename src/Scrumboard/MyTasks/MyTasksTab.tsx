@@ -82,7 +82,10 @@ export default function MyTasksTab() {
         loadFull();
     }, [fullTree, ownerData, fullData.length]);
 
-    const data = fullTree && fullData.length > 0 ? fullData : ownerData;
+    // nie pokazuj kontraktów zakończonych
+    const data = (fullTree && fullData.length > 0 ? fullData : ownerData).filter(
+        (c) => c.contract.status !== MainSetup.ContractStatuses.FINISHED
+    );
 
     // Przełączenie trybu drzewa musi wymusić odświeżenie sekcji w FilterableTable
     useEffect(() => {
