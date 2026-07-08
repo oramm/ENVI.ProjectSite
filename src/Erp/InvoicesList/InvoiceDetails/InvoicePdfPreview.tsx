@@ -32,6 +32,13 @@ type PreviewItem = {
     vatRate: string;
 };
 
+type VatSummaryRow = {
+    rateLabel: string;
+    net: number;
+    vat: number;
+    gross: number;
+};
+
 type PreviewDocument = {
     invoiceNumber: string;
     issueDate: string;
@@ -46,7 +53,40 @@ type PreviewDocument = {
     buyer: PreviewParty;
     thirdParties: PreviewThirdParty[];
     items: PreviewItem[];
+    vatSummary: VatSummaryRow[];
+    vatSummaryTotals: { net: number; vat: number; gross: number };
 };
+
+// Mapowanie pól podsumowania VAT ze schematu FA(3): pole netto (P_13_x),
+// odpowiadające mu pole VAT (P_14_x, jeśli istnieje) oraz etykieta stawki/typu.
+const VAT_SUMMARY_FIELDS: { netField: string; vatField?: string; label: string }[] = [
+    { netField: "P_13_1", vatField: "P_14_1", label: "23% lub 22%" },
+    { netField: "P_13_2", vatField: "P_14_2", label: "8% lub 7%" },
+    { netField: "P_13_3", vatField: "P_14_3", label: "5%" },
+    { netField: "P_13_4", vatField: "P_14_4", label: "4% (taxi)" },
+    { netField: "P_13_5", vatField: "P_14_5", label: "Procedura szczególna" },
+    { netField: "P_13_6_1", label: "0% (kraj)" },
+    { netField: "P_13_6_2", label: "0% (WDT)" },
+    { netField: "P_13_6_3", label: "0% (eksport)" },
+    { netField: "P_13_7", label: "zw." },
+    { netField: "P_13_8", label: "np. (poza terytorium kraju)" },
+    { netField: "P_13_9", label: "np. (art. 100 ust. 1 pkt 4)" },
+    { netField: "P_13_10", label: "odwrotne obciążenie" },
+    { netField: "P_13_11", label: "marża" },
+];
+
+function parseAmount(value: string): number {
+    if (!value) return 0;
+    const parsed = Number(value.replace(/\s/g, "").replace(",", "."));
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatAmount(value: number): string {
+    return value.toLocaleString("pl-PL", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+}
 
 type KsefPreviewStatus = {
     qrVerificationUrl?: string;
@@ -172,6 +212,28 @@ function parsePreviewXml(xml: string): PreviewDocument {
         }
     }
 
+    const vatSummary: VatSummaryRow[] = [];
+    const vatSummaryTotals = { net: 0, vat: 0, gross: 0 };
+    if (fa) {
+        for (const field of VAT_SUMMARY_FIELDS) {
+            const netEl = findChildrenByLocalName(fa, field.netField)[0];
+            const vatEl = field.vatField ? findChildrenByLocalName(fa, field.vatField)[0] : undefined;
+            if (!netEl && !vatEl) continue;
+
+            const net = parseAmount((netEl?.textContent || "").trim());
+            const vat = parseAmount((vatEl?.textContent || "").trim());
+            const gross = Math.round((net + vat) * 100) / 100;
+
+            vatSummary.push({ rateLabel: field.label, net, vat, gross });
+            vatSummaryTotals.net += net;
+            vatSummaryTotals.vat += vat;
+            vatSummaryTotals.gross += gross;
+        }
+        vatSummaryTotals.net = Math.round(vatSummaryTotals.net * 100) / 100;
+        vatSummaryTotals.vat = Math.round(vatSummaryTotals.vat * 100) / 100;
+        vatSummaryTotals.gross = Math.round(vatSummaryTotals.gross * 100) / 100;
+    }
+
     const thirdParties: PreviewThirdParty[] = podmiot3List.map((podmiot3) => {
         const podmiot3Id = findFirstByLocalName(podmiot3, "DaneIdentyfikacyjne");
         const podmiot3Adr = findFirstByLocalName(podmiot3, "Adres");
@@ -213,6 +275,8 @@ function parsePreviewXml(xml: string): PreviewDocument {
         },
         thirdParties,
         items,
+        vatSummary,
+        vatSummaryTotals,
     };
 }
 
@@ -540,6 +604,40 @@ export default function InvoicePdfPreview() {
                             ))}
                         </tbody>
                     </Table>
+
+                    {parsed.vatSummary.length > 0 && (
+                        <>
+                            <div className="mb-2"><strong>Podsumowanie VAT</strong></div>
+                            <Table bordered size="sm" responsive className="invoice-vat-summary">
+                                <thead>
+                                    <tr>
+                                        <th>Stawka VAT</th>
+                                        <th className="text-end">Netto</th>
+                                        <th className="text-end">VAT</th>
+                                        <th className="text-end">Brutto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {parsed.vatSummary.map((row, idx) => (
+                                        <tr key={`vat-summary-${idx}`}>
+                                            <td>{row.rateLabel}</td>
+                                            <td className="text-end invoice-mono">{formatAmount(row.net)}</td>
+                                            <td className="text-end invoice-mono">{formatAmount(row.vat)}</td>
+                                            <td className="text-end invoice-mono">{formatAmount(row.gross)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Razem</th>
+                                        <th className="text-end invoice-mono">{formatAmount(parsed.vatSummaryTotals.net)}</th>
+                                        <th className="text-end invoice-mono">{formatAmount(parsed.vatSummaryTotals.vat)}</th>
+                                        <th className="text-end invoice-mono">{formatAmount(parsed.vatSummaryTotals.gross)}</th>
+                                    </tr>
+                                </tfoot>
+                            </Table>
+                        </>
+                    )}
 
                     <Row>
                         <Col md={{ span: 4, offset: 8 }}>
