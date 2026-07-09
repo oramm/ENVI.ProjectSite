@@ -7,7 +7,8 @@ export type ScrumboardEventType =
     | "task-hours-changed"
     | "hours-reset"
     | "task-status-changed"
-    | "planning-changed";
+    | "planning-changed"
+    | "absence-changed";
 
 export type ScrumboardEventHandlers = Partial<
     Record<ScrumboardEventType, (payload: any) => void>
@@ -20,6 +21,7 @@ const EVENT_TYPES: ScrumboardEventType[] = [
     "hours-reset",
     "task-status-changed",
     "planning-changed",
+    "absence-changed",
 ];
 
 /**

@@ -211,6 +211,51 @@ export interface ScrumboardPersonSummary {
     remaining: number;
 }
 
+export interface ScrumboardAbsenceType {
+    id: number;
+    name: string;
+    color: string;
+    countsAgainstLimit: boolean;
+}
+
+export interface ScrumboardAbsence {
+    id: number;
+    personId: number;
+    typeId: number;
+    dateFrom: string; // 'YYYY-MM-DD'
+    dateTo: string; // 'YYYY-MM-DD'
+    workingDaysCount: number;
+    note?: string | null;
+    createdByPersonId?: number | null;
+    _typeName?: string;
+    _typeColor?: string;
+    _countsAgainstLimit?: boolean;
+}
+
+export interface ScrumboardVacationRow {
+    personId: number;
+    personName: string;
+    personAlias: string;
+    limitDays: number;
+    carryoverDays: number;
+    usedDays: number;
+    remainingDays: number;
+    absences: ScrumboardAbsence[];
+}
+
+export interface ScrumboardVacationsData {
+    year: number;
+    types: ScrumboardAbsenceType[];
+    rows: ScrumboardVacationRow[];
+}
+
+export interface ScrumboardVacationWeekCount {
+    personId: number;
+    prev: number;
+    current: number;
+    next: number;
+}
+
 export interface ContractType extends RepositoryDataItem {
     name: string;
     description?: string;

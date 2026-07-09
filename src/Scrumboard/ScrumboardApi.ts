@@ -1,8 +1,11 @@
 import {
     PersonData,
+    ScrumboardAbsence,
     ScrumboardContractStatus,
     ScrumboardPersonSummary,
     ScrumboardPlanningEntry,
+    ScrumboardVacationsData,
+    ScrumboardVacationWeekCount,
 } from "../../Typings/bussinesTypes";
 import MainSetup from "../React/MainSetupReact";
 import ToolsFetch from "../React/Tools/ToolsFetch";
@@ -120,6 +123,73 @@ export default class ScrumboardApi {
         return ToolsFetch.fetchWithRetry(
             `${base}scrumboard/report`,
             jsonOptions("POST")
+        );
+    }
+
+    // ---- Urlopy ----
+    static async getVacations(year: number): Promise<ScrumboardVacationsData> {
+        return ToolsFetch.fetchWithRetry(
+            `${base}scrumboard/vacations?year=${year}`,
+            jsonOptions("GET")
+        );
+    }
+
+    static async getVacationWeekCounts(): Promise<ScrumboardVacationWeekCount[]> {
+        return ToolsFetch.fetchWithRetry(
+            `${base}scrumboard/vacations/weekCounts`,
+            jsonOptions("GET")
+        );
+    }
+
+    static async addAbsence(payload: {
+        personId: number;
+        typeId: number;
+        dateFrom: string;
+        dateTo: string;
+        note?: string | null;
+    }): Promise<ScrumboardAbsence> {
+        return ToolsFetch.fetchWithRetry(
+            `${base}scrumboard/vacation`,
+            jsonOptions("POST", payload)
+        );
+    }
+
+    static async updateAbsence(
+        id: number,
+        payload: {
+            typeId: number;
+            dateFrom: string;
+            dateTo: string;
+            note?: string | null;
+        }
+    ): Promise<ScrumboardAbsence> {
+        return ToolsFetch.fetchWithRetry(
+            `${base}scrumboard/vacation/${id}`,
+            jsonOptions("PUT", payload)
+        );
+    }
+
+    static async deleteAbsence(id: number): Promise<{ ok: boolean }> {
+        return ToolsFetch.fetchWithRetry(
+            `${base}scrumboard/vacation/${id}`,
+            jsonOptions("DELETE")
+        );
+    }
+
+    static async setVacationLimit(
+        personId: number,
+        year: number,
+        limitDays: number,
+        carryoverDays: number
+    ): Promise<{
+        personId: number;
+        year: number;
+        limitDays: number;
+        carryoverDays: number;
+    }> {
+        return ToolsFetch.fetchWithRetry(
+            `${base}scrumboard/vacationLimit/${personId}/${year}`,
+            jsonOptions("PUT", { limitDays, carryoverDays })
         );
     }
 }

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Form, Table } from "react-bootstrap";
-import { ScrumboardPlanningEntry } from "../../../Typings/bussinesTypes";
+import {
+    ScrumboardPlanningEntry,
+    ScrumboardVacationWeekCount,
+} from "../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import ScrumboardApi from "../ScrumboardApi";
 import { useScrumboardEvents } from "../useScrumboardEvents";
@@ -30,16 +33,33 @@ function available(entry: ScrumboardPlanningEntry): number {
 /** Planowanie — odpowiednik arkusza "planowanie". Edycja per komórka na blur. */
 export default function PlanningTab() {
     const [entries, setEntries] = useState<ScrumboardPlanningEntry[]>([]);
+    const [weekCounts, setWeekCounts] = useState<
+        Map<number, ScrumboardVacationWeekCount>
+    >(new Map());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     async function load() {
         try {
-            setEntries(await ScrumboardApi.getPlanning());
+            const [planning, counts] = await Promise.all([
+                ScrumboardApi.getPlanning(),
+                ScrumboardApi.getVacationWeekCounts(),
+            ]);
+            setEntries(planning);
+            setWeekCounts(new Map(counts.map((c) => [c.personId, c])));
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function loadWeekCounts() {
+        try {
+            const counts = await ScrumboardApi.getVacationWeekCounts();
+            setWeekCounts(new Map(counts.map((c) => [c.personId, c])));
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err));
         }
     }
 
@@ -54,6 +74,7 @@ export default function PlanningTab() {
                     prev.map((e) => (e.personId === payload.personId ? { ...e, ...payload.entry } : e))
                 );
             },
+            "absence-changed": loadWeekCounts,
         },
         load
     );
@@ -93,6 +114,9 @@ export default function PlanningTab() {
                         <th key={f.key}>{f.label}</th>
                     ))}
                     <th>Godz. w tygodniu</th>
+                    <th title="Dni urlopu: tydzień poprzedni / bieżący / następny">
+                        Urlopy (pop./bież./nast.)
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -119,6 +143,12 @@ export default function PlanningTab() {
                             </td>
                         ))}
                         <td className="fw-semibold">{available(entry)}</td>
+                        <td className="text-nowrap">
+                            {(() => {
+                                const c = weekCounts.get(entry.personId);
+                                return `${c?.prev ?? 0} / ${c?.current ?? 0} / ${c?.next ?? 0}`;
+                            })()}
+                        </td>
                     </tr>
                 ))}
             </tbody>

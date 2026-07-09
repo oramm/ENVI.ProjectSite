@@ -6,6 +6,7 @@ import MyTasksTab from "./MyTasks/MyTasksTab";
 import PlanningTab from "./Planning/PlanningTab";
 import ScrumboardApi from "./ScrumboardApi";
 import TimesSummaryTab from "./TimesSummary/TimesSummaryTab";
+import VacationsTab from "./Vacations/VacationsTab";
 import "./Scrumboard.css";
 
 interface ConfirmState {
@@ -103,6 +104,9 @@ export default function ScrumboardMainView() {
                         </Tab>
                         <Tab eventKey="planning" title="Planowanie">
                             <PlanningTab />
+                        </Tab>
+                        <Tab eventKey="vacations" title="Urlopy">
+                            <VacationsTab active={activeKey === "vacations"} />
                         </Tab>
                     </Tabs>
                 </div>
