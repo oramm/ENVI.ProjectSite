@@ -57,8 +57,24 @@ interface BuildOpts {
     onlyInProgress?: boolean;
     /** Pomija zadania w statusie Backlog (warunek dawnego scrumboardu). */
     excludeBacklog?: boolean;
+    /** Pokazuje tylko zadania z uzupełnionymi godzinami (szacowane lub rzeczywiste pon-pt). */
+    hoursFilledOnly?: boolean;
+    /** Ogranicza do zadań z wybranej sprawy (Id sprawy = task._parent.id). */
+    caseId?: number;
     /** Repozytorium liści — MUSI być podane, inaczej buildTree nadpisze repo TasksGlobal. */
     leavesRepository: RepositoryReact<Task>;
+}
+
+/** true jeśli zadanie ma uzupełnione godziny szacowane LUB którekolwiek rzeczywiste (pon-pt). */
+function hasFilledHours(t: Task): boolean {
+    return !!(
+        t.estimatedHours ||
+        t.hoursMon ||
+        t.hoursTue ||
+        t.hoursWed ||
+        t.hoursThu ||
+        t.hoursFri
+    );
 }
 
 /**
@@ -68,13 +84,18 @@ interface BuildOpts {
  */
 export function buildScrumTree(data: ContractsWithChildren[], opts: BuildOpts): SectionNode<Task>[] {
     const notBacklog = (t: Task) => !opts.excludeBacklog || t.status !== MainSetup.TaskStatus.BACKLOG;
+    const keep = (t: Task) =>
+        notBacklog(t) &&
+        (!opts.ownerId || t._owner?.id === opts.ownerId) &&
+        (!opts.hoursFilledOnly || hasFilledHours(t)) &&
+        (!opts.caseId || t._parent?.id === opts.caseId);
     let filtered = data;
-    if (opts.ownerId) {
-        // Filtr osoby: pokazujemy tylko gałęzie z jej zadaniami (usuwamy puste, zachowując przodków)
-        const ownerId = opts.ownerId;
-        filtered = pruneTasks(filtered, (t) => t._owner?.id === ownerId && notBacklog(t));
+    if (opts.ownerId || opts.hoursFilledOnly || opts.caseId) {
+        // Filtr osoby/godzin: pokazujemy tylko gałęzie z pasującymi zadaniami
+        // (usuwamy puste, zachowując przodków)
+        filtered = pruneTasks(filtered, keep);
     } else if (opts.excludeBacklog) {
-        // Bez filtra osoby: ukrywamy tylko zadania Backlog, ale zostawiamy całą strukturę
+        // Bez filtrów zawężających: ukrywamy tylko zadania Backlog, ale zostawiamy całą strukturę
         // (kontrakty/kamienie/sprawy bez zadań pozostają widoczne, tylko zwinięte)
         filtered = filterLeaves(filtered, notBacklog);
     }

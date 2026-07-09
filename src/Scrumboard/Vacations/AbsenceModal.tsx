@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
 import {
     ScrumboardAbsence,
     ScrumboardAbsenceType,
@@ -26,7 +26,7 @@ interface Props {
         dateFrom: string;
         dateTo: string;
         note: string | null;
-    }) => void;
+    }) => Promise<void>;
     onDelete: (id: number) => void;
     onClose: () => void;
 }
@@ -59,20 +59,27 @@ export default function AbsenceModal({
         setError(null);
     }, [draft, types]);
 
-    function handleSave() {
+    async function handleSave() {
         if (!personId) return setError("Wybierz osobę");
         if (!typeId) return setError("Wybierz typ urlopu");
         if (!dateFrom || !dateTo) return setError("Podaj zakres dat");
         if (dateTo < dateFrom)
             return setError("Data końcowa nie może być wcześniejsza niż początkowa");
-        onSave({
-            id: draft?.id,
-            personId,
-            typeId,
-            dateFrom,
-            dateTo,
-            note: note.trim() || null,
-        });
+        setError(null);
+        try {
+            // Błąd serwera (np. brak dni opieki) pokazujemy TU, w modalu — modal zostaje otwarty,
+            // tabela urlopów nie znika. Zamknięcie następuje po stronie rodzica dopiero po sukcesie.
+            await onSave({
+                id: draft?.id,
+                personId,
+                typeId,
+                dateFrom,
+                dateTo,
+                note: note.trim() || null,
+            });
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err));
+        }
     }
 
     return (
@@ -81,7 +88,6 @@ export default function AbsenceModal({
                 <Modal.Title>{isEdit ? "Edytuj urlop" : "Dodaj urlop"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {error && <div className="text-danger mb-2">{error}</div>}
                 <Form.Group className="mb-2">
                     <Form.Label>Osoba</Form.Label>
                     <Form.Select
@@ -144,6 +150,11 @@ export default function AbsenceModal({
                         onChange={(e) => setNote(e.target.value)}
                     />
                 </Form.Group>
+                {error && (
+                    <Alert variant="danger" dismissible onClose={() => setError(null)} className="mt-3 mb-0">
+                        {error}
+                    </Alert>
+                )}
             </Modal.Body>
             <Modal.Footer className="justify-content-between">
                 <div>

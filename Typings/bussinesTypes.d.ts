@@ -216,6 +216,7 @@ export interface ScrumboardAbsenceType {
     name: string;
     color: string;
     countsAgainstLimit: boolean;
+    countsAsCare: boolean;
 }
 
 export interface ScrumboardAbsence {
@@ -240,6 +241,9 @@ export interface ScrumboardVacationRow {
     carryoverDays: number;
     usedDays: number;
     remainingDays: number;
+    careDays: number;
+    careUsedDays: number;
+    careRemainingDays: number;
     absences: ScrumboardAbsence[];
 }
 

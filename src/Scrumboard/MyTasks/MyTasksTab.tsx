@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Col, Form, ListGroup, Row } from "react-bootstrap";
-import { PersonData, Task } from "../../../Typings/bussinesTypes";
+import { Col, ListGroup, Row } from "react-bootstrap";
+import { Case, PersonData, Task } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
-import { SpecificAddNewModalButtonProps } from "../../View/Modals/ModalsTypes";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../../View/Resultsets/FilterableTable/Section";
@@ -12,6 +11,7 @@ import { buildScrumTree } from "../CurrentSprint/buildScrumTree";
 import ScrumTaskRow from "../CurrentSprint/ScrumTaskRow";
 import ScrumboardApi from "../ScrumboardApi";
 import { scrumContractsWithChildrenRepository, scrumMyTasksRepository } from "../ScrumboardController";
+import MyTasksFilterPanel, { MyTasksFilter } from "./MyTasksFilterPanel";
 
 /** Zakładka "Moje zadania": zadania zalogowanego użytkownika (lub wybranej osoby dla ADMIN/MANAGER). */
 export default function MyTasksTab() {
@@ -21,8 +21,13 @@ export default function MyTasksTab() {
     const [ownerData, setOwnerData] = useState<ContractsWithChildren[]>([]);
     const [fullData, setFullData] = useState<ContractsWithChildren[]>([]);
     const [fullTree, setFullTree] = useState(false);
+    const [onlyMine, setOnlyMine] = useState(false);
+    const [hoursFilledOnly, setHoursFilledOnly] = useState(false);
     const [loading, setLoading] = useState(false);
     const [externalUpdate, setExternalUpdate] = useState(0);
+    const [filter, setFilter] = useState<MyTasksFilter>({});
+    const selfId = MainSetup.getCurrentUserAsPerson()?.id;
+    const filterCaseId = (filter._case as Case | undefined)?.id;
 
     // Inicjalizacja: lista osób + domyślnie zalogowany na górze
     useEffect(() => {
@@ -46,23 +51,29 @@ export default function MyTasksTab() {
         init();
     }, [isManager]);
 
-    // Drzewo zadań osoby (tylko gałęzie z jej zadaniami — filtr po stronie serwera)
+    // Drzewo zadań osoby (tylko gałęzie z jej zadaniami — filtr po stronie serwera).
+    // Kontrakt i statusy z panelu filtrów doładowywane z serwera (jak w „Projekty i zadania").
     useEffect(() => {
         if (!selectedPerson) return;
         async function load() {
             setLoading(true);
+            const condition: Record<string, unknown> = { _owner: selectedPerson };
+            if (filter._contract) condition._contract = filter._contract;
+            if (filter.statuses && filter.statuses.length)
+                condition.statuses = filter.statuses;
+            else condition.statusType = "active";
             const result = (await scrumContractsWithChildrenRepository.loadItemsFromServerPOST(
-                [{ _owner: selectedPerson, statusType: "active" }],
+                [condition],
                 undefined,
                 { skipCache: true }
             )) as ContractsWithChildren[];
             setOwnerData(result);
-            setFullData([]); // unieważnij pełne drzewo poprzedniej osoby
+            setFullData([]); // unieważnij pełne drzewo poprzedniej osoby / filtra
             setExternalUpdate((n) => n + 1);
             setLoading(false);
         }
         load();
-    }, [selectedPerson]);
+    }, [selectedPerson, filter]);
 
     // Pełne drzewo (wszystkie zadania w kontraktach osoby) — ładowane leniwie po włączeniu przełącznika
     useEffect(() => {
@@ -87,30 +98,21 @@ export default function MyTasksTab() {
         (c) => c.contract.status !== MainSetup.ContractStatuses.FINISHED
     );
 
-    // Przełączenie trybu drzewa musi wymusić odświeżenie sekcji w FilterableTable
+    // Zmiana filtrów musi wymusić odświeżenie sekcji w FilterableTable
     useEffect(() => {
         setExternalUpdate((n) => n + 1);
-    }, [fullTree]);
+    }, [fullTree, onlyMine, hoursFilledOnly]);
 
     const sections: SectionNode<Task>[] = useMemo(
-        () => buildScrumTree(data, { leavesRepository: scrumMyTasksRepository }),
-        [data]
+        () =>
+            buildScrumTree(data, {
+                leavesRepository: scrumMyTasksRepository,
+                ownerId: onlyMine ? selfId : undefined,
+                hoursFilledOnly,
+                caseId: filterCaseId,
+            }),
+        [data, onlyMine, hoursFilledOnly, selfId, filterCaseId]
     );
-
-    // Przełącznik pełnego drzewa renderowany w wierszu nagłówka FilterableTable (obok "Moje zadania" i zwiń)
-    const FullTreeControl = useMemo(() => {
-        const Control: React.FC<SpecificAddNewModalButtonProps<Task>> = () => (
-            <Form.Check
-                type="switch"
-                id="scrum-mytasks-fulltree"
-                className="mb-0"
-                label="Pokaż pełne drzewo kontraktów (wszystkie zadania)"
-                checked={fullTree}
-                onChange={(e) => setFullTree(e.target.checked)}
-            />
-        );
-        return Control;
-    }, [fullTree]);
 
     const tree = loading ? (
         <SpinnerBootstrap />
@@ -122,7 +124,6 @@ export default function MyTasksTab() {
             title="Moje zadania"
             showTableHeader={false}
             repository={scrumMyTasksRepository}
-            AddNewButtonComponents={[FullTreeControl]}
             EditButtonComponent={TaskEditModalButton}
             initialSections={sections}
             snapshotMode="criteria-only"
@@ -133,23 +134,34 @@ export default function MyTasksTab() {
         />
     );
 
-    if (!isManager) return <div>{tree}</div>;
-
     return (
         <Row>
             <Col md="3">
-                <ListGroup>
-                    {persons.map((person) => (
-                        <ListGroup.Item
-                            key={person.id}
-                            action
-                            active={person.id === selectedPerson?.id}
-                            onClick={() => setSelectedPerson(person)}
-                        >
-                            {person.name} {person.surname}
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
+                <MyTasksFilterPanel
+                    onApply={setFilter}
+                    toggles={{
+                        fullTree,
+                        onlyMine,
+                        hoursFilledOnly,
+                        setFullTree,
+                        setOnlyMine,
+                        setHoursFilledOnly,
+                    }}
+                />
+                {isManager && (
+                    <ListGroup>
+                        {persons.map((person) => (
+                            <ListGroup.Item
+                                key={person.id}
+                                action
+                                active={person.id === selectedPerson?.id}
+                                onClick={() => setSelectedPerson(person)}
+                            >
+                                {person.name} {person.surname}
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                )}
             </Col>
             <Col md="9">{tree}</Col>
         </Row>

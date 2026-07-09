@@ -75,20 +75,18 @@ export default function VacationsTab({ active }: { active?: boolean }) {
         dateTo: string;
         note: string | null;
     }) {
-        try {
-            if (payload.id)
-                await ScrumboardApi.updateAbsence(payload.id, {
-                    typeId: payload.typeId,
-                    dateFrom: payload.dateFrom,
-                    dateTo: payload.dateTo,
-                    note: payload.note,
-                });
-            else await ScrumboardApi.addAbsence(payload);
-            setDraft(null);
-            load();
-        } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
-        }
+        // Bez try/catch — ewentualny błąd (np. brak dni opieki) propaguje się do modala,
+        // który go pokazuje i zostaje otwarty. Zamykamy dopiero po sukcesie.
+        if (payload.id)
+            await ScrumboardApi.updateAbsence(payload.id, {
+                typeId: payload.typeId,
+                dateFrom: payload.dateFrom,
+                dateTo: payload.dateTo,
+                note: payload.note,
+            });
+        else await ScrumboardApi.addAbsence(payload);
+        setDraft(null);
+        load();
     }
 
     async function handleDelete(id: number) {
@@ -104,14 +102,16 @@ export default function VacationsTab({ active }: { active?: boolean }) {
     async function saveLimit(
         personId: number,
         limitDays: number,
-        carryoverDays: number
+        carryoverDays: number,
+        careDays: number
     ) {
         try {
             await ScrumboardApi.setVacationLimit(
                 personId,
                 year,
                 limitDays,
-                carryoverDays
+                carryoverDays,
+                careDays
             );
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
@@ -120,7 +120,7 @@ export default function VacationsTab({ active }: { active?: boolean }) {
 
     function updateLimitLocal(
         personId: number,
-        field: "limitDays" | "carryoverDays",
+        field: "limitDays" | "carryoverDays" | "careDays",
         value: number
     ) {
         setData((prev) =>
@@ -247,13 +247,14 @@ interface ViewProps {
     onOpenEdit: (row: ScrumboardVacationRow, dateStr: string) => void;
     onLimitChange: (
         personId: number,
-        field: "limitDays" | "carryoverDays",
+        field: "limitDays" | "carryoverDays" | "careDays",
         value: number
     ) => void;
     onLimitSave: (
         personId: number,
         limitDays: number,
-        carryoverDays: number
+        carryoverDays: number,
+        careDays: number
     ) => void;
 }
 
@@ -261,52 +262,86 @@ type BalanceProps = Pick<ViewProps, "onLimitChange" | "onLimitSave"> & {
     row: ScrumboardVacationRow;
 };
 
-function BalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
+function LimitInput({
+    label,
+    title,
+    value,
+    onChange,
+    onBlur,
+}: {
+    label: string;
+    title: string;
+    value: number;
+    onChange: (v: number) => void;
+    onBlur: () => void;
+}) {
+    return (
+        <label className="scrum-vacation-limit-field" title={title}>
+            <span className="text-muted">{label}</span>
+            <Form.Control
+                type="number"
+                min={0}
+                step={1}
+                size="sm"
+                className="scrum-vacation-limit-input"
+                value={value}
+                onChange={(e) => onChange(Number(e.target.value))}
+                onBlur={onBlur}
+            />
+        </label>
+    );
+}
+
+/** Kolumna salda urlopu: Obecny/Zaległy (edytowalne) + Wyk./Poz. */
+function VacationBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
     const remaining = row.limitDays + row.carryoverDays - row.usedDays;
     const save = () =>
-        onLimitSave(row.personId, row.limitDays, row.carryoverDays);
+        onLimitSave(row.personId, row.limitDays, row.carryoverDays, row.careDays);
     return (
-        <div className="scrum-vacation-balance">
-            <label className="scrum-vacation-limit-field" title="urlop za bieżący rok">
-                <span className="text-muted">Obecny</span>
-                <Form.Control
-                    type="number"
-                    min={0}
-                    step={1}
-                    size="sm"
-                    className="scrum-vacation-limit-input"
-                    value={row.limitDays}
-                    onChange={(e) =>
-                        onLimitChange(row.personId, "limitDays", Number(e.target.value))
-                    }
-                    onBlur={save}
-                />
-            </label>
-            <label className="scrum-vacation-limit-field" title="urlop zaległy z poprzedniego roku">
-                <span className="text-muted">Zaległy</span>
-                <Form.Control
-                    type="number"
-                    min={0}
-                    step={1}
-                    size="sm"
-                    className="scrum-vacation-limit-input"
-                    value={row.carryoverDays}
-                    onChange={(e) =>
-                        onLimitChange(
-                            row.personId,
-                            "carryoverDays",
-                            Number(e.target.value)
-                        )
-                    }
-                    onBlur={save}
-                />
-            </label>
-            <span title="wykorzystane">Wyk. {row.usedDays}</span>
+        <div className="scrum-vacation-balance-row">
+            <LimitInput
+                label="Obecny"
+                title="urlop za bieżący rok"
+                value={row.limitDays}
+                onChange={(v) => onLimitChange(row.personId, "limitDays", v)}
+                onBlur={save}
+            />
+            <LimitInput
+                label="Zaległy"
+                title="urlop zaległy z poprzedniego roku"
+                value={row.carryoverDays}
+                onChange={(v) => onLimitChange(row.personId, "carryoverDays", v)}
+                onBlur={save}
+            />
             <span
-                title="pozostało (bieżący + zaległy − wykorzystane)"
+                title={`Urlop wykorzystany: ${row.usedDays}, pozostały: ${remaining} (Obecny ${row.limitDays} + Zaległy ${row.carryoverDays} − wykorzystany ${row.usedDays})`}
                 className={remaining < 0 ? "text-danger fw-semibold" : "fw-semibold"}
             >
-                Poz. {remaining}
+                {row.usedDays} / {remaining}
+            </span>
+        </div>
+    );
+}
+
+/** Kolumna salda opieki: pula (edytowalna) + Wyk./Poz. */
+function CareBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
+    const careRemaining = row.careDays - row.careUsedDays;
+    const save = () =>
+        onLimitSave(row.personId, row.limitDays, row.carryoverDays, row.careDays);
+    return (
+        <div className="scrum-vacation-balance-row">
+            <LimitInput
+                label="Pula"
+                title="pula dni opieki na dany rok"
+                value={row.careDays}
+                onChange={(v) => onLimitChange(row.personId, "careDays", v)}
+                onBlur={save}
+            />
+            <span
+                title={`Opieka wykorzystana: ${row.careUsedDays}, pozostała: ${careRemaining} (pula ${row.careDays} − wykorzystana ${row.careUsedDays})`}
+                className={careRemaining < 0 ? "text-danger fw-semibold" : "fw-semibold"}
+            >
+                {row.careUsedDays} / {careRemaining}
             </span>
         </div>
     );
@@ -322,6 +357,7 @@ function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
                     <tr>
                         <th className="scrum-vacation-name-col">Osoba</th>
                         <th className="scrum-vacation-balance-col">Urlop</th>
+                        <th className="scrum-vacation-balance-col">Opieka</th>
                         <th>
                             <div className="scrum-vacation-track scrum-vacation-track-header">
                                 {ticks.map((t) => (
@@ -342,7 +378,10 @@ function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
                         <tr key={row.personId}>
                             <td className="scrum-vacation-name-col">{row.personName}</td>
                             <td className="scrum-vacation-balance-col">
-                                <BalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
+                                <VacationBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
+                            </td>
+                            <td className="scrum-vacation-balance-col">
+                                <CareBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
                             </td>
                             <td>
                                 <div className="scrum-vacation-track">
@@ -398,6 +437,7 @@ function MonthView({
                     <tr>
                         <th className="scrum-vacation-name-col">Osoba</th>
                         <th className="scrum-vacation-balance-col">Urlop</th>
+                        <th className="scrum-vacation-balance-col">Opieka</th>
                         {days.map((d) => {
                             const dateStr = ymd(year, month0, d);
                             return (
@@ -419,7 +459,10 @@ function MonthView({
                         <tr key={row.personId}>
                             <td className="scrum-vacation-name-col">{row.personName}</td>
                             <td className="scrum-vacation-balance-col">
-                                <BalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
+                                <VacationBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
+                            </td>
+                            <td className="scrum-vacation-balance-col">
+                                <CareBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
                             </td>
                             {days.map((d) => {
                                 const dateStr = ymd(year, month0, d);

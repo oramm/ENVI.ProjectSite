@@ -159,7 +159,7 @@
     vertical-align: middle;
 }
 
-.scrum-vacation-balance {
+.scrum-vacation-balance-row {
     display: flex;
     align-items: center;
     gap: 0.35rem;

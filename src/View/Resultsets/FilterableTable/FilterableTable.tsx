@@ -195,6 +195,17 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             const wasRefreshed = await refreshSectionsFromHandlers();
             if (wasRefreshed) return;
 
+            // Gdy dodajemy LIŚĆ (np. zadanie pod sprawą — sekcja ma tablicę leaves),
+            // musimy dołożyć go też do repository.items. Inaczej klik w nowy wiersz rzuca
+            // "Nie znaleziono elementu" w addToCurrentItems (bez sectionsFilterHandlers
+            // nie ma przeładowania z serwera, które normalnie odświeżyłoby items).
+            const parentNode = findNodeById(sections, activeSectionId);
+            if (
+                parentNode?.leaves &&
+                !repository.items.some((item) => item.id === sectionDataObject.id)
+            )
+                repository.items.push(sectionDataObject as LeafDataItemType);
+
             setSections(addNode(sections, activeSectionId, sectionDataObject));
         })();
     }
@@ -469,6 +480,18 @@ function editLeafDataItem<LeafDataItemType extends RepositoryDataItem>(
 }
 
 // Funkcja do dodawania nowych węzłów i liści
+function findNodeById<LeafDataItemType extends RepositoryDataItem>(
+    nodes: SectionNode<LeafDataItemType>[],
+    id: string
+): SectionNode<LeafDataItemType> | undefined {
+    for (const node of nodes) {
+        if (node.id === id) return node;
+        const found = findNodeById(node.children, id);
+        if (found) return found;
+    }
+    return undefined;
+}
+
 function addNode<LeafDataItemType extends RepositoryDataItem>(
     nodes: SectionNode<LeafDataItemType>[],
     parentId: string,
