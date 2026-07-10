@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FormProvider } from "../View/Modals/FormContext";
 import {
@@ -25,8 +28,11 @@ function today() {
 }
 
 export default function MileagePage() {
+    // Wybór pojazdu jako trasa (#/mileage/:vehicleId) - dzięki temu systemowy
+    // przycisk "wstecz" wraca z formularza do listy pojazdów.
+    const { vehicleId } = useParams<{ vehicleId?: string }>();
+    const navigate = useNavigate();
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-    const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
     const [loadingVehicles, setLoadingVehicles] = useState(true);
     const [listError, setListError] = useState("");
 
@@ -39,17 +45,40 @@ export default function MileagePage() {
             .finally(() => setLoadingVehicles(false));
     }
 
-    useEffect(loadVehicles, []);
+    // Ładuje na wejściu i po powrocie do listy (świeży stan licznika po wpisie).
+    useEffect(loadVehicles, [vehicleId]);
 
-    if (selectedVehicle) {
+    // Manifest PWA (instalowalność) tylko na tej zakładce i tylko na urządzeniach
+    // dotykowych (telefony/tablety) - żeby opcja "Zainstaluj aplikację" nie pojawiała
+    // się na pozostałych ekranach ERP ani na desktopie.
+    useEffect(() => {
+        const isMobile = window.matchMedia("(pointer: coarse)").matches;
+        if (!isMobile) return;
+        const link = document.createElement("link");
+        link.rel = "manifest";
+        link.href = "manifest.webmanifest";
+        document.head.appendChild(link);
+        return () => {
+            document.head.removeChild(link);
+        };
+    }, []);
+
+    const selectedVehicle = vehicleId
+        ? vehicles.find((v) => String(v.id) === vehicleId) ?? null
+        : null;
+
+    if (vehicleId) {
+        if (selectedVehicle) return <MileageForm vehicle={selectedVehicle} />;
         return (
-            <MileageForm
-                vehicle={selectedVehicle}
-                onBack={() => {
-                    setSelectedVehicle(null);
-                    loadVehicles(); // odśwież aktualny stan licznika na kafelkach
-                }}
-            />
+            <Container className="py-3" style={{ maxWidth: 640 }}>
+                {loadingVehicles ? (
+                    <div className="text-center py-5">
+                        <Spinner />
+                    </div>
+                ) : (
+                    <Alert variant="danger">Nie znaleziono pojazdu.</Alert>
+                )}
+            </Container>
         );
     }
 
@@ -57,7 +86,7 @@ export default function MileagePage() {
         <Container className="py-3" style={{ maxWidth: 720 }}>
             <h4 className="mb-3">Kilometrówka</h4>
             {listError && <Alert variant="danger">{listError}</Alert>}
-            {loadingVehicles ? (
+            {loadingVehicles && vehicles.length === 0 ? (
                 <div className="text-center py-5">
                     <Spinner />
                 </div>
@@ -68,7 +97,7 @@ export default function MileagePage() {
                             key={v.id}
                             className="shadow-sm"
                             role="button"
-                            onClick={() => setSelectedVehicle(v)}
+                            onClick={() => navigate(`/mileage/${v.id}`)}
                         >
                             <Card.Body className="d-flex justify-content-between align-items-center py-4 px-4">
                                 <div>
@@ -96,14 +125,13 @@ export default function MileagePage() {
     );
 }
 
-function MileageForm({ vehicle, onBack }: { vehicle: Vehicle; onBack: () => void }) {
+function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const formMethods = useForm({ mode: "onChange" });
     const { watch, setValue } = formMethods;
 
     const [date, setDate] = useState(today());
     const [isGeneral, setIsGeneral] = useState(false);
     const [purposes, setPurposes] = useState<string[]>([]);
-    const [otherPurpose, setOtherPurpose] = useState("");
     const [routeFrom, setRouteFrom] = useState("Brzeg");
     const [routeMid, setRouteMid] = useState("");
     const [routeTo, setRouteTo] = useState("Brzeg");
@@ -163,14 +191,8 @@ function MileageForm({ vehicle, onBack }: { vehicle: Vehicle; onBack: () => void
         return e - s;
     }, [startReading, endReading]);
 
-    function togglePurpose(option: string) {
-        setPurposes((prev) => (prev.includes(option) ? prev.filter((p) => p !== option) : [...prev, option]));
-    }
-
     function purposeText() {
-        const parts = purposes.filter((p) => p !== "inne");
-        if (otherPurpose.trim()) parts.push(otherPurpose.trim());
-        return parts.join(", ");
+        return purposes.join(", ");
     }
 
     async function handleScan(e: React.ChangeEvent<HTMLInputElement>) {
@@ -250,7 +272,6 @@ function MileageForm({ vehicle, onBack }: { vehicle: Vehicle; onBack: () => void
             setStartReading(endReading);
             setEndReading("");
             setPurposes([]);
-            setOtherPurpose("");
             setFuelingDate("");
             setFuelingReading("");
             setFuelingReadingTouched(false);
@@ -266,15 +287,10 @@ function MileageForm({ vehicle, onBack }: { vehicle: Vehicle; onBack: () => void
 
     return (
         <Container className="py-3" style={{ maxWidth: 640 }}>
-            <div className="d-flex align-items-center gap-3 mb-3">
-                <Button variant="outline-secondary" size="sm" onClick={onBack}>
-                    ← Pojazdy
-                </Button>
-                <h4 className="mb-0">
-                    {vehicle.brand}
-                    {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
-                </h4>
-            </div>
+            <h4 className="mb-3">
+                {vehicle.brand}
+                {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
+            </h4>
 
             {success && <Alert variant="success">{success}</Alert>}
 
@@ -298,31 +314,20 @@ function MileageForm({ vehicle, onBack }: { vehicle: Vehicle; onBack: () => void
 
                     <Form.Group className="mb-3">
                         <Form.Label>Cel wyjazdu</Form.Label>
-                        {PURPOSE_OPTIONS.map((option) => (
-                            <Form.Check
-                                key={option}
-                                type="checkbox"
-                                id={`mileage-purpose-${option}`}
-                                label={option}
-                                checked={purposes.includes(option)}
-                                onChange={() => togglePurpose(option)}
-                            />
-                        ))}
-                        <Form.Check
-                            type="checkbox"
-                            id="mileage-purpose-inne"
-                            label="inne"
-                            checked={purposes.includes("inne")}
-                            onChange={() => togglePurpose("inne")}
+                        <Typeahead
+                            id="mileage-purpose"
+                            multiple
+                            allowNew
+                            newSelectionPrefix="Inne: "
+                            options={PURPOSE_OPTIONS}
+                            selected={purposes}
+                            onChange={(sel) =>
+                                setPurposes(
+                                    sel.map((s: any) => (typeof s === "string" ? s : s.label))
+                                )
+                            }
+                            placeholder="Wybierz lub wpisz cel(e) wyjazdu..."
                         />
-                        {purposes.includes("inne") && (
-                            <Form.Control
-                                className="mt-2"
-                                placeholder="Wpisz cel wyjazdu"
-                                value={otherPurpose}
-                                onChange={(e) => setOtherPurpose(e.target.value)}
-                            />
-                        )}
                     </Form.Group>
 
                     <Form.Group className="mb-3">

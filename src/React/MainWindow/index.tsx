@@ -179,6 +179,7 @@ function AppRoutes() {
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
                         <Route path="/mileage" element={<MileagePage />} />
+                        <Route path="/mileage/:vehicleId" element={<MileagePage />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
