@@ -43,6 +43,7 @@ import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreas
 import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch";
 import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ProtectedRoute from "../ProtectedRoute";
+import MileagePage from "../../Mileage/MileagePage";
 import Dashboard from "./Content/Dashboard/Dashboard";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
@@ -177,6 +178,7 @@ function AppRoutes() {
                         <Route path="/invoice/:id" element={<InvoiceDetails />} />
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
+                        <Route path="/mileage" element={<MileagePage />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
