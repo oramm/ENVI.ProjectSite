@@ -26,7 +26,7 @@ export async function fetchFidmanSyncStatus(
     contractId: number,
     fetcher: typeof fetch = fetch,
 ): Promise<FidmanSyncStatus> {
-    const url = `${MainSetup.serverUrl}fidmanSync/contract/${contractId}/status`;
+    const url = `${MainSetup.serverUrl}contract/${contractId}/fidmanSync/status`;
     const response = await fetcher(url, { method: "GET", credentials: "include" });
     if (!response.ok) {
         throw new Error(`Błąd odczytu statusu synchronizacji FIDman: ${response.status}`);
@@ -39,10 +39,15 @@ export async function retryFidmanSync(
     contractId: number,
     fetcher: typeof fetch = fetch,
 ): Promise<FidmanSyncStatus> {
-    const url = `${MainSetup.serverUrl}fidmanSync/contract/${contractId}/retry`;
+    const url = `${MainSetup.serverUrl}contract/${contractId}/fidmanSync/retry`;
     const response = await fetcher(url, { method: "POST", credentials: "include" });
     if (!response.ok) {
-        const msg = await response.text().catch(() => "");
+        // Backend errors come back as JSON { error }; read that, not the raw body
+        // (a 404 { "error": "..." } must not render as a JSON blob in the Alert).
+        const msg = await response
+            .json()
+            .then((body: { error?: string }) => body?.error)
+            .catch(() => undefined);
         throw new Error(msg || `Błąd ponowienia synchronizacji FIDman: ${response.status}`);
     }
     return response.json() as Promise<FidmanSyncStatus>;

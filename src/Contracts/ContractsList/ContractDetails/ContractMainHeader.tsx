@@ -240,6 +240,7 @@ function FidmanSyncSection() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        setStatus(null); // clear the previous contract's badge so it can't flash before the new fetch
         if (!contract?.id) return;
         let cancelled = false;
         fetchFidmanSyncStatus(contract.id)

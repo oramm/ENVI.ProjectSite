@@ -47,7 +47,7 @@ describe("fetchFidmanSyncStatus", () => {
         expect(result.status).toBe("SENT");
         expect(fetcher).toHaveBeenCalledOnce();
         const calledUrl = (fetcher as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-        expect(calledUrl).toContain("fidmanSync/contract/42/status");
+        expect(calledUrl).toContain("contract/42/fidmanSync/status");
     });
 
     it("surfaces FAILED status with lastError", async () => {
@@ -78,17 +78,31 @@ describe("retryFidmanSync (\"dopchnij synchronizację\")", () => {
 
         expect(result.status).toBe("SENT");
         const [url, opts] = (fetcher as ReturnType<typeof vi.fn>).mock.calls[0] as [string, RequestInit];
-        expect(url).toContain("fidmanSync/contract/42/retry");
+        expect(url).toContain("contract/42/fidmanSync/retry");
         expect(opts.method).toBe("POST");
     });
 
-    it("throws on non-ok response (e.g. no FAILED/SKIPPED row to retry)", async () => {
+    it("throws the backend JSON { error } message on non-ok (404 no FAILED/SKIPPED row), not a raw blob", async () => {
         const fetcher = vi.fn().mockResolvedValue({
             ok: false,
             status: 404,
-            text: async () => "Brak wpisu FAILED/SKIPPED do ponowienia dla tego kontraktu",
+            json: async () => ({ error: "Brak wpisu FAILED/SKIPPED do ponowienia dla tego kontraktu" }),
         }) as unknown as typeof fetch;
 
-        await expect(retryFidmanSync(42, fetcher)).rejects.toThrow(/404|Brak wpisu/);
+        // The thrown message is the parsed .error, never the JSON blob (no braces/quotes).
+        await expect(retryFidmanSync(42, fetcher)).rejects.toThrow("Brak wpisu FAILED/SKIPPED do ponowienia dla tego kontraktu");
+        await expect(retryFidmanSync(42, fetcher)).rejects.not.toThrow(/[{}]/);
+    });
+
+    it("falls back to a status-code message when the error body is not JSON", async () => {
+        const fetcher = vi.fn().mockResolvedValue({
+            ok: false,
+            status: 500,
+            json: async () => {
+                throw new Error("not json");
+            },
+        }) as unknown as typeof fetch;
+
+        await expect(retryFidmanSync(42, fetcher)).rejects.toThrow(/500/);
     });
 });
