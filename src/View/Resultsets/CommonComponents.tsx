@@ -247,6 +247,40 @@ export function KsefStatusBadge({
     return null;
 }
 
+/**
+ * SYNC-P2 — FIDman outbox status badge for a contract (see
+ * ../../Contracts/ContractsList/Modals/fidmanSyncService.ts). "NONE" (never
+ * enqueued, e.g. non-synced contract type) renders nothing.
+ */
+export function FidmanSyncBadge({
+    status,
+    tooltip,
+}: {
+    status?: "NONE" | "PENDING" | "SENT" | "FAILED" | "SKIPPED";
+    tooltip?: string | null;
+}) {
+    if (!status || status === "NONE") return null;
+
+    const byStatus: Record<Exclude<typeof status, "NONE">, { bg: Color; text?: Color; label: string }> = {
+        SENT: { bg: "success", text: "light", label: "✅ FIDman: zsynchronizowano" },
+        PENDING: { bg: "secondary", text: "light", label: "⏳ FIDman: w trakcie" },
+        FAILED: { bg: "danger", text: "light", label: "⚠️ FIDman: synchronizacja do dopchnięcia" },
+        SKIPPED: { bg: "warning", text: "dark", label: "🟡 FIDman: brakujące dane" },
+    };
+    const { bg, text, label } = byStatus[status];
+    const badge = (
+        <Badge bg={bg} text={text}>
+            {label}
+        </Badge>
+    );
+    if (!tooltip) return badge;
+    return (
+        <OverlayTrigger placement="top" overlay={<Tooltip id="fidman-sync-tooltip">{tooltip}</Tooltip>}>
+            {badge}
+        </OverlayTrigger>
+    );
+}
+
 export function ContractStatusBadge({
     status,
     className,

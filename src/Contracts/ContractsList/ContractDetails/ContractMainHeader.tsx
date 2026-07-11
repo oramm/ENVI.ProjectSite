@@ -6,7 +6,12 @@ import MainSetup from "../../../React/MainSetupReact";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import { FormProvider } from "../../../View/Modals/FormContext";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
-import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
+import { ContractStatusBadge, FidmanSyncBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
+import {
+    FidmanSyncStatus,
+    fetchFidmanSyncStatus,
+    retryFidmanSync,
+} from "../Modals/fidmanSyncService";
 import { ProjectSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import {
     ContractModalBodyDates,
@@ -98,6 +103,9 @@ export function ContractMainHeader() {
                 <Col sm={1}>{contract._gdFolderUrl && <GDFolderIconLink folderUrl={contract._gdFolderUrl} />}</Col>
                 <Col sm={12} md={6} className="d-flex align-items-center">
                     <MoveContractButton />
+                </Col>
+                <Col sm={12} md={6} className="d-flex align-items-center gap-2">
+                    <FidmanSyncSection />
                 </Col>
                 <Col sm={12} md={6}>
                     <PartialEditTrigger
@@ -215,6 +223,67 @@ function MoveContractButton() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+        </>
+    );
+}
+
+/**
+ * SYNC-P2 — "synchronizacja do dopchnięcia" badge + manual retry for the
+ * PS ENVI -> FIDman outbox (see ../Modals/fidmanSyncService.ts). Renders
+ * nothing while status is "NONE" (contract type not synced, or not enqueued
+ * yet) — the backend decides gating, the front just reflects it.
+ */
+function FidmanSyncSection() {
+    const { contract } = useContractDetails();
+    const [status, setStatus] = useState<FidmanSyncStatus | null>(null);
+    const [isRetrying, setIsRetrying] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!contract?.id) return;
+        let cancelled = false;
+        fetchFidmanSyncStatus(contract.id)
+            .then((s) => {
+                if (!cancelled) setStatus(s);
+            })
+            .catch(() => {
+                // ponytail: silent — a missing/failed status read must not block the header.
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [contract?.id]);
+
+    if (!contract?.id || !status || status.status === "NONE") return null;
+
+    async function handleRetry() {
+        if (!contract?.id) return;
+        setIsRetrying(true);
+        setError(null);
+        try {
+            setStatus(await retryFidmanSync(contract.id));
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err));
+        } finally {
+            setIsRetrying(false);
+        }
+    }
+
+    const canRetry = status.status === "FAILED" || status.status === "SKIPPED";
+
+    return (
+        <>
+            <FidmanSyncBadge status={status.status} tooltip={status.skipReasonLabel || status.lastError} />
+            {canRetry && (
+                <Button variant="outline-secondary" size="sm" onClick={handleRetry} disabled={isRetrying}>
+                    {isRetrying ? <Spinner size="sm" animation="border" /> : "Dopchnij synchronizację"}
+                </Button>
+            )}
+            {error && (
+                <Alert variant="danger" className="mb-0 py-1 px-2">
+                    {error}
+                </Alert>
+            )}
         </>
     );
 }
