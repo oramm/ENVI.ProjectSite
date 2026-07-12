@@ -1,17 +1,41 @@
-import React, { useEffect } from "react";
-import { Form } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { EntityData } from "../../../Typings/bussinesTypes";
 import { ErrorMessage } from "../../View/Modals/CommonFormComponents/GenericComponents";
+import { lookupNip } from "./gusLookupService";
 
 export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<EntityData>) {
     const {
         register,
         reset,
+        getValues,
+        setValue,
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
+
+    const [gusLoading, setGusLoading] = useState(false);
+    const [gusError, setGusError] = useState<string | null>(null);
+
+    // NIP-G1 — "Pobierz z GUS": autofill name+address from taxNumber, user can
+    // still edit both before saving. BLOCKED until gate G-N1 in prod (503 with
+    // a readable message until the owner sets GUS_BIR_KEY).
+    const handleFetchFromGus = async () => {
+        const nip = getValues("taxNumber");
+        setGusError(null);
+        setGusLoading(true);
+        try {
+            const result = await lookupNip(nip);
+            setValue("name", result.name, { shouldDirty: true, shouldValidate: true });
+            setValue("address", result.address, { shouldDirty: true, shouldValidate: true });
+        } catch (err) {
+            setGusError(err instanceof Error ? err.message : "Błąd wyszukiwania GUS");
+        } finally {
+            setGusLoading(false);
+        }
+    };
 
     useEffect(() => {
         const resetData: any = {
@@ -67,13 +91,36 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
 
             <Form.Group controlId="taxNumber">
                 <Form.Label>NIP</Form.Label>
-                <Form.Control
-                    placeholder="Podaj numer podatkowy"
-                    isInvalid={!!errors?.taxNumber}
-                    isValid={!errors?.taxNumber}
-                    {...register("taxNumber")}
-                />
+                <div className="d-flex align-items-start gap-2">
+                    <Form.Control
+                        placeholder="Podaj numer podatkowy"
+                        isInvalid={!!errors?.taxNumber}
+                        isValid={!errors?.taxNumber}
+                        {...register("taxNumber")}
+                    />
+                    <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        className="text-nowrap"
+                        onClick={handleFetchFromGus}
+                        disabled={gusLoading || !!errors?.taxNumber || !getValues("taxNumber")}
+                    >
+                        {gusLoading ? (
+                            <>
+                                <Spinner animation="border" size="sm" className="me-1" />
+                                Pobieranie...
+                            </>
+                        ) : (
+                            "Pobierz z GUS"
+                        )}
+                    </Button>
+                </div>
                 <ErrorMessage name="taxNumber" errors={errors} />
+                {gusError && (
+                    <Alert variant="danger" className="mt-2 mb-0" onClose={() => setGusError(null)} dismissible>
+                        {gusError}
+                    </Alert>
+                )}
             </Form.Group>
 
             <Form.Group controlId="www">
