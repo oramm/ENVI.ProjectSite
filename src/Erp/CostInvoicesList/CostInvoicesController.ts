@@ -355,6 +355,30 @@ export async function bookCostInvoice(id: number): Promise<CostInvoice> {
 }
 
 /**
+ * NIP-K2 — ręczna (re-)weryfikacja Białej Listy VAT (KAS wl-api) dla faktury kosztowej.
+ * Nadpisuje poprzedni wynik (whiteListStatus/whiteListRequestId/whiteListCheckedAt) —
+ * backend przechowuje tylko ostatni. Domyślnie sprawdza na dziś (bez `date` w body).
+ * Backend: PS-nodeJS POST /cost-invoices/:id/white-list/check
+ */
+export async function checkWhiteList(id: number, date?: string): Promise<CostInvoice> {
+    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/${id}/white-list/check`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(date ? { date } : {}),
+    });
+
+    if (!response.ok) {
+        await throwCostInvoiceApiError(response, "Błąd weryfikacji Białej Listy");
+    }
+
+    const result = await response.json();
+    return result.data || result;
+}
+
+/**
  * Pobiera raport miesięczny
  */
 export async function fetchMonthlyReport(

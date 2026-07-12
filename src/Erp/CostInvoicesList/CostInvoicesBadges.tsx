@@ -2,6 +2,7 @@ import React from "react";
 import { Badge, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { CostInvoiceStatuses, PaymentStatuses, PaymentStatus } from "./CostInvoicesController";
 import { CostInvoiceCategory } from "../../../Typings/bussinesTypes";
+import ToolsDate from "../../React/Tools/ToolsDate";
 
 /**
  * Badge statusu faktury kosztowej
@@ -34,6 +35,57 @@ export function CostInvoiceStatusBadge({ status }: { status: string }) {
         <Badge bg={variant} text={textColor}>
             {label}
         </Badge>
+    );
+}
+
+export type WhiteListStatus = "NOT_CHECKED" | "VERIFIED_OK" | "VERIFIED_MISMATCH" | "ERROR" | "NOT_APPLICABLE";
+
+/**
+ * NIP-K2 — badge statusu weryfikacji Białej Listy VAT (KAS wl-api) dla faktury
+ * kosztowej. Mirrors the FidmanSyncBadge idiom (see
+ * ../../View/Resultsets/CommonComponents.tsx): status → Badge + optional
+ * tooltip with the check details (date + KAS request id).
+ */
+export function WhiteListStatusBadge({
+    status,
+    checkedAt,
+    requestId,
+}: {
+    status?: WhiteListStatus | null;
+    checkedAt?: string | null;
+    requestId?: string | null;
+}) {
+    const resolved = status || "NOT_CHECKED";
+
+    const byStatus: Record<WhiteListStatus, { bg: string; text: string; label: string }> = {
+        NOT_CHECKED: { bg: "secondary", text: "light", label: "Biała lista: nie sprawdzono" },
+        VERIFIED_OK: { bg: "success", text: "light", label: "✅ Biała lista: OK" },
+        VERIFIED_MISMATCH: { bg: "danger", text: "light", label: "⚠️ Biała lista: NIEZGODNOŚĆ" },
+        ERROR: { bg: "warning", text: "dark", label: "⚠️ Biała lista: błąd sprawdzenia" },
+        NOT_APPLICABLE: { bg: "secondary", text: "light", label: "Biała lista: nie dotyczy" },
+    };
+    const { bg, text, label } = byStatus[resolved];
+
+    const badge = (
+        <Badge bg={bg} text={text}>
+            {label}
+        </Badge>
+    );
+
+    if (!checkedAt && !requestId) return badge;
+
+    return (
+        <OverlayTrigger
+            placement="top"
+            overlay={
+                <Tooltip id="white-list-tooltip">
+                    {checkedAt && <div>Sprawdzono: {ToolsDate.dateYMDtoDMY(checkedAt)}</div>}
+                    {requestId && <div>Nr wpisu KAS: {requestId}</div>}
+                </Tooltip>
+            }
+        >
+            {badge}
+        </OverlayTrigger>
     );
 }
 

@@ -19,6 +19,7 @@ import {
     updateCostInvoice,
     updateCostInvoiceItem,
     bookCostInvoice,
+    checkWhiteList,
     CostInvoiceApiError,
     CostInvoiceQrData,
     CostInvoiceStatus,
@@ -26,7 +27,7 @@ import {
     PaymentStatus,
     PaymentStatuses,
 } from "./CostInvoicesController";
-import { CostInvoiceStatusBadge, PaymentMethodBadge, InvoiceTypeBadge } from "./CostInvoicesBadges";
+import { CostInvoiceStatusBadge, PaymentMethodBadge, InvoiceTypeBadge, WhiteListStatusBadge } from "./CostInvoicesBadges";
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
@@ -46,6 +47,8 @@ export default function CostInvoiceDetails() {
     const [qrData, setQrData] = useState<CostInvoiceQrData | null>(null);
     const [qrLoading, setQrLoading] = useState(false);
     const [qrError, setQrError] = useState<string | null>(null);
+    const [whiteListChecking, setWhiteListChecking] = useState(false);
+    const [whiteListError, setWhiteListError] = useState<string | null>(null);
 
     // Edytowalne pola faktury
     const [categoryId, setCategoryId] = useState<number | null>(null);
@@ -270,6 +273,32 @@ export default function CostInvoiceDetails() {
         }
     };
 
+    /**
+     * NIP-K2 — ręczna (re-)weryfikacja Białej Listy VAT (KAS wl-api). Nadpisuje
+     * poprzedni wynik i odświeża badge. Weryfikacja jest tylko ostrzegawcza —
+     * nigdy nie blokuje księgowania (patrz alert NIEZGODNOŚĆ niżej).
+     */
+    const handleCheckWhiteList = async () => {
+        if (!invoice?.id) return;
+        setWhiteListChecking(true);
+        setWhiteListError(null);
+        try {
+            const updated = await checkWhiteList(invoice.id);
+            updateListCaches(updated);
+            setInvoice((prev) => (prev ? { ...prev, ...updated } : updated));
+        } catch (err) {
+            setWhiteListError(
+                err instanceof CostInvoiceApiError
+                    ? err.message
+                    : err instanceof Error
+                    ? err.message
+                    : "Błąd weryfikacji Białej Listy"
+            );
+        } finally {
+            setWhiteListChecking(false);
+        }
+    };
+
     const handleBook = async () => {
         if (!invoice) return;
         setSaving(true);
@@ -462,6 +491,12 @@ export default function CostInvoiceDetails() {
                                 Faktura {invoice.invoiceNumber}
                                 <CostInvoiceStatusBadge status={status} />
                                 <InvoiceTypeBadge invoiceType={invoice.invoiceType} />
+                                {" "}
+                                <WhiteListStatusBadge
+                                    status={invoice.whiteListStatus}
+                                    checkedAt={invoice.whiteListCheckedAt}
+                                    requestId={invoice.whiteListRequestId}
+                                />
                             </h4>
                         </Col>
                         <Col xs="auto" className="d-flex align-items-center gap-2">
@@ -639,10 +674,37 @@ export default function CostInvoiceDetails() {
 
             {/* Ustawienia księgowania */}
             <Card className="mb-3">
-                <Card.Header>
+                <Card.Header className="d-flex align-items-center justify-content-between">
                     <h5 className="mb-0">Ustawienia księgowania</h5>
+                    <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={handleCheckWhiteList}
+                        disabled={whiteListChecking}
+                    >
+                        {whiteListChecking ? (
+                            <>
+                                <Spinner animation="border" size="sm" className="me-1" />
+                                Weryfikacja...
+                            </>
+                        ) : (
+                            "Zweryfikuj rachunek (Biała lista)"
+                        )}
+                    </Button>
                 </Card.Header>
                 <Card.Body>
+                    {whiteListError && (
+                        <Alert variant="danger" className="mb-3" onClose={() => setWhiteListError(null)} dismissible>
+                            {whiteListError}
+                        </Alert>
+                    )}
+                    {invoice.whiteListStatus === "VERIFIED_MISMATCH" && (
+                        <Alert variant="danger" className="mb-3">
+                            <strong>⚠️ Niezgodność na Białej Liście VAT:</strong> numer rachunku dostawcy nie
+                            figuruje na Białej Liście na sprawdzaną datę. Fakturę nadal można zaksięgować —
+                            to ostrzeżenie, nie blokada — ale zweryfikuj rachunek przed wykonaniem przelewu.
+                        </Alert>
+                    )}
                     <Row>
                         <Col md={3}>
                             <Form.Group className="mb-3">

@@ -869,6 +869,11 @@ export interface CostInvoice extends RepositoryDataItem {
     paymentMethod?: string | null;
     paymentDate?: string | null;
 
+    // Weryfikacja Białej Listy VAT (KAS wl-api) — tylko ostatni wynik
+    whiteListStatus?: "NOT_CHECKED" | "VERIFIED_OK" | "VERIFIED_MISMATCH" | "ERROR" | "NOT_APPLICABLE";
+    whiteListRequestId?: string | null;
+    whiteListCheckedAt?: string | null;
+
     // Dane finansowe
     netAmount: number;
     vatAmount: number;
