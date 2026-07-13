@@ -1,7 +1,7 @@
 import { faCalendarAlt, faFolderOpen, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useRef, useState } from "react";
-import { Col, Card as Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
 import {
     Case,
@@ -139,7 +139,7 @@ export default function TasksGlobal() {
 
     return (
         <ContractProvider project={selectedProject}>
-            <Container>
+            <Container fluid>
                 <Row>
                     <Col md="3">
                         <FilterableTable<ProjectData>
