@@ -19,7 +19,7 @@ import ToolsDate from "../React/Tools/ToolsDate";
 import RepositoryReact from "../React/RepositoryReact";
 import ScrumTaskRow from "../Scrumboard/CurrentSprint/ScrumTaskRow";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
-import { ContractStatusBadge, MilestoneStatusBadge, SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import { ContractStatusBadge, SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -28,6 +28,7 @@ import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
+import MilestoneInlineStatusDropdown from "./MilestoneInlineStatusDropdown";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
 import "./TasksGlobal.css";
 import {
@@ -385,7 +386,7 @@ function makeMilestoneTitleLabel(milestone: MilestoneData) {
                     </div>
                 )}
             </div>
-            <div>{milestone.status && <MilestoneStatusBadge status={milestone.status} />}</div>
+            <div>{milestone.status && <MilestoneInlineStatusDropdown milestone={milestone} />}</div>
         </div>
     );
 }

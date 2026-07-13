@@ -5,6 +5,9 @@ export function makeMilestoneValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         _type: Yup.object().required("Typ kamienia milowego jest wymagany"),
         name: Yup.string().test("conditional-required", "Nazwa jest wymagana", function (value) {
+            // Przy edycji istniejącego kamienia (np. sama zmiana statusu) nie wymuszaj nazwy -
+            // domyślne kamienie tworzone z kontraktem powstają bez nazwy.
+            if (isEditing) return true;
             const { _type } = this.parent as { _type?: MilestoneType };
             const isUnique = _type?.isUniquePerContract;
             if (!isUnique && !value) {
