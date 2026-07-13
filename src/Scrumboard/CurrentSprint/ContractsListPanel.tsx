@@ -138,6 +138,9 @@ export default function ContractsListPanel({
                         checked={discussedToBottom}
                         onChange={(e) => setDiscussedToBottom(e.target.checked)}
                     />
+                </div>
+                <div className="d-flex align-items-center justify-content-between mt-2">
+                    <span className="text-muted small">Znaleziono: {visibleContracts.length} umów</span>
                     <Button variant="outline-secondary" size="sm" onClick={clearFilters}>
                         Wyczyść filtry
                     </Button>

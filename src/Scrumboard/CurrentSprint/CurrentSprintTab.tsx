@@ -26,7 +26,7 @@ export default function CurrentSprintTab() {
                 ) as Promise<Contract[]>,
                 ScrumboardApi.getContractStatuses(),
             ]);
-            setContracts(contractsList);
+            setContracts(contractsList.filter((c) => !/AQM/i.test((c as OurContract)._ourType || "")));
             setDiscussedByContractId(new Map(statuses.map((s) => [s.contractId, s.discussed])));
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
