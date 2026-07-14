@@ -43,11 +43,20 @@ import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreas
 import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch";
 import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ProtectedRoute from "../ProtectedRoute";
+import MileagePage from "../../Mileage/MileagePage";
 import Dashboard from "./Content/Dashboard/Dashboard";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
+
+/** Telefon/tablet (dotyk) lub zainstalowana aplikacja (standalone). */
+function isMobileOrAppView() {
+    return (
+        window.matchMedia("(pointer: coarse)").matches ||
+        window.matchMedia("(display-mode: standalone)").matches
+    );
+}
 //const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {
@@ -158,7 +167,8 @@ function AppRoutes() {
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
-            <GoodTipToast />
+            {/* Dobre rady zasłaniają za dużo ekranu na telefonie/w aplikacji - tylko desktop */}
+            {!isMobileOrAppView() && <GoodTipToast />}
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
@@ -177,6 +187,8 @@ function AppRoutes() {
                         <Route path="/invoice/:id" element={<InvoiceDetails />} />
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
+                        <Route path="/mileage" element={<MileagePage />} />
+                        <Route path="/mileage/:vehicleId" element={<MileagePage />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />

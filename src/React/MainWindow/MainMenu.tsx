@@ -68,6 +68,9 @@ export default function MainMenu() {
                                     <NavDropdown.Item as={Link} to="/contracts/znwu" className={isActive("/contracts/znwu")}>
                                         ZNWU
                                     </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/mileage" className={isActive("/mileage")}>
+                                        Kilometrówka
+                                    </NavDropdown.Item>
                                 </NavDropdown>
                             )}
                             <Nav.Link as={Link} to="/letters" className={isActive("/letters")}>

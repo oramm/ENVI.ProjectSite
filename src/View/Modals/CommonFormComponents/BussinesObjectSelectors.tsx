@@ -1430,10 +1430,13 @@ export function RegisteringEditorSelector({
     label = "Osoba rejestrująca",
     name = "_editor",
     showValidationInfo = true,
+    fetchRoute = "persons/registering-editors",
 }: {
     label?: string;
     name?: string;
     showValidationInfo?: boolean;
+    /** Endpoint zwracający listę osób (pierwsza = domyślnie wybrana). Domyślnie osoby rejestrujące. */
+    fetchRoute?: string;
 }) {
     const {
         control,
@@ -1446,7 +1449,7 @@ export function RegisteringEditorSelector({
     useEffect(() => {
         const fetchRegisteringEditors = async () => {
             try {
-                const response = await fetch(`${MainSetup.serverUrl}persons/registering-editors`, {
+                const response = await fetch(`${MainSetup.serverUrl}${fetchRoute}`, {
                     method: "GET",
                     credentials: "include",
                 });
@@ -1467,7 +1470,7 @@ export function RegisteringEditorSelector({
         };
 
         fetchRegisteringEditors();
-    }, [name, setValue]);
+    }, [name, setValue, fetchRoute]);
 
     function makeOptions(items: PersonData[]) {
         return items.map((item) => ({
