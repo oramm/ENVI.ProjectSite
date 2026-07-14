@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Button, Card, Modal, Tab, Tabs } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 import MainSetup from "../React/MainSetupReact";
 import CurrentSprintTab from "./CurrentSprint/CurrentSprintTab";
 import MyTasksTab from "./MyTasks/MyTasksTab";
@@ -15,9 +16,16 @@ interface ConfirmState {
     action: () => void;
 }
 
+const TAB_KEYS = ["currentSprint", "timesSummary", "myTasks", "planning", "vacations"];
+const DEFAULT_TAB = "currentSprint";
+
 /** Główny widok Scrumboarda z 4 zakładkami (następca arkuszy Google). */
 export default function ScrumboardMainView() {
-    const [activeKey, setActiveKey] = useState("currentSprint");
+    // Aktywna zakładka w URL (#/scrumboard?tab=...), aby przetrwała odświeżenie i była linkowalna.
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get("tab");
+    const activeKey = tabParam && TAB_KEYS.includes(tabParam) ? tabParam : DEFAULT_TAB;
+    const setActiveKey = (k: string) => setSearchParams({ tab: k }, { replace: true });
     const [confirm, setConfirm] = useState<ConfirmState | null>(null);
     const [reportUrl, setReportUrl] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -89,7 +97,7 @@ export default function ScrumboardMainView() {
                     <Tabs
                         id="scrumboard-tabs"
                         activeKey={activeKey}
-                        onSelect={(k) => setActiveKey(k ?? "currentSprint")}
+                        onSelect={(k) => setActiveKey(k ?? DEFAULT_TAB)}
                         className="mb-3"
                         mountOnEnter
                     >

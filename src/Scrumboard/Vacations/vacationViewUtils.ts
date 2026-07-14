@@ -21,6 +21,23 @@ export function daysInMonth(year: number, month0: number): number {
     return new Date(year, month0 + 1, 0).getDate();
 }
 
+/** Dzisiejsza data jako 'YYYY-MM-DD' (czas lokalny). */
+export function todayYmd(): string {
+    const now = new Date();
+    return ymd(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+/**
+ * Pozycja pionowego wskaźnika "dziś" w skali roku (procent, środek dnia).
+ * Zwraca null, gdy wyświetlany rok nie jest rokiem bieżącym.
+ */
+export function todayMarkerPct(year: number): number | null {
+    const today = todayYmd();
+    if (Number(today.slice(0, 4)) !== year) return null;
+    const total = daysInYear(year);
+    return ((dayOfYear(today) - 0.5) / total) * 100;
+}
+
 export function daysInYear(year: number): number {
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365;
 }

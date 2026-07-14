@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, ButtonGroup, Form, Table } from "react-bootstrap";
 import {
     ScrumboardVacationRow,
@@ -14,6 +14,8 @@ import {
     isWeekendYmd,
     MONTHS_PL_LONG,
     monthTicks,
+    todayMarkerPct,
+    todayYmd,
     yearBarStyle,
     ymd,
 } from "./vacationViewUtils";
@@ -187,7 +189,11 @@ export default function VacationsTab({ active }: { active?: boolean }) {
                         >
                             ‹
                         </Button>
-                        <Button variant="outline-secondary" disabled>
+                        <Button
+                            variant="outline-secondary"
+                            disabled
+                            className="scrum-vacation-month-label"
+                        >
                             {MONTHS_PL_LONG[month0]}
                         </Button>
                         <Button
@@ -262,6 +268,7 @@ type BalanceProps = Pick<ViewProps, "onLimitChange" | "onLimitSave"> & {
     row: ScrumboardVacationRow;
 };
 
+/** Pole limitu: w trybie odczytu pokazuje wartość; klik → input (jak godziny w zadaniach). */
 function LimitInput({
     label,
     title,
@@ -275,19 +282,46 @@ function LimitInput({
     onChange: (v: number) => void;
     onBlur: () => void;
 }) {
+    const [editing, setEditing] = useState(false);
+    const originalRef = useRef(value);
+
     return (
         <label className="scrum-vacation-limit-field" title={title}>
             <span className="text-muted">{label}</span>
-            <Form.Control
-                type="number"
-                min={0}
-                step={1}
-                size="sm"
-                className="scrum-vacation-limit-input"
-                value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
-                onBlur={onBlur}
-            />
+            {editing ? (
+                <Form.Control
+                    type="number"
+                    min={0}
+                    step={1}
+                    size="sm"
+                    autoFocus
+                    className="scrum-vacation-limit-input"
+                    value={value}
+                    onChange={(e) => onChange(Number(e.target.value))}
+                    onBlur={() => {
+                        setEditing(false);
+                        onBlur();
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") e.currentTarget.blur();
+                        if (e.key === "Escape") {
+                            onChange(originalRef.current);
+                            setEditing(false);
+                        }
+                    }}
+                />
+            ) : (
+                <span
+                    className="scrum-inline-value scrum-vacation-limit-value"
+                    title="Kliknij, aby edytować"
+                    onClick={() => {
+                        originalRef.current = value;
+                        setEditing(true);
+                    }}
+                >
+                    {value}
+                </span>
+            )}
         </label>
     );
 }
@@ -350,6 +384,7 @@ function CareBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
 /** Widok roczny: proporcjonalny timeline urlopów per osoba. */
 function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
     const ticks = monthTicks(data.year);
+    const todayPct = todayMarkerPct(data.year);
     return (
         <div className="scrum-vacations-scroll">
             <Table bordered hover size="sm" className="scrum-vacation-year">
@@ -383,8 +418,14 @@ function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
                             <td className="scrum-vacation-balance-col">
                                 <CareBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
                             </td>
-                            <td>
+                            <td className="scrum-vacation-timeline-cell">
                                 <div className="scrum-vacation-track">
+                                    {todayPct !== null && (
+                                        <span
+                                            className="scrum-vacation-today-line"
+                                            style={{ left: `${todayPct}%` }}
+                                        />
+                                    )}
                                     {ticks.map((t) => (
                                         <span
                                             key={t.label}
@@ -430,6 +471,7 @@ function MonthView({
 }: ViewProps & { year: number; month0: number }) {
     const dayCount = daysInMonth(year, month0);
     const days = Array.from({ length: dayCount }, (_, i) => i + 1);
+    const today = todayYmd();
     return (
         <div className="scrum-vacations-scroll">
             <Table bordered size="sm" className="scrum-vacation-month">
@@ -445,7 +487,8 @@ function MonthView({
                                     key={d}
                                     className={
                                         "scrum-vacation-day-head" +
-                                        (isWeekendYmd(dateStr) ? " scrum-vacation-weekend" : "")
+                                        (isWeekendYmd(dateStr) ? " scrum-vacation-weekend" : "") +
+                                        (dateStr === today ? " scrum-vacation-today" : "")
                                     }
                                 >
                                     {d}
@@ -475,7 +518,8 @@ function MonthView({
                                         key={d}
                                         className={
                                             "scrum-vacation-day-cell" +
-                                            (weekend ? " scrum-vacation-weekend" : "")
+                                            (weekend ? " scrum-vacation-weekend" : "") +
+                                            (dateStr === today ? " scrum-vacation-today" : "")
                                         }
                                         style={
                                             showColor

@@ -177,7 +177,28 @@
 .scrum-vacation-limit-input {
     width: 3rem;
     padding: 0.1rem 0.25rem;
+    min-height: 0; /* zdejmuje stałą min-height form-control-sm, by input miał tę samą wysokość co span odczytu */
     text-align: center;
+}
+
+/* Stała szerokość etykiety miesiąca — strzałki ‹ › nie przeskakują między miesiącami. */
+.scrum-vacation-month-label {
+    width: 7rem;
+}
+
+/* Wartość limitu w trybie odczytu — ten sam gabaryt co input (form-control-sm),
+   dzięki czemu wiersz nie zmienia wysokości przy wejściu/wyjściu z edycji. */
+.scrum-vacation-limit-value {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 3rem;
+    padding: 0.1rem 0.25rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-align: center;
+    cursor: pointer;
 }
 
 /* Widok roczny — proporcjonalny timeline */
@@ -188,13 +209,15 @@
 
 .scrum-vacation-track {
     position: relative;
-    height: 1.4rem;
+    height: 100%;
+    min-height: 1.9rem;
     min-width: 40rem;
     width: 100%;
 }
 
 .scrum-vacation-track-header {
     height: 1.1rem;
+    min-height: 0;
 }
 
 .scrum-vacation-tick {
@@ -215,7 +238,8 @@
 
 .scrum-vacation-bar {
     position: absolute;
-    top: 0.2rem;
+    top: 50%;
+    transform: translateY(-50%);
     height: 1rem;
     min-width: 3px;
     cursor: pointer;
@@ -264,4 +288,47 @@
         transparent 4px
     );
     color: var(--bs-secondary, #6c757d);
+}
+
+/* Kolumna timeline: bez pionowych marginesów + trik height:1px, dzięki któremu
+   .scrum-vacation-track (height:100%) wypełnia pełną wysokość wiersza —
+   linia "dziś" jest wtedy ciągła (bez przerw między wierszami). */
+.scrum-vacation-timeline-cell {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: 1px;
+}
+
+/* Wskaźnik "dziś" — widok roczny: jedna ciągła pionowa linia.
+   Anchor = komórka (pełna wysokość wiersza), wyciek ±1px kryje obramowania. */
+.scrum-vacation-today-line {
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    width: 2px;
+    transform: translateX(-1px);
+    background: rgba(220, 53, 69, 0.55);
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Wskaźnik "dziś" — widok miesięczny: subtelna ramka kolumny dnia. */
+.scrum-vacation-day-cell.scrum-vacation-today {
+    box-shadow: inset 1px 0 0 rgba(220, 53, 69, 0.55),
+        inset -1px 0 0 rgba(220, 53, 69, 0.55);
+}
+
+/* Domknięcie ramki dołem na ostatnim wierszu. */
+.scrum-vacation-month tbody tr:last-child .scrum-vacation-day-cell.scrum-vacation-today {
+    box-shadow: inset 1px 0 0 rgba(220, 53, 69, 0.55),
+        inset -1px 0 0 rgba(220, 53, 69, 0.55),
+        inset 0 -1px 0 rgba(220, 53, 69, 0.55);
+}
+
+.scrum-vacation-day-head.scrum-vacation-today {
+    background-color: rgba(220, 53, 69, 0.08);
+    font-weight: 600;
+    box-shadow: inset 1px 0 0 rgba(220, 53, 69, 0.55),
+        inset -1px 0 0 rgba(220, 53, 69, 0.55),
+        inset 0 1px 0 rgba(220, 53, 69, 0.55);
 }
