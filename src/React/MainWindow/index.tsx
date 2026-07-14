@@ -49,6 +49,14 @@ import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
+
+/** Telefon/tablet (dotyk) lub zainstalowana aplikacja (standalone). */
+function isMobileOrAppView() {
+    return (
+        window.matchMedia("(pointer: coarse)").matches ||
+        window.matchMedia("(display-mode: standalone)").matches
+    );
+}
 //const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {
@@ -159,7 +167,8 @@ function AppRoutes() {
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
-            <GoodTipToast />
+            {/* Dobre rady zasłaniają za dużo ekranu na telefonie/w aplikacji - tylko desktop */}
+            {!isMobileOrAppView() && <GoodTipToast />}
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />

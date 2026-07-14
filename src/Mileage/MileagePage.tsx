@@ -22,6 +22,9 @@ type Vehicle = {
 
 const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy"];
 const GENERAL_CODE = "OGÓLNE";
+// Odczyt licznika ze zdjęcia (Google Vision). Wyłączone dopóki Vision API nie jest
+// aktywne - ustaw na true, żeby włączyć przycisk aparatu.
+const OCR_ENABLED = false;
 
 function today() {
     return new Date().toISOString().slice(0, 10);
@@ -374,25 +377,27 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                                     value={endReading}
                                     onChange={(e) => setEndReading(e.target.value)}
                                 />
-                                <Button
-                                    as="label"
-                                    variant="outline-primary"
-                                    className="text-nowrap mb-0"
-                                    disabled={scanning}
-                                >
-                                    {scanning ? <Spinner size="sm" /> : "📷"}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        capture="environment"
-                                        hidden
-                                        onChange={handleScan}
-                                    />
-                                </Button>
+                                {OCR_ENABLED && (
+                                    <Button
+                                        as="label"
+                                        variant="outline-primary"
+                                        className="text-nowrap mb-0"
+                                        disabled={scanning}
+                                    >
+                                        {scanning ? <Spinner size="sm" /> : "📷"}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="environment"
+                                            hidden
+                                            onChange={handleScan}
+                                        />
+                                    </Button>
+                                )}
                             </div>
                         </Col>
                     </Row>
-                    {candidates.length > 1 && (
+                    {OCR_ENABLED && candidates.length > 1 && (
                         <div className="mb-3">
                             <div className="text-muted small">Wybierz rozpoznaną wartość:</div>
                             <div className="d-flex flex-wrap gap-2 mt-1">
