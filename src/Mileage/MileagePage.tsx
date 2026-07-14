@@ -443,7 +443,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                                 />
                             </Col>
                             <Col xs={6}>
-                                <Form.Label>Stan licznika (tankowanie)</Form.Label>
+                                <Form.Label>Licznik - tankowanie</Form.Label>
                                 <Form.Control
                                     inputMode="numeric"
                                     value={fuelingReading}
