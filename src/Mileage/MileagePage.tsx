@@ -18,6 +18,7 @@ type Vehicle = {
     model: string;
     plate: string;
     currentReading: number | null;
+    sheetUrl?: string;
 };
 
 const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy"];
@@ -291,8 +292,23 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     return (
         <Container className="py-3" style={{ maxWidth: 640 }}>
             <h4 className="mb-3">
-                {vehicle.brand}
-                {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
+                {vehicle.sheetUrl ? (
+                    <a
+                        href={vehicle.sheetUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Otwórz arkusz kilometrówki"
+                        className="link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover"
+                    >
+                        {vehicle.brand}
+                        {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
+                    </a>
+                ) : (
+                    <>
+                        {vehicle.brand}
+                        {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
+                    </>
+                )}
             </h4>
 
             {success && <Alert variant="success">{success}</Alert>}

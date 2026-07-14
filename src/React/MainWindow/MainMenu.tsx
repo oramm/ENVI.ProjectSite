@@ -69,7 +69,10 @@ export default function MainMenu() {
                                         ZNWU
                                     </NavDropdown.Item>
                                     <NavDropdown.Item as={Link} to="/mileage" className={isActive("/mileage")}>
-                                        Kilometrówka
+                                        Kilometrówka{" "}
+                                        <Badge bg="info" text="light">
+                                            nowe
+                                        </Badge>
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             )}
