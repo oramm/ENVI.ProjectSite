@@ -21,6 +21,7 @@ const sectionIcons: Record<string, string> = {
     Zapłacona: "💸",
     "Do korekty": "✏️",
     Wycofana: "🚫",
+    Skorygowana: "🔧",
 };
 
 export default function InvoicesCard({ className }: { className: string }) {

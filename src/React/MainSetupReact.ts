@@ -89,6 +89,7 @@ export default class MainSetup {
         PAID: "Zapłacona",
         TO_CORRECT: "Do korekty",
         WITHDRAWN: "Wycofana",
+        CORRECTED: "Skorygowana",
     };
 
     static ProjectStatuses = {

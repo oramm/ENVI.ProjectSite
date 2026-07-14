@@ -208,6 +208,10 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
         case MainSetup.InvoiceStatuses.WITHDRAWN:
             variant = "dark";
             break;
+        case MainSetup.InvoiceStatuses.CORRECTED:
+            variant = "warning";
+            textMode = "dark";
+            break;
         default:
             variant = "secondary";
     }
