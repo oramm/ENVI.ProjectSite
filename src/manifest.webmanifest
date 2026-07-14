@@ -1,13 +1,13 @@
 {
-    "name": "ENVI Kilometrówka",
-    "short_name": "Kilometrówka",
-    "description": "Rejestr przebiegu pojazdów ENVI",
+    "name": "ENVI",
+    "short_name": "ENVI",
+    "description": "ENVI konsulting",
     "scope": "./",
     "start_url": "./#/mileage",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#ffffff",
-    "theme_color": "#0d6efd",
+    "theme_color": "#6cb33f",
     "icons": [
         {
             "src": "pwa/icon-192.png",

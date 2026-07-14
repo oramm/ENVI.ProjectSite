@@ -455,6 +455,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         <RegisteringEditorSelector
                             label="Kierujący pojazdem"
                             name="_driver"
+                            fetchRoute="mileage/drivers"
                             showValidationInfo={false}
                         />
                     </div>
