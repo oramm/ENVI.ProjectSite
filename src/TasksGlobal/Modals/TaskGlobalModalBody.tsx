@@ -93,7 +93,7 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
                 />
             </Form.Group>
             <Form.Group className="mt-2">
-                <Form.Label>Czas rzeczywisty [h] (PO / W / Ś / C / PT)</Form.Label>
+                <Form.Label>Czas rzeczywisty [h] (PO / WT / ŚR / CZ / PT)</Form.Label>
                 <div className="d-flex gap-2">
                     {(["hoursMon", "hoursTue", "hoursWed", "hoursThu", "hoursFri"] as const).map((field, i) => (
                         <Form.Control
@@ -101,7 +101,7 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
                             type="number"
                             min={0}
                             step={0.5}
-                            placeholder={["PO", "W", "Ś", "C", "PT"][i]}
+                            placeholder={["PO", "WT", "ŚR", "CZ", "PT"][i]}
                             {...register(field, { setValueAs: toNullableNumber })}
                         />
                     ))}

@@ -9,9 +9,9 @@ interface Props {
 
 const DAYS: { key: "hoursMon" | "hoursTue" | "hoursWed" | "hoursThu" | "hoursFri"; placeholder: string }[] = [
     { key: "hoursMon", placeholder: "PO" },
-    { key: "hoursTue", placeholder: "W" },
-    { key: "hoursWed", placeholder: "Ś" },
-    { key: "hoursThu", placeholder: "C" },
+    { key: "hoursTue", placeholder: "WT" },
+    { key: "hoursWed", placeholder: "ŚR" },
+    { key: "hoursThu", placeholder: "CZ" },
     { key: "hoursFri", placeholder: "PT" },
 ];
 
