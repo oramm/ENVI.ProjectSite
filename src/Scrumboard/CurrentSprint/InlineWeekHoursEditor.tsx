@@ -93,7 +93,7 @@ export default function InlineWeekHoursEditor({ task, onSaved }: Props) {
                         ref={idx === todayIdx ? focusInputRef : undefined}
                         type="number"
                         min={0}
-                        step={0.5}
+                        step={0.25}
                         tabIndex={editing ? 0 : -1}
                         placeholder={d.placeholder}
                         className="form-control form-control-sm scrum-day-input"

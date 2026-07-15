@@ -88,7 +88,7 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
                 <Form.Control
                     type="number"
                     min={0}
-                    step={0.5}
+                    step={0.25}
                     {...register("estimatedHours", { setValueAs: toNullableNumber })}
                 />
             </Form.Group>
@@ -100,7 +100,7 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
                             key={field}
                             type="number"
                             min={0}
-                            step={0.5}
+                            step={0.25}
                             placeholder={["PO", "WT", "ŚR", "CZ", "PT"][i]}
                             {...register(field, { setValueAs: toNullableNumber })}
                         />

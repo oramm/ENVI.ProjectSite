@@ -49,7 +49,7 @@ export default function InlineEstimateInput({ task, onSaved }: Props) {
         <input
             type="number"
             min={0}
-            step={0.5}
+            step={0.25}
             autoFocus
             className="form-control form-control-sm scrum-inline-input"
             value={value}
