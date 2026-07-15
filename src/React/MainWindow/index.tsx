@@ -257,6 +257,10 @@ function matchesPublicProfileSubmissionRoute(hash: string): boolean {
 
 export async function renderApp() {
     installClientErrorReporter();
+    
+    if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+    }
 
     const root = document.getElementById("root");
 

@@ -21,7 +21,7 @@ type Vehicle = {
     sheetUrl?: string;
 };
 
-const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy"];
+const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy", "zakupy"];
 const GENERAL_CODE = "OGÓLNE";
 // Odczyt licznika ze zdjęcia (Google Vision). Wyłączone dopóki Vision API nie jest
 // aktywne - ustaw na true, żeby włączyć przycisk aparatu.
@@ -134,7 +134,6 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const { watch, setValue } = formMethods;
 
     const [date, setDate] = useState(today());
-    const [isGeneral, setIsGeneral] = useState(false);
     const [purposes, setPurposes] = useState<string[]>([]);
     const [routeFrom, setRouteFrom] = useState("Brzeg");
     const [routeMid, setRouteMid] = useState("");
@@ -162,15 +161,38 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const driver = driverPerson ? `${driverPerson.name} ${driverPerson.surname}` : "";
     const isFueling = purposes.includes("tankowanie");
 
+    // Telefon/tablet lub zainstalowana aplikacja.
+    const isTouchOrApp = useMemo(
+        () =>
+            window.matchMedia("(pointer: coarse)").matches ||
+            window.matchMedia("(display-mode: standalone)").matches,
+        []
+    );
+    // Przełącznik "Pełny formularz" (tylko mobile) pozwala wymusić widok jak na desktopie.
+    const [showFullForm, setShowFullForm] = useState(false);
+    // Uproszczony widok: kontrakt, trasa (skąd/dokąd), stan początkowy, data, kierowca
+    // i pola tankowania ukryte - wysyłane są wartości domyślne (pusty kontrakt,
+    // Brzeg-...-Brzeg, poprzedni licznik, dziś, zalogowany użytkownik jako kierowca).
+    const simplified = isTouchOrApp && !showFullForm;
+
+    // Switch "Pełny formularz" pokazuje się z napisem, po 5s zwija się do samego
+    // suwaka (napis "zjadany" przez zwijający się kontener).
+    const [switchCollapsed, setSwitchCollapsed] = useState(false);
+    useEffect(() => {
+        if (!isTouchOrApp) return;
+        const t = setTimeout(() => setSwitchCollapsed(true), 5000);
+        return () => clearTimeout(t);
+    }, [isTouchOrApp]);
+
     // Podpowiedź trasy (3 pola, edytowalne). Backend złoży je w "skąd - przez - dokąd".
     // "przez": miasto kontraktu ma pierwszeństwo (nawet przy tankowaniu); w przeciwnym
     // razie "Brzeg" dla tankowania, a puste dla reszty (backend zwinie do "Brzeg").
     useEffect(() => {
         setRouteFrom("Brzeg");
         setRouteTo("Brzeg");
-        const city = isGeneral ? undefined : selectedContract?._city?.name;
+        const city = selectedContract?._city?.name;
         setRouteMid(city ?? (isFueling ? "Brzeg" : ""));
-    }, [selectedContract, isGeneral, isFueling]);
+    }, [selectedContract, isFueling]);
 
     // Domyślne dane tankowania: stan = końcowy, data = data wyjazdu - dopóki
     // użytkownik ręcznie nie zmieni pola. Po odznaczeniu tankowania - reset.
@@ -183,10 +205,6 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             setFuelingDateTouched(false);
         }
     }, [isFueling, endReading, date, fuelingReadingTouched, fuelingDateTouched]);
-
-    useEffect(() => {
-        if (isGeneral) setValue("_contract", null);
-    }, [isGeneral, setValue]);
 
     const km = useMemo(() => {
         const s = Number(startReading);
@@ -233,12 +251,13 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     }
 
     function validate(): string | null {
-        if (!driver.trim()) return "Wybierz kierującego pojazdem.";
-        if (!isGeneral && !selectedContract) return "Wybierz kontrakt lub zaznacz OGÓLNE.";
-        if (!date) return "Podaj datę wyjazdu.";
-        if (!purposeText()) return "Wybierz cel wyjazdu.";
-        if (!startReading || !endReading) return "Podaj stan licznika początkowy i końcowy.";
+        if (!endReading) return "Podaj stan licznika końcowy.";
+        if (!startReading) return "Brak stanu początkowego (poprzedni odczyt).";
         if (km != null && km < 0) return "Stan końcowy nie może być mniejszy od początkowego.";
+        // Kierowca wymagany tylko w pełnym formularzu (na mobile fallback backendu).
+        // Kontrakt jest opcjonalny - puste pole = OGÓLNE.
+        if (!simplified && !driver.trim())
+            return "Wybierz kierującego pojazdem.";
         return null;
     }
 
@@ -260,7 +279,10 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     vehicleId: vehicle.id,
                     date,
                     driver,
-                    projectOurId: isGeneral ? GENERAL_CODE : selectedContract?.ourId,
+                    // Uproszczony (mobile): puste. Pełny: kontrakt lub OGÓLNE gdy pusty.
+                    projectOurId: simplified
+                        ? ""
+                        : selectedContract?.ourId || GENERAL_CODE,
                     purpose: purposeText(),
                     routeParts: [routeFrom, routeMid, routeTo],
                     startReading: Number(startReading),
@@ -281,7 +303,6 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             setFuelingReadingTouched(false);
             setFuelingDateTouched(false);
             setValue("_contract", null);
-            setIsGeneral(false);
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
@@ -315,24 +336,38 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
 
             <FormProvider value={formMethods}>
                 <Form>
-                    <Form.Group className="mb-2">
-                        <Form.Check
-                            type="checkbox"
-                            id="mileage-general"
-                            label="OGÓLNE (bez kontraktu)"
-                            checked={isGeneral}
-                            onChange={(e) => setIsGeneral(e.target.checked)}
-                        />
-                    </Form.Group>
-                    {!isGeneral && (
-                        <div className="mb-3">
-                            <Form.Label>Kontrakt ENVI</Form.Label>
-                            <ContractSelector name="_contract" typesToInclude="our" showValidationInfo={false} />
-                        </div>
-                    )}
-
                     <Form.Group className="mb-3">
-                        <Form.Label>Cel wyjazdu</Form.Label>
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                            <Form.Label className="mb-0">Cel wyjazdu</Form.Label>
+                            {isTouchOrApp && (
+                                <div
+                                    title="Pełny formularz"
+                                    className="d-flex align-items-center"
+                                    style={{ gap: "0.5rem" }}
+                                >
+                                    <span
+                                        className="small text-muted"
+                                        style={{
+                                            overflow: "hidden",
+                                            whiteSpace: "nowrap",
+                                            maxWidth: switchCollapsed ? 0 : "10rem",
+                                            opacity: switchCollapsed ? 0 : 1,
+                                            transition:
+                                                "max-width 0.7s ease, opacity 0.7s ease",
+                                        }}
+                                    >
+                                        Pełny formularz
+                                    </span>
+                                    <Form.Check
+                                        type="switch"
+                                        id="mileage-full-form"
+                                        className="mb-0"
+                                        checked={showFullForm}
+                                        onChange={(e) => setShowFullForm(e.target.checked)}
+                                    />
+                                </div>
+                            )}
+                        </div>
                         <Typeahead
                             id="mileage-purpose"
                             multiple
@@ -349,43 +384,66 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         />
                     </Form.Group>
 
+                    {!simplified && (
+                        <div className="mb-3">
+                            <Form.Label>
+                                Kontrakt ENVI{" "}
+                                <span className="text-muted small">(puste = OGÓLNE)</span>
+                            </Form.Label>
+                            <ContractSelector name="_contract" typesToInclude="our" showValidationInfo={false} />
+                        </div>
+                    )}
+
                     <Form.Group className="mb-3">
-                        <Form.Label>Opis trasy (skąd - przez - dokąd)</Form.Label>
-                        <Row className="g-2">
-                            <Col xs={4}>
-                                <Form.Control
-                                    value={routeFrom}
-                                    onChange={(e) => setRouteFrom(e.target.value)}
-                                    placeholder="skąd"
-                                />
-                            </Col>
-                            <Col xs={4}>
-                                <Form.Control
-                                    value={routeMid}
-                                    onChange={(e) => setRouteMid(e.target.value)}
-                                    placeholder="przez"
-                                />
-                            </Col>
-                            <Col xs={4}>
-                                <Form.Control
-                                    value={routeTo}
-                                    onChange={(e) => setRouteTo(e.target.value)}
-                                    placeholder="dokąd"
-                                />
-                            </Col>
-                        </Row>
+                        <Form.Label>
+                            Opis trasy{simplified ? "" : " (skąd - przez - dokąd)"}
+                        </Form.Label>
+                        {simplified ? (
+                            // Backend złoży "Brzeg - {to pole} - Brzeg"
+                            <Form.Control
+                                value={routeMid}
+                                onChange={(e) => setRouteMid(e.target.value)}
+                                placeholder="Dokąd"
+                            />
+                        ) : (
+                            <Row className="g-2">
+                                <Col xs={4}>
+                                    <Form.Control
+                                        value={routeFrom}
+                                        onChange={(e) => setRouteFrom(e.target.value)}
+                                        placeholder="skąd"
+                                    />
+                                </Col>
+                                <Col xs={4}>
+                                    <Form.Control
+                                        value={routeMid}
+                                        onChange={(e) => setRouteMid(e.target.value)}
+                                        placeholder="przez"
+                                    />
+                                </Col>
+                                <Col xs={4}>
+                                    <Form.Control
+                                        value={routeTo}
+                                        onChange={(e) => setRouteTo(e.target.value)}
+                                        placeholder="dokąd"
+                                    />
+                                </Col>
+                            </Row>
+                        )}
                     </Form.Group>
 
                     <Row className="g-2 mb-3">
-                        <Col xs={6}>
-                            <Form.Label>Stan licznika początkowy</Form.Label>
-                            <Form.Control
-                                inputMode="numeric"
-                                value={startReading}
-                                onChange={(e) => setStartReading(e.target.value)}
-                            />
-                        </Col>
-                        <Col xs={6}>
+                        {!simplified && (
+                            <Col xs={6}>
+                                <Form.Label>Stan licznika początkowy</Form.Label>
+                                <Form.Control
+                                    inputMode="numeric"
+                                    value={startReading}
+                                    onChange={(e) => setStartReading(e.target.value)}
+                                />
+                            </Col>
+                        )}
+                        <Col xs={simplified ? 12 : 6}>
                             <Form.Label>Stan licznika końcowy</Form.Label>
                             <div className="d-flex gap-2">
                                 <Form.Control
@@ -434,18 +492,20 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         </div>
                     )}
 
-                    <Row className="g-2 mb-3">
-                        <Col xs={6}>
-                            <Form.Label>Data wyjazdu</Form.Label>
-                            <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                        </Col>
-                        <Col xs={6}>
-                            <Form.Label>Ilość km</Form.Label>
-                            <Form.Control value={km ?? ""} readOnly disabled />
-                        </Col>
-                    </Row>
+                    {!simplified && (
+                        <Row className="g-2 mb-3">
+                            <Col xs={6}>
+                                <Form.Label>Data wyjazdu</Form.Label>
+                                <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Label>Ilość km</Form.Label>
+                                <Form.Control value={km ?? ""} readOnly disabled />
+                            </Col>
+                        </Row>
+                    )}
 
-                    {isFueling && (
+                    {!simplified && isFueling && (
                         <Row className="g-2 mb-3">
                             <Col xs={6}>
                                 <Form.Label>Data tankowania</Form.Label>
@@ -472,14 +532,16 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         </Row>
                     )}
 
-                    <div className="mb-3">
-                        <RegisteringEditorSelector
-                            label="Kierujący pojazdem"
-                            name="_driver"
-                            fetchRoute="mileage/drivers"
-                            showValidationInfo={false}
-                        />
-                    </div>
+                    {!simplified && (
+                        <div className="mb-3">
+                            <RegisteringEditorSelector
+                                label="Kierujący pojazdem"
+                                name="_driver"
+                                fetchRoute="mileage/drivers"
+                                showValidationInfo={false}
+                            />
+                        </div>
+                    )}
 
                     {error && <Alert variant="danger">{error}</Alert>}
 
