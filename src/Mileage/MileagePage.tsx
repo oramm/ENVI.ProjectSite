@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FormProvider } from "../View/Modals/FormContext";
@@ -23,13 +25,23 @@ type Vehicle = {
 
 const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy", "zakupy"];
 const GENERAL_CODE = "OGÓLNE";
-// Odczyt licznika ze zdjęcia (Google Vision). Wyłączone dopóki Vision API nie jest
-// aktywne - ustaw na true, żeby włączyć przycisk aparatu.
-const OCR_ENABLED = false;
 
 function today() {
     return new Date().toISOString().slice(0, 10);
 }
+
+// Rozpoznawanie mowy (Web Speech API) - kierowca dyktuje cyfry. Mapujemy słowa-cyfry
+// na cyfry i wyrzucamy resztę; obsługuje też przypadek gdy Chrome zwróci już cyfry.
+const WORD_DIGIT: Record<string, string> = {
+    zero: "0", jeden: "1", jedna: "1", dwa: "2", dwie: "2", trzy: "3",
+    cztery: "4", pięć: "5", sześć: "6", siedem: "7", osiem: "8", dziewięć: "9",
+};
+const spokenToDigits = (t: string) =>
+    t.toLowerCase().split(/\s+/).map((w) => WORD_DIGIT[w] ?? w).join(" ").replace(/\D/g, "");
+
+const SpeechRecognitionCtor: any =
+    typeof window !== "undefined" &&
+    ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
 
 export default function MileagePage() {
     // Wybór pojazdu jako trasa (#/mileage/:vehicleId) - dzięki temu systemowy
@@ -150,8 +162,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const [fuelingReadingTouched, setFuelingReadingTouched] = useState(false);
     const [fuelingDateTouched, setFuelingDateTouched] = useState(false);
 
-    const [scanning, setScanning] = useState(false);
-    const [candidates, setCandidates] = useState<number[]>([]);
+    const [listening, setListening] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -217,36 +228,36 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         return purposes.join(", ");
     }
 
-    async function handleScan(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0];
-        e.target.value = ""; // pozwól wybrać to samo zdjęcie ponownie
-        if (!file) return;
+    // Kierowca dyktuje stan licznika (cyfry) - transkrypt zamieniamy na cyfry.
+    function startVoiceReading() {
+        if (!SpeechRecognitionCtor) {
+            setError("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
+            return;
+        }
         setError("");
-        setCandidates([]);
-        setScanning(true);
+        const rec = new SpeechRecognitionCtor();
+        rec.lang = "pl-PL";
+        rec.interimResults = false;
+        rec.maxAlternatives = 1;
+        rec.onresult = (e: any) => {
+            const text: string = e.results[0][0].transcript;
+            const digits = spokenToDigits(text);
+            if (digits) setEndReading(digits);
+            else setError(`Nie rozpoznano liczby (usłyszano: "${text}").`);
+        };
+        rec.onerror = (e: any) => {
+            setListening(false);
+            setError(`Błąd mikrofonu: ${e?.error ?? "nieznany"}`);
+        };
+        rec.onend = () => setListening(false);
         try {
-            const body = new FormData();
-            body.append("file", file);
-            body.append("vehicleId", vehicle.id);
-            if (startReading) body.append("previousEndReading", startReading);
-            const res = await fetch(`${MainSetup.serverUrl}mileage/scan-odometer`, {
-                method: "POST",
-                credentials: "include",
-                body,
-            });
-            if (!res.ok) throw new Error("Nie udało się odczytać licznika.");
-            const { candidates } = await res.json();
-            if (!candidates?.length) {
-                setError("Nie rozpoznano stanu licznika na zdjęciu — wpisz ręcznie.");
-            } else if (candidates.length === 1) {
-                setEndReading(String(candidates[0]));
-            } else {
-                setCandidates(candidates);
-            }
+            setListening(true);
+            rec.start();
         } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
-        } finally {
-            setScanning(false);
+            setListening(false);
+            setError(
+                "Nie udało się uruchomić mikrofonu - wymaga HTTPS/localhost i zgody."
+            );
         }
     }
 
@@ -451,46 +462,24 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                                     value={endReading}
                                     onChange={(e) => setEndReading(e.target.value)}
                                 />
-                                {OCR_ENABLED && (
+                                {SpeechRecognitionCtor && (
                                     <Button
-                                        as="label"
-                                        variant="outline-primary"
-                                        className="text-nowrap mb-0"
-                                        disabled={scanning}
+                                        variant={listening ? "primary" : "outline-primary"}
+                                        className="text-nowrap"
+                                        onClick={startVoiceReading}
+                                        disabled={listening}
+                                        title="Podyktuj cyfry stanu licznika"
                                     >
-                                        {scanning ? <Spinner size="sm" /> : "📷"}
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            capture="environment"
-                                            hidden
-                                            onChange={handleScan}
-                                        />
+                                        {listening ? (
+                                            <Spinner size="sm" />
+                                        ) : (
+                                            <FontAwesomeIcon icon={faMicrophone} />
+                                        )}
                                     </Button>
                                 )}
                             </div>
                         </Col>
                     </Row>
-                    {OCR_ENABLED && candidates.length > 1 && (
-                        <div className="mb-3">
-                            <div className="text-muted small">Wybierz rozpoznaną wartość:</div>
-                            <div className="d-flex flex-wrap gap-2 mt-1">
-                                {candidates.map((c) => (
-                                    <Button
-                                        key={c}
-                                        size="sm"
-                                        variant="outline-secondary"
-                                        onClick={() => {
-                                            setEndReading(String(c));
-                                            setCandidates([]);
-                                        }}
-                                    >
-                                        {c}
-                                    </Button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
 
                     {!simplified && (
                         <Row className="g-2 mb-3">
