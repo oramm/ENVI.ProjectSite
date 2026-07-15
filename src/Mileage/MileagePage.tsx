@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
@@ -163,6 +163,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const [fuelingDateTouched, setFuelingDateTouched] = useState(false);
 
     const [listening, setListening] = useState(false);
+    const recognitionRef = useRef<any>(null);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -228,6 +229,11 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         return purposes.join(", ");
     }
 
+    // Zwolnij mikrofon przy opuszczeniu formularza (gdyby sesja jeszcze trwała).
+    useEffect(() => {
+        return () => recognitionRef.current?.abort();
+    }, []);
+
     // Kierowca dyktuje stan licznika (cyfry) - transkrypt zamieniamy na cyfry.
     function startVoiceReading() {
         if (!SpeechRecognitionCtor) {
@@ -236,6 +242,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         }
         setError("");
         const rec = new SpeechRecognitionCtor();
+        recognitionRef.current = rec;
         rec.lang = "pl-PL";
         rec.interimResults = false;
         rec.maxAlternatives = 1;
@@ -244,10 +251,13 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             const digits = spokenToDigits(text);
             if (digits) setEndReading(digits);
             else setError(`Nie rozpoznano liczby (usłyszano: "${text}").`);
+            rec.stop(); // zwolnij mikrofon od razu (iOS Safari nie robi tego sam)
         };
         rec.onerror = (e: any) => {
             setListening(false);
-            setError(`Błąd mikrofonu: ${e?.error ?? "nieznany"}`);
+            // 'aborted' = celowe przerwanie (stop/abort), nie pokazuj jako błąd.
+            if (e?.error && e.error !== "aborted")
+                setError(`Błąd mikrofonu: ${e.error}`);
         };
         rec.onend = () => setListening(false);
         try {
