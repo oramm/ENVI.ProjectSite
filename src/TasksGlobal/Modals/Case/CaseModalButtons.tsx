@@ -143,7 +143,10 @@ export function buildContractHeaderBadge(contract?: OurContract | OtherContract)
 }
 
 function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
-    if (!contract) return "";
+    if (!contract || typeof contract !== "object") {
+        if (contract) console.warn("buildContractFirstLineLabel: oczekiwano obiektu kontraktu, otrzymano:", contract);
+        return "";
+    }
 
     // Pola obliczeniowe serwera — dostępne na pełnych obiektach, obsługują oba typy kontraktów
     const computed = (contract as any)._ourIdOrNumber_Alias || (contract as any)._ourIdOrNumber_Name;
