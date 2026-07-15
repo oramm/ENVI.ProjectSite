@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
+import { GeneralModal } from "../../../View/Modals/GeneralModal";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { ProjectSelectorModalBody } from "./LetterModalBody";
 import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from "./LetterValidationSchema";
@@ -8,7 +9,9 @@ import { OurLetterModalBody } from "./OurLetterModalBody";
 import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
 import { lettersRepository } from "../LettersController";
 import { Button, Spinner } from "react-bootstrap";
-import { SuccessToast } from "../../../View/Resultsets/CommonComponents";
+import { ReplyIconButton, SuccessToast } from "../../../View/Resultsets/CommonComponents";
+import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTable/FilterableTableContext";
+import { RowActionMenuItemProps } from "../../../View/Resultsets/FilterableTable/FilterableTableTypes";
 
 /** przycisk i modal edycji Letter */
 export function LetterEditModalButton({
@@ -108,6 +111,62 @@ export function IncomingLetterAddNewModalButton({
                 buttonCaption: "Rejestruj przychodzące",
             }}
         />
+    );
+}
+
+/** ikona "Odpowiedz" (jak w kliencie pocztowym) w menu akcji wiersza — tylko dla pism przychodzących.
+ * Otwiera modal rejestracji pisma wychodzącego z polami wypełnionymi na podstawie pisma,
+ * na które odpowiadamy: projekt, sprawy (→ kontrakt), nadawca jako odbiorca oraz
+ * relatedLetterNumber (powiązanie z pismem, na które odpowiadamy). */
+export function RespondToIncomingLetterButton({
+    dataObject,
+    layout,
+}: RowActionMenuItemProps<OurLetterContract | IncomingLetterContract>) {
+    const { handleAddObject } = useFilterableTableContext<OurLetterContract | IncomingLetterContract>();
+    const [showForm, setShowForm] = useState(false);
+
+    // stabilna referencja: useEffect-y w LetterModalBody/OurLetterModalBody robią reset(initialData),
+    // więc nowy obiekt przy każdym renderze czyściłby formularz w trakcie wypełniania
+    const replyInitialData = React.useMemo(
+        () =>
+            ({
+                _project: dataObject._project,
+                _cases: dataObject._cases,
+                _entitiesMain: dataObject._entitiesMain,
+                description: dataObject.description
+                    ? `Odpowiedź na: ${dataObject.description}`.slice(0, 300)
+                    : "",
+                relatedLetterNumber: dataObject.number ? String(dataObject.number) : "",
+                isOur: true,
+            } as Partial<OurLetterContract> as OurLetterContract),
+        [dataObject]
+    );
+
+    // bez _cases nie da się wywieść kontraktu (ContractSelector readOnly w trybie add) — formularz byłby nie do zapisania
+    if (dataObject.isOur || !dataObject._cases?.length) return null;
+    const letter = dataObject as IncomingLetterContract;
+
+    return (
+        <>
+            <ReplyIconButton layout={layout} onClick={() => setShowForm(true)} />
+            <GeneralModal<OurLetterContract | IncomingLetterContract>
+                show={showForm}
+                onClose={() => setShowForm(false)}
+                isEditing={false}
+                title={`Odpowiedź na pismo ${letter.number ?? ""}`}
+                subtitle={letter.description ? `Dotyczy: ${letter.description}` : undefined}
+                repository={lettersRepository}
+                onAddNew={handleAddObject}
+                ModalBodyComponent={OurLetterModalBody}
+                makeValidationSchema={ourLetterValidationSchema}
+                modalBodyProps={{
+                    isEditing: false,
+                    initialData: replyInitialData,
+                }}
+                // host modala pisma musi puścić focus do panelu "Nowa sprawa" (InlineCreateDrawer)
+                enforceFocus={false}
+            />
+        </>
     );
 }
 

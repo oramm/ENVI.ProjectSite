@@ -18,6 +18,7 @@ import {
     IncomingLetterAddNewModalButton,
     LetterEditModalButton,
     OurLetterAddNewModalButton,
+    RespondToIncomingLetterButton,
 } from "./Modals/LetterModalButtons";
 
 export default function LettersSearch({ title }: { title: string }) {
@@ -171,6 +172,7 @@ export default function LettersSearch({ title }: { title: string }) {
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}
+            RowActionMenuComponents={[RespondToIncomingLetterButton]}
             isDeletable={true}
             repository={lettersRepository}
             selectedObjectRoute={"/letter/"}

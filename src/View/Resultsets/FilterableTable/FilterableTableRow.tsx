@@ -10,7 +10,7 @@ import {
 } from "../../Modals/ModalsTypes";
 import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton, CopyIconButton } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
-import { RowStructure } from "./FilterableTableTypes";
+import { RowActionMenuItemProps, RowStructure } from "./FilterableTableTypes";
 import { Col, Row } from "react-bootstrap";
 import { getColSize } from "./ResultSetTable";
 import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
@@ -36,6 +36,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         handleCopyObject,
         handleDeleteObject,
         EditButtonComponent,
+        RowActionMenuComponents,
         isDeletable,
         isCopyable,
         repository,
@@ -90,6 +91,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                             handleEditObject={handleEditObject}
                             handleCopyObject={handleCopyObject}
                             EditButtonComponent={EditButtonComponent}
+                            rowActionMenuComponents={RowActionMenuComponents}
                             handleDeleteObject={handleDeleteObject}
                             isDeletable={isDeletable}
                             isCopyable={isCopyable}
@@ -109,6 +111,8 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     handleEditObject?: (object: DataItemType) => void;
     handleCopyObject?: (object: DataItemType) => void;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
+    /** dodatkowe akcje wiersza (ikony) — np. "Odpowiedz" na liście pism */
+    rowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<DataItemType>>[];
     handleDeleteObject?: (objectId: number) => void;
     isDeletable: boolean | ((item: DataItemType) => boolean);
     isCopyable?: boolean;
@@ -123,6 +127,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     handleEditObject,
     handleCopyObject,
     EditButtonComponent,
+    rowActionMenuComponents = [],
     handleDeleteObject,
     isDeletable,
     isCopyable = false,
@@ -164,6 +169,9 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                     buttonProps={{ layout }}
                 />
             )}{" "}
+            {rowActionMenuComponents.map((RowActionComponent, index) => (
+                <RowActionComponent key={index} dataObject={dataObject} layout={layout} />
+            ))}
             {isCopyable && handleCopyObject && (
                 <CopyModalButton
                     modalProps={{

@@ -1244,6 +1244,24 @@ export function OurLetterTemplateSelector({
         return filteredTemplates;
     }
 
+    const options = makeoptions(repository.items);
+    const selectedTemplate = watch(name) as DocumentTemplate | undefined;
+    // klucz zamiast referencji: makeoptions tworzy nową tablicę co render, options w deps zapętliłoby efekt
+    const optionsKey = options.map((option) => option.id).join(",");
+
+    useEffect(() => {
+        const selectedIsAvailable = selectedTemplate && options.some((option) => option.id === selectedTemplate.id);
+        if (selectedTemplate && !selectedIsAvailable) {
+            // wybór nieaktualny po zmianie spraw — wyczyść; kolejny przebieg efektu ustawi jedyną opcję
+            setValue(name, undefined, { shouldValidate: true });
+            return;
+        }
+        // gdy dostępny jest dokładnie jeden szablon, ustaw go automatycznie
+        if (!selectedTemplate && options.length === 1) {
+            setValue(name, options[0], { shouldValidate: true });
+        }
+    }, [selectedTemplate, optionsKey, setValue]);
+
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
         const valueToBeSent = selectedOptions[0];
         setValue(name, valueToBeSent);
@@ -1262,7 +1280,7 @@ export function OurLetterTemplateSelector({
                             id={`${label}-controlled`}
                             labelKey="name"
                             multiple={false}
-                            options={makeoptions(repository.items)}
+                            options={options}
                             onChange={(items) => handleOnChange(items, field)}
                             selected={field.value ? [field.value] : []}
                             placeholder="-- Wybierz szablon --"

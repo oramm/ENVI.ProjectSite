@@ -44,7 +44,11 @@ export function LetterModalBody({
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
-    const _project = isEditing ? undefined : (watch("_project") as ProjectData | undefined);
+    // fallback do initialData._project: przy odpowiedzi na pismo projekt jest znany z góry
+    // (modal otwiera się bez ProjectSelectorModalBody, więc watch("_project") jest puste)
+    const _project = isEditing
+        ? undefined
+        : (watch("_project") as ProjectData | undefined) ?? initialData?._project;
 
     // Panel inline-tworzenia Sprawy (Offcanvas) + token wymuszający odświeżenie opcji
     // selektora ze źródła prawdy (casesRepository.items) po utworzeniu/edycji sprawy.

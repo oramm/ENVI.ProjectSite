@@ -28,6 +28,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     tableStructure,
     AddNewButtonComponents = [],
     EditButtonComponent,
+    RowActionMenuComponents,
     isDeletable = true,
     isCopyable = false,
     FilterBodyComponent,
@@ -290,6 +291,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             handleDeleteSection={handleDeleteSection}
             selectedObjectRoute={selectedObjectRoute}
             EditButtonComponent={EditButtonComponent}
+            RowActionMenuComponents={RowActionMenuComponents}
             isDeletable={isDeletable}
             isCopyable={isCopyable}
             externalUpdate={externalUpdate}

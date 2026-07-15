@@ -7,6 +7,12 @@ import * as yup from "yup";
 
 export type SnapshotMode = "criteria+objects" | "criteria-only";
 
+/** props komponentu akcji wiersza renderowanego w RowActionMenu (obok ikony edycji) */
+export type RowActionMenuItemProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    dataObject: DataItemType;
+    layout: "vertical" | "horizontal";
+};
+
 export type SectionsFilterHandlers<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     onSubmitSections: (criteria: FieldValues) => Promise<SectionNode<DataItemType>[]>;
     onResetSections: () => SectionNode<DataItemType>[];
@@ -21,6 +27,8 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     repository: RepositoryReact<DataItemType>;
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
+    /** dodatkowe akcje wiersza (ikony) renderowane w RowActionMenu — np. "Odpowiedz" na liście pism */
+    RowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<DataItemType>>[];
     isDeletable?: boolean | ((item: DataItemType) => boolean);
     isCopyable?: boolean;
     FilterBodyComponent?: React.ComponentType<FilterBodyProps>;

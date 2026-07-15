@@ -2,7 +2,7 @@ import React, { createContext } from "react";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
-import { RowStructure } from "./FilterableTableTypes";
+import { RowActionMenuItemProps, RowStructure } from "./FilterableTableTypes";
 import { SectionsFilterHandlers, SnapshotMode } from "./FilterableTableTypes";
 import { SectionNode } from "./Section";
 
@@ -29,6 +29,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     /** Zbiór ID sekcji na ścieżce od korzenia do aktywnej (dla podświetlenia tła) */
     activePathSet: Set<string>;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
+    RowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<DataItemType>>[];
     isDeletable: boolean | ((item: DataItemType) => boolean);
     isCopyable: boolean;
     externalUpdate: number;
@@ -61,6 +62,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     editingSectionId: "",
     activePathSet: new Set<string>(),
     EditButtonComponent: undefined,
+    RowActionMenuComponents: undefined,
     isDeletable: true,
     isCopyable: false,
     externalUpdate: 0,
@@ -93,6 +95,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     editingSectionId,
     activePathSet,
     EditButtonComponent,
+    RowActionMenuComponents,
     isDeletable = true,
     isCopyable = false,
     externalUpdate,
@@ -130,6 +133,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 editingSectionId,
                 activePathSet,
                 EditButtonComponent,
+                RowActionMenuComponents,
                 isDeletable,
                 isCopyable,
                 externalUpdate,

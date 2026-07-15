@@ -12,6 +12,7 @@ import {
     faBars,
     IconDefinition,
     faPencil,
+    faReply,
     faTrash,
     faEllipsisV,
     faEllipsisH,
@@ -165,6 +166,10 @@ export function DeleteIconButton({ layout, onClick }: SpecificIconButtonProps) {
 
 export function CopyIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faCopy} layout={layout} onClick={onClick} className="text-info" />;
+}
+
+export function ReplyIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faReply} layout={layout} onClick={onClick} className="text-success" />;
 }
 
 export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {
