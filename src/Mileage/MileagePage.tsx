@@ -331,79 +331,84 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         }
     }
 
+    const vehicleDisplayName = (
+        <>
+            {vehicle.brand}
+            {vehicle.model ? ` ${vehicle.model}` : ""}
+            {!isTouchOrApp && ` · ${vehicle.plate}`}
+        </>
+    );
+
     return (
         <Container className="py-3" style={{ maxWidth: 640 }}>
-            <h4 className="mb-3">
-                {vehicle.sheetUrl ? (
-                    <a
-                        href={vehicle.sheetUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Otwórz arkusz kilometrówki"
-                        className="link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover"
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4 className="mb-0 text-truncate" style={{ maxWidth: "70%" }}>
+                    {vehicle.sheetUrl ? (
+                        <a
+                            href={vehicle.sheetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Otwórz arkusz kilometrówki"
+                            className="link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover text-truncate d-inline-block"
+                        >
+                            {vehicleDisplayName}
+                        </a>
+                    ) : (
+                        vehicleDisplayName
+                    )}
+                </h4>
+                {isTouchOrApp && (
+                    <div
+                        title="Pełny formularz"
+                        className="d-flex align-items-center"
+                        style={{ gap: "0.5rem" }}
                     >
-                        {vehicle.brand}
-                        {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
-                    </a>
-                ) : (
-                    <>
-                        {vehicle.brand}
-                        {vehicle.model ? ` ${vehicle.model}` : ""} · {vehicle.plate}
-                    </>
+                        <span
+                            className="small text-muted"
+                            style={{
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                maxWidth: switchCollapsed ? 0 : "10rem",
+                                opacity: switchCollapsed ? 0 : 1,
+                                transition: "max-width 0.7s ease, opacity 0.7s ease",
+                            }}
+                        >
+                            Pełny formularz
+                        </span>
+                        <Form.Check
+                            type="switch"
+                            id="mileage-full-form"
+                            className="mb-0"
+                            checked={showFullForm}
+                            onChange={(e) => setShowFullForm(e.target.checked)}
+                        />
+                    </div>
                 )}
-            </h4>
+            </div>
 
             {success && <Alert variant="success">{success}</Alert>}
 
             <FormProvider value={formMethods}>
                 <Form>
-                    <Form.Group className="mb-3">
-                        <div className="d-flex justify-content-between align-items-center mb-1">
-                            <Form.Label className="mb-0">Cel wyjazdu</Form.Label>
-                            {isTouchOrApp && (
-                                <div
-                                    title="Pełny formularz"
-                                    className="d-flex align-items-center"
-                                    style={{ gap: "0.5rem" }}
-                                >
-                                    <span
-                                        className="small text-muted"
-                                        style={{
-                                            overflow: "hidden",
-                                            whiteSpace: "nowrap",
-                                            maxWidth: switchCollapsed ? 0 : "10rem",
-                                            opacity: switchCollapsed ? 0 : 1,
-                                            transition:
-                                                "max-width 0.7s ease, opacity 0.7s ease",
-                                        }}
-                                    >
-                                        Pełny formularz
-                                    </span>
-                                    <Form.Check
-                                        type="switch"
-                                        id="mileage-full-form"
-                                        className="mb-0"
-                                        checked={showFullForm}
-                                        onChange={(e) => setShowFullForm(e.target.checked)}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <Typeahead
-                            id="mileage-purpose"
-                            multiple
-                            allowNew
-                            newSelectionPrefix="Inne: "
-                            options={PURPOSE_OPTIONS}
-                            selected={purposes}
-                            onChange={(sel) =>
-                                setPurposes(
-                                    sel.map((s: any) => (typeof s === "string" ? s : s.label))
-                                )
-                            }
-                            placeholder="Wybierz lub wpisz cel(e) wyjazdu..."
-                        />
-                    </Form.Group>
+                    {!simplified && (
+                        <Form.Group className="mb-3">
+                            <Form.Label>Cel wyjazdu</Form.Label>
+                            <Typeahead
+                                id="mileage-purpose"
+                                multiple
+                                allowNew
+                                newSelectionPrefix="Inne: "
+                                options={PURPOSE_OPTIONS}
+                                selected={purposes}
+                                onChange={(sel) =>
+                                    setPurposes(
+                                        sel.map((s: any) => (typeof s === "string" ? s : s.label))
+                                    )
+                                }
+                                placeholder="Wybierz lub wpisz cel(e) wyjazdu..."
+                            />
+                        </Form.Group>
+                    )}
 
                     {!simplified && (
                         <div className="mb-3">
