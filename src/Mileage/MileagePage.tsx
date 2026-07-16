@@ -3,8 +3,9 @@ import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from "react-b
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { faMicrophone, faCarSide } from "@fortawesome/free-solid-svg-icons";
+import { flushSync } from "react-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FormProvider } from "../View/Modals/FormContext";
 import {
@@ -48,9 +49,26 @@ export default function MileagePage() {
     // przycisk "wstecz" wraca z formularza do listy pojazdów.
     const { vehicleId } = useParams<{ vehicleId?: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [loadingVehicles, setLoadingVehicles] = useState(true);
     const [listError, setListError] = useState("");
+    // Komunikat po zapisie wpisu (ze stanu nawigacji z formularza). Czytany wprost
+    // w renderze, więc jest już w DOM listy w chwili snapshotu View Transition -
+    // wjeżdża razem z listą, zamiast "wyskakiwać" po animacji.
+    const savedState = location.state as
+        | { savedMsg?: string; sheetUrl?: string; driveCar?: boolean }
+        | null;
+    const savedMsg = savedState?.savedMsg ?? "";
+    const savedSheetUrl = savedState?.sheetUrl;
+    // Auto renderujemy wprost w renderze (jak komunikat), by trafiło do snapshotu
+    // View Transition. Odpoczywa poza ekranem, więc po animacji jest niewidoczne.
+    const driveCar = !!savedState?.driveCar;
+
+    // Wyczyść stan historii, by odświeżenie strony (F5) nie pokazało komunikatu ponownie.
+    useEffect(() => {
+        if (savedMsg) window.history.replaceState({}, "");
+    }, [location.key]);
 
     function loadVehicles() {
         setLoadingVehicles(true);
@@ -100,7 +118,70 @@ export default function MileagePage() {
 
     return (
         <Container className="py-3" style={{ maxWidth: 720 }}>
+            <style>{`
+                ::view-transition-old(root) {
+                    animation: 1500ms cubic-bezier(0.4, 0, 0.2, 1) both mileageSlideOut;
+                }
+                ::view-transition-new(root) {
+                    animation: 1500ms cubic-bezier(0.4, 0, 0.2, 1) both mileageSlideIn;
+                }
+                @keyframes mileageSlideOut { to { transform: translateX(-100%); } }
+                @keyframes mileageSlideIn { from { transform: translateX(100%); } }
+
+                /* Auto: spoczywa poza ekranem (translateX(-120vw) = niewidoczne po animacji),
+                   a w warstwie View Transition przejeżdża po wierzchu przez cały ekran. */
+                .mileage-drive-car {
+                    position: fixed;
+                    top: 50%;
+                    left: 0;
+                    transform: translate(-120vw, -50%);
+                    view-transition-name: mileage-car;
+                    font-size: 7rem;
+                    color: var(--bs-primary, #0d6efd);
+                    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15));
+                    pointer-events: none;
+                    z-index: 9999;
+                }
+                /* Animujemy zawartość (-new), nie grupę - grupa trzyma wyśrodkowanie w pionie,
+                   a auto rusza względem swojej pozycji spoczynkowej (-120vw): 230vw..55vw
+                   daje netto 110vw..-65vw, czyli przejazd z prawej za lewą krawędź - auto
+                   znika całkiem poza ekranem, bez zatrzymania w połowie. */
+                ::view-transition-new(mileage-car) {
+                    animation: 1500ms cubic-bezier(0.4, 0, 0.2, 1) both mileageCarDrive;
+                }
+                @keyframes mileageCarDrive {
+                    from { transform: translateX(230vw); }
+                    to   { transform: translateX(55vw); }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    ::view-transition-old(root),
+                    ::view-transition-new(root),
+                    ::view-transition-new(mileage-car) { animation-duration: 0.01ms; }
+                }
+            `}</style>
+            {driveCar && (
+                <div className="mileage-drive-car" aria-hidden>
+                    <FontAwesomeIcon icon={faCarSide} flip="horizontal" />
+                </div>
+            )}
             <h4 className="mb-3">Kilometrówka</h4>
+            {savedMsg && (
+                <Alert variant="success">
+                    {savedSheetUrl ? (
+                        <a
+                            href={savedSheetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Otwórz arkusz kilometrówki"
+                            className="link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover"
+                        >
+                            {savedMsg}
+                        </a>
+                    ) : (
+                        savedMsg
+                    )}
+                </Alert>
+            )}
             {listError && <Alert variant="danger">{listError}</Alert>}
             {loadingVehicles && vehicles.length === 0 ? (
                 <div className="text-center py-5">
@@ -166,12 +247,12 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const recognitionRef = useRef<any>(null);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
 
     const selectedContract = watch("_contract") as OurContract | undefined;
     const driverPerson = watch("_driver") as PersonData | undefined;
     const driver = driverPerson ? `${driverPerson.name} ${driverPerson.surname}` : "";
     const isFueling = purposes.includes("tankowanie");
+    const navigate = useNavigate();
 
     // Telefon/tablet lub zainstalowana aplikacja.
     const isTouchOrApp = useMemo(
@@ -272,6 +353,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     }
 
     function validate(): string | null {
+        if (!routeMid.trim()) return "Podaj miasto na trasie";
         if (!endReading) return "Podaj stan licznika końcowy.";
         if (!startReading) return "Brak stanu początkowego (poprzedni odczyt).";
         if (km != null && km < 0) return "Stan końcowy nie może być mniejszy od początkowego.";
@@ -289,7 +371,6 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             return;
         }
         setError("");
-        setSuccess("");
         setSubmitting(true);
         try {
             const res = await fetch(`${MainSetup.serverUrl}mileage/trip`, {
@@ -314,16 +395,24 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             });
             if (!res.ok) throw new Error("Nie udało się zapisać wpisu.");
             const trip = await res.json();
-            setSuccess(`Zapisano wpis Lp. ${trip.lp} (${trip.km} km).`);
-            // Reset do kolejnego wpisu: nowy stan początkowy = właśnie zapisany końcowy
-            setStartReading(endReading);
-            setEndReading("");
-            setPurposes([]);
-            setFuelingDate("");
-            setFuelingReading("");
-            setFuelingReadingTouched(false);
-            setFuelingDateTouched(false);
-            setValue("_contract", null);
+
+            const via = routeMid.trim();
+            const savedMsg = `Zapisano wpis Lp. ${trip.lp} (${trip.km} km)${
+                via ? ` przez ${via}` : ""
+            }.`;
+            // Zapis potwierdzony. Przejście na listę robimy przez View Transitions API:
+            // przeglądarka sama animuje wjazd listy i wyjazd formularza (bez białych ekranów),
+            // a auto (osobny view-transition-name) przejeżdża po wierzchu.
+            const startVT = (document as any).startViewTransition?.bind(document);
+            const goToList = () =>
+                navigate("/mileage", {
+                    state: { savedMsg, sheetUrl: vehicle.sheetUrl, driveCar: !!startVT },
+                });
+            if (startVT) {
+                startVT(() => flushSync(goToList));
+            } else {
+                goToList();
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
@@ -385,8 +474,6 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     </div>
                 )}
             </div>
-
-            {success && <Alert variant="success">{success}</Alert>}
 
             <FormProvider value={formMethods}>
                 <Form>
