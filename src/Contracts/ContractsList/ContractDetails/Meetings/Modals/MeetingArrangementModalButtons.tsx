@@ -19,6 +19,10 @@ export function MeetingArrangementEditModalButton({
                 repository: meetingArrangementsRepository,
                 initialData,
                 makeValidationSchema: makeMeetingArrangementValidationSchema,
+                // Modal nie może wymuszać focusu w swoim obrębie, bo inline-panel tworzenia
+                // Sprawy (Offcanvas) jest portalowany poza DOM modala — inaczej modal odbiera
+                // focus przy każdym znaku wpisywanym w polu nowej sprawy.
+                enforceFocus: false,
             }}
             buttonProps={{ ...buttonProps, buttonVariant: 'outline-success' }}
         />
@@ -38,6 +42,10 @@ export function MeetingArrangementAddNewModalButton({
                 repository: meetingArrangementsRepository,
                 makeValidationSchema: makeMeetingArrangementValidationSchema,
                 contextData,
+                // Modal nie może wymuszać focusu w swoim obrębie, bo inline-panel tworzenia
+                // Sprawy (Offcanvas) jest portalowany poza DOM modala — inaczej modal odbiera
+                // focus przy każdym znaku wpisywanym w polu nowej sprawy.
+                enforceFocus: false,
             }}
             buttonProps={{
                 buttonCaption: 'Dodaj punkt agendy',

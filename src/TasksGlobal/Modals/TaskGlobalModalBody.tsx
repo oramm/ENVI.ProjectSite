@@ -101,6 +101,7 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData: conte
                             type="number"
                             min={0}
                             step={0.25}
+                            style={{ minWidth: "4.5rem" }}
                             placeholder={["PO", "WT", "ŚR", "CZ", "PT"][i]}
                             {...register(field, { setValueAs: toNullableNumber })}
                         />
