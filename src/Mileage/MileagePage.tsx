@@ -44,6 +44,28 @@ const SpeechRecognitionCtor: any =
     typeof window !== "undefined" &&
     ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
 
+// Przycisk dyktowania: w spoczynku obrys, podczas nagrywania czerwony i pulsujący zamiast mylącego spinnera.
+function VoiceButton({
+    active,
+    onClick,
+    hint,
+}: {
+    active: boolean;
+    onClick: () => void;
+    hint: string;
+}) {
+    return (
+        <Button
+            variant={active ? "danger" : "outline-primary"}
+            className="text-nowrap"
+            onClick={onClick}
+            title={active ? "Nagrywanie... kliknij, aby zatrzymać" : hint}
+        >
+            <FontAwesomeIcon icon={faMicrophone} beatFade={active} />
+        </Button>
+    );
+}
+
 export default function MileagePage() {
     // Wybór pojazdu jako trasa (#/mileage/:vehicleId) - dzięki temu systemowy
     // przycisk "wstecz" wraca z formularza do listy pojazdów.
@@ -243,7 +265,8 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const [fuelingReadingTouched, setFuelingReadingTouched] = useState(false);
     const [fuelingDateTouched, setFuelingDateTouched] = useState(false);
 
-    const [listening, setListening] = useState(false);
+    // Które pole aktualnie nagrywa (np. "reading", "dest") - null gdy cisza.
+    const [listeningField, setListeningField] = useState<string | null>(null);
     const recognitionRef = useRef<any>(null);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -307,7 +330,8 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     }, [startReading, endReading]);
 
     function purposeText() {
-        return purposes.join(", ");
+        // Brak wybranego celu = domyślnie "spotkanie".
+        return purposes.length ? purposes.join(", ") : "spotkanie";
     }
 
     // Zwolnij mikrofon przy opuszczeniu formularza (gdyby sesja jeszcze trwała).
@@ -315,8 +339,17 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         return () => recognitionRef.current?.abort();
     }, []);
 
-    // Kierowca dyktuje stan licznika (cyfry) - transkrypt zamieniamy na cyfry.
-    function startVoiceReading() {
+    // Klik w mikrofon danego pola: gdy cokolwiek nagrywa - zatrzymaj, inaczej zacznij nasłuch.
+    function toggleVoice(field: string, onText: (text: string) => void) {
+        if (listeningField) {
+            recognitionRef.current?.stop();
+            return;
+        }
+        startVoice(field, onText);
+    }
+
+    // Kierowca dyktuje wartość pola - transkrypt oddajemy do onText (cyfry albo miasto).
+    function startVoice(field: string, onText: (text: string) => void) {
         if (!SpeechRecognitionCtor) {
             setError("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
             return;
@@ -328,28 +361,32 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         rec.interimResults = false;
         rec.maxAlternatives = 1;
         rec.onresult = (e: any) => {
-            const text: string = e.results[0][0].transcript;
-            const digits = spokenToDigits(text);
-            if (digits) setEndReading(digits);
-            else setError(`Nie rozpoznano liczby (usłyszano: "${text}").`);
+            onText(e.results[0][0].transcript);
             rec.stop(); // zwolnij mikrofon od razu (iOS Safari nie robi tego sam)
         };
         rec.onerror = (e: any) => {
-            setListening(false);
+            setListeningField(null);
             // 'aborted' = celowe przerwanie (stop/abort), nie pokazuj jako błąd.
             if (e?.error && e.error !== "aborted")
                 setError(`Błąd mikrofonu: ${e.error}`);
         };
-        rec.onend = () => setListening(false);
+        rec.onend = () => setListeningField(null);
         try {
-            setListening(true);
+            setListeningField(field);
             rec.start();
         } catch (err) {
-            setListening(false);
+            setListeningField(null);
             setError(
                 "Nie udało się uruchomić mikrofonu - wymaga HTTPS/localhost i zgody."
             );
         }
+    }
+
+    // Transkrypt licznika: słowa-cyfry na cyfry, z komunikatem gdy nic nie rozpoznano.
+    function fillReadingFromVoice(text: string) {
+        const digits = spokenToDigits(text);
+        if (digits) setEndReading(digits);
+        else setError(`Nie rozpoznano liczby (usłyszano: "${text}").`);
     }
 
     function validate(): string | null {
@@ -513,28 +550,54 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         </Form.Label>
                         {simplified ? (
                             // Backend złoży "Brzeg - {to pole} - Brzeg"
-                            <Form.Control
-                                value={routeMid}
-                                onChange={(e) => setRouteMid(e.target.value)}
-                                placeholder="Dokąd"
-                            />
+                            <div className="d-flex gap-2">
+                                <Form.Control
+                                    value={routeMid}
+                                    onChange={(e) => setRouteMid(e.target.value)}
+                                    placeholder="Dokąd"
+                                />
+                                {SpeechRecognitionCtor && (
+                                    <VoiceButton
+                                        active={listeningField === "dest"}
+                                        onClick={() =>
+                                            toggleVoice("dest", (t) =>
+                                                setRouteMid(t.trim())
+                                            )
+                                        }
+                                        hint="Podyktuj miasto docelowe"
+                                    />
+                                )}
+                            </div>
                         ) : (
                             <Row className="g-2">
-                                <Col xs={4}>
+                                <Col xs={3}>
                                     <Form.Control
                                         value={routeFrom}
                                         onChange={(e) => setRouteFrom(e.target.value)}
                                         placeholder="skąd"
                                     />
                                 </Col>
-                                <Col xs={4}>
-                                    <Form.Control
-                                        value={routeMid}
-                                        onChange={(e) => setRouteMid(e.target.value)}
-                                        placeholder="przez"
-                                    />
+                                <Col xs={6}>
+                                    <div className="d-flex gap-2">
+                                        <Form.Control
+                                            value={routeMid}
+                                            onChange={(e) => setRouteMid(e.target.value)}
+                                            placeholder="przez"
+                                        />
+                                        {SpeechRecognitionCtor && (
+                                            <VoiceButton
+                                                active={listeningField === "dest"}
+                                                onClick={() =>
+                                                    toggleVoice("dest", (t) =>
+                                                        setRouteMid(t.trim())
+                                                    )
+                                                }
+                                                hint="Podyktuj miasto (przez)"
+                                            />
+                                        )}
+                                    </div>
                                 </Col>
-                                <Col xs={4}>
+                                <Col xs={3}>
                                     <Form.Control
                                         value={routeTo}
                                         onChange={(e) => setRouteTo(e.target.value)}
@@ -565,19 +628,13 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                                     onChange={(e) => setEndReading(e.target.value)}
                                 />
                                 {SpeechRecognitionCtor && (
-                                    <Button
-                                        variant={listening ? "primary" : "outline-primary"}
-                                        className="text-nowrap"
-                                        onClick={startVoiceReading}
-                                        disabled={listening}
-                                        title="Podyktuj cyfry stanu licznika"
-                                    >
-                                        {listening ? (
-                                            <Spinner size="sm" />
-                                        ) : (
-                                            <FontAwesomeIcon icon={faMicrophone} />
-                                        )}
-                                    </Button>
+                                    <VoiceButton
+                                        active={listeningField === "reading"}
+                                        onClick={() =>
+                                            toggleVoice("reading", fillReadingFromVoice)
+                                        }
+                                        hint="Podyktuj cyfry stanu licznika"
+                                    />
                                 )}
                             </div>
                         </Col>
