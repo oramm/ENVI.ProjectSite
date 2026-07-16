@@ -23,7 +23,12 @@ import { ContractStatusBadge, SpinnerBootstrap } from "../View/Resultsets/Common
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
-import { CaseAddNewModalButton, CaseAndSubCaseAddButtonGroup, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
+import {
+    CaseAddNewInTypeFolderButton,
+    CaseAddNewModalButton,
+    CaseAndSubCaseAddButtonGroup,
+    CaseEditModalButton,
+} from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
@@ -593,10 +598,14 @@ export function buildTree(
                         level: 3,
                         type: "casetype",
                         repository: caseTypesRepository,
-                        dataItem: caseItem._type,
+                        // typ + kamień rodzic — przycisk "Dodaj sprawę" folderu potrzebuje obu
+                        dataItem: { ...caseItem._type, _parentMilestone: milestone } as RepositoryDataItem,
                         title: <>{makeCaseTypeTitleLabel(caseItem._type)}</>,
                         children: [],
                         isDeletable: false,
+                        AddNewButtonComponent: CaseAddNewInTypeFolderButton as unknown as ComponentType<
+                            SpecificAddNewModalButtonProps<RepositoryDataItem>
+                        >,
                     };
                     caseTypeFolderNodes.set(typeId, caseTypeNode);
                     milestoneNode.children.push(caseTypeNode);

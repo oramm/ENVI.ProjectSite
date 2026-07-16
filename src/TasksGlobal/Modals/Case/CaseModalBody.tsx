@@ -6,7 +6,7 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function CaseModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Case>) {
+export function CaseModalBody({ isEditing, initialData, contextData, additionalProps }: ModalBodyProps<Case>) {
     const {
         register,
         reset,
@@ -17,12 +17,14 @@ export function CaseModalBody({ isEditing, initialData, contextData: contextData
     } = useFormContext();
     const _type = watch("_type");
     const _parent = (initialData?._parent || contextData) as MilestoneData;
+    // Typ z góry wybrany, gdy sprawę dodajemy z poziomu folderu typu w drzewie TasksGlobal.
+    const preselectedCaseType = additionalProps?.preselectedCaseType as CaseType | undefined;
 
     useEffect(() => {
         console.log("CaseModalBody useEffect", initialData);
         const resetData = {
             _parent,
-            _type: initialData?._type,
+            _type: initialData?._type ?? preselectedCaseType,
             parentCaseId: initialData?.parentCaseId,
             name: initialData?.name,
             description: initialData?.description || "",

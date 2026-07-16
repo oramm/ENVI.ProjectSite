@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Badge } from "react-bootstrap";
-import { Case, MilestoneData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import { Case, CaseType, MilestoneData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { casesRepository } from "../../TasksGlobalController";
@@ -48,6 +48,38 @@ export function CaseAddNewModalButton({
                 contextData,
                 ModalBodyComponent: CaseModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: CaseModalBody },
+                modalTitle: "Nowa sprawa",
+                headerBadge,
+                repository: casesRepository,
+                makeValidationSchema: makeCaseValidationSchema,
+            }}
+            buttonProps={{
+                buttonCaption: "Dodaj sprawę",
+                buttonVariant: "outline-success",
+                ...buttonProps,
+            }}
+        />
+    );
+}
+
+/** "Dodaj sprawę" na poziomie folderu typu: jak CaseAddNewModalButton, ale z typem wybranym z góry.
+ *  contextData = CaseType folderu z doczepionym `_parentMilestone` (patrz buildTree w TasksGlobal.tsx). */
+export function CaseAddNewInTypeFolderButton({
+    modalProps: { onAddNew, contextData },
+    buttonProps,
+}: SpecificAddNewModalButtonProps<Case>) {
+    // milestone → kontekst (_parent); caseType (bez kamienia) → wstępny wybór typu.
+    const { _parentMilestone: milestone, ...caseType } =
+        (contextData as CaseType & { _parentMilestone?: MilestoneData }) ?? {};
+    const headerBadge = buildCaseHeaderBadge(milestone);
+
+    return (
+        <GeneralAddNewModalButton
+            modalProps={{
+                onAddNew,
+                contextData: milestone,
+                ModalBodyComponent: CaseModalBody,
+                additionalModalBodyProps: { preselectedCaseType: caseType },
                 modalTitle: "Nowa sprawa",
                 headerBadge,
                 repository: casesRepository,
