@@ -114,16 +114,21 @@ export function IncomingLetterAddNewModalButton({
     );
 }
 
-/** ikona "Odpowiedz" (jak w kliencie pocztowym) w menu akcji wiersza — tylko dla pism przychodzących.
- * Otwiera modal rejestracji pisma wychodzącego z polami wypełnionymi na podstawie pisma,
- * na które odpowiadamy: projekt, sprawy (→ kontrakt), nadawca jako odbiorca oraz
- * relatedLetterNumber (powiązanie z pismem, na które odpowiadamy). */
-export function RespondToIncomingLetterButton({
+/** ikona "Odpowiedz" (jak w kliencie pocztowym) w menu akcji wiersza — dla obu kierunków.
+ * Odpowiedź jest zawsze pismem w kierunku przeciwnym do źródłowego:
+ *   - na pismo przychodzące → rejestracja pisma wychodzącego (nasza odpowiedź, z szablonem),
+ *   - na pismo wychodzące   → rejestracja pisma przychodzącego (odpowiedź kontrahenta, z plikiem).
+ * Pola wypełniane na podstawie pisma źródłowego: projekt, sprawy (→ kontrakt),
+ * podmiot (odbiorca ↔ nadawca) oraz relatedLetterNumber (powiązanie ze źródłem). */
+export function RespondToLetterButton({
     dataObject,
     layout,
 }: RowActionMenuItemProps<OurLetterContract | IncomingLetterContract>) {
     const { handleAddObject } = useFilterableTableContext<OurLetterContract | IncomingLetterContract>();
     const [showForm, setShowForm] = useState(false);
+
+    // odpowiadamy pismem w kierunku przeciwnym do źródłowego
+    const replyIsOur = !dataObject.isOur;
 
     // stabilna referencja: useEffect-y w LetterModalBody/OurLetterModalBody robią reset(initialData),
     // więc nowy obiekt przy każdym renderze czyściłby formularz w trakcie wypełniania
@@ -137,14 +142,13 @@ export function RespondToIncomingLetterButton({
                     ? `Odpowiedź na: ${dataObject.description}`.slice(0, 300)
                     : "",
                 relatedLetterNumber: dataObject.number ? String(dataObject.number) : "",
-                isOur: true,
-            } as Partial<OurLetterContract> as OurLetterContract),
-        [dataObject]
+                isOur: replyIsOur,
+            } as Partial<OurLetterContract | IncomingLetterContract> as OurLetterContract),
+        [dataObject, replyIsOur]
     );
 
     // bez _cases nie da się wywieść kontraktu (ContractSelector readOnly w trybie add) — formularz byłby nie do zapisania
-    if (dataObject.isOur || !dataObject._cases?.length) return null;
-    const letter = dataObject as IncomingLetterContract;
+    if (!dataObject._cases?.length) return null;
 
     return (
         <>
@@ -153,12 +157,12 @@ export function RespondToIncomingLetterButton({
                 show={showForm}
                 onClose={() => setShowForm(false)}
                 isEditing={false}
-                title={`Odpowiedź na pismo ${letter.number ?? ""}`}
-                subtitle={letter.description ? `Dotyczy: ${letter.description}` : undefined}
+                title={`Odpowiedź na pismo ${dataObject.number ?? ""}`}
+                subtitle={dataObject.description ? `Dotyczy: ${dataObject.description}` : undefined}
                 repository={lettersRepository}
                 onAddNew={handleAddObject}
-                ModalBodyComponent={OurLetterModalBody}
-                makeValidationSchema={ourLetterValidationSchema}
+                ModalBodyComponent={replyIsOur ? OurLetterModalBody : IncomingLetterModalBody}
+                makeValidationSchema={replyIsOur ? ourLetterValidationSchema : makeOtherLetterValidationSchema}
                 modalBodyProps={{
                     isEditing: false,
                     initialData: replyInitialData,
