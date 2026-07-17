@@ -31,6 +31,7 @@ import {
     CaseEditModalButton,
 } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
+import { AddFilesToFolderButton } from "./Modals/AddFilesToFolderButton";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
@@ -482,6 +483,10 @@ function taskMatchesStatusFilter(task: Task, taskStatuses?: string[]): boolean {
     return taskStatuses.includes(task.status);
 }
 
+// Akcje menu dla węzłów-folderów (kontrakt/kamień/sprawa/podsprawa).
+// AddFilesToFolderButton sam się ukrywa, gdy węzeł nie ma gdFolderId.
+const folderRowActionMenuComponents = [AddFilesToFolderButton];
+
 export function buildTree(
     contractsWithChildrenInput: ContractsWithChildren[],
     targetCaseId?: number,
@@ -526,6 +531,7 @@ export function buildTree(
             shouldRetrieveDataBeforeEdit: true,
             specialRetrieveActionRoute: "contracts",
             isDeletable: false,
+            rowActionMenuComponents: folderRowActionMenuComponents,
         };
         contractNodes.push(contractNode);
 
@@ -557,6 +563,7 @@ export function buildTree(
                 >,
                 editHandler: milestoneNodeEditHandler,
                 isDeletable: true,
+                rowActionMenuComponents: folderRowActionMenuComponents,
             };
             contractNode.children.push(milestoneNode);
 
@@ -593,6 +600,7 @@ export function buildTree(
                     editHandler: (node: SectionNode<Task>) => {
                         node.title = <>{makeCaseTitleLabel(node.dataItem as Case, isInTypeFolder)}</>;
                     },
+                    rowActionMenuComponents: folderRowActionMenuComponents,
                 };
                 parentNode.children.push(caseNode);
                 allTasks.push(...caseTasks);
@@ -621,6 +629,7 @@ export function buildTree(
                             editHandler: (node: SectionNode<Task>) => {
                                 node.title = <>{makeCaseTitleLabel(node.dataItem as Case, isInTypeFolder)}</>;
                             },
+                            rowActionMenuComponents: folderRowActionMenuComponents,
                         };
                         caseNode.children.push(subCaseNode);
                         allTasks.push(...subCaseTasks);

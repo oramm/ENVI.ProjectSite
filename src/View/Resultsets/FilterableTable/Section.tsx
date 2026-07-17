@@ -7,6 +7,7 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import "./FilterableTable.css";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowActionMenu } from "./FilterableTableRow";
+import { RowActionMenuItemProps } from "./FilterableTableTypes";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 import { ExpandTrigger, ToggleExpandButton } from "./ToggleExpandButton";
 import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
@@ -27,6 +28,8 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     children: SectionNode<LeafDataItemType>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>;
     AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>;
+    /** dodatkowe akcje w menu akcji sekcji (ikony) — np. "Dodaj pliki" do folderu GD */
+    rowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<RepositoryDataItem>>[];
     leaves?: LeafDataItemType[];
     isInAccordion?: boolean;
     /** Kontroluje stan akordeonu przy montowaniu — domyślnie true (rozwinięty) */
@@ -253,6 +256,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         dataObject={sectionNode.dataItem}
                         isDeletable={!!sectionNode.isDeletable}
                         EditButtonComponent={sectionNode.EditButtonComponent}
+                        rowActionMenuComponents={sectionNode.rowActionMenuComponents}
                         handleEditObject={handleEditSection}
                         handleDeleteObject={handleDeleteSection}
                         shouldRetrieveDataBeforeEdit={sectionNode.shouldRetrieveDataBeforeEdit}

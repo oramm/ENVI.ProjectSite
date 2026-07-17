@@ -16,6 +16,7 @@ import {
     faTrash,
     faEllipsisV,
     faEllipsisH,
+    faFileCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 export function ProgressBar() {
@@ -170,6 +171,10 @@ export function CopyIconButton({ layout, onClick }: SpecificIconButtonProps) {
 
 export function ReplyIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faReply} layout={layout} onClick={onClick} className="text-success" />;
+}
+
+export function UploadIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faFileCirclePlus} layout={layout} onClick={onClick} className="text-primary" />;
 }
 
 export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {
