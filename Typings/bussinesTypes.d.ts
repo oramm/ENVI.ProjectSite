@@ -149,6 +149,7 @@ export interface Case extends RepositoryDataItem {
     name?: string | null;
     number?: number;
     description?: string;
+    status?: string;
     gdFolderId?: string;
     parentCaseId?: number;
     _parent: MilestoneData;

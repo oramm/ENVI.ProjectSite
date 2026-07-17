@@ -23,6 +23,7 @@ import { ContractStatusBadge, SpinnerBootstrap } from "../View/Resultsets/Common
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { DEFAULT_CASE_STATUS_FILTER } from "../View/Modals/CommonFormComponents/CaseStatusFilter";
 import {
     CaseAddNewInTypeFolderButton,
     CaseAddNewModalButton,
@@ -33,6 +34,7 @@ import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
+import CaseInlineStatusDropdown from "./CaseInlineStatusDropdown";
 import MilestoneInlineStatusDropdown from "./MilestoneInlineStatusDropdown";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
 import "./TasksGlobal.css";
@@ -113,11 +115,21 @@ export default function TasksGlobal() {
     }, [scrollTrigger]);
 
     async function handleSubmitTasksSections(criteria: FieldValues): Promise<SectionNode<Task>[]> {
-        if (!selectedProject) return buildTree(contractsWithChildren);
+        if (!selectedProject) return buildTree(contractsWithChildren, undefined, undefined, { caseStatuses: DEFAULT_CASE_STATUS_FILTER });
 
         const targetCaseId = (criteria._case as Case | undefined)?.id;
-        // _case jest obsługiwany wyłącznie fronendowo (collapse/scroll) — nie trafia do backendu
-        const { _case: _unused, ...backendCriteria } = criteria;
+        // _case, caseStatuses i taskStatuses są obsługiwane wyłącznie frontendowo
+        // (collapse/scroll, filtr drzewa) — nie trafiają do backendu
+        const { _case: _unused, caseStatuses: caseStatusesRaw, taskStatuses: taskStatusesRaw, ...backendCriteria } =
+            criteria;
+        // Pusty wybór ⇒ powrót do domyślnego filtra (Na zaś + W trakcie), a nie "pokaż wszystko"
+        const caseStatuses = (caseStatusesRaw as string[] | undefined)?.length
+            ? (caseStatusesRaw as string[])
+            : DEFAULT_CASE_STATUS_FILTER;
+        // Domyślnie wszystkie statusy zadań — pusty/pełny wybór ⇒ brak filtrowania zadań
+        const taskStatuses = (taskStatusesRaw as string[] | undefined)?.length
+            ? (taskStatusesRaw as string[])
+            : undefined;
 
         const [filteredContractsWithChildren] = await Promise.all([
             contractsWithChildrenRepository.loadItemsFromServerPOST([
@@ -136,11 +148,14 @@ export default function TasksGlobal() {
             setScrollTrigger((t) => t + 1);
         }
 
-        return buildTree(filteredContractsWithChildren as ContractsWithChildren[], targetCaseId, version);
+        return buildTree(filteredContractsWithChildren as ContractsWithChildren[], targetCaseId, version, {
+            caseStatuses,
+            taskStatuses,
+        });
     }
 
     function handleResetTasksSections(): SectionNode<Task>[] {
-        return buildTree(contractsWithChildren);
+        return buildTree(contractsWithChildren, undefined, undefined, { caseStatuses: DEFAULT_CASE_STATUS_FILTER });
     }
 
     return (
@@ -179,7 +194,9 @@ export default function TasksGlobal() {
                                 repository={tasksGlobalRepository}
                                 FilterBodyComponent={TasksGlobalFilterBody}
                                 EditButtonComponent={TaskEditModalButton}
-                                initialSections={buildTree(contractsWithChildren)}
+                                initialSections={buildTree(contractsWithChildren, undefined, undefined, {
+                                    caseStatuses: DEFAULT_CASE_STATUS_FILTER,
+                                })}
                                 snapshotMode="criteria-only"
                                 sectionsFilterHandlers={{
                                     onSubmitSections: handleSubmitTasksSections,
@@ -403,18 +420,21 @@ function makeCaseTitleLabel(caseItem: Case, isInTypeFolder = false) {
         ? `${caseItem._displayNumber || ""} ${caseItem.name || ""}`.trim()
         : `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
     return (
-        <>
-            {label}
-            <UniquenessIcon isUnique={caseItem._type.isUniquePerMilestone} />
-            {isParentCase && (
-                <FontAwesomeIcon
-                    icon={faSitemap}
-                    className="ms-1 text-primary"
-                    size="sm"
-                    title="Sprawa może mieć podsprawy"
-                />
-            )}
-        </>
+        <div className="d-flex gap-3 align-items-center justify-content-between">
+            <span>
+                {label}
+                <UniquenessIcon isUnique={caseItem._type.isUniquePerMilestone} />
+                {isParentCase && (
+                    <FontAwesomeIcon
+                        icon={faSitemap}
+                        className="ms-1 text-primary"
+                        size="sm"
+                        title="Sprawa może mieć podsprawy"
+                    />
+                )}
+            </span>
+            <div>{caseItem.status && <CaseInlineStatusDropdown caseItem={caseItem} />}</div>
+        </div>
     );
 }
 
@@ -439,12 +459,42 @@ function collapseEmptyBranches(node: SectionNode<Task>) {
     (node.children || []).forEach(collapseEmptyBranches);
 }
 
+/**
+ * true jeśli sprawa spełnia filtr statusów. `caseStatuses` pominięty ⇒ brak filtrowania.
+ * Sprawy bez statusu (dane sprzed migracji) są zawsze pokazywane.
+ * Sprawa wskazana do nawigacji (`targetCaseId`) jest zawsze widoczna — inaczej wybór
+ * zamkniętej sprawy w selektorze skutkowałby cichą nieudaną nawigacją.
+ */
+function caseMatchesStatusFilter(caseItem: Case, caseStatuses?: string[], targetCaseId?: number): boolean {
+    if (targetCaseId !== undefined && caseItem.id === targetCaseId) return true;
+    if (!caseStatuses) return true;
+    if (!caseItem.status) return true;
+    return caseStatuses.includes(caseItem.status);
+}
+
+/**
+ * true jeśli zadanie spełnia filtr statusów. `taskStatuses` pominięty ⇒ brak filtrowania.
+ * Zadania bez statusu są zawsze pokazywane.
+ */
+function taskMatchesStatusFilter(task: Task, taskStatuses?: string[]): boolean {
+    if (!taskStatuses) return true;
+    if (!task.status) return true;
+    return taskStatuses.includes(task.status);
+}
+
 export function buildTree(
     contractsWithChildrenInput: ContractsWithChildren[],
     targetCaseId?: number,
     version?: number,
-    options?: { collapseEmpty?: boolean; leavesRepository?: RepositoryReact<Task> }
+    options?: {
+        collapseEmpty?: boolean;
+        leavesRepository?: RepositoryReact<Task>;
+        caseStatuses?: string[];
+        taskStatuses?: string[];
+    }
 ): SectionNode<Task>[] {
+    const caseStatuses = options?.caseStatuses;
+    const taskStatuses = options?.taskStatuses;
     const sfx = version !== undefined ? `_v${version}` : "";
     const contractNodes: SectionNode<Task>[] = [];
     const allTasks: Task[] = [];
@@ -521,7 +571,7 @@ export function buildTree(
                 isInTypeFolder = false
             ) => {
                 const allowsSubCases = Boolean(caseItem._type.allowsSubCases);
-                const caseTasks = tasks ?? [];
+                const caseTasks = (tasks ?? []).filter((t) => taskMatchesStatusFilter(t, taskStatuses));
                 const caseNode = {
                     id: "case" + caseItem.id + sfx,
                     level,
@@ -549,7 +599,8 @@ export function buildTree(
 
                 if (allowsSubCases) {
                     for (const { caseItem: subCase, tasks: subTasks } of subCasesWithTasks || []) {
-                        const subCaseTasks = subTasks ?? [];
+                        if (!caseMatchesStatusFilter(subCase, caseStatuses, targetCaseId)) continue;
+                        const subCaseTasks = (subTasks ?? []).filter((t) => taskMatchesStatusFilter(t, taskStatuses));
                         const subCaseWithParent = { ...subCase, _parentCase: caseItem };
                         const subCaseNode = {
                             id: "subcase" + subCase.id + sfx,
@@ -583,6 +634,14 @@ export function buildTree(
             // foldery i sprawy unikatowe zachowują wspólną, alfabetyczną kolejność.
             const caseTypeFolderNodes = new Map<number, SectionNode<Task>>();
             for (const { caseItem, tasks, subCasesWithTasks } of allCasesWithTasks) {
+                // Rodzica zachowujemy również, gdy sam odpada przez filtr, ale zawiera
+                // podsprawę wskazaną do nawigacji — inaczej nawigacja do niej cicho zawiedzie
+                // (strażnik podsprawy w addCaseNode i tak przepuści tylko właściwą podsprawę).
+                const containsTargetSubCase =
+                    targetCaseId !== undefined &&
+                    (subCasesWithTasks || []).some(({ caseItem: sc }) => sc.id === targetCaseId);
+                if (!containsTargetSubCase && !caseMatchesStatusFilter(caseItem, caseStatuses, targetCaseId))
+                    continue;
                 if (caseItem._type.isUniquePerMilestone) {
                     addCaseNode(caseItem, tasks, subCasesWithTasks, 3, milestoneNode);
                     continue;

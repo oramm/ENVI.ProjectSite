@@ -145,6 +145,23 @@ export function MilestoneStatusSelector({
     });
 }
 
+export function CaseStatusSelector({
+    showValidationInfo = true,
+    name,
+    label = "Status",
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: Object.values(MainSetup.CaseStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label,
+        multiple,
+        as,
+    });
+}
+
 export function TaksStatusSelector({
     showValidationInfo = true,
     name,

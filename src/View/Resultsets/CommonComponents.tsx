@@ -353,6 +353,30 @@ export function MilestoneStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function CaseStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light";
+    switch (status) {
+        case MainSetup.CaseStatus.FOR_LATER:
+            variant = "secondary";
+            break;
+        case MainSetup.CaseStatus.IN_PROGRESS:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetup.CaseStatus.CLOSED:
+            variant = "success";
+            break;
+        default:
+            variant = "secondary";
+    }
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 export function SecurityStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = "light";

@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { Case, CaseType, MilestoneData } from "../../../../Typings/bussinesTypes";
 import { CaseTypeSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { CaseStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import MainSetup from "../../../React/MainSetupReact";
 
 export function CaseModalBody({ isEditing, initialData, contextData, additionalProps }: ModalBodyProps<Case>) {
     const {
@@ -28,6 +30,7 @@ export function CaseModalBody({ isEditing, initialData, contextData, additionalP
             parentCaseId: initialData?.parentCaseId,
             name: initialData?.name,
             description: initialData?.description || "",
+            status: initialData?.status ?? MainSetup.CaseStatus.FOR_LATER,
         };
         reset(resetData);
         trigger();
@@ -61,6 +64,7 @@ export function CaseModalBody({ isEditing, initialData, contextData, additionalP
                     <ErrorMessage name="name" errors={errors} />
                 </Form.Group>
             )}
+            <CaseStatusSelector showValidationInfo={true} />
             <Form.Group controlId="description">
                 <Form.Label>Uwagi</Form.Label>
                 <Form.Control

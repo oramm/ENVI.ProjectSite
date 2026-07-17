@@ -39,6 +39,7 @@ import {
     SkillDictionaryRecord,
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
+import { CaseStatusFilterMenuHeader, DEFAULT_CASE_STATUS_FILTER } from "./CaseStatusFilter";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
 import { safeGetFirstField, ensureLabelKey } from "../../../React/Tools/ToolsForms";
 
@@ -1563,6 +1564,7 @@ function renderCaseMenu(
     state: TypeaheadManagerChildProps,
     groupedResults: Record<string, Case[]>,
     milestoneNames: string[],
+    header?: React.ReactNode,
 ) {
     let index = 0;
 
@@ -1587,7 +1589,17 @@ function renderCaseMenu(
         </Fragment>
     ));
 
-    return <Menu {...menuProps}>{items}</Menu>;
+    // paddingTop: 0 usuwa domyślną górną szczelinę .dropdown-menu, w której przewijane
+    // sprawy przebijałyby NAD sticky-nagłówkiem filtra statusów.
+    return (
+        <Menu {...menuProps} style={{ ...(menuProps.style || {}), paddingTop: 0 }}>
+            {header}
+            {milestoneNames.length === 0 && (
+                <div className="px-3 py-2 text-muted small">Brak spraw.</div>
+            )}
+            {items}
+        </Menu>
+    );
 }
 
 /** Token wybranej sprawy z ikoną ołówka pojawiającą się po kliknięciu (focus). */
@@ -1680,6 +1692,8 @@ export function CaseSelectMenuElement({
     refreshToken,
 }: CaseSelectMenuElementProps) {
     const [options, setOptions] = useState<any[]>([]);
+    // Domyślnie ukrywamy sprawy zamknięte; sprawy bez statusu (sprzed migracji) zawsze widoczne.
+    const [statusFilter, setStatusFilter] = useState<string[]>([...DEFAULT_CASE_STATUS_FILTER]);
 
     const {
         control,
@@ -1688,6 +1702,10 @@ export function CaseSelectMenuElement({
     } = useFormContext();
 
     const labelKey = "_typeFolderNumber_TypeName_Number_Name";
+
+    const visibleOptions = options.filter(
+        (option) => !(option as Case).status || statusFilter.includes((option as Case).status!),
+    );
 
     useEffect(() => {
         const fetchData = async () => {
@@ -1739,12 +1757,25 @@ export function CaseSelectMenuElement({
                     id={`${name}-typeahead`}
                     labelKey={labelKey}
                     multiple={multiple}
-                    options={options}
+                    options={visibleOptions}
                     onChange={(items) => handleOnChange(items, field)}
                     renderMenu={(results, menuProps, state) => {
                         const groupedResults = groupByMilestone(results as Case[]);
                         const milestoneNames = Object.keys(groupedResults).sort();
-                        return renderCaseMenu(results as Case[], menuProps, state, groupedResults, milestoneNames);
+                        const header = (
+                            <CaseStatusFilterMenuHeader
+                                selectedStatuses={statusFilter}
+                                onChange={setStatusFilter}
+                            />
+                        );
+                        return renderCaseMenu(
+                            results as Case[],
+                            menuProps,
+                            state,
+                            groupedResults,
+                            milestoneNames,
+                            header,
+                        );
                     }}
                     selected={getValidatedSelected(field.value)}
                     placeholder="-- Wybierz sprawę --"
@@ -1775,8 +1806,8 @@ export function CaseSelectMenuElement({
         />
     );
 
-    // Bez `onRequestCreate` zachowanie jest IDENTYCZNE jak dotychczas (sam Typeahead),
-    // więc wszystkie istniejące call-site pozostają nietknięte.
+    // Bez `onRequestCreate` zachowanie jest IDENTYCZNE jak dotychczas (sam Typeahead z filtrem
+    // statusów w menu), więc wszystkie istniejące call-site pozostają nietknięte.
     if (!onRequestCreate) return selector;
 
     return (

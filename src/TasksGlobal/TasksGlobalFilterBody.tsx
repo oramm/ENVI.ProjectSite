@@ -10,12 +10,28 @@ import {
     PersonSelectorPreloaded,
 } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../View/Modals/FormContext";
-import { ContractStatusSelector } from "../View/Modals/CommonFormComponents/StatusSelectors";
+import {
+    CaseStatusSelector,
+    ContractStatusSelector,
+    TaksStatusSelector,
+} from "../View/Modals/CommonFormComponents/StatusSelectors";
+import { DEFAULT_CASE_STATUS_FILTER } from "../View/Modals/CommonFormComponents/CaseStatusFilter";
 
 export function TasksGlobalFilterBody() {
     const { project } = useContract();
     const { watch, setValue } = useFormContext();
     const _contract = watch("_contract");
+    const caseStatuses = watch("caseStatuses");
+    const taskStatuses = watch("taskStatuses");
+
+    // Domyślne filtry statusów. Ustawiamy tylko gdy pole jest jeszcze puste — snapshot
+    // z sessionStorage (przywracany w FilterPanel) ma pierwszeństwo.
+    // - Sprawy: Na zaś + W trakcie (ukrywa Zamknięte).
+    // - Zadania: wszystkie statusy (brak filtrowania zadań domyślnie).
+    useEffect(() => {
+        if (caseStatuses === undefined) setValue("caseStatuses", [...DEFAULT_CASE_STATUS_FILTER]);
+        if (taskStatuses === undefined) setValue("taskStatuses", Object.values(MainSetup.TaskStatus));
+    }, []);
 
     const casesFilterRepository = useMemo(
         () =>
@@ -59,6 +75,22 @@ export function TasksGlobalFilterBody() {
                     />
                 </Form.Group>
             )}
+            <Form.Group as={Col} md={3}>
+                <CaseStatusSelector
+                    showValidationInfo={false}
+                    multiple={true}
+                    name="caseStatuses"
+                    label="Statusy spraw"
+                />
+            </Form.Group>
+            <Form.Group as={Col} md={9}>
+                <TaksStatusSelector
+                    showValidationInfo={false}
+                    multiple={true}
+                    name="taskStatuses"
+                    label="Statusy zadań"
+                />
+            </Form.Group>
         </Row>
     );
 }
