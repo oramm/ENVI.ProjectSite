@@ -12,6 +12,7 @@ import { Invoice, InvoiceThirdParty, OurContract } from "../../../../Typings/bus
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 import { entitiesRepository } from "../InvoicesController";
+import { computeJstInvoicePrefill } from "./invoiceJstPrefill";
 
 const THIRD_PARTY_ROLE_OPTIONS = [
     { value: 1, label: "1 - Faktor" },
@@ -48,7 +49,11 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
     const isGvMember = watch("isGvMember");
     const addAnotherThirdParty = watch("addAnotherThirdParty");
     const thirdParties = (watch("_thirdParties") || []) as InvoiceThirdParty[];
-    const buyer = watch("_entity") as { taxNumber?: string; address?: string } | undefined;
+    const buyer = watch("_entity") as { name?: string; taxNumber?: string; address?: string } | undefined;
+    // F3: nowa FV z umowy, która ma Nabywcę FV (klasa JST gmina+zakład) → auto-fill Nabywca+Odbiorca i lock (D2/OD3).
+    // Tylko dla NOWEJ faktury; edycja istniejącej FV nietknięta (D3). Kontrakt jest read-only dla nowej FV
+    // (ContractSelector readOnly={!isEditing}), więc prefill liczony raz z contextData — brak zmiany kontraktu w formularzu.
+    const isJstAutoFilled = Boolean(computeJstInvoicePrefill(contextData as OurContract | undefined, isEditing));
     const prevIsJstSubordinateRef = useRef<boolean>(false);
     const prevIsGvMemberRef = useRef<boolean>(false);
     const [showCreateEntity, setShowCreateEntity] = useState(false);
@@ -75,7 +80,11 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
     useEffect(() => {
         console.log("InvoiceModalBody useEffect", initialData);
         const typedContextData = contextData as OurContract | undefined;
-        const _entity = initialData?._entity || (typedContextData?._employers && typedContextData._employers[0]);
+        const employer0 = typedContextData?._employers && typedContextData._employers[0];
+        // F3: NOWA FV z umowy z Nabywcą FV → Nabywca=Nabywca FV (gmina), Odbiorca=Zamawiający (zakład, rola 8), zablokowane.
+        const jstPrefillData = computeJstInvoicePrefill(typedContextData, isEditing);
+        const jstPrefill = Boolean(jstPrefillData);
+        const _entity = initialData?._entity || (jstPrefillData ? jstPrefillData._entity : employer0);
         const resetData = {
             _contract: initialData?._contract || contextData,
             issueDate: initialData?.issueDate || new Date().toISOString().slice(0, 10),
@@ -85,15 +94,17 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             _owner: setInitialOwner(),
             _editor: MainSetup.getCurrentUserAsPerson(),
             description: initialData?.description || "",
-            isJstSubordinate: initialData?.isJstSubordinate ?? false,
+            isJstSubordinate: initialData?.isJstSubordinate ?? jstPrefill,
             isGvMember: initialData?.isGvMember ?? false,
-            includeThirdParty: initialData?.includeThirdParty ?? false,
+            includeThirdParty: initialData?.includeThirdParty ?? jstPrefill,
             _thirdParties:
                 initialData?._thirdParties && initialData._thirdParties.length > 0
                     ? initialData._thirdParties
                     : initialData?._thirdParty
                       ? [{ role: initialData?.isJstSubordinate ? 8 : initialData?.isGvMember ? 10 : null, _entity: initialData._thirdParty }]
-                      : [],
+                      : jstPrefillData
+                        ? jstPrefillData._thirdParties
+                        : [],
             addAnotherThirdParty: false,
         };
         reset(resetData);
@@ -179,8 +190,12 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                 <ErrorMessage errors={errors} name={"status"} />
             </Form.Group>
             <Form.Group>
-                <Form.Label>Nabywca</Form.Label>
-                <EntitySelector name="_entity" multiple={false} onRequestCreate={() => setShowCreateEntity(true)} />
+                <Form.Label>Nabywca{isJstAutoFilled ? " — auto z umowy (Nabywca FV, gmina), zablokowany" : ""}</Form.Label>
+                {isJstAutoFilled ? (
+                    <Form.Control readOnly disabled value={buyer?.name ?? ""} />
+                ) : (
+                    <EntitySelector name="_entity" multiple={false} onRequestCreate={() => setShowCreateEntity(true)} />
+                )}
                 {buyer && !buyer.taxNumber && (
                     <div className="small text-warning mt-1">
                         ⚠ Nabywca nie ma NIP — KSeF odrzuci fakturę przy wysyłce. Uzupełnij NIP podmiotu.
@@ -198,6 +213,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         type="checkbox"
                         label={<span className="text-nowrap">Dotyczy jednostki podrzędnej JST</span>}
                         isInvalid={!!errors.isJstSubordinate}
+                        disabled={isJstAutoFilled}
                         {...register("isJstSubordinate")}
                     />
                     <ErrorMessage name="isJstSubordinate" errors={errors} />
@@ -207,6 +223,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         type="checkbox"
                         label={<span className="text-nowrap">Dotyczy członka grupy VAT</span>}
                         isInvalid={!!errors.isGvMember}
+                        disabled={isJstAutoFilled}
                         {...register("isGvMember")}
                     />
                     <ErrorMessage name="isGvMember" errors={errors} />
@@ -216,12 +233,21 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         type="checkbox"
                         label={<span className="text-nowrap">Dodaj podmiot 3 do faktury</span>}
                         isInvalid={!!errors.includeThirdParty}
+                        disabled={isJstAutoFilled}
                         {...register("includeThirdParty")}
                     />
                     <ErrorMessage name="includeThirdParty" errors={errors} />
                 </Form.Group>
             </Row>
-            {includeThirdParty && (
+            {includeThirdParty && isJstAutoFilled && (
+                <Row className="mt-2">
+                    <Form.Group as={Col} md={7} controlId="jstReceiverReadonly">
+                        <Form.Label>Odbiorca (JST — jednostka podrzędna, rola 8) — auto z umowy (Zamawiający, zakład), zablokowany</Form.Label>
+                        <Form.Control readOnly disabled value={thirdParties[0]?._entity?.name ?? ""} />
+                    </Form.Group>
+                </Row>
+            )}
+            {includeThirdParty && !isJstAutoFilled && (
                 <>
                     {thirdParties.map((item, index) => (
                         <React.Fragment key={`third-party-${index}`}>
@@ -277,7 +303,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                     <ErrorMessage name="_thirdParties" errors={errors} />
                 </>
             )}
-            {includeThirdParty && thirdParties.length > 0 && thirdParties[thirdParties.length - 1]?._entity && (
+            {includeThirdParty && !isJstAutoFilled && thirdParties.length > 0 && thirdParties[thirdParties.length - 1]?._entity && (
                 <Form.Group className="mt-2" controlId="includeAdditionalThirdParty">
                     <Form.Check
                         type="checkbox"

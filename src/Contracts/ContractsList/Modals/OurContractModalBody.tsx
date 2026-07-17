@@ -43,8 +43,10 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
     } = useFormContext();
     const _type = watch("_type");
     const _employers = watch("_employers") as EntityData[] | undefined;
+    const _invoiceBuyer = watch("_invoiceBuyer") as EntityData | null | undefined;
     const [showCreateCity, setShowCreateCity] = useState(false);
     const [showCreateEmployer, setShowCreateEmployer] = useState(false);
+    const [showCreateInvoiceBuyer, setShowCreateInvoiceBuyer] = useState(false);
 
     // AQM match preview state (L11)
     const [matchState, setMatchState] = useState<AqmMatchResponse | null>(null);
@@ -61,7 +63,16 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
         setValue("_admin", initialData?._admin, { shouldValidate: true });
         setValue("_manager", initialData?._manager, { shouldValidate: true });
         setValue("_employers", initialData?._employers, { shouldValidate: true });
+        setValue("_invoiceBuyer", initialData?._invoiceBuyer, { shouldValidate: true });
     }, [initialData, setValue]);
+
+    // Keep invoiceBuyerEntityId in lockstep with _invoiceBuyer (server ContractOur.ts derives
+    // the FK from _invoiceBuyer.id when present; but on EDIT the previous invoiceBuyerEntityId
+    // survives the merge with currentDataItem in GeneralModal, so clearing the picker needs an
+    // EXPLICIT null here, not just an absent field, or the old id would stick server-side).
+    useEffect(() => {
+        setValue("invoiceBuyerEntityId", _invoiceBuyer?.id ?? null, { shouldDirty: false });
+    }, [_invoiceBuyer, setValue]);
 
     // Reset match state when switching away from AQM type
     useEffect(() => {
@@ -132,6 +143,10 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
             const current = (watch("_employers") as EntityData[]) || [];
             setValue("_employers", [...current, created], { shouldValidate: true });
         }
+    }
+
+    function handleInvoiceBuyerCreated(created: EntityData) {
+        setValue("_invoiceBuyer", created, { shouldValidate: true });
     }
 
     return (
@@ -209,6 +224,27 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                     )}
                 </Form.Group>
             </Row>
+            <Row>
+                <Form.Group>
+                    <Form.Label>Nabywca FV (JST — gmina)</Form.Label>
+                    <EntitySelector
+                        name="_invoiceBuyer"
+                        multiple={false}
+                        showValidationInfo={false}
+                        onRequestCreate={() => setShowCreateInvoiceBuyer(true)}
+                    />
+                    {_invoiceBuyer && !_invoiceBuyer.taxNumber && (
+                        <div className="small text-warning mt-1">
+                            ⚠ Nabywca FV nie ma NIP — KSeF odrzuci fakturę przy wysyłce. Uzupełnij NIP podmiotu.
+                        </div>
+                    )}
+                    {_invoiceBuyer && !_invoiceBuyer.address && (
+                        <div className="small text-warning mt-1">
+                            ⚠ Nabywca FV nie ma adresu — na zwykłej fakturze adres jest obowiązkowy, KSeF odrzuci fakturę bez niego.
+                        </div>
+                    )}
+                </Form.Group>
+            </Row>
             <CityInlineCreateDrawer
                 show={showCreateCity}
                 onHide={() => setShowCreateCity(false)}
@@ -222,6 +258,13 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 title="Nowy podmiot (zamawiający)"
                 repository={entitiesRepository}
                 onCreated={handleEmployerCreated}
+            />
+            <EntityInlineCreateDrawer
+                show={showCreateInvoiceBuyer}
+                onHide={() => setShowCreateInvoiceBuyer(false)}
+                title="Nowy podmiot (Nabywca FV)"
+                repository={entitiesRepository}
+                onCreated={handleInvoiceBuyerCreated}
             />
         </>
     );

@@ -93,6 +93,7 @@ export function ourContractValidationSchema(isEditing: boolean) {
         _admin: Yup.object().required("Wybierz administratora"),
         _manager: Yup.object().required("Wybierz koordynatora"),
         _employers: _employersAqmRule,
+        _invoiceBuyer: Yup.object().nullable().notRequired(),
     });
 }
 

@@ -90,6 +90,9 @@ export interface OurContract extends Contract {
     _ourType: string;
     _admin?: PersonData;
     _city?: CityData;
+    /** Nabywca FV (JST — gmina), opcjonalny. Jawny `null` czyści pole. */
+    _invoiceBuyer?: EntityData | null;
+    invoiceBuyerEntityId?: number | null;
 }
 
 export interface OtherContract extends Contract {
