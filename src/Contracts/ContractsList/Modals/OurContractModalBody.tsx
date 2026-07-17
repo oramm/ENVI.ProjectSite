@@ -54,6 +54,12 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
     const [matchError, setMatchError] = useState<string | null>(null);
     const prevNipRef = useRef<string | null>(null);
 
+    // Nabywca-FV AQM match (incident 2026-07-17, umowa 871): a buyer NIP that
+    // already exists as an AQM org signals the field was swapped with Zamawiający
+    // (gmina normally is NOT in AQM). Advisory only — no loading/error UI.
+    const [buyerMatch, setBuyerMatch] = useState<AqmMatchResponse | null>(null);
+    const prevBuyerNipRef = useRef<string | null>(null);
+
     const isAqm = _type?.name === "AQM";
 
     useEffect(() => {
@@ -130,6 +136,38 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
             cancelled = true;
         };
     }, [isAqm, _employers]);
+
+    // Nabywca-FV AQM match check (incident 2026-07-17). Mirrors the employer
+    // effect but advisory-only: on error or non-AQM we just clear the warning.
+    useEffect(() => {
+        if (!isAqm || !_invoiceBuyer?.taxNumber) {
+            setBuyerMatch(null);
+            prevBuyerNipRef.current = null;
+            return;
+        }
+
+        const normalized = normalizeNip(_invoiceBuyer.taxNumber);
+        if (normalized === prevBuyerNipRef.current) return;
+        prevBuyerNipRef.current = normalized;
+
+        if (!/^\d{10}$/.test(normalized)) {
+            setBuyerMatch(null);
+            return;
+        }
+
+        let cancelled = false;
+        fetchAqmMatch(normalized, _invoiceBuyer.name)
+            .then((result) => {
+                if (!cancelled) setBuyerMatch(result);
+            })
+            .catch(() => {
+                if (!cancelled) setBuyerMatch(null);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isAqm, _invoiceBuyer]);
 
     function handleCityCreated(created: CityData) {
         setValue("_city", created, { shouldValidate: true });
@@ -241,6 +279,18 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                     {_invoiceBuyer && !_invoiceBuyer.address && (
                         <div className="small text-warning mt-1">
                             ⚠ Nabywca FV nie ma adresu — na zwykłej fakturze adres jest obowiązkowy, KSeF odrzuci fakturę bez niego.
+                        </div>
+                    )}
+                    {/* Cross-check vs Zamawiający (incident 871): swapped fields */}
+                    {_invoiceBuyer && _employers?.[0] && _invoiceBuyer.id === _employers[0].id && (
+                        <div className="small text-warning mt-1" data-testid="buyer-equals-employer-warning">
+                            ⚠ Nabywca FV to ten sam podmiot co Zamawiający — prawdopodobnie pomyłka (zamienione pola?). Nabywca FV powinien być gminą (JST), a Zamawiający zakładem.
+                        </div>
+                    )}
+                    {isAqm && buyerMatch?.match === "NIP" && (
+                        <div className="small text-warning mt-1" data-testid="buyer-in-aqm-warning">
+                            ⚠ Nabywca FV pasuje po NIP do organizacji w AQM
+                            {buyerMatch.organization ? ` (${buyerMatch.organization.name})` : ""} — Nabywca FV to zwykle gmina, której NIE ma w AQM. Sprawdź, czy pola z Zamawiającym nie zostały zamienione.
                         </div>
                     )}
                 </Form.Group>
