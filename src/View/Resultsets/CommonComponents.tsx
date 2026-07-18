@@ -295,6 +295,51 @@ export function FidmanSyncBadge({
     );
 }
 
+/**
+ * Badge typu kontraktu z dwudzielnym językiem wizualnym (decyzja FID.APP.01
+ * 2026-07-17 „Czerwony ryczałtowy"). Baza = kolor osi FIDIC (pierwsze słowo nazwy:
+ * „Czerwony" → czerwień, „Żółty" → żółć); prawy pasek ~23% = kolor metody rozliczenia,
+ * gdy niedomyślna (drugie słowo: „ryczałtowy" na czerwonym → żółty pasek; „obmiarowy"
+ * na żółtym → czerwony pasek). Tekst w badge = JEDNO słowo (pierwsze); pełna nazwa w
+ * tooltipie. Pasek realizowany 1 regułą CSS (hard-stop linear-gradient), bez nowego
+ * komponentu-pliku. Typy spoza osi FIDIC (IK, PT, AQM…) → neutralny badge.
+ */
+export function ContractTypeBadge({ type }: { type: { name?: string } }) {
+    const name = (type?.name ?? "").trim();
+    if (!name) return null;
+    const RED = "#dc3545";
+    const YELLOW = "#ffc107";
+    const words = name.split(/\s+/);
+    const first = words[0];
+    const hasModifier = words.length > 1;
+    const base = first === "Czerwony" ? RED : first === "Żółty" ? YELLOW : null;
+    const stripe = base === RED ? YELLOW : base === YELLOW ? RED : null;
+    const isDark = base === YELLOW; // żółte tło → ciemny tekst
+    const style: React.CSSProperties = base
+        ? {
+              // hard-stop gradient: baza 0–77%, pasek metody rozliczenia 77–100%
+              background: hasModifier
+                  ? `linear-gradient(90deg, ${base} 0 77%, ${stripe} 77% 100%)`
+                  : base,
+              color: isDark ? "#212529" : "#fff",
+              paddingRight: hasModifier ? "1.4em" : undefined, // tekst nie wchodzi na pasek
+          }
+        : {};
+    const badge = base ? (
+        <Badge style={style}>{first}</Badge>
+    ) : (
+        <Badge bg="secondary" text="light">
+            {first}
+        </Badge>
+    );
+    if (!hasModifier) return badge;
+    return (
+        <OverlayTrigger placement="top" overlay={<Tooltip id="contract-type-tooltip">{name}</Tooltip>}>
+            {badge}
+        </OverlayTrigger>
+    );
+}
+
 export function ContractStatusBadge({
     status,
     className,

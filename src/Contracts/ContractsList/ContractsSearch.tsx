@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { OtherContract, OurContract } from "../../../Typings/bussinesTypes";
-import { ContractStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { ContractStatusBadge, ContractTypeBadge } from "../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { contractsRepository } from "./ContractsController";
 import { ContractsFilterBody } from "./ContractsFilterBody";
@@ -20,7 +20,7 @@ export default function ContractsSearch({ title }: { title: string }) {
         return (
             <>
                 <strong>{ourIdLabel(contract)}</strong> {numberLabel(contract)} {contract.name}{" "}
-                <ContractStatusBadge status={contract.status} />
+                <ContractTypeBadge type={contract._type} /> <ContractStatusBadge status={contract.status} />
                 <div>{renderRangeNames(contract)}</div>
             </>
         );
