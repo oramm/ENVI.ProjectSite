@@ -849,7 +849,9 @@ export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoice
                         invoice.status === MainSetup.InvoiceStatuses.READY_FOR_KSEF ||
                         invoice.status === MainSetup.InvoiceStatuses.SENT_TO_KSEF ||
                         invoice.status === MainSetup.InvoiceStatuses.KSEF_ERROR ||
-                        invoice.status === MainSetup.InvoiceStatuses.PAID) &&
+                        invoice.status === MainSetup.InvoiceStatuses.PAID ||
+                        invoice.status === MainSetup.InvoiceStatuses.CORRECTED ||
+                        invoice.status === MainSetup.InvoiceStatuses.TO_CORRECT) &&
                     invoice.number &&
                     invoice.sentDate ? (
                         <div className="d-flex gap-2 flex-wrap">
