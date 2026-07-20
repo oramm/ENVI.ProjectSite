@@ -1,5 +1,6 @@
 import React, { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { Spinner, Alert, Badge, Tooltip, OverlayTrigger, Toast } from "react-bootstrap";
+import { createPortal } from "react-dom";
+import { Spinner, Alert, Badge, Tooltip, OverlayTrigger, Toast, ToastContainer } from "react-bootstrap";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import GDFolderIcon from "../../Resources/View/Google-Drive-icon.png";
 import GDDocFileIcon from "../../Resources/View/Google-Docs-icon.png";
@@ -67,24 +68,19 @@ interface ToastComponentProps {
 }
 
 export function SuccessToast({ header = "Sukces", message, show, onClose }: ToastComponentProps) {
-    return (
-        <Toast
-            onClose={onClose}
-            show={show}
-            delay={5000}
-            autohide
-            style={{
-                position: "absolute",
-                bottom: 20,
-                right: 20,
-                zIndex: 9999,
-            }}
-        >
-            <Toast.Header>
-                <strong className="me-auto">{header}</strong>
-            </Toast.Header>
-            <Toast.Body>{message}</Toast.Body>
-        </Toast>
+    if (typeof document === "undefined") return null;
+    // Portal do body + pozycja fixed bottom-end — inaczej wewnątrz modala toast
+    // pozycjonuje się względem modala (ląduje na środku ekranu), nie viewportu.
+    return createPortal(
+        <ToastContainer position="bottom-end" className="p-3" style={{ position: "fixed", zIndex: 9999 }}>
+            <Toast onClose={onClose} show={show} delay={5000} autohide>
+                <Toast.Header>
+                    <strong className="me-auto">{header}</strong>
+                </Toast.Header>
+                <Toast.Body>{message}</Toast.Body>
+            </Toast>
+        </ToastContainer>,
+        document.body
     );
 }
 

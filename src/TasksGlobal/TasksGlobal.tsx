@@ -29,6 +29,8 @@ import {
     CaseAddNewModalButton,
     CaseAndSubCaseAddButtonGroup,
     CaseEditModalButton,
+    buildContractFirstLineLabel,
+    buildMilestoneNameLabel,
 } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { AddFilesToFolderButton } from "./Modals/AddFilesToFolderButton";
@@ -487,6 +489,27 @@ function taskMatchesStatusFilter(task: Task, taskStatuses?: string[]): boolean {
 // AddFilesToFolderButton sam się ukrywa, gdy węzeł nie ma gdFolderId.
 const folderRowActionMenuComponents = [AddFilesToFolderButton];
 
+// Czytelna ścieżka folderu (kontrakt | kamień | sprawa | podsprawa) — pokazywana
+// jako badge w modalu "Dodaj do folderu", analogicznie do badge'a przy edycji sprawy.
+function makeCaseNameLabel(c?: Case) {
+    return c ? c.name || c._type?.name || c._typeFolderNumber_TypeName_Number_Name || "" : "";
+}
+function makeFolderPath(
+    contract: OurContract | OtherContract,
+    milestone?: MilestoneData,
+    caseItem?: Case,
+    subCaseItem?: Case
+) {
+    return [
+        buildContractFirstLineLabel(contract),
+        buildMilestoneNameLabel(milestone),
+        makeCaseNameLabel(caseItem),
+        makeCaseNameLabel(subCaseItem),
+    ]
+        .filter(Boolean)
+        .join(" | ");
+}
+
 export function buildTree(
     contractsWithChildrenInput: ContractsWithChildren[],
     targetCaseId?: number,
@@ -533,6 +556,7 @@ export function buildTree(
             isDeletable: false,
             rowActionMenuComponents: folderRowActionMenuComponents,
         };
+        (contract as RepositoryDataItem)._folderPath = makeFolderPath(contract);
         contractNodes.push(contractNode);
 
         for (const { milestone, casesWithTasks } of milestonesWithCases || []) {
@@ -565,6 +589,7 @@ export function buildTree(
                 isDeletable: true,
                 rowActionMenuComponents: folderRowActionMenuComponents,
             };
+            (milestone as RepositoryDataItem)._folderPath = makeFolderPath(contract, milestone);
             contractNode.children.push(milestoneNode);
 
             const allCasesWithTasks = casesWithTasks || [];
@@ -602,6 +627,7 @@ export function buildTree(
                     },
                     rowActionMenuComponents: folderRowActionMenuComponents,
                 };
+                (caseItem as RepositoryDataItem)._folderPath = makeFolderPath(contract, milestone, caseItem);
                 parentNode.children.push(caseNode);
                 allTasks.push(...caseTasks);
 
@@ -631,6 +657,12 @@ export function buildTree(
                             },
                             rowActionMenuComponents: folderRowActionMenuComponents,
                         };
+                        (subCaseWithParent as RepositoryDataItem)._folderPath = makeFolderPath(
+                            contract,
+                            milestone,
+                            caseItem,
+                            subCase
+                        );
                         caseNode.children.push(subCaseNode);
                         allTasks.push(...subCaseTasks);
                     }

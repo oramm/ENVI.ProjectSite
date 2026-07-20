@@ -27,6 +27,8 @@ export interface RepositoryDataItem {
     id: number;
     _gdFolderUrl?: string;
     _documentOpenUrl?: string;
+    /** czytelna ścieżka folderu (kontrakt | kamień | sprawa) — badge w modalu "Dodaj do folderu" */
+    _folderPath?: string;
 }
 
 export interface ProjectData extends RepositoryDataItem {
