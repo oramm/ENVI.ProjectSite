@@ -20,7 +20,7 @@ import { normalizeNip } from "./nipValidator";
 /** Text labels for the 3 AQM dedup match states (L11). */
 const AQM_MATCH_LABELS: Record<AqmMatchResponse["match"], string> = {
     NIP: "Podmiot zostanie powiązany po NIP z istniejącą organizacją w AQM.",
-    NAME: "Znaleziono organizację o zbieżnej nazwie bez NIP — wymagane potwierdzenie przed zapisem.",
+    NAME: "W AQM istnieje już karta o tej samej nazwie (dane niżej). Zapis dopasowuje karty po NIP, nigdy po nazwie — jeśli tego podmiotu nie wysłano wcześniej do AQM, powstanie DRUGA karta. Sprawdź, czy to nie ten sam podmiot.",
     NONE: "Podmiot nie istnieje w AQM — zostanie utworzony automatycznie przy zapisie umowy.",
 };
 
@@ -169,6 +169,15 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
         };
     }, [isAqm, _invoiceBuyer]);
 
+    // Expose the match result to the schema and reset the NAME-confirmation on EVERY
+    // change of it. matchState is nulled before each lookup and when the employer is
+    // cleared or the type leaves AQM, so this one effect covers all reset paths —
+    // without it a tick made for one card would survive into a different podmiot.
+    useEffect(() => {
+        setValue("_aqmMatchState", matchState?.match ?? null);
+        setValue("aqmNameMatchConfirmed", false);
+    }, [matchState, setValue]);
+
     function handleCityCreated(created: CityData) {
         setValue("_city", created, { shouldValidate: true });
     }
@@ -258,7 +267,22 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                                     {matchState.organization.taxNr ? ` (NIP: ${matchState.organization.taxNr})` : ""}
                                 </span>
                             )}
+                            {matchState.match === "NAME" && (
+                                <Form.Check
+                                    type="checkbox"
+                                    className="mt-1"
+                                    id="aqmNameMatchConfirmed"
+                                    label="Sprawdziłem kartę powyżej — zapisz mimo zbieżnej nazwy"
+                                    data-testid="aqm-name-match-confirm"
+                                    {...register("aqmNameMatchConfirmed")}
+                                />
+                            )}
                         </Alert>
+                    )}
+                    {isAqm && errors.aqmNameMatchConfirmed && (
+                        <div className="small text-danger mt-1" data-testid="aqm-name-match-error">
+                            {errors.aqmNameMatchConfirmed.message as string}
+                        </div>
                     )}
                 </Form.Group>
             </Row>

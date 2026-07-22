@@ -86,6 +86,31 @@ const _employersAqmRule = Yup.array().when("_type", {
     otherwise: (schema) => schema.required("Wybierz Zamawiającego"),
 });
 
+/**
+ * Confirmation gate for the AQM NAME match (WS10/L11).
+ *
+ * matchOrganization returns NAME for ANY card with the same name — also one that HAS
+ * a NIP — and the AQM upsert keys on legacy_entity_id → NIP → INSERT, never on name.
+ * So saving over a NAME match usually creates a SECOND card for the same podmiot.
+ * Exception the front cannot see: if this employer was pushed to AQM before, the card
+ * is already linked by legacy_entity_id and gets UPDATED instead — the match endpoint
+ * only returns hasLegacyEntityId for the name-matched row, not the link target, so the
+ * gate asks for a deliberate save rather than asserting which of the two will happen.
+ */
+const _aqmNameMatchConfirmedRule = Yup.boolean().test(
+    "aqm-name-match-confirmed",
+    "Potwierdź zapis mimo karty o tej samej nazwie w AQM.",
+    function (confirmed: boolean | undefined) {
+        const parent = this.parent as {
+            _type?: { name?: string } | null;
+            _aqmMatchState?: string | null;
+        };
+        if (parent?._type?.name !== "AQM") return true;
+        if (parent?._aqmMatchState !== "NAME") return true;
+        return confirmed === true;
+    },
+);
+
 export function ourContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
@@ -94,6 +119,10 @@ export function ourContractValidationSchema(isEditing: boolean) {
         _manager: Yup.object().required("Wybierz koordynatora"),
         _employers: _employersAqmRule,
         _invoiceBuyer: Yup.object().nullable().notRequired(),
+        // Client-only pair: the match result the form last saw, and the user's confirmation.
+        // The server constructor cherry-picks known fields, so both are ignored on POST.
+        _aqmMatchState: Yup.string().nullable().notRequired(),
+        aqmNameMatchConfirmed: _aqmNameMatchConfirmedRule,
     });
 }
 

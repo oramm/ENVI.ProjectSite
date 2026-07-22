@@ -191,3 +191,96 @@ describe("ourContractValidationSchema — non-AQM type: NO NIP/employer regressi
         expect(msgs.some((m) => m.includes("NIP") || m.includes("AQM") || m.includes("tylko 1"))).toBe(false);
     });
 });
+
+// ─── AQM NAME-match confirmation gate (L11) ─────────────────────────────────
+
+describe("ourContractValidationSchema — AQM NAME match: confirmation gate", () => {
+    const schema = ourContractValidationSchema(false);
+    const AQM_EMPLOYER = [{ id: 1, taxNumber: "5260250995" }];
+
+    /** Errors on one field path; [] when the whole form validates. */
+    async function fieldErrors(data: object, path: string): Promise<string[]> {
+        try {
+            await schema.validate(data, { abortEarly: false });
+            return [];
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) return getFieldErrors(err, path);
+            throw err;
+        }
+    }
+
+    it("blocks save on AQM + NAME match with the checkbox unticked", async () => {
+        const msgs = await fieldErrors(
+            {
+                ...BASE_VALID,
+                _type: AQM_TYPE,
+                _employers: AQM_EMPLOYER,
+                _aqmMatchState: "NAME",
+            },
+            "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toEqual(["Potwierdź zapis mimo karty o tej samej nazwie w AQM."]);
+    });
+
+    it("blocks save on AQM + NAME match with the checkbox explicitly false", async () => {
+        const msgs = await fieldErrors(
+            {
+                ...BASE_VALID,
+                _type: AQM_TYPE,
+                _employers: AQM_EMPLOYER,
+                _aqmMatchState: "NAME",
+                aqmNameMatchConfirmed: false,
+            },
+            "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toHaveLength(1);
+    });
+
+    it("passes on AQM + NAME match once the checkbox is ticked", async () => {
+        const msgs = await fieldErrors(
+            {
+                ...BASE_VALID,
+                _type: AQM_TYPE,
+                _employers: AQM_EMPLOYER,
+                _aqmMatchState: "NAME",
+                aqmNameMatchConfirmed: true,
+            },
+            "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toHaveLength(0);
+    });
+
+    it.each(["NIP", "NONE", null])("does not gate AQM when the match state is %s", async (state) => {
+        const msgs = await fieldErrors(
+            {
+                ...BASE_VALID,
+                _type: AQM_TYPE,
+                _employers: AQM_EMPLOYER,
+                _aqmMatchState: state,
+            },
+            "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toHaveLength(0);
+    });
+
+    it("does not gate a non-AQM contract even on a NAME match", async () => {
+        const msgs = await fieldErrors(
+            {
+                ...BASE_VALID,
+                _type: OTHER_TYPE,
+                _employers: [{ id: 1, name: "Gmina ABC" }],
+                _aqmMatchState: "NAME",
+            },
+            "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toHaveLength(0);
+    });
+
+    it("leaves a plain non-AQM contract with no match field untouched", async () => {
+        const msgs = await fieldErrors(
+            { ...BASE_VALID, _type: OTHER_TYPE, _employers: [{ id: 1, name: "Gmina ABC" }] },
+            "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toHaveLength(0);
+    });
+});
