@@ -13,6 +13,11 @@ import ToolsForms from "../../../React/Tools/ToolsForms";
 import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 
+// Typy kontraktów, które mają kamień „Projektowanie - nadzór” (MilestoneType 6)
+// wg MilestoneTypes_ContractTypes: 3 = „Żółty”, 8 = „Usługa”. Tylko dla nich
+// opcja „Dokumentacja zatwierdzona” ma sens (gdzie indziej kamień 6 nie powstaje).
+const APPROVED_DOCS_CONTRACT_TYPE_IDS = [3, 8];
+
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<OurContract | OtherContract>) {
     const {
         register,
@@ -23,6 +28,10 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         trigger,
     } = useFormContext();
     const watchAllFields = watch();
+    // „Dokumentacja zatwierdzona” tylko dla typów kontraktu mających kamień 6.
+    const approvedDocsAllowed = APPROVED_DOCS_CONTRACT_TYPE_IDS.includes(
+        (watch("_type") as { id?: number } | undefined)?.id ?? -1
+    );
     let startDateSugestion: string | undefined;
     let endDateSugestion: string | undefined;
     let guaranteeEndDateSugestion: string | undefined;
@@ -47,6 +56,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
         setValue("lettersShortcutsInSubfolder", initialData?.lettersShortcutsInSubfolder ?? false, { shouldValidate: true });
+        setValue("approvedDocumentation", initialData?.approvedDocumentation ?? false, { shouldValidate: true });
         setValue("startDate", startDateSugestion, { shouldValidate: true });
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
@@ -177,6 +187,15 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     {...register("lettersShortcutsInSubfolder")}
                 />
             </Form.Group>
+            {approvedDocsAllowed && (
+                <Form.Group controlId="approvedDocumentation" className="mt-2">
+                    <Form.Check
+                        type="checkbox"
+                        label="Czy chcesz dodać folder &quot;Dokumentacja zatwierdzona&quot; (kamień projektowanie - nadzór)?"
+                        {...register("approvedDocumentation")}
+                    />
+                </Form.Group>
+            )}
         </>
     );
 }

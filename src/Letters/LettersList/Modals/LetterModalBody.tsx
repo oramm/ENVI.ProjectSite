@@ -30,6 +30,10 @@ import {
     buildContractHeaderBadge,
 } from "../../../TasksGlobal/Modals/Case/CaseModalButtons";
 
+// Typ kamienia „projektowanie - nadzór” (MilestoneTypes.Id) — dla niego oferujemy
+// opcję dodania pisma do „Dokumentacji zatwierdzonej”. Odpowiednik Setup.MilestoneTypes.DESIGN_SUPERVISION.
+const DESIGN_SUPERVISION_MILESTONE_TYPE_ID = 6;
+
 export function LetterModalBody({
     isEditing,
     initialData,
@@ -58,6 +62,14 @@ export function LetterModalBody({
     const [caseOptionsRefreshToken, setCaseOptionsRefreshToken] = useState(0);
 
     const _contract = watch("_contract");
+    const _watchedCases = watch("_cases") as Case[] | undefined;
+    // Opcja „Dokumentacja zatwierdzona” tylko gdy kontrakt ma włączoną flagę
+    // i któraś wybrana sprawa należy do kamienia projektowanie - nadzór.
+    const approvedDocsApplicable =
+        (_contract as Contract | undefined)?.approvedDocumentation === true &&
+        !!_watchedCases?.some(
+            (caseItem) => caseItem?._parent?._type?.id === DESIGN_SUPERVISION_MILESTONE_TYPE_ID
+        );
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
     const responseDueDate = watch("responseDueDate");
@@ -107,6 +119,7 @@ export function LetterModalBody({
             _editor: initialData?._editor,
             relatedLetterNumber: initialData?.relatedLetterNumber || "",
             responseDueDate: toDateInput(initialData?.responseDueDate),
+            addedToApprovedDocumentation: initialData?.addedToApprovedDocumentation ? 1 : 0,
         };
         if (!isEditing) resetData._project = _project;
         reset(resetData);
@@ -117,6 +130,8 @@ export function LetterModalBody({
     useEffect(() => {
         if (!dirtyFields._contract) return;
         setValue("_cases", undefined, { shouldValidate: true });
+        // zmiana kontraktu unieważnia zaznaczenie „dokumentacji zatwierdzonej”
+        setValue("addedToApprovedDocumentation", 0, { shouldValidate: true });
     }, [_contract, _contract?.id, setValue]);
 
     useEffect(() => {
@@ -153,6 +168,23 @@ export function LetterModalBody({
                     <Alert variant="warning">Wybierz kontrakt, by przypisać do spraw</Alert>
                 )}
             </Form.Group>
+
+            {approvedDocsApplicable && (
+                <Form.Group controlId="addedToApprovedDocumentation" className="mt-2">
+                    {/* Zapisujemy 1/0 (nie boolean), bo przy piśmie z plikiem payload idzie
+                        jako FormData, a serializer gubi wartości boolean. Backend robi !!. */}
+                    <Form.Check
+                        type="checkbox"
+                        label="Dodaj to pismo do &quot;Dokumentacji zatwierdzonej&quot;"
+                        checked={!!watch("addedToApprovedDocumentation")}
+                        onChange={(e) =>
+                            setValue("addedToApprovedDocumentation", e.target.checked ? 1 : 0, {
+                                shouldValidate: true,
+                            })
+                        }
+                    />
+                </Form.Group>
+            )}
 
             {/* Panel boczny tworzenia Sprawy "w miejscu" — ta SAMA instancja casesRepository
                 co selektor, więc utworzona sprawa odświeża jego opcje. */}

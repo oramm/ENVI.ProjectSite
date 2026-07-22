@@ -46,6 +46,8 @@ const commonFields = {
         ),
     _entitiesMain: Yup.array().required("Wybierz podmiot"),
     _editor: Yup.object().required("Podaj kto rejestruje"),
+    // 1/0 (nie boolean) — patrz LetterModalBody: przenoszone przez FormData
+    addedToApprovedDocumentation: Yup.mixed().notRequired(),
 };
 
 export function ourLetterValidationSchema(isEditing: boolean) {
