@@ -691,6 +691,14 @@ export function buildTree(
                 const typeId = caseItem._type.id;
                 let caseTypeNode = caseTypeFolderNodes.get(typeId);
                 if (!caseTypeNode) {
+                    const caseTypeFolderLabel =
+                        caseItem._type._folderName ??
+                        `${caseItem._type.folderNumber} ${caseItem._type.name}`;
+                    (caseItem._type as RepositoryDataItem)._folderPath = makeFolderPath(
+                        contract,
+                        milestone,
+                        { name: caseTypeFolderLabel } as Case
+                    );
                     caseTypeNode = {
                         id: `casetype${milestone.id}_${typeId}${sfx}`,
                         isInAccordion: true,
@@ -703,6 +711,7 @@ export function buildTree(
                         title: <>{makeCaseTypeTitleLabel(caseItem._type)}</>,
                         children: [],
                         isDeletable: false,
+                        rowActionMenuComponents: folderRowActionMenuComponents,
                         AddNewButtonComponent: CaseAddNewInTypeFolderButton as unknown as ComponentType<
                             SpecificAddNewModalButtonProps<RepositoryDataItem>
                         >,
