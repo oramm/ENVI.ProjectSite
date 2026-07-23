@@ -36,7 +36,41 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     enforceFocus?: boolean;
 };
 
-export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
+/**
+ * Zewnętrzny host modala. `GeneralModal` jest montowany na stałe przy przycisku
+ * (tylko `show` się przełącza), więc gdyby useForm żyło tutaj, jego stan (wartości,
+ * błędy, dirty) wyciekałby między kolejnymi otwarciami — react-bootstrap nie zawsze
+ * odmontowuje zawartość, a efekty inicjalizujące pól odpalają się tylko przy montowaniu.
+ *
+ * Rozwiązanie: cała logika formularza żyje w `GeneralModalContent`, montowanym ze
+ * ŚWIEŻYM `key` przy każdym otwarciu (openKey rośnie, gdy `show` przechodzi w true).
+ * Dzięki temu każde otwarcie startuje z czystym useForm i na nowo odpala efekty
+ * inicjalizujące ciała modala.
+ */
+export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>(
+    props: GeneralModalProps<DataItemType>,
+) {
+    const { show, onClose, size = "lg", enforceFocus = true } = props;
+    // Świeży `key` przy każdym przejściu `show` false→true. Wzorzec "dostrajania stanu
+    // przy zmianie propsów" (ustawienie stanu w trakcie renderu) — React porzuca bieżący
+    // render i renderuje ponownie z nowym key, więc nie ma podwójnego montażu zawartości.
+    const [openKey, setOpenKey] = useState(0);
+    const [prevShow, setPrevShow] = useState(show);
+    if (show !== prevShow) {
+        setPrevShow(show);
+        if (show) setOpenKey((key) => key + 1);
+    }
+
+    return (
+        <Modal size={size} show={show} onHide={onClose} enforceFocus={enforceFocus}>
+            <ErrorBoundary>
+                <GeneralModalContent<DataItemType> key={openKey} {...props} />
+            </ErrorBoundary>
+        </Modal>
+    );
+}
+
+function GeneralModalContent<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     show,
     title,
     subtitle,
@@ -53,8 +87,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     makeValidationSchema: validationSchema,
     fieldsToUpdate,
     shouldRetrieveDataBeforeEdit = false,
-    size = "lg",
-    enforceFocus = true,
 }: GeneralModalProps<DataItemType>) {
     const [dataObjectFromServer, setDataObjectFromServer] = useState<DataItemType | undefined>(undefined);
     const [isLoadingData, setIsLoadingData] = useState(false);
@@ -352,50 +384,41 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     }
 
     return (
-        <Modal
-            size={size}
-            show={show}
-            onHide={onClose}
-            enforceFocus={enforceFocus}
-        >
-            <ErrorBoundary>
-                <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>
-                    <Modal.Header closeButton={true}>{renderHeader()}</Modal.Header>
-                    <Modal.Body>{renderFormBody()}</Modal.Body>
-                    <Modal.Footer>
-                        <Row className="w-100 align-items-center text-end">
-                            <Col xs="12" sm="8" className="W-100">
-                                {renderProgressBar()}
-                            </Col>
-                            <Col className="text-end">
-                                <Button variant="secondary" className="me-2 mb-2" onClick={onClose}>
-                                    Anuluj
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    variant="primary"
-                                    className="mb-2"
-                                    disabled={!formMethods.formState.isValid || requestPending || isLoadingData}
-                                >
-                                    <span className="d-inline-flex align-items-center">
-                                        Zatwierdź
-                                        {requestPending && (
-                                            <Spinner
-                                                as="span"
-                                                animation="border"
-                                                size="sm"
-                                                role="status"
-                                                aria-hidden="true"
-                                                className="ms-2"
-                                            />
-                                        )}
-                                    </span>
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Modal.Footer>
-                </Form>
-            </ErrorBoundary>
-        </Modal>
+        <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>
+            <Modal.Header closeButton={true}>{renderHeader()}</Modal.Header>
+            <Modal.Body>{renderFormBody()}</Modal.Body>
+            <Modal.Footer>
+                <Row className="w-100 align-items-center text-end">
+                    <Col xs="12" sm="8" className="W-100">
+                        {renderProgressBar()}
+                    </Col>
+                    <Col className="text-end">
+                        <Button variant="secondary" className="me-2 mb-2" onClick={onClose}>
+                            Anuluj
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            className="mb-2"
+                            disabled={!formMethods.formState.isValid || requestPending || isLoadingData}
+                        >
+                            <span className="d-inline-flex align-items-center">
+                                Zatwierdź
+                                {requestPending && (
+                                    <Spinner
+                                        as="span"
+                                        animation="border"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        className="ms-2"
+                                    />
+                                )}
+                            </span>
+                        </Button>
+                    </Col>
+                </Row>
+            </Modal.Footer>
+        </Form>
     );
 }
