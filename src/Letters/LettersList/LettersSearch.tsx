@@ -1,4 +1,4 @@
-import { faEnvelope, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faPaperPlane, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
@@ -54,7 +54,19 @@ export default function LettersSearch({ title }: { title: string }) {
 
     function renderIconTdBody(letter: OurLetterContract | IncomingLetterContract) {
         const icon = letter.isOur ? faPaperPlane : faEnvelope;
-        return <FontAwesomeIcon icon={icon} size="lg" />;
+        return (
+            <div className="d-flex flex-column align-items-center gap-2">
+                <FontAwesomeIcon icon={icon} size="lg" />
+                {letter.addedToApprovedDocumentation && (
+                    <FontAwesomeIcon
+                        icon={faClipboardCheck}
+                        size="lg"
+                        className="text-success"
+                        title="Dokumentacja zatwierdzona"
+                    />
+                )}
+            </div>
+        );
     }
 
     function ExportToPDFButtonWithError({

@@ -58,6 +58,24 @@ export function LettersFilterBody() {
             </Row>
             <Row>
                 <Form.Group as={Col} md={6}>
+                    <Form.Label>Odbiorca (DO / DW)</Form.Label>
+                    <EntitySelector
+                        name="_entities"
+                        multiple={true}
+                        showValidationInfo={false}
+                    />
+                </Form.Group>
+                <Form.Group as={Col} md={6}>
+                    <Form.Label>Dokumentacja zatwierdzona</Form.Label>
+                    <Form.Select {...register("approvedDocumentationFilter")}>
+                        <option value="">-- wszystkie --</option>
+                        <option value="APPROVED">Dokumentacja zatwierdzona</option>
+                        <option value="REMAINING">Pozostałe</option>
+                    </Form.Select>
+                </Form.Group>
+            </Row>
+            <Row>
+                <Form.Group as={Col} md={6}>
                     <Form.Label>Kontrakt</Form.Label>
                     <ContractSelector
                         name="_contract"
@@ -66,29 +84,19 @@ export function LettersFilterBody() {
                         _project={_project}
                     />
                 </Form.Group>
+            {_contract && (
                 <Form.Group as={Col} md={6}>
-                    <Form.Label>Odbiorca (DO / DW)</Form.Label>
-                    <EntitySelector
-                        name="_entities"
-                        multiple={true}
+                    <Form.Label>Sprawa</Form.Label>
+                    <CaseSelectMenuElement
+                        name="_case"
+                        repository={casesRepository}
                         showValidationInfo={false}
+                        _contract={_contract}
+                        multiple={false}
                     />
                 </Form.Group>
-            </Row>
-            {_contract && (
-                <Row>
-                    <Form.Group as={Col} md={12}>
-                        <Form.Label>Sprawa</Form.Label>
-                        <CaseSelectMenuElement
-                            name="_case"
-                            repository={casesRepository}
-                            showValidationInfo={false}
-                            _contract={_contract}
-                            multiple={false}
-                        />
-                    </Form.Group>
-                </Row>
             )}
+            </Row>
         </>
     );
 }
