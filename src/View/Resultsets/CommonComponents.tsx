@@ -18,6 +18,7 @@ import {
     faEllipsisV,
     faEllipsisH,
     faFileCirclePlus,
+    faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 
 export function ProgressBar() {
@@ -176,6 +177,10 @@ export function UploadIconButton({ layout, onClick }: SpecificIconButtonProps) {
 export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {
     const icon = layout === "vertical" ? faEllipsisV : faEllipsisH;
     return <IconButton icon={icon} layout={layout} onClick={onClick} className="text-secondary" />;
+}
+
+export function MapIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faLocationDot} layout={layout} onClick={onClick} className="text-danger" />;
 }
 
 export function InvoiceStatusBadge({ status }: { status: string }) {

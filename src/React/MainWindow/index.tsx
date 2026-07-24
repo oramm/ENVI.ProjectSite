@@ -44,6 +44,7 @@ import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programme
 import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ProtectedRoute from "../ProtectedRoute";
 import MileagePage from "../../Mileage/MileagePage";
+import SiteVisitsPage from "../../SiteVisits/SiteVisitsPage";
 import Dashboard from "./Content/Dashboard/Dashboard";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
@@ -189,6 +190,10 @@ function AppRoutes() {
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
                         <Route path="/mileage" element={<MileagePage />} />
                         <Route path="/mileage/:vehicleId" element={<MileagePage />} />
+                        <Route path="/visits" element={<SiteVisitsPage />} />
+                        <Route path="/visits/list" element={<SiteVisitsPage />} />
+                        <Route path="/visits/admin" element={<SiteVisitsPage />} />
+                        <Route path="/visits/:contractId" element={<SiteVisitsPage />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />

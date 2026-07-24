@@ -1,7 +1,7 @@
 // Minimalny service worker dla PWA (instalowalność + szybki start + fallback offline).
 // Strategia: network-first dla GET z tej samej domeny (użytkownik online zawsze dostaje
 // świeży bundle.js), z fallbackiem do cache gdy brak sieci. POST-y omijają cache.
-const CACHE = 'envi-pwa-v2';
+const CACHE = 'envi-pwa-v3';
 const SHELL = ['./', './index.html', './bundle.js', './pwa/icon-192.png'];
 
 self.addEventListener('install', (event) => {

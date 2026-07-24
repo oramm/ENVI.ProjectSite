@@ -10,6 +10,16 @@ export default function MainMenu() {
     const location = useLocation();
     const currentUser = MainSetup.currentUserOrNull;
 
+    // Dostęp do "Wizyty na budowie" (rola 1/2 lub flaga StaffMembers) - decyduje
+    // backend, dlatego pytamy /site-visits/access i pokazujemy pozycję tylko upoważnionym.
+    const [visitsAccess, setVisitsAccess] = React.useState(false);
+    React.useEffect(() => {
+        fetch(`${MainSetup.serverUrl}site-visits/access`, { credentials: "include" })
+            .then((r) => (r.ok ? r.json() : { hasAccess: false }))
+            .then((d) => setVisitsAccess(!!d.hasAccess))
+            .catch(() => {});
+    }, []);
+
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
     }
@@ -74,6 +84,14 @@ export default function MainMenu() {
                                             nowe
                                         </Badge>
                                     </NavDropdown.Item>
+                                    {visitsAccess && (
+                                        <NavDropdown.Item as={Link} to="/visits" className={isActive("/visits")}>
+                                            Wizyty na budowie{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
                                 </NavDropdown>
                             )}
                             <Nav.Link as={Link} to="/letters" className={isActive("/letters")}>
