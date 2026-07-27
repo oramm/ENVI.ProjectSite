@@ -18,6 +18,7 @@ import "leaflet/dist/leaflet.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faCamera,
+    faImages,
     faMicrophone,
     faPen,
     faXmark,
@@ -264,7 +265,8 @@ function ContractPicker() {
 // ----------------------------------------------------------------------------
 function CaptureScreen({ contractId }: { contractId: number }) {
     const navigate = useNavigate();
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const cameraInputRef = useRef<HTMLInputElement | null>(null);
+    const galleryInputRef = useRef<HTMLInputElement | null>(null);
     const recognitionRef = useRef<any>(null);
 
     const [contractLabel, setContractLabel] = useState("");
@@ -467,10 +469,21 @@ function CaptureScreen({ contractId }: { contractId: number }) {
                 </Alert>
             )}
 
-            {/* Bez atrybutu capture - telefon pokazuje natywny wybór Aparat/Galeria/Pliki
-                (capture wymuszałby od razu aparat). Na komputerze i tak jest eksplorator. */}
+            {/* Dwa jawne wejścia zamiast jednego: natywny wybór "Aparat vs Pliki"
+                jest sterowany przez OS/przeglądarkę i różni się między telefonami
+                (nowszy Android otwiera od razu galerię). Rozbicie na osobne inputy
+                daje deterministyczne, identyczne zachowanie na każdym urządzeniu:
+                capture="environment" => aparat; brak capture => galeria/pliki. */}
             <input
-                ref={fileInputRef}
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                hidden
+                onChange={onFilesSelected}
+            />
+            <input
+                ref={galleryInputRef}
                 type="file"
                 accept="image/*"
                 multiple
@@ -478,15 +491,29 @@ function CaptureScreen({ contractId }: { contractId: number }) {
                 onChange={onFilesSelected}
             />
 
-            <Button
-                className="w-100 mb-3 py-3"
-                variant="success"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={gpsBusy}
-            >
-                <FontAwesomeIcon icon={faCamera} className="me-2" />
-                {gpsBusy ? "Pobieranie lokalizacji…" : "Zrób / dodaj zdjęcia"}
-            </Button>
+            <div className="d-flex gap-2 mb-3">
+                <Button
+                    className="flex-fill py-3"
+                    variant="success"
+                    onClick={() => cameraInputRef.current?.click()}
+                    disabled={gpsBusy}
+                >
+                    <FontAwesomeIcon icon={faCamera} className="me-2" />
+                    Zrób zdjęcie
+                </Button>
+                <Button
+                    className="flex-fill py-3"
+                    variant="outline-success"
+                    onClick={() => galleryInputRef.current?.click()}
+                    disabled={gpsBusy}
+                >
+                    <FontAwesomeIcon icon={faImages} className="me-2" />
+                    Z galerii
+                </Button>
+            </div>
+            {gpsBusy && (
+                <div className="text-muted small mb-3">Pobieranie lokalizacji…</div>
+            )}
 
             {photos.length > 0 && (
                 <div
