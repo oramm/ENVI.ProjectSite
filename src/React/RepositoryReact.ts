@@ -207,7 +207,9 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
         try {
             // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
-            const response = await ToolsFetch.fetchWithRetry(urlPath, requestOptions);
+            // POST nie jest idempotentny - ponowienie po timeoucie tworzyło duplikaty
+            // (i kasowało folder GD utworzony przez pierwszą próbę). Jedna próba.
+            const response = await ToolsFetch.fetchWithRetry(urlPath, requestOptions, 1);
             if (onProgress && response.taskId) onProgress(response);
             // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
             if (response && !response.taskId) {
