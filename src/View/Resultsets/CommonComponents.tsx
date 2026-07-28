@@ -297,13 +297,23 @@ export function FidmanSyncBadge({
 }
 
 /**
- * Badge typu kontraktu z dwudzielnym językiem wizualnym (decyzja FID.APP.01
- * 2026-07-17 „Czerwony ryczałtowy"). Baza = kolor osi FIDIC (pierwsze słowo nazwy:
- * „Czerwony" → czerwień, „Żółty" → żółć); prawy pasek ~23% = kolor metody rozliczenia,
- * gdy niedomyślna (drugie słowo: „ryczałtowy" na czerwonym → żółty pasek; „obmiarowy"
- * na żółtym → czerwony pasek). Tekst w badge = JEDNO słowo (pierwsze); pełna nazwa w
- * tooltipie. Pasek realizowany 1 regułą CSS (hard-stop linear-gradient), bez nowego
- * komponentu-pliku. Typy spoza osi FIDIC (IK, PT, AQM…) → neutralny badge.
+ * Badge typu kontraktu z akcentem odstępstwa od typowego rozliczenia (kanon firmowy
+ * 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent, decyzja FID.APP.01
+ * 2026-07-28 — zastępuje odrzucone dwubarwne tło z twardym cięciem 77%).
+ * Baza = kolor osi FIDIC (pierwsze słowo nazwy: „Czerwony" → czerwień, „Żółty" → żółć);
+ * akcent = kolor metody rozliczenia, gdy niedomyślna („Czerwony ryczałtowy" → akcent
+ * żółty, „Żółty obmiarowy" → akcent czerwony), jako gradient wygaszany od PRAWEJ
+ * krawędzi. Tekst w badge = JEDNO słowo (pierwsze); pełna nazwa w tooltipie, sam akcent
+ * dodatkowo opisany dla czytnika ekranu. Typy spoza osi FIDIC (IK, PT, AQM…) → neutralny
+ * badge, nigdy z akcentem.
+ *
+ * NIE ZMIENIAĆ bez nowej decyzji ownera (kontrast WCAG AA):
+ * - kierunek `to left` — zapis procentowy od lewej wygasza w innym miejscu dla „Czerwony"
+ *   i „Żółty" (różna długość słowa), ostatnie litery siadają wtedy na mieszance kolorów;
+ * - `transparent 1.45em` i `paddingRight: 1.6em` są SPAROWANE — zmiana jednej wymaga
+ *   przeliczenia drugiej;
+ * - odcinek pełnego nasycenia `0 .45em` — bez niego akcent przestaje dawać się nazwać
+ *   kolorem i jest najsłabszy przy daltonizmie.
  */
 export function ContractTypeBadge({ type }: { type: { name?: string } }) {
     const name = (type?.name ?? "").trim();
@@ -316,18 +326,30 @@ export function ContractTypeBadge({ type }: { type: { name?: string } }) {
     const base = first === "Czerwony" ? RED : first === "Żółty" ? YELLOW : null;
     const stripe = base === RED ? YELLOW : base === YELLOW ? RED : null;
     const isDark = base === YELLOW; // żółte tło → ciemny tekst
+    const hasAccent = Boolean(base) && hasModifier;
     const style: React.CSSProperties = base
         ? {
-              // hard-stop gradient: baza 0–77%, pasek metody rozliczenia 77–100%
-              background: hasModifier
-                  ? `linear-gradient(90deg, ${base} 0 77%, ${stripe} 77% 100%)`
-                  : base,
+              backgroundColor: base,
+              backgroundImage: hasAccent
+                  ? `linear-gradient(to left, ${stripe} 0 .45em, transparent 1.45em)`
+                  : undefined,
               color: isDark ? "#212529" : "#fff",
-              paddingRight: hasModifier ? "1.4em" : undefined, // tekst nie wchodzi na pasek
+              paddingRight: hasAccent ? "1.6em" : undefined, // tekst nie wchodzi na akcent
           }
         : {};
+    // akcent jest wyłącznie wizualny — czytnik ekranu dostaje go słowem
+    const accentLabel = hasAccent ? (
+        <span className="visually-hidden">
+            {words[1].startsWith("rycz") ? " — rozliczany ryczałtem" : " — rozliczany obmiarem"}
+        </span>
+    ) : null;
     const badge = base ? (
-        <Badge style={style}>{first}</Badge>
+        // bg="" wyłącza domyślne `bg-primary` — Bootstrap daje mu `!important`, więc bez tego
+        // inline `backgroundColor` nie wchodzi w życie i baza zostaje niebieska (błąd z TY-1)
+        <Badge bg="" style={style}>
+            {first}
+            {accentLabel}
+        </Badge>
     ) : (
         <Badge bg="secondary" text="light">
             {first}
