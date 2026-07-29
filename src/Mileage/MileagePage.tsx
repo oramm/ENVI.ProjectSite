@@ -271,7 +271,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    const selectedContract = watch("_contract") as OurContract | undefined;
+    const selectedContracts = (watch("_contracts") as OurContract[] | undefined) ?? [];
     const driverPerson = watch("_driver") as PersonData | undefined;
     const driver = driverPerson ? `${driverPerson.name} ${driverPerson.surname}` : "";
     const isFueling = purposes.includes("tankowanie");
@@ -303,12 +303,17 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     // Podpowiedź trasy (3 pola, edytowalne). Backend złoży je w "skąd - przez - dokąd".
     // "przez": miasto kontraktu ma pierwszeństwo (nawet przy tankowaniu); w przeciwnym
     // razie "Brzeg" dla tankowania, a puste dla reszty (backend zwinie do "Brzeg").
+    // Miasta wszystkich wybranych kontraktów (bez powtórzeń) - string, więc nadaje się
+    // na zależność efektu (tablica z watch() jest nowa przy każdym renderze).
+    const contractCities = [
+        ...new Set(selectedContracts.map((contract) => contract._city?.name).filter(Boolean)),
+    ].join(" - ");
+
     useEffect(() => {
         setRouteFrom("Brzeg");
         setRouteTo("Brzeg");
-        const city = selectedContract?._city?.name;
-        setRouteMid(city ?? (isFueling ? "Brzeg" : ""));
-    }, [selectedContract, isFueling]);
+        setRouteMid(contractCities || (isFueling ? "Brzeg" : ""));
+    }, [contractCities, isFueling]);
 
     // Domyślne dane tankowania: stan = końcowy, data = data wyjazdu - dopóki
     // użytkownik ręcznie nie zmieni pola. Po odznaczeniu tankowania - reset.
@@ -418,10 +423,14 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     vehicleId: vehicle.id,
                     date,
                     driver,
-                    // Uproszczony (mobile): puste. Pełny: kontrakt lub OGÓLNE gdy pusty.
+                    // Uproszczony (mobile): puste. Pełny: kontrakty po przecinku
+                    // (jedna komórka arkusza) lub OGÓLNE gdy nic nie wybrano.
                     projectOurId: simplified
                         ? ""
-                        : selectedContract?.ourId || GENERAL_CODE,
+                        : selectedContracts
+                              .map((contract) => contract.ourId)
+                              .filter(Boolean)
+                              .join(", ") || GENERAL_CODE,
                     purpose: purposeText(),
                     routeParts: [routeFrom, routeMid, routeTo],
                     startReading: Number(startReading),
@@ -537,10 +546,16 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     {!simplified && (
                         <div className="mb-3">
                             <Form.Label>
-                                Kontrakt ENVI{" "}
+                                Kontrakty ENVI{" "}
                                 <span className="text-muted small">(puste = OGÓLNE)</span>
                             </Form.Label>
-                            <ContractSelector name="_contract" typesToInclude="our" showValidationInfo={false} />
+                            <ContractSelector
+                                name="_contracts"
+                                typesToInclude="our"
+                                showValidationInfo={false}
+                                multiple
+                                limit={5}
+                            />
                         </div>
                     )}
 

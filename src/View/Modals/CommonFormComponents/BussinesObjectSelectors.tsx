@@ -40,6 +40,7 @@ import {
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { CaseStatusFilterMenuHeader, DEFAULT_CASE_STATUS_FILTER } from "./CaseStatusFilter";
+import { StatusFilterMenuHeader } from "./StatusFilterMenuHeader";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
 import { safeGetFirstField, ensureLabelKey } from "../../../React/Tools/ToolsForms";
 
@@ -726,6 +727,12 @@ export function ClientNeedSelector({
     );
 }
 
+/** Domyślny filtr statusów kontraktów w selektorze: aktywne (bez 'Zakończony' i 'Archiwalny'). */
+export const DEFAULT_CONTRACT_STATUS_FILTER = [
+    MainSetup.ContractStatuses.NOT_STARTED,
+    MainSetup.ContractStatuses.IN_PROGRESS,
+];
+
 export type ContractSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
@@ -733,6 +740,10 @@ export type ContractSelectorProps = {
     typesToInclude?: "our" | "other" | "all";
     _project?: ProjectData;
     readOnly?: boolean;
+    /** Statusy pokazywane po otwarciu listy; użytkownik może je przełączyć w nagłówku menu. */
+    defaultStatuses?: string[];
+    /** Maksymalna liczba podpowiedzi z serwera. Pominięty ⇒ bez limitu (zachowanie dotychczasowe). */
+    limit?: number;
 };
 
 /**
@@ -746,10 +757,17 @@ export function ContractSelector({
     typesToInclude = "all",
     _project,
     readOnly = false,
+    defaultStatuses = DEFAULT_CONTRACT_STATUS_FILTER,
+    limit,
 }: ContractSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // Filtrowanie statusów robi SERWER (lista jest doczytywana asynchronicznie i przycinana
+    // limitem, więc filtr na kliencie ucinałby wyniki już po limicie). Pusty filtr = brak
+    // warunku, czyli wszystkie statusy - spójnie z zachowaniem serwera.
+    const [statusFilter, setStatusFilter] = useState<string[]>([...defaultStatuses]);
 
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = useMemo(
@@ -795,6 +813,32 @@ export function ContractSelector({
         );
     }
 
+    function renderContractMenu(results: unknown[], menuProps: any, state: any) {
+        const contracts = results as (OurContract | OtherContract)[];
+
+        return (
+            // paddingTop: 0 usuwa górną szczelinę .dropdown-menu, w której przewijane
+            // pozycje przebijałyby NAD sticky-nagłówkiem filtra statusów.
+            <Menu {...menuProps} style={{ ...(menuProps.style || {}), paddingTop: 0 }}>
+                <StatusFilterMenuHeader
+                    allStatuses={Object.values(MainSetup.ContractStatuses)}
+                    selectedStatuses={statusFilter}
+                    onChange={setStatusFilter}
+                />
+                {contracts.length === 0 && (
+                    <div className="px-3 py-2 text-muted small">
+                        {state?.isLoading ? "Szukam…" : "Brak kontraktów."}
+                    </div>
+                )}
+                {contracts.map((item, index) => (
+                    <MenuItem key={item.id} option={item} position={index}>
+                        {renderOption(item)}
+                    </MenuItem>
+                ))}
+            </Menu>
+        );
+    }
+
     return (
         <>
             <MyAsyncTypeahead
@@ -804,9 +848,11 @@ export function ContractSelector({
                 contextSearchParams={{
                     typesToInclude: typesToInclude,
                     _project: _project,
+                    statuses: statusFilter,
+                    limit: limit,
                 }}
                 repository={localRepository}
-                renderMenuItemChildren={renderOption}
+                renderMenu={renderContractMenu}
                 multiple={multiple}
                 showValidationInfo={showValidationInfo}
                 readOnly={readOnly}

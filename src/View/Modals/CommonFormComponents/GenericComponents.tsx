@@ -85,9 +85,15 @@ export function MyAsyncTypeahead({
     } = useFormContext();
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
+    const lastQueryRef = useRef("");
+    // Numer ostatniego wysłanego zapytania - starsze odpowiedzi (np. po szybkim
+    // przeklikaniu filtrów) są odrzucane, żeby nie nadpisały aktualnej listy.
+    const requestIdRef = useRef(0);
 
     async function handleSearch(query: string) {
         console.log(`🔍 [${name}] handleSearch rozpoczęty dla query:`, query);
+        lastQueryRef.current = query;
+        const requestId = ++requestIdRef.current;
         setIsLoading(true);
         const params = {
             [searchKey]: query,
@@ -112,9 +118,12 @@ export function MyAsyncTypeahead({
             console.log(`✅ [${name}] Po walidacji:`, validatedData);
             console.log(`🏷️ [${name}] labelKey="${labelKey}", pierwszy obiekt:`, validatedData[0]);
 
+            if (requestId !== requestIdRef.current) return; // nieaktualna odpowiedź
+
             setOptions(validatedData);
             setIsLoading(false);
         } catch (error) {
+            if (requestId !== requestIdRef.current) return;
             setIsLoading(false);
             console.error(`❌ MyAsyncTypeahead [${name}] - Błąd wyszukiwania:`, error);
             setOptions([]);
@@ -125,6 +134,14 @@ export function MyAsyncTypeahead({
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
+
+    // Zmiana kryteriów kontekstowych (np. filtr statusów przełączony w nagłówku menu)
+    // ponawia ostatnie zapytanie - inaczej lista zostałaby z wynikami dla starych kryteriów.
+    const contextSearchParamsKey = JSON.stringify(contextSearchParams);
+    useEffect(() => {
+        if (lastQueryRef.current) handleSearch(lastQueryRef.current);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [contextSearchParamsKey]);
 
     function handleOnChange(selectedOptions: any[], field: ControllerRenderProps<any, string>) {
         let valueToBeSent;
@@ -139,6 +156,9 @@ export function MyAsyncTypeahead({
         } else {
             valueToBeSent = null;
         }
+        // Wybór zamyka wyszukiwanie - bez tego zmiana kryteriów kontekstowych
+        // odpytywałaby serwer o nieaktualną już frazę.
+        lastQueryRef.current = "";
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
     }
@@ -172,7 +192,15 @@ export function MyAsyncTypeahead({
                     };
                     return (
                         <AsyncTypeahead
-                            renderMenu={renderMenu ? renderMenu : undefined}
+                            // Własne renderMenu omija wbudowane komunikaty AsyncTypeahead,
+                            // więc dokładamy do state `isLoading` - inaczej w trakcie
+                            // doczytywania menu pokazywałoby "brak wyników".
+                            renderMenu={
+                                renderMenu
+                                    ? (results, menuProps, state) =>
+                                          renderMenu(results, menuProps, { ...state, isLoading } as any)
+                                    : undefined
+                            }
                             align={align}
                             filterBy={filterBy}
                             id={`${name}-asyncTypeahead`}
