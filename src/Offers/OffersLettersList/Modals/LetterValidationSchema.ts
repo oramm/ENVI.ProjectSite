@@ -2,7 +2,9 @@ import * as Yup from "yup";
 
 const commonFields = {
     _offer: Yup.object().required("Wybierz ofertę"),
-    _cases: Yup.array().required("Wybierz sprawy"),
+    // .min(1) obok .required() — `required` przepuszcza pustą tablicę, a pismo bez sprawy
+    // serwer po cichu odrzuca (guard w LettersController.editCaseAssociations).
+    _cases: Yup.array().min(1, "Wybierz co najmniej jedną sprawę").required("Wybierz sprawy"),
 
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
@@ -22,7 +24,7 @@ const commonFields = {
                 return value >= this.parent.creationDate;
             }
         ),
-    _entitiesMain: Yup.array().required("Wybierz podmiot"),
+    _entitiesMain: Yup.array().min(1, "Wybierz co najmniej jeden podmiot").required("Wybierz podmiot"),
     _editor: Yup.object().required("Podaj kto rejestruje"),
 };
 

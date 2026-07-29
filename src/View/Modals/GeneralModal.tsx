@@ -37,6 +37,54 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
 };
 
 /**
+ * Buduje obiekt wysyłany na serwer przy edycji: dane z repozytorium uzupełnione
+ * wartościami z formularza.
+ *
+ * UWAGA: `lodash.merge` łączy TABLICE po indeksie, zamiast je zastępować. Dla pól
+ * wielokrotnego wyboru (`_cases`, `_entitiesMain`, `_entitiesCc`, ...) dawało to wynik
+ * będący sklejką starej i nowej listy:
+ *   [A, B] + [B]  => [B, B]  → duplikat w bazie (UNIQUE_LetterId_CaseId, 409)
+ *   [A, B] + [A]  => [A, B]  → usunięta pozycja "sama z siebie" wracała
+ *   [A, B] + []   => [A, B]  → skasowanie wszystkich pozycji nie działało
+ * Wartość z formularza jest kompletna, więc tablice nadpisujemy w całości. Pola
+ * nieobecne w formularzu (undefined) nadal uzupełnia `merge` z `currentDataItem`.
+ */
+export function mergeFormDataIntoItem(
+    currentDataItem: Record<string, any>,
+    data: FieldValues,
+    contextData?: unknown
+) {
+    const objectToEdit = merge(
+        {},
+        currentDataItem,
+        data,
+        { _contextData: contextData },
+        { _originalData: currentDataItem } // oryginalne dane
+    ) as Record<string, any>;
+
+    overwriteArraysFromForm(objectToEdit, data);
+
+    return objectToEdit;
+}
+
+/**
+ * Nadpisuje w `target` każdą tablicę obecną w `source` — również zagnieżdżoną.
+ * Kopia płytka (`[...value]`), bo `lodash.merge` też zwracał własne tablice: obiekt
+ * wysyłany na serwer jest jeszcze mutowany w miejscu (`ToolsDate.convertDatesToUTC`)
+ * i nie może współdzielić tablicy ze stanem formularza ani z `repository.items`.
+ */
+function overwriteArraysFromForm(target: Record<string, any>, source: Record<string, any>) {
+    for (const [key, value] of Object.entries(source)) {
+        if (Array.isArray(value)) target[key] = [...value];
+        else if (isPlainObject(value) && isPlainObject(target[key])) overwriteArraysFromForm(target[key], value);
+    }
+}
+
+function isPlainObject(value: unknown): value is Record<string, any> {
+    return typeof value === "object" && value !== null && Object.getPrototypeOf(value) === Object.prototype;
+}
+
+/**
  * Zewnętrzny host modala. `GeneralModal` jest montowany na stałe przy przycisku
  * (tylko `show` się przełącza), więc gdyby useForm żyło tutaj, jego stan (wartości,
  * błędy, dirty) wyciekałby między kolejnymi otwarciami — react-bootstrap nie zawsze
@@ -260,12 +308,10 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
 
     async function handleEditWithoutFiles(data: FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = merge(
-            {},
+        const objectToEdit = mergeFormDataIntoItem(
             currentDataItem,
             data,
-            { _contextData: modalBodyProps.contextData },
-            { _originalData: currentDataItem } // oryginalne dane
+            modalBodyProps.contextData
         ) as DataItemType;
 
         const editedObject = await repository.editItem(

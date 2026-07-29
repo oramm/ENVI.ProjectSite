@@ -8,7 +8,9 @@ maxDate.setDate(maxDate.getDate() + 30);
 
 const commonFields = {
     _contract: Yup.object().required("Wybierz kontrakt"),
-    _cases: Yup.array().required("Wybierz sprawy"),
+    // .min(1) obok .required() — `required` przepuszcza pustą tablicę, a pismo bez sprawy
+    // serwer po cichu odrzuca (guard w LettersController.editCaseAssociations).
+    _cases: Yup.array().min(1, "Wybierz co najmniej jedną sprawę").required("Wybierz sprawy"),
     status: Yup.string().required("Wybierz status"),
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
@@ -44,7 +46,7 @@ const commonFields = {
                 return value >= registrationDate;
             }
         ),
-    _entitiesMain: Yup.array().required("Wybierz podmiot"),
+    _entitiesMain: Yup.array().min(1, "Wybierz co najmniej jeden podmiot").required("Wybierz podmiot"),
     _editor: Yup.object().required("Podaj kto rejestruje"),
     // 1/0 (nie boolean) — patrz LetterModalBody: przenoszone przez FormData
     addedToApprovedDocumentation: Yup.mixed().notRequired(),

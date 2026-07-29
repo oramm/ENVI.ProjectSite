@@ -8,9 +8,17 @@ import { Alert, Col, Form, Placeholder, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
-import { IncomingLetterOffer, OurLetterOffer, OurOffer } from "../../../../Typings/bussinesTypes";
+import { Case, ExternalOffer, IncomingLetterOffer, OurLetterOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import { casesRepository, offersRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { InlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawer";
+import {
+    CaseInlineCreateBody,
+    makeInlineCaseValidationSchema,
+} from "../../../TasksGlobal/Modals/Case/CaseInlineCreateBody";
+import { CaseModalBody } from "../../../TasksGlobal/Modals/Case/CaseModalBody";
+import { makeCaseValidationSchema } from "../../../TasksGlobal/Modals/Case/CaseValidationSchema";
+import { buildCaseHeaderBadge } from "../../../TasksGlobal/Modals/Case/CaseModalButtons";
 
 type LetterModalBodyProps = ModalBodyProps<OurLetterOffer | IncomingLetterOffer> & {
     getConfidenceClass?: (fieldName: string) => string;
@@ -27,9 +35,37 @@ export function LetterModalBody({ isEditing, initialData, getConfidenceClass = (
         trigger,
     } = useFormContext();
 
-    const _offer = watch("_offer");
+    const _offer = watch("_offer") as OurOffer | ExternalOffer | undefined;
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
+
+    // Panel inline-tworzenia/edycji Sprawy (Offcanvas) + token wymuszający odświeżenie opcji
+    // selektora ze źródła prawdy (casesRepository.items). Analogicznie do pism do kontraktów.
+    const [showCreateCase, setShowCreateCase] = useState(false);
+    const [showEditCase, setShowEditCase] = useState(false);
+    const [caseToEdit, setCaseToEdit] = useState<Case | undefined>(undefined);
+    const [caseOptionsRefreshToken, setCaseOptionsRefreshToken] = useState(0);
+
+    // Po utworzeniu sprawy w panelu: addNewItem dopisał ją już do casesRepository.items
+    // (źródło prawdy). Auto-zaznaczamy ją w `_cases` i podbijamy token, by selektor
+    // przebudował opcje z repository.items.
+    function handleCaseCreated(newCase: Case) {
+        const created = casesRepository.items.find((item) => item.id === newCase.id) ?? newCase;
+        const current = (watch("_cases") as Case[] | undefined) ?? [];
+        const alreadySelected = current.some((item) => item.id === created.id);
+        const nextCases = alreadySelected ? current : [...current, created];
+        setValue("_cases", nextCases, { shouldValidate: true });
+        setCaseOptionsRefreshToken((token) => token + 1);
+    }
+
+    // Po edycji sprawy: editItem zaktualizował casesRepository.items (źródło prawdy).
+    function handleCaseEdited(editedCase: Case) {
+        const updated = casesRepository.items.find((item) => item.id === editedCase.id) ?? editedCase;
+        const current = (watch("_cases") as Case[] | undefined) ?? [];
+        const nextCases = current.map((item) => (item.id === updated.id ? updated : item));
+        setValue("_cases", nextCases, { shouldValidate: true });
+        setCaseOptionsRefreshToken((token) => token + 1);
+    }
 
     useEffect(() => {
         let defaultEditor;
@@ -81,11 +117,49 @@ export function LetterModalBody({ isEditing, initialData, getConfidenceClass = (
                         repository={casesRepository}
                         _offer={_offer}
                         readonly={!_offer}
+                        onRequestCreate={() => setShowCreateCase(true)}
+                        onRequestEdit={(caseItem) => {
+                            setCaseToEdit(caseItem);
+                            setShowEditCase(true);
+                        }}
+                        refreshToken={caseOptionsRefreshToken}
                     />
                 ) : (
                     <Alert variant="warning">Wybierz ofertę, by przypisać do spraw</Alert>
                 )}
             </Form.Group>
+
+            {/* Panel boczny tworzenia Sprawy "w miejscu" — ta SAMA instancja casesRepository
+                co selektor, więc utworzona sprawa odświeża jego opcje. */}
+            <InlineCreateDrawer<Case>
+                show={showCreateCase}
+                onHide={() => setShowCreateCase(false)}
+                title="Nowa sprawa"
+                repository={casesRepository}
+                ModalBodyComponent={CaseInlineCreateBody}
+                additionalModalBodyProps={{ _offer }}
+                makeValidationSchema={makeInlineCaseValidationSchema}
+                onCreated={handleCaseCreated}
+            />
+
+            {/* Panel boczny edycji Sprawy "w miejscu" (ikona ołówka na tokenie sprawy). */}
+            <InlineCreateDrawer<Case>
+                show={showEditCase}
+                onHide={() => setShowEditCase(false)}
+                title="Edytuj sprawę"
+                headerBadge={buildCaseHeaderBadge(
+                    caseToEdit?._parent,
+                    caseToEdit?.parentCaseId
+                        ? casesRepository.items.find((c) => c.id === caseToEdit.parentCaseId)
+                        : undefined
+                )}
+                repository={casesRepository}
+                ModalBodyComponent={CaseModalBody}
+                makeValidationSchema={makeCaseValidationSchema}
+                isEditing={true}
+                initialData={caseToEdit}
+                onEdited={handleCaseEdited}
+            />
 
             <Form.Group controlId="description">
                 <Form.Label>Opis</Form.Label>

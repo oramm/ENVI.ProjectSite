@@ -1874,6 +1874,8 @@ export function CaseSelectMenuElement({
 interface MilestoneSelectorProps {
     name?: string;
     _contract?: Contract;
+    /** Alternatywa dla `_contract` — kamienie milowe oferty (pisma do ofert). */
+    _offer?: OurOffer | ExternalOffer;
     readOnly?: boolean;
     showValidationInfo?: boolean;
     // TODO(graf): onRequestCreate?: () => void — przyszły hook do inline tworzenia Kamienia
@@ -1906,6 +1908,7 @@ interface MilestoneSelectorProps {
 export function MilestoneSelector({
     name = "_parent",
     _contract,
+    _offer,
     readOnly = false,
     showValidationInfo = true,
     onRequestCreate,
@@ -1939,12 +1942,22 @@ export function MilestoneSelector({
     useEffect(() => {
         const fetchData = async () => {
             if (_contract?.id) {
-                // Backend `/milestones` czyta `orConditions` (warunki AND/OR) oraz top-level
-                // `parentType` (domyślnie "CONTRACT"). Pole `milestoneParentType` w warunku jest
-                // ignorowane przez endpoint milestones, ale trzymamy je dla spójności z
-                // CaseSelectMenuElement (ten sam kształt zapytania po kontrakcie).
+                // Backend `/milestones` czyta `orConditions` (warunki AND/OR) oraz typ rodzica:
+                // top-level `parentType` albo `milestoneParentType` z pierwszego warunku
+                // (domyślnie "CONTRACT"). Kształt zapytania spójny z CaseSelectMenuElement.
                 await localRepository.loadItemsFromServerPOST([
                     { contractId: _contract.id, milestoneParentType: "CONTRACT" },
+                ]);
+                setOptions(
+                    localRepository.items.map((item) =>
+                        ensureLabelKey(item, labelKey, `MilestoneSelector[${name}]`),
+                    ),
+                );
+                onOptionsLoaded?.(localRepository.items.length);
+            } else if (_offer?.id) {
+                // Kamienie oferty: typ rodzica podajemy w warunku (patrz komentarz wyżej).
+                await localRepository.loadItemsFromServerPOST([
+                    { offerId: _offer.id, milestoneParentType: "OFFER" },
                 ]);
                 setOptions(
                     localRepository.items.map((item) =>
@@ -1959,7 +1972,7 @@ export function MilestoneSelector({
             }
         };
         fetchData();
-    }, [_contract, labelKey, name, localRepository]);
+    }, [_contract, _offer, labelKey, name, localRepository]);
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
         const valueToBeSent = selectedOptions[0];

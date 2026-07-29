@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { Alert, Spinner } from "react-bootstrap";
-import { Case, Contract, MilestoneData } from "../../../../Typings/bussinesTypes";
+import { Case, Contract, ExternalOffer, MilestoneData, OurOffer } from "../../../../Typings/bussinesTypes";
 import { MilestoneSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
@@ -43,6 +43,8 @@ export function makeInlineCaseValidationSchema(isEditing: boolean) {
 export function CaseInlineCreateBody({ additionalProps }: ModalBodyProps<Case>) {
     const { watch } = useFormContext();
     const _contract = additionalProps?._contract as Contract | undefined;
+    // Pisma do ofert: rodzicem kamieni jest Oferta, nie Kontrakt (jedno z dwóch, nigdy oba).
+    const _offer = additionalProps?._offer as OurOffer | ExternalOffer | undefined;
     const selectedMilestone = watch("_parent") as MilestoneData | undefined;
     // null = jeszcze nieładowane; liczba = wynik ostatniego ładowania dla kontraktu.
     const [milestoneCount, setMilestoneCount] = useState<number | null>(null);
@@ -65,17 +67,22 @@ export function CaseInlineCreateBody({ additionalProps }: ModalBodyProps<Case>) 
         };
     }, []);
 
-    // Brak kamieni milowych dla kontraktu ⇒ nie da się utworzyć Sprawy (musi mieć rodzica).
+    // Brak kamieni milowych dla kontraktu/oferty ⇒ nie da się utworzyć Sprawy (musi mieć rodzica).
     // Zgodnie z N0: kierujemy do TasksGlobal (inline tworzenie Kamienia jest odroczone).
-    const hasNoMilestones = !!_contract && milestoneCount === 0;
+    const hasNoMilestones = (!!_contract || !!_offer) && milestoneCount === 0;
 
     return (
         <>
-            <MilestoneSelector name="_parent" _contract={_contract} onOptionsLoaded={setMilestoneCount} />
+            <MilestoneSelector
+                name="_parent"
+                _contract={_contract}
+                _offer={_offer}
+                onOptionsLoaded={setMilestoneCount}
+            />
             {hasNoMilestones ? (
                 <Alert variant="warning" className="mt-2 mb-0 small">
-                    Ten kontrakt nie ma jeszcze kamieni milowych, więc nie można utworzyć sprawy.
-                    Dodaj kamień milowy w{" "}
+                    {_offer ? "Ta oferta" : "Ten kontrakt"} nie ma jeszcze kamieni milowych, więc nie można
+                    utworzyć sprawy. Dodaj kamień milowy w{" "}
                     <Alert.Link href="#/tasksGlobal" target="_blank" rel="noopener noreferrer">
                         module Zadania (TasksGlobal)
                     </Alert.Link>

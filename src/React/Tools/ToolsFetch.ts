@@ -1,6 +1,9 @@
 import { ErrorServerResponse } from "../../../Typings/bussinesTypes";
 import MainSetup from "../MainSetupReact";
 
+/** Błąd HTTP z zachowanym kodem odpowiedzi serwera. */
+type HttpError = Error & { status?: number };
+
 export default class ToolsFetch {
     private static getClientErrorSecret(): string | null {
         const runtimeSecret = (window as any).__BUG_CLIENT_ERROR_SECRET__;
@@ -17,23 +20,30 @@ export default class ToolsFetch {
     }
 
     static async fetchJsonWithSafeError(url: string, options: RequestInit = {}, customErrorMsg?: string) {
+        let httpStatus: number | undefined;
         try {
             const response = await fetch(url, options);
 
             if (!response.ok) {
+                httpStatus = response.status;
                 const errorDetails: ErrorServerResponse = await response.json();
                 throw new Error(errorDetails.errorMessage);
             }
 
             return await response.json();
         } catch (error) {
-            if (error instanceof TypeError) {
-                throw new Error(customErrorMsg || `Brak połączenia z serwerem, sprawdź połączenie internetowe`);
+            let wrapped: Error;
+            if (error instanceof TypeError && httpStatus === undefined) {
+                wrapped = new Error(customErrorMsg || `Brak połączenia z serwerem, sprawdź połączenie internetowe`);
             } else if (error instanceof Error) {
-                throw new Error(customErrorMsg || error.message);
+                wrapped = new Error(customErrorMsg || error.message);
             } else {
-                throw new Error(customErrorMsg || `Nieznany błąd klienta`);
+                wrapped = new Error(customErrorMsg || `Nieznany błąd klienta`);
             }
+            // Status HTTP jest potrzebny wywołującemu, by odróżnić błąd deterministyczny
+            // (4xx — powtórka nic nie da) od chwilowego (5xx / brak sieci).
+            if (httpStatus !== undefined) (wrapped as HttpError).status = httpStatus;
+            throw wrapped;
         }
     }
 
@@ -45,10 +55,24 @@ export default class ToolsFetch {
             try {
                 return await this.fetchJsonWithSafeError(url, options, customErrorMsg);
             } catch (error) {
-                if (i < retries - 1) await sleep(delay);
-                else throw error;
+                if (this.isNonRetryable(error) || i === retries - 1) throw error;
+                await sleep(delay);
             }
         }
+    }
+
+    /**
+     * Statusy deterministyczne: powtórka da dokładnie ten sam błąd, a niepotrzebnie
+     * powtórzy ciężkie operacje serwera (transakcja + Google Drive) — tak powstawały
+     * trzy identyczne 409 z jednego kliknięcia "Zatwierdź".
+     * Celowo BEZ 404 (wyścig przy odpytywaniu /sessionTaskStatus) i BEZ 429 (rate limiter
+     * jest oknem czasowym) — tam ponowienie ma sens.
+     */
+    private static readonly NON_RETRYABLE_STATUSES = [400, 401, 403, 409, 422];
+
+    private static isNonRetryable(error: unknown): boolean {
+        const status = (error as HttpError)?.status;
+        return typeof status === "number" && this.NON_RETRYABLE_STATUSES.includes(status);
     }
 
     /**
