@@ -129,7 +129,13 @@ export default function MyTasksTab() {
             snapshotMode="criteria-only"
             externalUpdate={externalUpdate}
             tableStructure={[
-                { header: "Zadania", renderTdBody: (task: Task) => <ScrumTaskRow task={task} />, colLg: 11 },
+                {
+                    header: "Zadania",
+                    renderTdBody: (task: Task, isActive?: boolean) => (
+                        <ScrumTaskRow task={task} isActive={isActive} />
+                    ),
+                    colLg: 11,
+                },
             ]}
         />
     );

@@ -71,6 +71,13 @@
     min-width: 4rem;
 }
 
+/* Uwagi zadania — widoczne dopiero po zaznaczeniu wiersza.
+   pre-wrap zachowuje łamanie linii wpisane w polu "Uwagi" (textarea). */
+.scrum-task-description {
+    white-space: pre-wrap;
+    margin-top: 0.15rem;
+}
+
 .scrum-task-owner {
     max-width: 10rem;
 }

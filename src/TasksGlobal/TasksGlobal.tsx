@@ -208,7 +208,9 @@ export default function TasksGlobal() {
                                 tableStructure={[
                                     {
                                         header: "Zadania",
-                                        renderTdBody: (task: Task) => <ScrumTaskRow task={task} />,
+                                        renderTdBody: (task: Task, isActive?: boolean) => (
+                                            <ScrumTaskRow task={task} isActive={isActive} />
+                                        ),
                                         colLg: 11,
                                     },
                                 ]}
