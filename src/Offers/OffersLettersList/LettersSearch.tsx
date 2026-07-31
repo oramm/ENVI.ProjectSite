@@ -8,12 +8,8 @@ import {
     OurLetterAddNewModalButton,
 } from "./Modals/LetterModalButtons";
 import { EntityData, IncomingLetterOffer, OurLetterOffer } from "../../../Typings/bussinesTypes";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
+import { LetterRowContent, LetterRowMarkers } from "../../Letters/LettersList/LetterRowContent";
 import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
-import { LetterModalBodyStatus } from "../../Letters/LettersList/Modals/LetterModalBodiesPartial";
-import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
 
 export default function OffersLettersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -47,26 +43,18 @@ export default function OffersLettersSearch({ title }: { title: string }) {
     }
 
     function renderIconTdBody(letter: OurLetterOffer | IncomingLetterOffer) {
-        const icon = letter.isOur ? faPaperPlane : faEnvelope;
-        return <FontAwesomeIcon icon={icon} size="lg" />;
+        return <LetterRowMarkers letter={letter} />;
     }
 
-    function renderRowContent(letter: OurLetterOffer | IncomingLetterOffer){
-        const cellStyle: React.CSSProperties = {
-            wordBreak: "break-word",
-            whiteSpace: 'pre-wrap',
-        };
+    function renderRowContent(letter: OurLetterOffer | IncomingLetterOffer) {
         return (
-            <>
-                {letter.number && (
-                    <div style={cellStyle}>
-                        Numer: <strong>{letter.number}</strong>
-                    </div>
-                )}
-                <div className="mt-2" style={ cellStyle}>
-                    Dotyczy: {letter.description}
-                </div>
-            </>
+            <LetterRowContent
+                letter={letter}
+                context="offer"
+                // Status tylko do odczytu — edycja statusu pisma ofertowego nie istniała
+                // w tym rejestrze i nie jest przedmiotem tej zmiany.
+                renderStatus={(rowLetter) => (rowLetter.status ? <LetterStatusBadge status={rowLetter.status} /> : null)}
+            />
         );
     }
 
@@ -76,11 +64,10 @@ export default function OffersLettersSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[
-                { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colMd: 1 },
-                { header: "Utworzono", objectAttributeToShow: "creationDate", colMd: 1 },
-                { header: "Wysłano", objectAttributeToShow: "registrationDate", colMd: 1 },
-                { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
-                { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
+                // Ta sama siatka co w rejestrze pism kontraktowych — daty zeszły do paska meta.
+                { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colLg: 1 },
+                { header: "Pismo", renderTdBody: renderRowContent, colLg: 8 },
+                { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}

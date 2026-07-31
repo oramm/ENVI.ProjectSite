@@ -103,6 +103,9 @@ export interface OurContract extends Contract {
 export interface OtherContract extends Contract {
     _contractors?: EntityData[];
     _ourContract?: OurContract;
+    /** Oznaczenie naszego kontraktu nadrzędnego, wyprowadzane przez model z `_ourContract.ourId`
+     *  (kolumna Contracts.OurIdRelated). Puste przy naszych kontraktach. */
+    ourIdRelated?: string;
     materialCardsGdFolderId?: string;
 }
 
@@ -332,6 +335,10 @@ export interface Letter extends GenericDocument {
     responseDueDate?: string;
     responseIKNumber?: string;
     addedToApprovedDocumentation?: boolean;
+    /** Czy pismo założył agent. Liczone ze zdarzenia utworzenia (CREATED), nie z autora
+     *  wiersza ani z ostatniego zdarzenia — autorstwo przechodzi na człowieka przy
+     *  zatwierdzeniu, a fakt „ten wpis założył agent” ma zostać na zawsze. */
+    _isCreatedByAgent?: boolean;
 }
 
 export interface OurLetter extends Letter {

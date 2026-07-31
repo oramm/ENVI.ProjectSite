@@ -1,17 +1,13 @@
-import { faEnvelope, faPaperPlane, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import { EntityData, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
-import MainSetup from "../../React/MainSetupReact";
-import Tools from "../../React/Tools/Tools";
-import ToolsDate from "../../React/Tools/ToolsDate";
 import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
 import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
 import { LettersFilterBody } from "./LetterFilterBody";
 import { lettersRepository } from "./LettersController";
+import { LetterRowContent, LetterRowMarkers } from "./LetterRowContent";
 import { LetterModalBodyStatus } from "./Modals/LetterModalBodiesPartial";
 import {
     ExportOurLetterContractToPDFButton,
@@ -53,20 +49,7 @@ export default function LettersSearch({ title }: { title: string }) {
     }
 
     function renderIconTdBody(letter: OurLetterContract | IncomingLetterContract) {
-        const icon = letter.isOur ? faPaperPlane : faEnvelope;
-        return (
-            <div className="d-flex flex-column align-items-center gap-2">
-                <FontAwesomeIcon icon={icon} size="lg" />
-                {letter.addedToApprovedDocumentation && (
-                    <FontAwesomeIcon
-                        icon={faClipboardCheck}
-                        size="lg"
-                        className="text-success"
-                        title="Dokumentacja zatwierdzona"
-                    />
-                )}
-            </div>
-        );
+        return <LetterRowMarkers letter={letter} />;
     }
 
     function ExportToPDFButtonWithError({
@@ -101,19 +84,6 @@ export default function LettersSearch({ title }: { title: string }) {
         );
     }
 
-    function renderLastEvent(letter: OurLetterContract | IncomingLetterContract) {
-        if (!letter._lastEvent) return null;
-        return (
-            <div className="text-muted small mt-2">
-                <span className="fw-bold">
-                    {Tools.getLabelFromKey(letter._lastEvent.eventType, MainSetup.LetterEventType)}
-                </span>{" "}
-                {ToolsDate.dateToDDmmmYYYYHHMM(letter._lastEvent._lastUpdated!)} przez {letter._lastEvent._editor.name}{" "}
-                {letter._lastEvent._editor.surname}
-            </div>
-        );
-    }
-
     function renderStatus(letter: OurLetterContract | IncomingLetterContract) {
         const { handleEditObject } = useFilterableTableContext<OurLetterContract | IncomingLetterContract>();
         return (
@@ -137,36 +107,16 @@ export default function LettersSearch({ title }: { title: string }) {
 
     function renderRowContent(letter: OurLetterContract | IncomingLetterContract, isActive: boolean = false) {
         return (
-            <>
-                {letter.number && (
-                    <div>
-                        Numer: <strong>{letter.number}</strong> {renderStatus(letter)}
-                    </div>
-                )}
-                <div className="mt-2" style={{ whiteSpace: "pre-line" }}>
-                    Dotyczy: {letter.description}
-                    {letter.relatedLetterNumber && (
-                        <>
-                            <br />W odpowiedzi na pismo nr: {letter.relatedLetterNumber}
-                        </>
-                    )}
-                    {letter.responseDueDate && (
-                        <>
-                            <br />
-                            Wymagana odpowiedzi do dnia:{" "}
-                            {ToolsDate.dateDMYtoYMD(ToolsDate.dateISOToDMY(letter.responseDueDate))}
-                        </>
-                    )}
-                    {letter.responseIKNumber && (
-                        <>
-                            <br />
-                            Odpowiedź IK: {letter.responseIKNumber}
-                        </>
-                    )}
-                </div>
-                {letter.isOur && <ExportToPDFButtonWithError ourLetterContract={letter} isActive={isActive} />}
-                {renderLastEvent(letter)}
-            </>
+            <LetterRowContent
+                letter={letter}
+                context="contract"
+                renderStatus={(rowLetter) => renderStatus(rowLetter as OurLetterContract | IncomingLetterContract)}
+                renderExtras={(rowLetter) =>
+                    rowLetter.isOur ? (
+                        <ExportToPDFButtonWithError ourLetterContract={rowLetter as OurLetterContract} isActive={isActive} />
+                    ) : null
+                }
+            />
         );
     }
 
@@ -176,10 +126,10 @@ export default function LettersSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[
+                // Kolumny „Utworzono” i „Wysłano” zeszły do paska meta w bloku pisma
+                // (decyzja właściciela 2026-07-31) — odzyskane miejsce idzie na treść.
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colLg: 1 },
-                { header: "Utworzono", objectAttributeToShow: "creationDate", colLg: 1 },
-                { header: "Wysłano", objectAttributeToShow: "registrationDate", colLg: 1 },
-                { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
+                { header: "Pismo", renderTdBody: renderRowContent, colLg: 8 },
                 { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
