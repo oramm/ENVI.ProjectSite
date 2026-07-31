@@ -9,6 +9,7 @@ import {
     MilestoneData,
     OtherContract,
     OurContract,
+    PersonData,
     ProjectData,
     RepositoryDataItem,
     Task,
@@ -34,6 +35,7 @@ import {
 } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { AddFilesToFolderButton } from "./Modals/AddFilesToFolderButton";
+import { CaseListSheetButton } from "./Modals/CaseListSheetButton";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
@@ -154,6 +156,9 @@ export default function TasksGlobal() {
         return buildTree(filteredContractsWithChildren as ContractsWithChildren[], targetCaseId, version, {
             caseStatuses,
             taskStatuses,
+            // Lista osób w oknie "Spis spraw" musi pochodzić z pełnego drzewa projektu:
+            // po filtrze "osoba = X" przefiltrowane drzewo zna już tylko tę jedną osobę.
+            taskOwnersSource: contractsWithChildren,
         });
     }
 
@@ -487,9 +492,34 @@ function taskMatchesStatusFilter(task: Task, taskStatuses?: string[]): boolean {
     return taskStatuses.includes(task.status);
 }
 
-// Akcje menu dla węzłów-folderów (kontrakt/kamień/sprawa/podsprawa).
+// Akcje menu dla węzłów-folderów (kamień/sprawa/podsprawa).
 // AddFilesToFolderButton sam się ukrywa, gdy węzeł nie ma gdFolderId.
 const folderRowActionMenuComponents = [AddFilesToFolderButton];
+
+// Kontrakt ma najwięcej akcji, więc rzadziej używane chowamy pod trzykropek —
+// na pasku zostają tylko edycja i dodawanie kamienia.
+const contractCollapsedRowActionMenuComponents = [CaseListSheetButton, AddFilesToFolderButton];
+
+/**
+ * Właściciele zadań w kontrakcie — lista osób w oknie "Spis spraw". Liczona z drzewa,
+ * żeby nie dało się wybrać osoby, dla której spis i tak byłby pusty.
+ */
+function collectTaskOwners(milestonesWithCases: ContractsWithChildren["milestonesWithCases"]) {
+    const ownersById = new Map<number, PersonData>();
+    for (const { casesWithTasks } of milestonesWithCases || [])
+        for (const caseWithTasks of casesWithTasks || []) {
+            const taskGroups = [
+                caseWithTasks.tasks,
+                ...(caseWithTasks.subCasesWithTasks || []).map((s) => s.tasks),
+            ];
+            for (const tasks of taskGroups)
+                for (const task of tasks || [])
+                    if (task._owner?.id) ownersById.set(task._owner.id, task._owner);
+        }
+    return [...ownersById.values()].sort((a, b) =>
+        `${a.surname} ${a.name}`.localeCompare(`${b.surname} ${b.name}`, "pl")
+    );
+}
 
 // Czytelna ścieżka folderu (kontrakt | kamień | sprawa | podsprawa) — pokazywana
 // jako badge w modalu "Dodaj do folderu", analogicznie do badge'a przy edycji sprawy.
@@ -521,6 +551,9 @@ export function buildTree(
         leavesRepository?: RepositoryReact<Task>;
         caseStatuses?: string[];
         taskStatuses?: string[];
+        /** Pełne (nieprzefiltrowane) drzewo — źródło listy osób dla okna "Spis spraw".
+         *  Pominięte ⇒ osoby liczone z drzewa budowanego. */
+        taskOwnersSource?: ContractsWithChildren[];
     }
 ): SectionNode<Task>[] {
     const caseStatuses = options?.caseStatuses;
@@ -556,9 +589,13 @@ export function buildTree(
             shouldRetrieveDataBeforeEdit: true,
             specialRetrieveActionRoute: "contracts",
             isDeletable: false,
-            rowActionMenuComponents: folderRowActionMenuComponents,
+            collapsedRowActionMenuComponents: contractCollapsedRowActionMenuComponents,
         };
         (contract as RepositoryDataItem)._folderPath = makeFolderPath(contract);
+        const ownersSource =
+            options?.taskOwnersSource?.find((c) => c.contract.id === contract.id)
+                ?.milestonesWithCases ?? milestonesWithCases;
+        (contract as RepositoryDataItem)._taskOwners = collectTaskOwners(ownersSource);
         contractNodes.push(contractNode);
 
         for (const { milestone, casesWithTasks } of milestonesWithCases || []) {

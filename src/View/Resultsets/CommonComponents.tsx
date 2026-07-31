@@ -18,6 +18,7 @@ import {
     faEllipsisV,
     faEllipsisH,
     faFileCirclePlus,
+    faListCheck,
     faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -172,6 +173,11 @@ export function ReplyIconButton({ layout, onClick }: SpecificIconButtonProps) {
 
 export function UploadIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faFileCirclePlus} layout={layout} onClick={onClick} className="text-primary" />;
+}
+
+/** Generowanie spisu spraw kontraktu (arkusz Google) */
+export function CaseListIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faListCheck} layout={layout} onClick={onClick} className="text-success" />;
 }
 
 export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {

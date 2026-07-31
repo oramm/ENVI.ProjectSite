@@ -29,6 +29,8 @@ export interface RepositoryDataItem {
     _documentOpenUrl?: string;
     /** czytelna ścieżka folderu (kontrakt | kamień | sprawa) — badge w modalu "Dodaj do folderu" */
     _folderPath?: string;
+    /** właściciele zadań w poddrzewie — lista osób w oknie "Spis spraw" przy kontrakcie */
+    _taskOwners?: PersonData[];
 }
 
 export interface ProjectData extends RepositoryDataItem {
