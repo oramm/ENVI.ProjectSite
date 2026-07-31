@@ -65,8 +65,9 @@ export default function OffersLettersSearch({ title }: { title: string }) {
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[
                 // Ta sama siatka co w rejestrze pism kontraktowych — daty zeszły do paska meta.
+                // Suma colLg maks. 11: dwunasta kolumna jest zarezerwowana na RowActionMenu.
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colLg: 1 },
-                { header: "Pismo", renderTdBody: renderRowContent, colLg: 8 },
+                { header: "Pismo", renderTdBody: renderRowContent, colLg: 7 },
                 { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}

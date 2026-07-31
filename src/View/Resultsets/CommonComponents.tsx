@@ -20,6 +20,7 @@ import {
     faFileCirclePlus,
     faListCheck,
     faLocationDot,
+    faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 
 export function ProgressBar() {
@@ -67,19 +68,21 @@ interface ToastComponentProps {
     message: string;
     show: boolean;
     onClose: () => void;
+    /** wariant tła Bootstrapa — "danger" dla błędów; domyślnie neutralny */
+    bg?: string;
 }
 
-export function SuccessToast({ header = "Sukces", message, show, onClose }: ToastComponentProps) {
+export function SuccessToast({ header = "Sukces", message, show, onClose, bg }: ToastComponentProps) {
     if (typeof document === "undefined") return null;
     // Portal do body + pozycja fixed bottom-end — inaczej wewnątrz modala toast
     // pozycjonuje się względem modala (ląduje na środku ekranu), nie viewportu.
     return createPortal(
         <ToastContainer position="bottom-end" className="p-3" style={{ position: "fixed", zIndex: 9999 }}>
-            <Toast onClose={onClose} show={show} delay={5000} autohide>
+            <Toast onClose={onClose} show={show} delay={5000} autohide bg={bg}>
                 <Toast.Header>
                     <strong className="me-auto">{header}</strong>
                 </Toast.Header>
-                <Toast.Body>{message}</Toast.Body>
+                <Toast.Body className={bg === "danger" ? "text-white" : undefined}>{message}</Toast.Body>
             </Toast>
         </ToastContainer>,
         document.body
@@ -169,6 +172,10 @@ export function CopyIconButton({ layout, onClick }: SpecificIconButtonProps) {
 
 export function ReplyIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faReply} layout={layout} onClick={onClick} className="text-success" />;
+}
+
+export function PdfIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faFilePdf} layout={layout} onClick={onClick} className="text-danger" />;
 }
 
 export function UploadIconButton({ layout, onClick }: SpecificIconButtonProps) {

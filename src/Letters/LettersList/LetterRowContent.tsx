@@ -339,11 +339,9 @@ export type LetterRowContentProps = {
     context: LetterRowContextKind;
     /** Odznaka statusu; w rejestrze kontraktowym klikalna (edycja statusu), w ofertowym nie ma jej wcale. */
     renderStatus?: (letter: LetterRowLetter) => React.ReactNode;
-    /** Dodatki poniżej tematu (np. eksport pisma do PDF w rejestrze kontraktowym). */
-    renderExtras?: (letter: LetterRowLetter) => React.ReactNode;
 };
 
-export function LetterRowContent({ letter, context, renderStatus, renderExtras }: LetterRowContentProps) {
+export function LetterRowContent({ letter, context, renderStatus }: LetterRowContentProps) {
     return (
         <div className="d-flex flex-column" style={{ gap: "9px", wordBreak: "break-word" }}>
             <LetterContext letter={letter} context={context} />
@@ -368,7 +366,6 @@ export function LetterRowContent({ letter, context, renderStatus, renderExtras }
                     </>
                 )}
             </div>
-            {renderExtras?.(letter)}
             <LetterMetaStrip letter={letter} />
             <LetterLastEvent letter={letter} />
         </div>

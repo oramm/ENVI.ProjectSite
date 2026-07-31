@@ -8,8 +8,8 @@ import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
 import { OurLetterModalBody } from "./OurLetterModalBody";
 import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
 import { lettersRepository } from "../LettersController";
-import { Button, Spinner } from "react-bootstrap";
-import { ReplyIconButton, SuccessToast } from "../../../View/Resultsets/CommonComponents";
+import { Spinner } from "react-bootstrap";
+import { PdfIconButton, ReplyIconButton, SuccessToast } from "../../../View/Resultsets/CommonComponents";
 import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTable/FilterableTableContext";
 import { RowActionMenuItemProps } from "../../../View/Resultsets/FilterableTable/FilterableTableTypes";
 
@@ -174,40 +174,47 @@ export function RespondToLetterButton({
     );
 }
 
+/** Eksport pisma do PDF — pozycja menu akcji wiersza; tylko dla pism naszych. */
 export function ExportOurLetterContractToPDFButton({
-    onError,
-    ourLetterContract,
-}: {
-    onError: (error: Error) => void;
-    ourLetterContract: OurLetterContract;
-}) {
+    dataObject,
+    layout,
+}: RowActionMenuItemProps<OurLetterContract | IncomingLetterContract>) {
     const [requestPending, setRequestPending] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    if (!dataObject.isOur) return null;
 
     async function handleClick() {
         try {
             setRequestPending(true);
-            await lettersRepository.fetch("exportOurLetterToPDF", ourLetterContract);
+            await lettersRepository.fetch("exportOurLetterToPDF", dataObject);
             setRequestPending(false);
             setShowSuccessToast(true);
         } catch (error) {
-            if (error instanceof Error) {
-                setRequestPending(false);
-                onError(error);
-            }
+            setRequestPending(false);
+            if (error instanceof Error) setErrorMessage(error.message);
         }
     }
 
     return (
         <>
-            <Button key="Exportuj do PDF" variant="outline-secondary" size="sm" onClick={handleClick}>
-                Exportuj do PDF{" "}
-                {requestPending && <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />}
-            </Button>
+            {requestPending ? (
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+            ) : (
+                <PdfIconButton layout={layout} onClick={handleClick} />
+            )}
             <SuccessToast
                 message="Eksport do PDF zakończył się powodzeniem!"
                 show={showSuccessToast}
                 onClose={() => setShowSuccessToast(false)}
+            />
+            <SuccessToast
+                header="Błąd eksportu do PDF"
+                message={errorMessage ?? ""}
+                bg="danger"
+                show={!!errorMessage}
+                onClose={() => setErrorMessage(null)}
             />
         </>
     );

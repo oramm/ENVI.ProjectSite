@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Alert } from "react-bootstrap";
+import React, { useEffect } from "react";
 import { EntityData, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
 import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
 import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
@@ -52,38 +51,6 @@ export default function LettersSearch({ title }: { title: string }) {
         return <LetterRowMarkers letter={letter} />;
     }
 
-    function ExportToPDFButtonWithError({
-        ourLetterContract,
-        isActive,
-    }: {
-        ourLetterContract: OurLetterContract;
-        isActive: boolean;
-    }) {
-        const [error, setError] = useState<Error | null>(null);
-
-        useEffect(() => {
-            if (error) {
-                console.log("Error zaktualizowany:", error.message);
-            }
-        }, [error]);
-
-        if (!ourLetterContract.isOur || !isActive) return null;
-
-        return (
-            <>
-                <ExportOurLetterContractToPDFButton
-                    onError={(error) => setError(error)}
-                    ourLetterContract={ourLetterContract}
-                />
-                {error && (
-                    <Alert dismissible variant="danger" className="mt-2" onClose={() => setError(null)}>
-                        {error.message}
-                    </Alert>
-                )}
-            </>
-        );
-    }
-
     function renderStatus(letter: OurLetterContract | IncomingLetterContract) {
         const { handleEditObject } = useFilterableTableContext<OurLetterContract | IncomingLetterContract>();
         return (
@@ -105,17 +72,12 @@ export default function LettersSearch({ title }: { title: string }) {
         );
     }
 
-    function renderRowContent(letter: OurLetterContract | IncomingLetterContract, isActive: boolean = false) {
+    function renderRowContent(letter: OurLetterContract | IncomingLetterContract) {
         return (
             <LetterRowContent
                 letter={letter}
                 context="contract"
                 renderStatus={(rowLetter) => renderStatus(rowLetter as OurLetterContract | IncomingLetterContract)}
-                renderExtras={(rowLetter) =>
-                    rowLetter.isOur ? (
-                        <ExportToPDFButtonWithError ourLetterContract={rowLetter as OurLetterContract} isActive={isActive} />
-                    ) : null
-                }
             />
         );
     }
@@ -128,13 +90,15 @@ export default function LettersSearch({ title }: { title: string }) {
             tableStructure={[
                 // Kolumny „Utworzono” i „Wysłano” zeszły do paska meta w bloku pisma
                 // (decyzja właściciela 2026-07-31) — odzyskane miejsce idzie na treść.
+                // Suma colLg musi zostawić 1 kolumnę na RowActionMenu aktywnego wiersza,
+                // czyli maks. 11 — przy 12 menu zawija się na nowy wiersz i ląduje po lewej.
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colLg: 1 },
-                { header: "Pismo", renderTdBody: renderRowContent, colLg: 8 },
+                { header: "Pismo", renderTdBody: renderRowContent, colLg: 7 },
                 { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}
-            RowActionMenuComponents={[RespondToLetterButton]}
+            RowActionMenuComponents={[RespondToLetterButton, ExportOurLetterContractToPDFButton]}
             isDeletable={true}
             repository={lettersRepository}
             selectedObjectRoute={"/letter/"}
