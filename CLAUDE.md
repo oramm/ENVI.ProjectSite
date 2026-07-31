@@ -119,29 +119,19 @@ ENABLE_DEV_LOGIN=true  # Mock auth for local dev
 
 ## Extended Documentation
 
-Detailed guides in `instructions/` directory:
+Code is the source of truth for how the app works. `instructions/` holds rules and recipes:
 
-**Architecture:**
-
-- `selectors-architecture.md` - 3-layer selector architecture, validation, creating new selectors
-- `filterable-table-data-flow.md` - Component hierarchy, state flow, CRUD operations
-- `TasksGlobalView.md` - Cross-domain task management
-
-**Development:**
-
+- `AI_GUIDELINES.md` - FE rules: repository sync, FilterableTable, modals, typical mistakes
+- `selectors.md` - selector rules: own repository per selector, validation, pick-or-create
+- `crud-module-guide.md` - recipe for a new CRUD module (skill: `/new-crud-module`)
 - `DEVELOPMENT.md` - .env config, dev login, Puppeteer testing
-- `backend-computed-fields.md` - Backend field computation patterns
-- `business-object-selectors.md` - Selector usage, examples, debugging
-
-**AI Workflow:**
-
-- `AI_GUIDELINES.md` - General AI development workflows
-- `ui-browser-loop.md` - UI testing loop mode
+- `ui-browser-loop.md` - UI verification loop with screenshots
 
 Use the `ui-browser-loop` skill for iterative browser-based UI verification with automated screenshots, mock login, and viewport controls.
 Treat `tmp/ui-browser-loop/` as temporary workspace output and clean it after verification.
 
-All docs indexed in `instructions/README.md`.
+API contract (types, endpoints, DTO) is owned by the backend repo: read
+`C:\Apache24\htdocs\PS-nodeJS\src\types\types.d.ts` before updating `Typings/bussinesTypes.d.ts`.
 
 ## Definition of Done
 

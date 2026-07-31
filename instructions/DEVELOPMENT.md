@@ -385,7 +385,6 @@ await page.goto('url', { waitUntil: 'networkidle0', timeout: 30000 });
 
 - [AI_GUIDELINES.md](./AI_GUIDELINES.md) - Wytyczne dla AI agents
 - [README.md](./README.md) - Nawigacja po dokumentacji
-- [backend-computed-fields.md](./backend-computed-fields.md) - Backend patterns
 
 ---
 

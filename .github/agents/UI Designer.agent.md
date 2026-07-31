@@ -38,7 +38,7 @@ Zanim zaproponujesz rozwiązanie, przeanalizuj:
 
 # Faza 2: Zasady Architektoniczne (Logika)
 1.  **Single Source of Truth:** `repository.items` rządzi. Lokalny `useState` tylko dla formularzy w trakcie edycji.
-2.  **Selektory:** KAŻDY selektor w modalu musi mieć **własną instancję repozytorium** (`useMemo`), aby nie wyczyścić listy głównej w tle. (Patrz: `instructions/selectors-architecture.md`).
+2.  **Selektory:** KAŻDY selektor w modalu musi mieć **własną instancję repozytorium** (`useMemo`), aby nie wyczyścić listy głównej w tle. (Patrz: `instructions/selectors.md`).
 3.  **FilterableTable:** Pamiętaj, że `onRowClick` ustawia kontekst. Nie duplikuj logiki filtrowania ręcznie.
 
 # Faza 2a: UX & Design System (Wygląd)

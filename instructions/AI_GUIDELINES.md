@@ -8,7 +8,7 @@
 2. [FilterableTable - zarządzanie listami](#filterabletable---zarządzanie-listami)
 3. [RepositoryReact - komunikacja z API](#repositoryreact---komunikacja-z-api)
 4. [Modalne i formularze](#modalne-i-formularze)
-5. [Business Object Selectors](./business-object-selectors.md) ⭐ **Szczegółowa dokumentacja**
+5. [Business Object Selectors](./selectors.md) ⭐ **Szczegółowa dokumentacja**
 6. [Typowe błędy i rozwiązania](#typowe-błędy-i-rozwiązania)
 7. [Checklist dla deweloperów](#checklist-dla-deweloperów)
 8. [UI Browser Loop (dopracowanie UI)](#ui-browser-loop-dopracowanie-ui)
@@ -83,7 +83,7 @@ const localRepository = useMemo(
 );
 ```
 
-**Szczegółowo:** Zobacz [Business Object Selectors](./business-object-selectors.md)
+**Szczegółowo:** Zobacz [Business Object Selectors](./selectors.md)
 
 ## FilterableTable - Zarządzanie Listami
 
@@ -213,7 +213,7 @@ function handleAddObject(object: LeafDataItemType) {
 
 ## Business Object Selectors
 
-> **📖 Pełna dokumentacja:** [Business Object Selectors](./business-object-selectors.md)
+> **📖 Pełna dokumentacja:** [Business Object Selectors](./selectors.md)
 
 ### Szybkie Wprowadzenie
 
@@ -246,7 +246,7 @@ export function ContractSelector({ name, typesToInclude, _project }: Props) {
 - ✅ Prosty interfejs - nie trzeba przekazywać repository
 - ✅ Reużywalność - można używać wszędzie
 
-**Więcej:** Pełna dokumentacja wzorca, przykłady i FAQ w [business-object-selectors.md](./business-object-selectors.md)
+**Więcej:** Pełna dokumentacja wzorca, przykłady i FAQ w [selectors.md](./selectors.md)
 
 ## Immutability i React
 
@@ -359,7 +359,7 @@ function handleAddObject(object: LeafDataItemType) {
 - [ ] Props NIE zawierają `repository`
 - [ ] Lokalne repository utworzone z `useMemo(() => new RepositoryReact(...), [])`
 - [ ] Nazwa repository jest unikalna i kończy się `_temp`
-- [ ] Zobacz pełny checklist w [business-object-selectors.md](./business-object-selectors.md)
+- [ ] Zobacz pełny checklist w [selectors.md](./selectors.md)
 
 ### Przed Refactoringiem
 
@@ -411,7 +411,7 @@ export function MyList() {
 
 ### Selektor z Lokalnym Repository
 
-> **📖 Więcej przykładów:** [business-object-selectors.md](./business-object-selectors.md)
+> **📖 Więcej przykładów:** [selectors.md](./selectors.md)
 
 ```typescript
 export function ContractSelector({ name, typesToInclude, _project }: Props) {
@@ -441,7 +441,7 @@ export function ContractSelector({ name, typesToInclude, _project }: Props) {
 
 Projekt jest w trakcie refactoringu. Szczegółowe wytyczne są rozdzielone na moduły:
 
-- **[Business Object Selectors](./business-object-selectors.md)** - Wzorce dla komponentów wyboru obiektów
+- **[Business Object Selectors](./selectors.md)** - Wzorce dla komponentów wyboru obiektów
 - _(Więcej modułów w przyszłości)_
 
 ## Pytania i Odpowiedzi
@@ -456,7 +456,7 @@ A: Po każdej operacji CRUD (dodanie/edycja/usunięcie) i po synchronizacji `obj
 A: Tak, ale tylko w metodach `RepositoryReact` (addNewItem, editItem, deleteItem). W komponentach React zawsze używaj `setObjects([...repository.items])`.
 
 **Q: Co zrobić gdy mam komponent używany w wielu miejscach?**  
-A: Jeśli komponent ładuje dane z serwera (selector, autocomplete), daj mu własne lokalne repository. Jeśli tylko wyświetla dane, przekaż `repository` jako props. Zobacz [business-object-selectors.md](./business-object-selectors.md)
+A: Jeśli komponent ładuje dane z serwera (selector, autocomplete), daj mu własne lokalne repository. Jeśli tylko wyświetla dane, przekaż `repository` jako props. Zobacz [selectors.md](./selectors.md)
 
 ## Wsparcie i Kontakt
 

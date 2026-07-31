@@ -1,6 +1,6 @@
 # Przewodnik: Tworzenie nowego modułu CRUD
 
-Receptura krok po kroku. Nie opisuje *jak działa* (patrz `filterable-table-data-flow.md`), ale *jak stworzyć*.
+Receptura krok po kroku: nie *jak dziala*, tylko *jak stworzyc*.
 
 ---
 
