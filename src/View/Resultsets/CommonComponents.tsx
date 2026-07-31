@@ -307,11 +307,15 @@ export function FidmanSyncBadge({
  * 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent, decyzja FID.APP.01
  * 2026-07-28 — zastępuje odrzucone dwubarwne tło z twardym cięciem 77%).
  * Baza = kolor osi FIDIC (pierwsze słowo nazwy: „Czerwony" → czerwień, „Żółty" → żółć);
- * akcent = kolor metody rozliczenia, gdy niedomyślna („Czerwony ryczałtowy" → akcent
- * żółty, „Żółty obmiarowy" → akcent czerwony), jako gradient wygaszany od PRAWEJ
- * krawędzi. Tekst w badge = JEDNO słowo (pierwsze); pełna nazwa w tooltipie, sam akcent
- * dodatkowo opisany dla czytnika ekranu. Typy spoza osi FIDIC (IK, PT, AQM…) → neutralny
- * badge, nigdy z akcentem.
+ * akcent = kolor metody rozliczenia, gdy niedomyślna wobec `settlementMethod` (RZL-3,
+ * osobna kolumna `Contracts.SettlementMethod` — 40_wiki/firma/technologie/
+ * plakietka-typu-kontraktu-akcent#implementacja): „Czerwony" + `LUMP_SUM` → akcent
+ * żółty, „Żółty" + `MEASUREMENT` → akcent czerwony. Każda inna kombinacja, w tym
+ * `null`/brak wartości i typy spoza osi FIDIC — bez akcentu. Odstępstwo NIE jest już
+ * czytane z drugiego słowa nazwy typu (to był model sprzed RZL, `TypeId` w tym pakcie
+ * pozostaje nietknięty). Tekst w badge = JEDNO słowo (pierwsze); pełna nazwa w tooltipie
+ * (gdy nazwa typu ma więcej niż jedno słowo), sam akcent dodatkowo opisany dla czytnika
+ * ekranu. Typy spoza osi FIDIC (IK, PT, AQM…) → neutralny badge, nigdy z akcentem.
  *
  * NIE ZMIENIAĆ bez nowej decyzji ownera (kontrast WCAG AA):
  * - kierunek `to left` — zapis procentowy od lewej wygasza w innym miejscu dla „Czerwony"
@@ -321,18 +325,26 @@ export function FidmanSyncBadge({
  * - odcinek pełnego nasycenia `0 .45em` — bez niego akcent przestaje dawać się nazwać
  *   kolorem i jest najsłabszy przy daltonizmie.
  */
-export function ContractTypeBadge({ type }: { type: { name?: string } }) {
+export function ContractTypeBadge({
+    type,
+    settlementMethod,
+}: {
+    type: { name?: string };
+    settlementMethod?: "LUMP_SUM" | "MEASUREMENT" | null;
+}) {
     const name = (type?.name ?? "").trim();
     if (!name) return null;
     const RED = "#dc3545";
     const YELLOW = "#ffc107";
     const words = name.split(/\s+/);
     const first = words[0];
-    const hasModifier = words.length > 1;
+    const hasModifier = words.length > 1; // tylko do decyzji o tooltipie z pełną nazwą
     const base = first === "Czerwony" ? RED : first === "Żółty" ? YELLOW : null;
     const stripe = base === RED ? YELLOW : base === YELLOW ? RED : null;
     const isDark = base === YELLOW; // żółte tło → ciemny tekst
-    const hasAccent = Boolean(base) && hasModifier;
+    // Reguła odstępstwa (kontrakt danych RZL): źródło = settlementMethod, nie nazwa typu.
+    const hasAccent =
+        (base === RED && settlementMethod === "LUMP_SUM") || (base === YELLOW && settlementMethod === "MEASUREMENT");
     const style: React.CSSProperties = base
         ? {
               backgroundColor: base,
@@ -346,7 +358,7 @@ export function ContractTypeBadge({ type }: { type: { name?: string } }) {
     // akcent jest wyłącznie wizualny — czytnik ekranu dostaje go słowem
     const accentLabel = hasAccent ? (
         <span className="visually-hidden">
-            {words[1].startsWith("rycz") ? " — rozliczany ryczałtem" : " — rozliczany obmiarem"}
+            {settlementMethod === "LUMP_SUM" ? " — rozliczany ryczałtem" : " — rozliczany obmiarem"}
         </span>
     ) : null;
     const badge = base ? (

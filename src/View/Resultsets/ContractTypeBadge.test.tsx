@@ -1,8 +1,12 @@
 /**
- * TY-1b (FID.APP.01 decyzja 2026-07-28) — presentational tests for the contract-type
- * badge with a fade-out accent anchored to the RIGHT edge. Verifies: base = FIDIC axis
- * color, accent = billing method when non-default, single-word visible text, screen-reader
- * text for the accent, plain badge untouched, neutral badge for non-FIDIC types.
+ * TY-1b (FID.APP.01 decyzja 2026-07-28) + RZL-3 (PS.APP.01, 2026-07-31) — presentational
+ * tests for the contract-type badge with a fade-out accent anchored to the RIGHT edge.
+ * Od RZL-3 odstępstwo liczy się z `settlementMethod` (kolumna `Contracts.SettlementMethod`),
+ * nie z drugiego słowa nazwy typu — `TypeId` w tym pakcie zostaje nietknięty.
+ * Verifies: base = FIDIC axis color, accent = settlementMethod when it diverges from the
+ * typical method for that color, single-word visible text, screen-reader text for the
+ * accent, plain badge untouched, neutral badge for non-FIDIC types, and the Bootstrap
+ * `bg-primary` regression (TY-1b) stays caught.
  */
 import React from "react";
 import { render, screen } from "@testing-library/react";
@@ -12,19 +16,19 @@ import { ContractTypeBadge } from "./CommonComponents";
 const RED = "rgb(220, 53, 69)"; // #dc3545 — jsdom normalizes backgroundColor to rgb()
 const YELLOW = "rgb(255, 193, 7)"; // #ffc107
 
-function renderBadge(name: string) {
-    const { container } = render(<ContractTypeBadge type={{ name }} />);
+function renderBadge(name: string, settlementMethod?: "LUMP_SUM" | "MEASUREMENT" | null) {
+    const { container } = render(<ContractTypeBadge type={{ name }} settlementMethod={settlementMethod} />);
     return container.querySelector(".badge") as HTMLElement;
 }
 
 describe("ContractTypeBadge", () => {
     it("nothing for empty name", () => {
-        const { container } = render(<ContractTypeBadge type={{ name: "" }} />);
+        const { container } = render(<ContractTypeBadge type={{ name: "" }} settlementMethod={null} />);
         expect(container).toBeEmptyDOMElement();
     });
 
-    it("Czerwony ryczałtowy -> red base + yellow accent faded from the right edge", () => {
-        const el = renderBadge("Czerwony ryczałtowy");
+    it("Czerwony + LUMP_SUM -> red base + yellow accent faded from the right edge", () => {
+        const el = renderBadge("Czerwony", "LUMP_SUM");
         expect(el.firstChild).toHaveTextContent("Czerwony"); // widoczne JEDNO słowo
         expect(el.style.backgroundColor).toBe(RED);
         // kotwiczenie od prawej krawędzi + sparowane .45em/1.45em/1.6em (kontrast AA)
@@ -33,15 +37,36 @@ describe("ContractTypeBadge", () => {
         expect(el.querySelector(".visually-hidden")).toHaveTextContent("rozliczany ryczałtem");
     });
 
-    it("Żółty obmiarowy -> yellow base + red accent, dark text", () => {
-        const el = renderBadge("Żółty obmiarowy");
+    it("Żółty + MEASUREMENT -> yellow base + red accent, dark text", () => {
+        const el = renderBadge("Żółty", "MEASUREMENT");
         expect(el.style.backgroundColor).toBe(YELLOW);
         expect(el.style.backgroundImage).toBe("linear-gradient(to left, #dc3545 0 .45em, transparent 1.45em)");
         expect(el.style.color).toBe("rgb(33, 37, 41)"); // #212529 dark text on yellow
         expect(el.querySelector(".visually-hidden")).toHaveTextContent("rozliczany obmiarem");
     });
 
-    it("Czerwony (plain) -> solid red, no accent and no extra padding", () => {
+    it("Czerwony + MEASUREMENT (metoda typowa dla tego koloru) -> bez akcentu", () => {
+        const el = renderBadge("Czerwony", "MEASUREMENT");
+        expect(el.style.backgroundImage).toBe("");
+        expect(el.style.paddingRight).toBe("");
+        expect(el.querySelector(".visually-hidden")).toBeNull();
+    });
+
+    it("Żółty + LUMP_SUM (metoda typowa dla tego koloru) -> bez akcentu", () => {
+        const el = renderBadge("Żółty", "LUMP_SUM");
+        expect(el.style.backgroundImage).toBe("");
+        expect(el.style.paddingRight).toBe("");
+        expect(el.querySelector(".visually-hidden")).toBeNull();
+    });
+
+    it("Czerwony + null (jeszcze nie wpisano) -> bez akcentu", () => {
+        const el = renderBadge("Czerwony", null);
+        expect(el.style.backgroundColor).toBe(RED);
+        expect(el.style.backgroundImage).toBe("");
+        expect(el.querySelector(".visually-hidden")).toBeNull();
+    });
+
+    it("Czerwony (plain, brak settlementMethod) -> solid red, no accent and no extra padding", () => {
         const el = renderBadge("Czerwony");
         expect(el).toHaveTextContent("Czerwony");
         expect(el.style.backgroundColor).toBe(RED);
@@ -52,10 +77,11 @@ describe("ContractTypeBadge", () => {
         expect(el.querySelector(".visually-hidden")).toBeNull();
     });
 
-    it("non-FIDIC type (IK) -> neutral badge, never accented", () => {
-        const el = renderBadge("IK");
+    it("typ spoza osi FIDIC (IK) + LUMP_SUM -> neutralny badge, nigdy z akcentem", () => {
+        const el = renderBadge("IK", "LUMP_SUM");
         expect(screen.getByText("IK")).toBeInTheDocument();
         expect(el.style.backgroundImage).toBe("");
         expect(el.querySelector(".visually-hidden")).toBeNull();
+        expect(el.className).not.toContain("bg-primary");
     });
 });

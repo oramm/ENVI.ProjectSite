@@ -86,6 +86,10 @@ export interface Contract extends RepositoryDataItem {
     _contractRangesPerContract?: any[];
     lettersShortcutsInSubfolder?: boolean;
     approvedDocumentation?: boolean;
+    /** Metoda rozliczenia robót (RZL pack): 'LUMP_SUM' = ryczałt, 'MEASUREMENT' = obmiar.
+     *  `null`/brak = jeszcze nie wpisano, nie jest trzecim stanem domenowym. Oś niezależna
+     *  od `_type` (tryb FIDIC) — patrz 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent. */
+    settlementMethod?: 'LUMP_SUM' | 'MEASUREMENT' | null;
 }
 
 export interface OurContract extends Contract {

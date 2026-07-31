@@ -57,6 +57,10 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("status", initialData?.status || "", { shouldValidate: true });
         setValue("lettersShortcutsInSubfolder", initialData?.lettersShortcutsInSubfolder ?? false, { shouldValidate: true });
         setValue("approvedDocumentation", initialData?.approvedDocumentation ?? false, { shouldValidate: true });
+        // Metoda rozliczenia (RZL pack): pole nieobowiązkowe, dokładnie dwie opcje domenowe.
+        // "" = jeszcze nie wpisano (789 kontraktów historycznych) — to stan pusty pola,
+        // NIE trzecia opcja do wyboru. Backend normalizuje "" do null (Contract.ts).
+        setValue("settlementMethod", initialData?.settlementMethod ?? "", { shouldValidate: true });
         setValue("startDate", startDateSugestion, { shouldValidate: true });
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
@@ -196,6 +200,18 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     />
                 </Form.Group>
             )}
+            {/* Metoda rozliczenia (RZL pack, 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent):
+                dokładnie dwie opcje domenowe + pusty stan początkowy „—" dla kontraktów bez wpisanej
+                wartości. Pole nieobowiązkowe — NIE dodawać trzeciej opcji („nieustalona"/„mieszana");
+                kontrakt mieszany owner wpisuje wg przeważającej metody. */}
+            <Form.Group controlId="settlementMethod" className="mt-2">
+                <Form.Label>Metoda rozliczenia</Form.Label>
+                <Form.Control as="select" {...register("settlementMethod")}>
+                    <option value="">—</option>
+                    <option value="LUMP_SUM">ryczałt</option>
+                    <option value="MEASUREMENT">obmiar</option>
+                </Form.Control>
+            </Form.Group>
         </>
     );
 }

@@ -57,6 +57,19 @@ export function ContractsFilterBody() {
             <Form.Group as={Col} xl={2}>
                 <ContractRangeSelector repository={contractRangesRepository} showValidationInfo={false} />
             </Form.Group>
+            {/* RZL-5 — kanon plakietki typu kontraktu (40_wiki/firma/technologie/
+                plakietka-typu-kontraktu-akcent, sekcja „Uzupełnienie po stronie listy"):
+                akcent na plakietce mówi „czy TA umowa jest nietypowa", ten filtr — „pokaż
+                WSZYSTKIE nietypowe". Warunek po stronie API: ContractRepository.
+                makeAtypicalSettlementCondition(). */}
+            <Form.Group as={Col} xl={2} className="d-flex align-items-end mb-2">
+                <Form.Check
+                    type="checkbox"
+                    id="contracts-only-atypical-settlement"
+                    label="Tylko nietypowe rozliczenie"
+                    {...register("onlyAtypicalSettlement")}
+                />
+            </Form.Group>
         </Row>
     );
 }

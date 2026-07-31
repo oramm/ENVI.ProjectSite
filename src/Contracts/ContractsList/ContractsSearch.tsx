@@ -20,7 +20,8 @@ export default function ContractsSearch({ title }: { title: string }) {
         return (
             <>
                 <strong>{ourIdLabel(contract)}</strong> {numberLabel(contract)} {contract.name}{" "}
-                <ContractTypeBadge type={contract._type} /> <ContractStatusBadge status={contract.status} />
+                <ContractTypeBadge type={contract._type} settlementMethod={contract.settlementMethod} />{" "}
+                <ContractStatusBadge status={contract.status} />
                 <div>{renderRangeNames(contract)}</div>
             </>
         );
