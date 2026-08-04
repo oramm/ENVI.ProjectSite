@@ -21,6 +21,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
         register,
         reset,
         watch,
+        getValues,
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
@@ -44,7 +45,10 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
             comment: initialData?.comment || "",
             systemRoleId: initialData?.systemRoleId || "",
             systemEmail: initialData?.systemEmail || "",
-            _projectAssignments: [],
+            // Celowo BEZ _projectAssignments: przypisania dojeżdżają osobnym żądaniem.
+            // Pusta tablica znaczyłaby "użytkownik wyczyścił listę", więc zapis wykonany
+            // zanim dane dotrą skasowałby przypisania. Brak pola blokuje zapis (patrz
+            // saveProjectAssignments), pusta lista już nie.
             //googleId: initialData?.googleId,
             //googleRefreshToken: initialData?.googleRefreshToken,
         };
@@ -69,8 +73,11 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
 
                     // Nadpisz pola account w formularzu danymi z v2
                     if (accountData) {
+                        // getValues(), nie resetData: dane dojeżdżają po otwarciu modala,
+                        // a resetData to zdjęcie sprzed żądania - nadpisanie nim skasowałoby
+                        // to, co użytkownik zdążył wpisać w międzyczasie.
                         reset({
-                            ...resetData,
+                            ...getValues(),
                             systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
                             systemEmail: accountData.systemEmail ?? resetData.systemEmail,
                             _projectAssignments: assignments,

@@ -13,13 +13,25 @@ import MainSetup from "../../../React/MainSetupReact";
  * kontraktowy wysyła pustą listę - dzięki temu zmiana roli na inną odbiera dostęp
  * do projektów, zamiast zostawiać go po cichu w bazie.
  */
-async function saveProjectAssignments(person: SystemUserData) {
+export async function saveProjectAssignments(person: SystemUserData) {
     if (!person?.id) return;
     const isContractWorker = Number(person.systemRoleId) === MainSetup.SystemRoles.CONTRACT_WORKER.id;
-    const projectOurIds = isContractWorker
-        ? ((person as any)._projectAssignments ?? []).map((project: { ourId: string }) => project.ourId)
-        : [];
-    await savePersonProjectAssignments(person.id, projectOurIds);
+
+    if (!isContractWorker) {
+        await savePersonProjectAssignments(person.id, []);
+        return;
+    }
+
+    const selected = (person as any)._projectAssignments;
+    // Brak pola to NIE to samo co pusty wybór. Gdyby formularz go nie dowiózł,
+    // pusta lista skasowałaby istniejące przypisania - a zapis, który po cichu
+    // kasuje dane, jest gorszy niż zapis, który ich nie ruszy.
+    if (!Array.isArray(selected)) return;
+
+    await savePersonProjectAssignments(
+        person.id,
+        selected.map((project: { ourId: string }) => project.ourId)
+    );
 }
 
 export function SystemUserEditModalButton({
