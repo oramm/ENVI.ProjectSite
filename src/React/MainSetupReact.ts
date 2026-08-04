@@ -308,7 +308,34 @@ export default class MainSetup {
             systemName: "EXTERNAL_USER",
             description: "Użytkownik zewnętrzny – domyślnie osoba bez dostępu do wirtyny, po dodaniu maila systemowego dostęp tylko do pism",
         },
+        CONTRACT_WORKER: {
+            id: 6,
+            systemName: "CONTRACT_WORKER",
+            description: "Pracownik kontraktowy – praca operacyjna wyłącznie w przypisanych projektach, bez faktur, ofert i dotacji",
+        },
     };
+
+    /** Pracownicy ENVI – pełny zakres modułów firmowych. */
+    static readonly STAFF_ROLES: SystemRoleName[] = [
+        "ADMIN",
+        "ENVI_MANAGER",
+        "ENVI_EMPLOYEE",
+    ];
+
+    /** Role widzące kontrakty – pracownicy ENVI oraz pracownik kontraktowy
+     * (temu ostatniemu backend zawęża dane do przypisanych projektów). */
+    static readonly CONTRACT_SCOPED_ROLES: SystemRoleName[] = [
+        ...MainSetup.STAFF_ROLES,
+        "CONTRACT_WORKER",
+    ];
+
+    static canViewInvoices() {
+        return this.isRoleAllowed(this.STAFF_ROLES);
+    }
+
+    static canViewOffers() {
+        return this.isRoleAllowed(this.STAFF_ROLES);
+    }
 
     static readonly RoleGroups = {
         EMPLOYER: "Zamawiający",

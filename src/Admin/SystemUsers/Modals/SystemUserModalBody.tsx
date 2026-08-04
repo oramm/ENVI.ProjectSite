@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Form, Spinner } from "react-bootstrap";
 import { PersonProfileV2Payload, SystemUserData } from "../../../../Typings/bussinesTypes";
-import { fetchPersonAccountV2, fetchPersonProfileV2 } from "../../../Persons/personsV2Helpers";
-import { EntitySelector, SystemRoleSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import {
+    fetchPersonAccountV2,
+    fetchPersonProfileV2,
+    fetchPersonProjectAssignments,
+} from "../../../Persons/personsV2Helpers";
+import MainSetup from "../../../React/MainSetupReact";
+import {
+    EntitySelector,
+    ProjectSelector,
+    SystemRoleSelector,
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
@@ -11,12 +20,17 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
     const {
         register,
         reset,
+        watch,
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
 
     const [v2Loading, setV2Loading] = useState(false);
     const [profileV2, setProfileV2] = useState<PersonProfileV2Payload | null>(null);
+
+    // Pracownik kontraktowy widzi tylko przypisane projekty, więc przy tej roli trzeba
+    // je wskazać. Dla pozostałych ról pole nie ma sensu i się nie pokazuje.
+    const isContractWorker = Number(watch("systemRoleId")) === MainSetup.SystemRoles.CONTRACT_WORKER.id;
 
     useEffect(() => {
         const resetData: any = {
@@ -30,19 +44,24 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
             comment: initialData?.comment || "",
             systemRoleId: initialData?.systemRoleId || "",
             systemEmail: initialData?.systemEmail || "",
+            _projectAssignments: [],
             //googleId: initialData?.googleId,
             //googleRefreshToken: initialData?.googleRefreshToken,
         };
         reset(resetData);
         trigger();
 
-        // Przy edycji pobierz dane z endpointow v2 (account + profile)
+        // Przy edycji pobierz dane z endpointow v2 (account + profile + przypisania projektów)
         if (isEditing && initialData?.id) {
             let cancelled = false;
             setV2Loading(true);
 
-            Promise.all([fetchPersonAccountV2(initialData.id), fetchPersonProfileV2(initialData.id)])
-                .then(([accountData, profileData]) => {
+            Promise.all([
+                fetchPersonAccountV2(initialData.id),
+                fetchPersonProfileV2(initialData.id),
+                fetchPersonProjectAssignments(initialData.id).catch(() => []),
+            ])
+                .then(([accountData, profileData, assignments]) => {
                     if (cancelled) return;
 
                     // Zapisz profile do lokalnego stanu (na potrzeby przyszlego write path)
@@ -54,6 +73,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                             ...resetData,
                             systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
                             systemEmail: accountData.systemEmail ?? resetData.systemEmail,
+                            _projectAssignments: assignments,
                         });
                         trigger();
                     }
@@ -165,6 +185,15 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
             </Form.Group>
 
             <SystemRoleSelector name="systemRoleId" />
+
+            {isContractWorker && (
+                <Form.Group className="mt-2">
+                    <ProjectSelector name="_projectAssignments" multiple label="Przypisane projekty" />
+                    <Form.Text className="text-muted">
+                        Pracownik kontraktowy widzi wyłącznie dane wskazanych tu projektów.
+                    </Form.Text>
+                </Form.Group>
+            )}
         </>
     );
 }

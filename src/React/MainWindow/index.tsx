@@ -175,27 +175,32 @@ function AppRoutes() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/public/experience-update/:token" element={<PublicProfileSubmissionPage />} />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
-                    <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"]} />}>
+                    {/* Widoki kontraktowe - także dla pracownika kontraktowego. Backend zawęża
+                        mu dane do przypisanych projektów, więc widzi te same ekrany, ale mniej rekordów.
+                        Dostęp do wizyt i kilometrówki rozstrzyga dodatkowo flaga w StaffMembers. */}
+                    <Route element={<ProtectedRoute allowedRoles={MainSetup.CONTRACT_SCOPED_ROLES} />}>
                         <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
-                        <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
                         <Route
                             path="/contracts/dates"
                             element={<MilestoneDatesSearch title={"Terminy kamieni milowych"} />}
                         />
                         <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
                         <Route path="/contract/:id" element={<ContractMainViewTabs />} />
-                        <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
-                        <Route path="/invoice/:id" element={<InvoiceDetails />} />
-                        <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
                         <Route path="/mileage" element={<MileagePage />} />
                         <Route path="/mileage/:vehicleId" element={<MileagePage />} />
                         <Route path="/visits" element={<SiteVisitsPage />} />
                         <Route path="/visits/list" element={<SiteVisitsPage />} />
-                        <Route path="/visits/admin" element={<SiteVisitsPage />} />
                         <Route path="/visits/:contractId" element={<SiteVisitsPage />} />
-                        <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
+                    </Route>
+                    <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
+                        <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
+                        <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
+                        <Route path="/invoice/:id" element={<InvoiceDetails />} />
+                        <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
+                        <Route path="/visits/admin" element={<SiteVisitsPage />} />
+                        <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />

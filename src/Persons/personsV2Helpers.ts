@@ -261,3 +261,39 @@ export async function savePersonV2AccountAndProfile(
 
     return result;
 }
+
+/** Projekt przypisany pracownikowi kontraktowemu (kształt zgodny z ProjectSelector). */
+export type ProjectAssignment = {
+    ourId: string;
+    name: string;
+};
+
+/** Projekty przypisane osobie (rola CONTRACT_WORKER). */
+export async function fetchPersonProjectAssignments(personId: number): Promise<ProjectAssignment[]> {
+    const validId = validatePersonId(personId, "GET project-assignments");
+    const url = `${MainSetup.serverUrl}v2/persons/${validId}/project-assignments`;
+    const result = await ToolsFetch.fetchJsonWithSafeError(url, {
+        method: "GET",
+        credentials: "include",
+    });
+    return result?.assignments ?? [];
+}
+
+/**
+ * Ustawia komplet przypisań osoby. Pusta tablica czyści przypisania - tak wygląda
+ * zmiana roli na inną niż pracownik kontraktowy.
+ */
+export async function savePersonProjectAssignments(
+    personId: number,
+    projectOurIds: string[],
+): Promise<ProjectAssignment[]> {
+    const validId = validatePersonId(personId, "PUT project-assignments");
+    const url = `${MainSetup.serverUrl}v2/persons/${validId}/project-assignments`;
+    const result = await ToolsFetch.fetchJsonWithSafeError(url, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectOurIds }),
+    });
+    return result?.assignments ?? [];
+}

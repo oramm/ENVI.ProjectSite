@@ -48,6 +48,9 @@ type ProjectSelectorProps = {
     showValidationInfo?: boolean;
     name?: string;
     disabled?: boolean;
+    /** Wybór wielu projektów (np. przypisania pracownika kontraktowego). */
+    multiple?: boolean;
+    label?: string;
 };
 
 /**
@@ -94,6 +97,8 @@ export function ProjectSelector({
     name = "_project",
     showValidationInfo = true,
     disabled = false,
+    multiple = false,
+    label = "Projekt",
 }: ProjectSelectorProps) {
     const {
         formState: { errors },
@@ -129,7 +134,7 @@ export function ProjectSelector({
 
     return (
         <>
-            <Form.Label>Projekt</Form.Label>
+            <Form.Label>{label}</Form.Label>
             <MyAsyncTypeahead
                 name={name}
                 labelKey="ourId"
@@ -137,7 +142,7 @@ export function ProjectSelector({
                 //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                 showValidationInfo={showValidationInfo}
                 renderMenuItemChildren={renderOption}
-                multiple={false}
+                multiple={multiple}
             />
         </>
     );

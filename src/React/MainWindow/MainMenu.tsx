@@ -20,6 +20,16 @@ export default function MainMenu() {
             .catch(() => {});
     }, []);
 
+    // Kilometrówka - tak samo jak wizyty: decyduje flaga StaffMembers.IsDriver po stronie
+    // backendu, nie rola. Pracownicy ENVI mają ją domyślnie, pracownik kontraktowy nie.
+    const [mileageAccess, setMileageAccess] = React.useState(false);
+    React.useEffect(() => {
+        fetch(`${MainSetup.serverUrl}mileage/access`, { credentials: "include" })
+            .then((r) => (r.ok ? r.json() : { hasAccess: false }))
+            .then((d) => setMileageAccess(!!d.hasAccess))
+            .catch(() => {});
+    }, []);
+
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
     }
@@ -51,7 +61,7 @@ export default function MainMenu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (
+                            {MainSetup.CONTRACT_SCOPED_ROLES.includes(systemRoleName) && (
                                 <NavDropdown
                                     title="Kontrakty"
                                     id="basic-nav-dropdown"
@@ -63,27 +73,33 @@ export default function MainMenu() {
                                     <NavDropdown.Item as={Link} to="/tasksGlobal" className={isActive("/tasksGlobal")}>
                                         Projekty i zadania
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item as={Link} to="/scrumboard" className={isActive("/scrumboard")}>
-                                        Scrumboard{" "}
-                                        <Badge bg="info" text="light">
-                                            nowe
-                                        </Badge>
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item as={Link} to="/contracts/roles" className={isActive("/contracts/roles")}>
-                                        Role kontrakowe
-                                    </NavDropdown.Item>
+                                    {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
+                                        <>
+                                            <NavDropdown.Item as={Link} to="/scrumboard" className={isActive("/scrumboard")}>
+                                                Scrumboard{" "}
+                                                <Badge bg="info" text="light">
+                                                    nowe
+                                                </Badge>
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Item as={Link} to="/contracts/roles" className={isActive("/contracts/roles")}>
+                                                Role kontrakowe
+                                            </NavDropdown.Item>
+                                        </>
+                                    )}
                                     <NavDropdown.Item as={Link} to="/contracts/dates" className={isActive("/contracts/dates")}>
                                         Terminy
                                     </NavDropdown.Item>
                                     <NavDropdown.Item as={Link} to="/contracts/znwu" className={isActive("/contracts/znwu")}>
                                         ZNWU
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item as={Link} to="/mileage" className={isActive("/mileage")}>
-                                        Kilometrówka{" "}
-                                        <Badge bg="info" text="light">
-                                            nowe
-                                        </Badge>
-                                    </NavDropdown.Item>
+                                    {mileageAccess && (
+                                        <NavDropdown.Item as={Link} to="/mileage" className={isActive("/mileage")}>
+                                            Kilometrówka{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
                                     {visitsAccess && (
                                         <NavDropdown.Item as={Link} to="/visits" className={isActive("/visits")}>
                                             Wizyty na budowie{" "}
@@ -98,9 +114,7 @@ export default function MainMenu() {
                                 Pisma
                             </Nav.Link>
                             {(() => {
-                                const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                    systemRoleName,
-                                );
+                                const canViewInvoices = MainSetup.STAFF_ROLES.includes(systemRoleName);
                                 const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
 
                                 if (!canViewInvoices) return null;
@@ -153,11 +167,13 @@ export default function MainMenu() {
                                     </Nav.Link>
                                 );
                             })()}
-                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (
+                            {MainSetup.CONTRACT_SCOPED_ROLES.includes(systemRoleName) && (
+                                <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
+                                    Podmioty
+                                </Nav.Link>
+                            )}
+                            {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
                                 <>
-                                    <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
-                                        Podmioty
-                                    </Nav.Link>
                                     <Nav.Link as={Link} to="/persons" className={isActive("/persons")}>
                                         Osoby
                                     </Nav.Link>
@@ -225,7 +241,7 @@ export default function MainMenu() {
                                 >
                                     Wyloguj się
                                 </NavDropdown.Item>
-                                {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(systemRoleName) && (
+                                {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
                                     <>
                                         <NavDropdown.Item as={Link} to="/admin/systemUsers">
                                             Dodaj użytkownika

@@ -26,14 +26,29 @@ export default function Dashboard() {
     return (
         <Row className="mx-3">
             <Col md={3} className="mb-3">
-                <OffersCard className="mb-3 bg-white" />
+                {/* Oferty i nabory to sprawy firmowe - widzą je tylko pracownicy ENVI. */}
+                {MainSetup.STAFF_ROLES.includes(currentUser.systemRoleName) && (
+                    <OffersCard className="mb-3 bg-white" />
+                )}
                 {["ADMIN", "ENVI_MANAGER"].includes(currentUser.systemRoleName) && (
                     <InvoicesCard className="mb-3 bg-white" />
                 )}
-                <ApplicationCallsCard className="mb-3 bg-white" />
+                {MainSetup.STAFF_ROLES.includes(currentUser.systemRoleName) && (
+                    <ApplicationCallsCard className="mb-3 bg-white" />
+                )}
             </Col>
             <Col md={6} className="mb-3">
-                <MilestonesCard />
+                {/* Kafelek ma przycisk edycji i usuwania (isDeletable), a renderował się
+                    każdemu - współpracownik i użytkownik zewnętrzny dostawali w ten sposób
+                    kamienie milowe z całej bazy do zmiany. Dla pracownika kontraktowego
+                    kafelek zostaje: backend przycina mu dane do przypisanych projektów.
+
+                    UWAGA: to jest wyłącznie ukrycie widoku. Trasy PUT/DELETE /milestoneDate/:id
+                    nadal sprawdzają tylko to, czy ktoś jest zalogowany - zapis wykonany poza UI
+                    (konsola przeglądarki) przejdzie. Właściwa poprawka jest po stronie serwera. */}
+                {MainSetup.CONTRACT_SCOPED_ROLES.includes(currentUser.systemRoleName) && (
+                    <MilestonesCard />
+                )}
 
                 {/* <UpcomingEvents /> */}
             </Col>

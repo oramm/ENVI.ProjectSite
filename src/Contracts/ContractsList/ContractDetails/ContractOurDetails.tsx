@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Container, Card, Col, Row, Button, Alert, Placeholder } from "react-bootstrap";
 import { ContractsSettlementData, Invoice, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import MainSetup from "../../../React/MainSetupReact";
 import Tools from "../../../React/Tools/Tools";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import { InvoiceStatusBadge, MyTooltip } from "../../../View/Resultsets/CommonComponents";
@@ -29,7 +30,10 @@ export default function ContractOurDetails() {
         const fetchSettlementData = (
             await contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }])
         )[0];
-        const fetchInvoicesData = await invoicesRepository.loadItemsFromServerPOST([{ contractId: contractIdString }]);
+        // Bez uprawnień do faktur nie ma po co pytać serwera - odpowiedziałby 403.
+        const fetchInvoicesData = MainSetup.canViewInvoices()
+            ? await invoicesRepository.loadItemsFromServerPOST([{ contractId: contractIdString }])
+            : [];
         try {
             const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
             setSettlemenData(settlementData);
@@ -139,6 +143,9 @@ export default function ContractOurDetails() {
                         </MyTooltip>
                     </Row>
 
+                    {/* Wartości rozliczenia widzą wszystkie role kontraktowe, ale sam rejestr
+                        faktur jest zamknięty dla pracownika kontraktowego (backend też go blokuje). */}
+                    {MainSetup.canViewInvoices() && (
                     <Row className="mt-3">
                         <Col sm={12}>
                             <div>Faktury</div>
@@ -187,6 +194,7 @@ export default function ContractOurDetails() {
                             />
                         </Col>
                     </Row>
+                    )}
                 </Container>
 
                 <p className="tekst-muted small">

@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import MainSetup from "../../../React/MainSetupReact";
 
 const commonFields = {
     _entity: Yup.object().required("Wybierz podmiot"),
@@ -22,6 +23,14 @@ const commonFields = {
     systemEmail: Yup.string().default("").max(50, "Email może mieć maksymalnie 50 znaków"),
 
     systemRoleId: Yup.number().required("Wybierz rolę systemową"),
+
+    // Pracownik kontraktowy bez przypisanego projektu nie zobaczy niczego (backend
+    // traktuje pustą listę jako brak dostępu), więc konto bez projektów jest bezużyteczne.
+    _projectAssignments: Yup.array().when("systemRoleId", {
+        is: (systemRoleId: number) => Number(systemRoleId) === MainSetup.SystemRoles.CONTRACT_WORKER.id,
+        then: (schema) => schema.min(1, "Wskaż co najmniej jeden projekt"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
 };
 
 export function makeSystemUserValidationSchema(isEditing: boolean) {

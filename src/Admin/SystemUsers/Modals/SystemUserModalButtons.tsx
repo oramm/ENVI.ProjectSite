@@ -5,7 +5,22 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { systemUserRepository } from "../SystemUserController";
 import { SystemUserModalBody } from "./SystemUserModalBody";
 import { makeSystemUserValidationSchema } from "./SystemUserValidationSchema";
-import { savePersonV2AccountAndProfile } from "../../../Persons/personsV2Helpers";
+import { savePersonProjectAssignments, savePersonV2AccountAndProfile } from "../../../Persons/personsV2Helpers";
+import MainSetup from "../../../React/MainSetupReact";
+
+/**
+ * Zapisuje przypisania projektów po zapisaniu konta. Dla ról innych niż pracownik
+ * kontraktowy wysyła pustą listę - dzięki temu zmiana roli na inną odbiera dostęp
+ * do projektów, zamiast zostawiać go po cichu w bazie.
+ */
+async function saveProjectAssignments(person: SystemUserData) {
+    if (!person?.id) return;
+    const isContractWorker = Number(person.systemRoleId) === MainSetup.SystemRoles.CONTRACT_WORKER.id;
+    const projectOurIds = isContractWorker
+        ? ((person as any)._projectAssignments ?? []).map((project: { ourId: string }) => project.ourId)
+        : [];
+    await savePersonProjectAssignments(person.id, projectOurIds);
+}
 
 export function SystemUserEditModalButton({
     modalProps: { onEdit, initialData },
@@ -24,6 +39,7 @@ export function SystemUserEditModalButton({
                 {},
                 "SystemUsers"
             );
+            await saveProjectAssignments(editedObject);
         }
         onEdit(editedObject);
     }
@@ -60,6 +76,7 @@ export function SystemUserAddNewModalButton({ modalProps: { onAddNew } }: Specif
                 {},
                 "SystemUsers"
             );
+            await saveProjectAssignments(newObject);
         }
         onAddNew(newObject);
     }

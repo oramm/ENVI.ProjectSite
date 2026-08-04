@@ -15,6 +15,7 @@ export enum SystemRoleName {
     ENVI_EMPLOYEE = "ENVI_EMPLOYEE",
     ENVI_COOPERATOR = "ENVI_COOPERATOR",
     EXTERNAL_USER = "EXTERNAL_USER",
+    CONTRACT_WORKER = "CONTRACT_WORKER",
 }
 
 export type SessionTask = {
