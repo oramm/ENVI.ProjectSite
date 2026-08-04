@@ -19,6 +19,38 @@ export default class ToolsFetch {
         return null;
     }
 
+    /**
+     * Sesja padła po stronie serwera, mimo że klient uważał się za zalogowanego.
+     * Dzieje się tak, gdy komuś zmieniono rolę systemową (backend kasuje wtedy jego sesje,
+     * żeby nowe uprawnienia obowiązywały od razu) albo gdy sesja wygasła.
+     *
+     * Bez tego użytkownik dostawałby serię komunikatów o błędach i dopiero po ręcznym
+     * odświeżeniu strony zobaczyłby ekran logowania.
+     *
+     * Czyścimy CAŁY sessionStorage, nie tylko dane użytkownika: leżą tam też podręczne kopie
+     * repozytoriów i wyników tabel, a po zmianie roli są to dane, których zalogowany
+     * ponownie może już nie mieć prawa oglądać.
+     */
+    private static sessionExpiredHandled = false;
+
+    /** Dla ścieżek omijających fetchJsonWithSafeError (własna obsługa błędów). */
+    static notifySessionExpired() {
+        this.handleSessionExpired();
+    }
+
+    private static handleSessionExpired() {
+        // Ekran logowania sam odpytuje /session i dostaje 401 - to normalny stan startowy,
+        // nie wygaśnięcie. Reagujemy tylko, gdy klient miał zapamiętanego użytkownika.
+        if (!MainSetup.currentUserOrNull) return;
+        // Jedno przeładowanie na sesję - równoległe żądania nie mogą zapętlić strony.
+        if (this.sessionExpiredHandled) return;
+        this.sessionExpiredHandled = true;
+
+        console.warn("Sesja wygasła lub została unieważniona - przechodzę do ekranu logowania.");
+        window.sessionStorage.clear();
+        window.location.reload();
+    }
+
     static async fetchJsonWithSafeError(url: string, options: RequestInit = {}, customErrorMsg?: string) {
         let httpStatus: number | undefined;
         try {
@@ -26,6 +58,7 @@ export default class ToolsFetch {
 
             if (!response.ok) {
                 httpStatus = response.status;
+                if (httpStatus === 401) this.handleSessionExpired();
                 const errorDetails: ErrorServerResponse = await response.json();
                 throw new Error(errorDetails.errorMessage);
             }

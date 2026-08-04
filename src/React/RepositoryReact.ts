@@ -382,6 +382,11 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
         }
 
+        // Ta ścieżka omija ToolsFetch (własna obsługa błędów), więc wygaśnięcie sesji
+        // trzeba tu zgłosić osobno - inaczej usuwanie byłoby jedyną akcją, po której
+        // użytkownik zostaje z komunikatem błędu zamiast ekranu logowania.
+        if (response.status === 401) ToolsFetch.notifySessionExpired();
+
         let result;
         try {
             result = await response.json();
