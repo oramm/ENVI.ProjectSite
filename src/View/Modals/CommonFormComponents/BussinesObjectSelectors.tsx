@@ -871,6 +871,8 @@ interface ContractRangeSelectorProps {
     showValidationInfo?: boolean;
     multiple?: boolean;
     name?: string;
+    /** Opcjonalny hook "pick-or-create": gdy przekazany, obok Typeahead renderowany jest przycisk `+ Nowy zakres`. */
+    onRequestCreate?: () => void;
 }
 
 export function ContractRangeSelector({
@@ -878,6 +880,7 @@ export function ContractRangeSelector({
     showValidationInfo = true,
     multiple = true,
     name = "_contractRanges",
+    onRequestCreate,
 }: ContractRangeSelectorProps) {
     const {
         control,
@@ -907,41 +910,56 @@ export function ContractRangeSelector({
         fetchData();
     }, [repository, setValue, multiple, name]);
 
+    const selector = (
+        <Controller
+            name={name}
+            control={control}
+            render={({ field }) => {
+                const formValue = (field.value || []) as any[];
+                // Zakres utworzony inline nie zdążył trafić do `options` - bierzemy go
+                // wtedy wprost z wartości formularza, żeby pozostał widoczny jako wybrany.
+                const currentSelection = formValue
+                    .map((item: any) => {
+                        const itemId = item?._contractRange?.id ?? item?.id;
+                        return options.find((option) => option.id === itemId) ?? item?._contractRange ?? item;
+                    })
+                    .filter(Boolean);
+
+                return (
+                    <Typeahead
+                        id={`${name}-controlled`}
+                        labelKey="name"
+                        multiple={multiple}
+                        options={options}
+                        onChange={field.onChange}
+                        selected={currentSelection}
+                        placeholder="-- Wybierz zakresy kontraktu --"
+                        isValid={showValidationInfo ? !errors?.[name] : undefined}
+                        isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                        renderMenuItemChildren={(option, props, index) => {
+                            const optionTyped = option as ContractRangeData;
+                            return (
+                                <div>
+                                    <span>{optionTyped.name}</span>
+                                    <div className="text-muted small text-wrap">{optionTyped.description}</div>
+                                </div>
+                            );
+                        }}
+                    />
+                );
+            }}
+        />
+    );
+
     return (
         <Form.Group controlId={name}>
             <Form.Label>{label}</Form.Label>
-            <Controller
+            <SelectorWithCreate
+                selector={selector}
+                caption="+ Nowy zakres"
                 name={name}
-                control={control}
-                render={({ field }) => {
-                    const formValue = (field.value || []) as any[];
-                    const currentSelection = options.filter((option) =>
-                        formValue.some((item: any) => (item?._contractRange?.id || item?.id) === option.id),
-                    );
-
-                    return (
-                        <Typeahead
-                            id={`${name}-controlled`}
-                            labelKey="name"
-                            multiple={multiple}
-                            options={options}
-                            onChange={field.onChange}
-                            selected={currentSelection}
-                            placeholder="-- Wybierz zakresy kontraktu --"
-                            isValid={showValidationInfo ? !errors?.[name] : undefined}
-                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
-                            renderMenuItemChildren={(option, props, index) => {
-                                const optionTyped = option as ContractRangeData;
-                                return (
-                                    <div>
-                                        <span>{optionTyped.name}</span>
-                                        <div className="text-muted small text-wrap">{optionTyped.description}</div>
-                                    </div>
-                                );
-                            }}
-                        />
-                    );
-                }}
+                multiple={multiple}
+                onRequestCreate={onRequestCreate}
             />
             <ErrorMessage errors={errors} name={name} />
         </Form.Group>

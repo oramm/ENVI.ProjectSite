@@ -10,6 +10,7 @@ import { saveProjectAssignments } from "./SystemUserModalButtons";
 
 const save = savePersonProjectAssignments as unknown as ReturnType<typeof vi.fn>;
 const CONTRACT_WORKER = 6;
+const CLIENT = 7;
 
 describe("saveProjectAssignments", () => {
     beforeEach(() => save.mockReset());
@@ -45,6 +46,16 @@ describe("saveProjectAssignments", () => {
         } as any);
 
         expect(save).toHaveBeenCalledWith(7, []);
+    });
+
+    it("zapisuje wybrane projekty klienta - ta rola też jest zakresowa", async () => {
+        await saveProjectAssignments({
+            id: 7,
+            systemRoleId: CLIENT,
+            _projectAssignments: [{ ourId: "AQM" }],
+        } as any);
+
+        expect(save).toHaveBeenCalledWith(7, ["AQM"]);
     });
 
     it("zmiana roli na inną odbiera przypisania", async () => {

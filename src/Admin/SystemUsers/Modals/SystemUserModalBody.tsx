@@ -29,9 +29,9 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
     const [v2Loading, setV2Loading] = useState(false);
     const [profileV2, setProfileV2] = useState<PersonProfileV2Payload | null>(null);
 
-    // Pracownik kontraktowy widzi tylko przypisane projekty, więc przy tej roli trzeba
-    // je wskazać. Dla pozostałych ról pole nie ma sensu i się nie pokazuje.
-    const isContractWorker = Number(watch("systemRoleId")) === MainSetup.SystemRoles.CONTRACT_WORKER.id;
+    // Role zakresowe (pracownik kontraktowy, klient) widzą tylko przypisane projekty,
+    // więc przy nich trzeba je wskazać. Dla pozostałych ról pole nie ma sensu i się nie pokazuje.
+    const isProjectScopedRole = MainSetup.isProjectScopedRoleId(watch("systemRoleId"));
 
     useEffect(() => {
         const resetData: any = {
@@ -193,11 +193,11 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
 
             <SystemRoleSelector name="systemRoleId" />
 
-            {isContractWorker && (
+            {isProjectScopedRole && (
                 <Form.Group className="mt-2">
                     <ProjectSelector name="_projectAssignments" multiple label="Przypisane projekty" />
                     <Form.Text className="text-muted">
-                        Pracownik kontraktowy widzi wyłącznie dane wskazanych tu projektów.
+                        Ta rola widzi wyłącznie dane wskazanych tu projektów.
                     </Form.Text>
                 </Form.Group>
             )}

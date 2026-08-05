@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     ContractRangeSelector,
     ProjectSelector,
@@ -6,7 +6,8 @@ import {
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { OtherContract, OurContract, ProjectData } from "../../../../Typings/bussinesTypes";
+import { ContractRangeData, OtherContract, OurContract, ProjectData } from "../../../../Typings/bussinesTypes";
+import { ContractRangeInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 import { contractRangesRepository, projectsRepository } from "../ContractsController";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import ToolsForms from "../../../React/Tools/ToolsForms";
@@ -28,6 +29,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         trigger,
     } = useFormContext();
     const watchAllFields = watch();
+    const [showCreateContractRange, setShowCreateContractRange] = useState(false);
     // „Dokumentacja zatwierdzona” tylko dla typów kontraktu mających kamień 6.
     const approvedDocsAllowed = APPROVED_DOCS_CONTRACT_TYPE_IDS.includes(
         (watch("_type") as { id?: number } | undefined)?.id ?? -1
@@ -104,7 +106,10 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                 />
                 <ErrorMessage errors={errors} name="alias" />
             </Form.Group>
-            <ContractRangeSelector repository={contractRangesRepository} />
+            <ContractRangeSelector
+                repository={contractRangesRepository}
+                onRequestCreate={() => setShowCreateContractRange(true)}
+            />
             <Form.Group controlId="comment">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control
@@ -212,6 +217,16 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     <option value="MEASUREMENT">obmiar</option>
                 </Form.Control>
             </Form.Group>
+            <ContractRangeInlineCreateDrawer
+                show={showCreateContractRange}
+                onHide={() => setShowCreateContractRange(false)}
+                title="Nowy zakres kontraktu"
+                onCreated={(created) => {
+                    // selektor jest multiple - dopisujemy nowy zakres do już wybranych
+                    const current = (watch("_contractRanges") || []) as ContractRangeData[];
+                    setValue("_contractRanges", [...current, created], { shouldValidate: true });
+                }}
+            />
         </>
     );
 }

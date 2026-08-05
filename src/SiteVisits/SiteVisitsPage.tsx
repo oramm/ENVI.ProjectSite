@@ -140,6 +140,22 @@ function useVisitsManifest() {
     }, []);
 }
 
+// Uprawnienia modułu z backendu: hasAccess (czy w ogóle), isAdmin (przegląd cudzych
+// wizyt), canLog (rejestrowanie własnych - flaga StaffMembers, nie rola).
+type VisitsAccess = { hasAccess: boolean; isAdmin: boolean; canLog: boolean };
+const NO_ACCESS: VisitsAccess = { hasAccess: false, isAdmin: false, canLog: false };
+
+function useVisitsAccess(): VisitsAccess {
+    const [access, setAccess] = useState<VisitsAccess>(NO_ACCESS);
+    useEffect(() => {
+        fetch(api("site-visits/access"), { credentials: "include" })
+            .then((r) => (r.ok ? r.json() : NO_ACCESS))
+            .then((d) => setAccess({ ...NO_ACCESS, ...d }))
+            .catch(() => {});
+    }, []);
+    return access;
+}
+
 export default function SiteVisitsPage() {
     const { contractId } = useParams<{ contractId?: string }>();
     const location = useLocation();
@@ -148,6 +164,9 @@ export default function SiteVisitsPage() {
     if (location.pathname.endsWith("/admin")) return <VisitsAdmin />;
     if (location.pathname.endsWith("/list")) return <VisitsList />;
     if (contractId) return <CaptureScreen contractId={Number(contractId)} />;
+    // Klient przychodzi tu po raporty z wizyt, nie po to, żeby je rejestrować -
+    // wejście w zakładkę ma od razu pokazać przegląd, a nie wybór budowy.
+    if (MainSetup.isRoleAllowed(["CLIENT"])) return <VisitsAdmin />;
     return <ContractPicker />;
 }
 
@@ -867,14 +886,7 @@ function VisitsList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [filters, setFilters] = useState<Filters>(defaultDateFilters);
-    const [isAdmin, setIsAdmin] = useState(false);
-
-    useEffect(() => {
-        fetch(api("site-visits/access"), { credentials: "include" })
-            .then((r) => (r.ok ? r.json() : { isAdmin: false }))
-            .then((d) => setIsAdmin(!!d.isAdmin))
-            .catch(() => {});
-    }, []);
+    const { isAdmin, canLog } = useVisitsAccess();
 
     useEffect(() => {
         setLoading(true);
@@ -902,10 +914,12 @@ function VisitsList() {
                             Przegląd
                         </Button>
                     )}
-                    <Button variant="success" size="sm" onClick={() => navigate("/visits")}>
-                        <FontAwesomeIcon icon={faCamera} className="me-1" />
-                        Nowa wizyta
-                    </Button>
+                    {canLog && (
+                        <Button variant="success" size="sm" onClick={() => navigate("/visits")}>
+                            <FontAwesomeIcon icon={faCamera} className="me-1" />
+                            Nowa wizyta
+                        </Button>
+                    )}
                 </div>
             </div>
 
@@ -956,6 +970,7 @@ function VisitsAdmin() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [denied, setDenied] = useState(false);
+    const { canLog } = useVisitsAccess();
 
     // Zaznaczona grupa trzymana w URL (?person= / ?contract=) - dzięki temu
     // systemowe/przeglądarkowe "wstecz" wraca do listy grup, bez własnej strzałki.
@@ -1021,13 +1036,17 @@ function VisitsAdmin() {
         <Container className="py-3" style={{ maxWidth: 720 }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4 className="mb-0">Przegląd wizyt</h4>
-                <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    onClick={() => navigate("/visits/list")}
-                >
-                    Moje wizyty
-                </Button>
+                {/* Kto sam wizyt nie rejestruje (klient bez flagi), ten nie ma po co
+                    zaglądać do "moich wizyt" - lista byłaby zawsze pusta. */}
+                {canLog && (
+                    <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => navigate("/visits/list")}
+                    >
+                        Moje wizyty
+                    </Button>
+                )}
             </div>
 
             <ButtonGroup className="mb-3 w-100">

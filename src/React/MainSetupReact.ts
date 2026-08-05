@@ -313,6 +313,12 @@ export default class MainSetup {
             systemName: "CONTRACT_WORKER",
             description: "Pracownik kontraktowy – praca operacyjna wyłącznie w przypisanych projektach, bez faktur, ofert i dotacji",
         },
+        CLIENT: {
+            id: 7,
+            systemName: "CLIENT",
+            description:
+                "Klient – zakres pracownika kontraktowego (tylko przypisane projekty) plus raporty z wizyt na budowie",
+        },
     };
 
     /** Pracownicy ENVI – pełny zakres modułów firmowych. */
@@ -322,12 +328,27 @@ export default class MainSetup {
         "ENVI_EMPLOYEE",
     ];
 
-    /** Role widzące kontrakty – pracownicy ENVI oraz pracownik kontraktowy
-     * (temu ostatniemu backend zawęża dane do przypisanych projektów). */
+    /** Role, którym backend zawęża dane do projektów przypisanych w PersonProjects.
+     * Tym rolom wskazuje się projekty w modalu użytkownika. */
+    static readonly PROJECT_SCOPED_ROLES: SystemRoleName[] = ["CONTRACT_WORKER", "CLIENT"];
+
+    /** Role widzące kontrakty – pracownicy ENVI oraz role zakresowe
+     * (tym ostatnim backend zawęża dane do przypisanych projektów). */
     static readonly CONTRACT_SCOPED_ROLES: SystemRoleName[] = [
         ...MainSetup.STAFF_ROLES,
-        "CONTRACT_WORKER",
+        ...MainSetup.PROJECT_SCOPED_ROLES,
     ];
+
+    /** Role z przeglądem cudzych wizyt na budowie – pracownicy ENVI oraz klient
+     * (klientowi backend zawęża wizyty do przypisanych projektów). */
+    static readonly VISITS_OVERVIEW_ROLES: SystemRoleName[] = [...MainSetup.STAFF_ROLES, "CLIENT"];
+
+    /** Czy rola należy do zakresowych (przypisania projektów, węższe menu). */
+    static isProjectScopedRoleId(systemRoleId: number | string | undefined) {
+        return this.PROJECT_SCOPED_ROLES.some(
+            (role) => MainSetup.SystemRoles[role].id === Number(systemRoleId),
+        );
+    }
 
     static canViewInvoices() {
         return this.isRoleAllowed(this.STAFF_ROLES);

@@ -24,10 +24,10 @@ const commonFields = {
 
     systemRoleId: Yup.number().required("Wybierz rolę systemową"),
 
-    // Pracownik kontraktowy bez przypisanego projektu nie zobaczy niczego (backend
-    // traktuje pustą listę jako brak dostępu), więc konto bez projektów jest bezużyteczne.
+    // Rola zakresowa bez przypisanego projektu nie zobaczy niczego (backend traktuje
+    // pustą listę jako brak dostępu), więc konto bez projektów jest bezużyteczne.
     _projectAssignments: Yup.array().when("systemRoleId", {
-        is: (systemRoleId: number) => Number(systemRoleId) === MainSetup.SystemRoles.CONTRACT_WORKER.id,
+        is: (systemRoleId: number) => MainSetup.isProjectScopedRoleId(systemRoleId),
         then: (schema) => schema.min(1, "Wskaż co najmniej jeden projekt"),
         otherwise: (schema) => schema.notRequired(),
     }),

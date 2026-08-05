@@ -1,7 +1,14 @@
 import { number } from "yup";
 import MainSetup from "../src/React/MainSetupReact";
 
-export type SystemRoleName = "ADMIN" | "ENVI_MANAGER" | "ENVI_EMPLOYEE" | "ENVI_COOPERATOR" | "EXTERNAL_USER" | "CONTRACT_WORKER";
+export type SystemRoleName =
+    | "ADMIN"
+    | "ENVI_MANAGER"
+    | "ENVI_EMPLOYEE"
+    | "ENVI_COOPERATOR"
+    | "EXTERNAL_USER"
+    | "CONTRACT_WORKER"
+    | "CLIENT";
 
 export type SystemRole = {
     id: number;

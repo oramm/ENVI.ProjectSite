@@ -9,15 +9,14 @@ import { savePersonProjectAssignments, savePersonV2AccountAndProfile } from "../
 import MainSetup from "../../../React/MainSetupReact";
 
 /**
- * Zapisuje przypisania projektów po zapisaniu konta. Dla ról innych niż pracownik
- * kontraktowy wysyła pustą listę - dzięki temu zmiana roli na inną odbiera dostęp
- * do projektów, zamiast zostawiać go po cichu w bazie.
+ * Zapisuje przypisania projektów po zapisaniu konta. Dla ról spoza zakresowych
+ * (pracownik kontraktowy, klient) wysyła pustą listę - dzięki temu zmiana roli na inną
+ * odbiera dostęp do projektów, zamiast zostawiać go po cichu w bazie.
  */
 export async function saveProjectAssignments(person: SystemUserData) {
     if (!person?.id) return;
-    const isContractWorker = Number(person.systemRoleId) === MainSetup.SystemRoles.CONTRACT_WORKER.id;
 
-    if (!isContractWorker) {
+    if (!MainSetup.isProjectScopedRoleId(person.systemRoleId)) {
         await savePersonProjectAssignments(person.id, []);
         return;
     }

@@ -1,5 +1,12 @@
 import React from "react";
-import { CityData, EntityData, FinancialAidProgrammeData, FocusAreaData, PersonData } from "../../../Typings/bussinesTypes";
+import {
+    CityData,
+    ContractRangeData,
+    EntityData,
+    FinancialAidProgrammeData,
+    FocusAreaData,
+    PersonData,
+} from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 import { InlineCreateDrawer } from "./InlineCreateDrawer";
 import { EntityModalBody } from "../../Entities/Modals/EntityModalBody";
@@ -14,6 +21,9 @@ import { financialAidProgrammesRepository } from "../../financialAidProgrammes/F
 import { focusAreasRepository } from "../../financialAidProgrammes/FocusAreas/FocusAreasController";
 import { PersonModalBody } from "../../Persons/Modals/PersonModalBody";
 import { makePersonValidationSchema } from "../../Persons/Modals/PersonValidationSchema";
+import { ContractRangeModalBody } from "../../Admin/ContractRanges/Modals/ContractRangeModalBody";
+import { makeContractRangeValidationSchema } from "../../Admin/ContractRanges/Modals/ContractRangeValidationSchema";
+import { contractRangesRepository as contractRangesAdminRepository } from "../../Admin/ContractRanges/ContractRangesController";
 
 interface DrawerBaseProps<T> {
     show: boolean;
@@ -67,6 +77,21 @@ export function FocusAreaInlineCreateDrawer(props: DrawerBaseProps<FocusAreaData
             repository={focusAreasRepository}
             ModalBodyComponent={FocusAreaModalBody}
             makeValidationSchema={makeFocusAreaValidationSchema}
+            {...props}
+        />
+    );
+}
+
+/**
+ * Zakresy kontraktu są słownikiem administracyjnym — repozytorium z routami zapisu
+ * mieszka w Admin/ContractRanges (to z ContractsController jest read-only).
+ */
+export function ContractRangeInlineCreateDrawer(props: DrawerBaseProps<ContractRangeData>) {
+    return (
+        <InlineCreateDrawer<ContractRangeData>
+            repository={contractRangesAdminRepository}
+            ModalBodyComponent={ContractRangeModalBody}
+            makeValidationSchema={makeContractRangeValidationSchema}
             {...props}
         />
     );

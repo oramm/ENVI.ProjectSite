@@ -175,9 +175,10 @@ function AppRoutes() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/public/experience-update/:token" element={<PublicProfileSubmissionPage />} />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
-                    {/* Widoki kontraktowe - także dla pracownika kontraktowego. Backend zawęża
-                        mu dane do przypisanych projektów, więc widzi te same ekrany, ale mniej rekordów.
-                        Dostęp do wizyt i kilometrówki rozstrzyga dodatkowo flaga w StaffMembers. */}
+                    {/* Widoki kontraktowe - także dla ról zakresowych (pracownik kontraktowy, klient).
+                        Backend zawęża im dane do przypisanych projektów, więc widzą te same ekrany, ale
+                        mniej rekordów. Dostęp do kilometrówki i rejestrowania wizyt rozstrzyga dodatkowo
+                        flaga w StaffMembers. */}
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.CONTRACT_SCOPED_ROLES} />}>
                         <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
                         <Route
@@ -194,12 +195,16 @@ function AppRoutes() {
                         <Route path="/visits/:contractId" element={<SiteVisitsPage />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                     </Route>
+                    {/* Przegląd cudzych wizyt: pracownicy ENVI widzą wszystkie, klient - tylko
+                        z przypisanych projektów (zawęża backend). */}
+                    <Route element={<ProtectedRoute allowedRoles={MainSetup.VISITS_OVERVIEW_ROLES} />}>
+                        <Route path="/visits/admin" element={<SiteVisitsPage />} />
+                    </Route>
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
                         <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
                         <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
                         <Route path="/invoice/:id" element={<InvoiceDetails />} />
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
-                        <Route path="/visits/admin" element={<SiteVisitsPage />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
