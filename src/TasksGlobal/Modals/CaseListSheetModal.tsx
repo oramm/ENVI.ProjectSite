@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Form, Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListCheck } from "@fortawesome/free-solid-svg-icons";
 import { PersonData } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
 import ToolsFetch from "../../React/Tools/ToolsFetch";
+import { GDFolderIconLink } from "../../View/Resultsets/CommonComponents";
 
-type GeneratedSheet = { gdId: string; url: string; name: string; overwritten: boolean };
+type GeneratedSheet = {
+    gdId: string;
+    url: string;
+    name: string;
+    overwritten: boolean;
+    /** podfolder „Spisy spraw" — przy pierwszym generowaniu powstaje dopiero teraz */
+    folderUrl: string;
+};
 
 type PersonScope = "all" | "me" | "selected";
 
@@ -49,11 +57,49 @@ export function CaseListSheetModal({
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<GeneratedSheet | null>(null);
+    const [folderUrl, setFolderUrl] = useState<string | null>(null);
 
     const self = MainSetup.getCurrentUserAsPerson();
     const selfHasTasks = !!self && scope.taskOwners.some((p) => p.id === self.id);
     // Oba okna mogą wisieć w drzewie jednocześnie — prefiks trzyma id pól unikalne.
     const idPrefix = scope.action;
+
+    /**
+     * Adres podfolderu „Spisy spraw" na Dysku — dociągany przy otwarciu okna, bo klient
+     * zna tylko folder kontraktu/projektu, a podfolder zakłada serwer przy generowaniu.
+     *
+     * Cichy błąd jest tu w porządku: link to udogodnienie, a nie warunek wygenerowania
+     * spisu — czerwony alert nad formularzem sugerowałby, że coś jest zepsute.
+     *
+     * scope.target celowo poza zależnościami: to literał tworzony na nowo przy każdym
+     * renderze rodzica, więc pętliłby efekt. scope.action wystarczy za tożsamość zakresu.
+     */
+    useEffect(() => {
+        if (!show) return;
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const found: { url: string | null } = await ToolsFetch.fetchJsonWithSafeError(
+                    MainSetup.serverUrl + "caseListSheetFolder",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(scope.target),
+                    }
+                );
+                if (!cancelled) setFolderUrl(found?.url ?? null);
+            } catch {
+                if (!cancelled) setFolderUrl(null);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [show, scope.action]);
 
     function resolvePersonIds(): number[] {
         if (personScope === "me") return self ? [self.id] : [];
@@ -97,6 +143,9 @@ export function CaseListSheetModal({
                 }
             );
             setResult(generated);
+            // przy pierwszym spisie podfolder powstał dopiero co — stąd link bierze się
+            // z odpowiedzi, a nie z ponownego odpytywania Dysku
+            if (generated?.folderUrl) setFolderUrl(generated.folderUrl);
             if (generated?.url) window.open(generated.url, "_blank");
         } catch (e) {
             setError(e instanceof Error ? e.message : "Wystąpił błąd");
@@ -113,7 +162,16 @@ export function CaseListSheetModal({
             <div onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                 <Modal.Header closeButton>
                     <div className="me-2">
-                        <h5 className="mb-1">Spis spraw</h5>
+                        <div className="d-flex align-items-center mb-1">
+                            <h5 className="mb-0">Spis spraw</h5>
+                            {/* Link pojawia się dopiero, gdy podfolder istnieje — czyli po
+                                pierwszym wygenerowaniu spisu w tym kontrakcie/projekcie. */}
+                            {folderUrl && (
+                                <span className="ms-2" title="Otwórz folder „Spisy spraw” na Dysku Google">
+                                    <GDFolderIconLink layout="horizontal" folderUrl={folderUrl} />
+                                </span>
+                            )}
+                        </div>
                         <div className="text-secondary small">{scope.subtitle}</div>
                     </div>
                 </Modal.Header>
