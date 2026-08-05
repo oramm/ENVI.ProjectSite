@@ -1,6 +1,6 @@
 import { faCalendarAlt, faFolderOpen, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { ComponentType, useEffect, useRef, useState } from "react";
+import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
 import {
@@ -38,6 +38,7 @@ import { AddFilesToFolderButton } from "./Modals/AddFilesToFolderButton";
 import { CaseListSheetButton } from "./Modals/CaseListSheetButton";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
+import { ProjectCaseListSheetButton, ProjectTaskOwnersContext } from "./Modals/ProjectCaseListSheetButton";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
 import CaseInlineStatusDropdown from "./CaseInlineStatusDropdown";
 import MilestoneInlineStatusDropdown from "./MilestoneInlineStatusDropdown";
@@ -86,6 +87,16 @@ export default function TasksGlobal() {
 
         fetchData();
     }, [selectedProject]);
+
+    // Osoby do okna „Spis spraw" projektu — z pełnego (nieprzefiltrowanego) drzewa
+    // wybranego projektu, więc filtr „osoba = X" nie okroi listy do jednej osoby.
+    const projectTaskOwners = useMemo(
+        () => ({
+            projectId: selectedProject?.id,
+            owners: collectTaskOwners(contractsWithChildren.flatMap((c) => c.milestonesWithCases || [])),
+        }),
+        [contractsWithChildren, selectedProject?.id]
+    );
 
     function makeTaskParentsLabel(task: Task) {
         const _contract = task._parent._parent._contract as OurContract | OtherContract;
@@ -171,23 +182,26 @@ export default function TasksGlobal() {
             <Container fluid>
                 <Row>
                     <Col md="3">
-                        <FilterableTable<ProjectData>
-                            id="projects"
-                            title="Projekty"
-                            repository={projectsRepository}
-                            showTableHeader={false}
-                            AddNewButtonComponents={[ProjectAddNewModalButton]}
-                            FilterBodyComponent={ProjectsFilterBody}
-                            EditButtonComponent={ProjectEditModalButton}
-                            tableStructure={[
-                                {
-                                    header: "Nazwa",
-                                    renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
-                                    colLg: 11,
-                                },
-                            ]}
-                            onRowClick={setSelectedProject}
-                        />
+                        <ProjectTaskOwnersContext.Provider value={projectTaskOwners}>
+                            <FilterableTable<ProjectData>
+                                id="projects"
+                                title="Projekty"
+                                repository={projectsRepository}
+                                showTableHeader={false}
+                                AddNewButtonComponents={[ProjectAddNewModalButton]}
+                                FilterBodyComponent={ProjectsFilterBody}
+                                EditButtonComponent={ProjectEditModalButton}
+                                RowActionMenuComponents={projectRowActionMenuComponents}
+                                tableStructure={[
+                                    {
+                                        header: "Nazwa",
+                                        renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
+                                        colLg: 11,
+                                    },
+                                ]}
+                                onRowClick={setSelectedProject}
+                            />
+                        </ProjectTaskOwnersContext.Provider>
                     </Col>
                     <Col md="9">
                         {!selectedProject ? (
@@ -499,6 +513,9 @@ const folderRowActionMenuComponents = [AddFilesToFolderButton];
 // Kontrakt ma najwięcej akcji, więc rzadziej używane chowamy pod trzykropek —
 // na pasku zostają tylko edycja i dodawanie kamienia.
 const contractCollapsedRowActionMenuComponents = [CaseListSheetButton, AddFilesToFolderButton];
+
+// Stała tablica: nowa przy każdym renderze przerysowywałaby akcje wiersza bez powodu.
+const projectRowActionMenuComponents = [ProjectCaseListSheetButton];
 
 /**
  * Właściciele zadań w kontrakcie — lista osób w oknie "Spis spraw". Liczona z drzewa,
