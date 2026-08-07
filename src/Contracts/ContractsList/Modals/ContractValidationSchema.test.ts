@@ -10,7 +10,7 @@
  */
 import { describe, it, expect } from "vitest";
 import * as Yup from "yup";
-import { ourContractValidationSchema } from "./ContractValidationSchema";
+import { otherContractValidationSchema, ourContractValidationSchema } from "./ContractValidationSchema";
 
 // A minimal valid base for fields we don't care about in these tests
 const BASE_VALID = {
@@ -280,6 +280,106 @@ describe("ourContractValidationSchema — AQM NAME match: confirmation gate", ()
         const msgs = await fieldErrors(
             { ...BASE_VALID, _type: OTHER_TYPE, _employers: [{ id: 1, name: "Gmina ABC" }] },
             "aqmNameMatchConfirmed",
+        );
+        expect(msgs).toHaveLength(0);
+    });
+});
+
+// ─── Drzewo struktury: minimum jeden kamień milowy ──────────────────────────
+
+describe("walidacja wyboru kamieni milowych z drzewa struktury", () => {
+    const PICKED = [{ milestoneTypeId: 1, caseTypeIds: [45] }];
+
+    /** Błędy dla jednej ścieżki pola; [] gdy cały formularz przechodzi. */
+    async function fieldErrors(
+        data: object,
+        path: string,
+        schema: ReturnType<typeof ourContractValidationSchema>,
+    ): Promise<string[]> {
+        try {
+            await schema.validate(data, { abortEarly: false });
+            return [];
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) return getFieldErrors(err, path);
+            throw err;
+        }
+    }
+
+    const base = {
+        ...BASE_VALID,
+        _type: OTHER_TYPE,
+        _employers: [{ id: 1, name: "Gmina ABC" }],
+    };
+
+    it("blokuje rejestrację przy pustym wyborze kamieni", async () => {
+        const msgs = await fieldErrors(
+            { ...base, _milestonesSelection: [] },
+            "_milestonesSelection",
+            ourContractValidationSchema(false),
+        );
+        expect(msgs).toEqual(["Wybierz przynajmniej jeden kamień milowy"]);
+    });
+
+    it("blokuje rejestrację, gdy pola w ogóle nie ma", async () => {
+        const msgs = await fieldErrors(base, "_milestonesSelection", ourContractValidationSchema(false));
+        expect(msgs).toHaveLength(1);
+    });
+
+    it("przepuszcza wybór z co najmniej jednym kamieniem", async () => {
+        const msgs = await fieldErrors(
+            { ...base, _milestonesSelection: PICKED },
+            "_milestonesSelection",
+            ourContractValidationSchema(false),
+        );
+        expect(msgs).toHaveLength(0);
+    });
+
+    it("nie obowiązuje przy edycji - drzewa tam nie ma", async () => {
+        const msgs = await fieldErrors(
+            { ...base, _milestonesSelection: [] },
+            "_milestonesSelection",
+            ourContractValidationSchema(true),
+        );
+        expect(msgs).toHaveLength(0);
+    });
+
+    it("furtka po awarii endpointu odblokowuje zapis", async () => {
+        const msgs = await fieldErrors(
+            { ...base, _milestonesSelection: undefined, _contractStructureTreeUnavailable: true },
+            "_milestonesSelection",
+            ourContractValidationSchema(false),
+        );
+        expect(msgs).toHaveLength(0);
+    });
+
+    it("ta sama reguła obowiązuje umowę zewnętrzną", async () => {
+        const otherSchema = otherContractValidationSchema(false);
+        const otherBase = {
+            ...BASE_VALID,
+            _type: OTHER_TYPE,
+            _contractors: [{ id: 1 }],
+            _ourContract: { id: 1 },
+        };
+        const blocked = await fieldErrors(
+            { ...otherBase, _milestonesSelection: [] },
+            "_milestonesSelection",
+            otherSchema as any,
+        );
+        expect(blocked).toEqual(["Wybierz przynajmniej jeden kamień milowy"]);
+
+        const ok = await fieldErrors(
+            { ...otherBase, _milestonesSelection: PICKED },
+            "_milestonesSelection",
+            otherSchema as any,
+        );
+        expect(ok).toHaveLength(0);
+    });
+
+    it("wybór folderów nie wpływa na walidację", async () => {
+        const msgs = await fieldErrors(
+            { ...base, _milestonesSelection: PICKED, _contractFoldersSelection: [] },
+            "_contractFoldersSelection",
+            ourContractValidationSchema(false),
         );
         expect(msgs).toHaveLength(0);
     });

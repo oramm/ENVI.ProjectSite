@@ -111,9 +111,32 @@ const _aqmNameMatchConfirmedRule = Yup.boolean().test(
     },
 );
 
+/**
+ * Drzewo struktury: przy rejestracji musi zostać wybrany co najmniej jeden
+ * kamień milowy. Reguła NIE obowiązuje przy edycji (drzewa tam nie ma) ani gdy
+ * endpoint drzewa padł — bez tej furtki awaria `/contractTemplatesTree`
+ * zablokowałaby rejestrację umów w ogóle, bo GeneralModal wyłącza submit przy
+ * !formState.isValid. Wtedy serwer nie dostaje wyboru i tworzy strukturę
+ * domyślną, czyli zachowuje się jak przed wprowadzeniem drzewa.
+ */
+const milestonesSelectionRule = (isEditing: boolean) =>
+    isEditing
+        ? Yup.array().notRequired()
+        : Yup.array().test(
+              "at-least-one-milestone",
+              "Wybierz przynajmniej jeden kamień milowy",
+              function (value) {
+                  if (this.parent?._contractStructureTreeUnavailable === true) return true;
+                  return Array.isArray(value) && value.length > 0;
+              },
+          );
+
 export function ourContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
+        _milestonesSelection: milestonesSelectionRule(isEditing),
+        _contractFoldersSelection: Yup.array().notRequired(),
+        _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
         _city: Yup.object().required("Wybierz miasto"),
         _admin: Yup.object().required("Wybierz administratora"),
         _manager: Yup.object().required("Wybierz koordynatora"),
@@ -129,6 +152,9 @@ export function ourContractValidationSchema(isEditing: boolean) {
 export function otherContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
+        _milestonesSelection: milestonesSelectionRule(isEditing),
+        _contractFoldersSelection: Yup.array().notRequired(),
+        _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
         _contractors: Yup.array(),
         _ourContract: Yup.object().required("Powiązana umowa Envi jest wymagana"),
     });

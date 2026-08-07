@@ -290,6 +290,54 @@ export interface ContractType extends RepositoryDataItem {
     status?: string;
 }
 
+/* --- Drzewo struktury umowy (GET /contractTemplatesTree) ---------------------
+   Pozycją drzewa jest TYP (kamienia / sprawy), nie szablon. Szablon dostarcza
+   nazwę i opis, jeśli istnieje; isCheckedByDefault mówi, co powstaje dziś
+   automatycznie (IsDefault ORAZ istniejący szablon) i steruje zaznaczeniem
+   startowym. Regułę liczy serwer - nie duplikować jej w komponencie. */
+
+export type OptionalContractFolderKey = "MEETING_PROTOCOLS" | "MATERIAL_CARDS";
+
+export interface CaseTypeTreeNode {
+    caseTypeId: number;
+    folderNumber: string;
+    typeName: string;
+    templateName: string;
+    isUniquePerMilestone: boolean;
+    hasTemplate: boolean;
+    isDefault: boolean;
+    isCheckedByDefault: boolean;
+}
+
+export interface MilestoneTypeTreeNode {
+    milestoneTypeId: number;
+    folderNumber: string;
+    typeName: string;
+    templateName: string;
+    isUniquePerContract: boolean;
+    hasTemplate: boolean;
+    isDefault: boolean;
+    isCheckedByDefault: boolean;
+    caseTypes: CaseTypeTreeNode[];
+}
+
+export interface OptionalFolderNode {
+    key: OptionalContractFolderKey;
+    name: string;
+    isDefault: boolean;
+}
+
+export interface ContractTemplatesTree {
+    milestoneTypes: MilestoneTypeTreeNode[];
+    optionalFolders: OptionalFolderNode[];
+}
+
+/** Wybór wysyłany w POST /contractReact jako _milestonesSelection */
+export interface MilestoneSelectionItem {
+    milestoneTypeId: number;
+    caseTypeIds: number[];
+}
+
 export interface MilestoneType extends RepositoryDataItem {
     name: string;
     description: string;

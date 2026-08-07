@@ -12,6 +12,7 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { EntityData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
+import { ContractStructureTree } from "./ContractStructureTree";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
@@ -76,6 +77,8 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
                 repository={entitiesRepository}
                 onCreated={handleContractorCreated}
             />
+            {/* Na samym dole formularza: drzewo to ostatnia decyzja przed zapisem. */}
+            {!props.isEditing && <ContractStructureTree />}
         </>
     );
 }

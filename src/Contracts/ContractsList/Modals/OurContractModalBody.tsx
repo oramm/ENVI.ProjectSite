@@ -15,6 +15,7 @@ import { CityData, EntityData, OurContract } from "../../../../Typings/bussinesT
 import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { CityInlineCreateDrawer, EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 import { fetchAqmMatch, AqmMatchResponse } from "./aqmMatchService";
+import { ContractStructureTree } from "./ContractStructureTree";
 import { normalizeNip } from "./nipValidator";
 
 /** Text labels for the 3 AQM dedup match states (L11). */
@@ -340,6 +341,10 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 repository={entitiesRepository}
                 onCreated={handleInvoiceBuyerCreated}
             />
+            {/* Na samym dole formularza: drzewo to ostatnia decyzja przed zapisem.
+                Tylko przy rejestracji — przy edycji kamienie i sprawy już istnieją
+                i zmienia się je w widoku umowy. */}
+            {!isEditing && <ContractStructureTree />}
         </>
     );
 }
