@@ -33,7 +33,7 @@
         "jsdom": "^25.0.1",
         "lodash.merge": "^4.6.2",
         "puppeteer": "^24.35.0",
-        "react-router-dom": "^6.17.0",
+        "react-router-dom": "^6.30.4",
         "rimraf": "^5.0.1",
         "style-loader": "^3.3.1",
         "ts-loader": "^9.4.2",
