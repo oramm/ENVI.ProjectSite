@@ -62,10 +62,11 @@ export function ContractsFilterBody() {
                 akcent na plakietce mówi „czy TA umowa jest nietypowa", ten filtr — „pokaż
                 WSZYSTKIE nietypowe". Warunek po stronie API: ContractRepository.
                 makeAtypicalSettlementCondition(). */}
-            <Form.Group as={Col} xl={2} className="d-flex align-items-end mb-2">
+            <Form.Group as={Col} xl={4} className="d-flex align-items-end mb-2">
                 <Form.Check
                     type="checkbox"
                     id="contracts-only-atypical-settlement"
+                    className="text-nowrap"
                     label="Tylko nietypowe rozliczenie"
                     {...register("onlyAtypicalSettlement")}
                 />
