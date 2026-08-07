@@ -76,9 +76,16 @@ describe("MeetingNoteSection", () => {
                 meetingId: 12,
             })
         );
-        expect(hoisted.meetingNotesRepositoryMock.currentItems).toEqual([
-            expect.objectContaining({ id: 7 }),
-        ]);
+        // Read the repository back through the mocked module, exactly the way the component
+        // reaches it. Since vitest 4.1 the hoisted factory object and the module export the
+        // component imports are no longer guaranteed to be the same reference, so asserting on
+        // the hoisted object alone gave a false negative while the write itself was fine.
+        const { meetingNotesRepository } = await import("../../ContractsController");
+        await waitFor(() => {
+            expect(meetingNotesRepository.currentItems).toEqual([
+                expect.objectContaining({ id: 7 }),
+            ]);
+        });
     });
 
     it("reports missing note state and clears UI after delete", async () => {
