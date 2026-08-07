@@ -15,7 +15,7 @@ import GoogleButton from "../GoogleLoginButton";
 import MainController from "../MainControllerReact";
 import MainSetup from "../MainSetupReact";
 import Footer from "./Footer";
-import MainMenu from "./MainMenu";
+import MainMenu, { useModuleAccess } from "./MainMenu";
 import { installClientErrorReporter } from "./clientErrorReporter";
 
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
@@ -165,6 +165,13 @@ function App() {
 }
 
 function AppRoutes() {
+    // Faktury kosztowe i bank stoją na flagach StaffMembers, nie na roli - o dostępie
+    // rozstrzyga backend, a te same odpowiedzi gaszą pozycje w menu. Trasy rejestrujemy
+    // warunkowo, żeby wpisanie adresu z ręki nie otwierało ekranu, który i tak dostanie 403.
+    const isStaff = MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES);
+    const costInvoicesAccess = useModuleAccess("cost-invoices/access", isStaff);
+    const bankAccess = useModuleAccess("bank-transfers/access", isStaff);
+
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
@@ -238,13 +245,20 @@ function AppRoutes() {
                             element={<SystemUsersSearch title="Dodawanie użytkowników" />}
                         />
                     </Route>
-                    {/* Faktury kosztowe i bank - tylko dla ENVI_MANAGER i ADMIN */}
-                    <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER"]} />}>
-                        <Route path="/costInvoices" element={<CostInvoicesSearch title="Faktury kosztowe" />} />
-                        <Route path="/cost-invoice/:id" element={<CostInvoiceDetails />} />
-                        <Route path="/costInvoices/report" element={<CostInvoicesReport />} />
-                        <Route path="/bankSync" element={<BankSyncSearch title="Wyciągi bankowe" />} />
-                    </Route>
+                    {/* Faktury kosztowe - flaga StaffMembers.HasCostInvoiceAccess (ADMIN zawsze). */}
+                    {costInvoicesAccess && (
+                        <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
+                            <Route path="/costInvoices" element={<CostInvoicesSearch title="Faktury kosztowe" />} />
+                            <Route path="/cost-invoice/:id" element={<CostInvoiceDetails />} />
+                            <Route path="/costInvoices/report" element={<CostInvoicesReport />} />
+                        </Route>
+                    )}
+                    {/* Wyciągi bankowe - flaga StaffMembers.HasBankAccess (ADMIN zawsze). */}
+                    {bankAccess && (
+                        <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
+                            <Route path="/bankSync" element={<BankSyncSearch title="Wyciągi bankowe" />} />
+                        </Route>
+                    )}
                     {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
                 </Routes>
             </div>

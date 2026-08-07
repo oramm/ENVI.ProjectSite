@@ -6,29 +6,45 @@ import { Link, useLocation } from "react-router-dom";
 import MainController from "../MainControllerReact";
 import MainSetup from "../MainSetupReact";
 
+/**
+ * O dostępie do modułów flagowych decyduje backend (flagi w StaffMembers), nie rola -
+ * dlatego pytamy go wprost i pokazujemy pozycję menu tylko upoważnionym. Błąd sieci
+ * albo 401 traktujemy jak brak dostępu: menu ma być węższe, nie szersze.
+ *
+ * `enabled=false` wyłącza samo zapytanie dla ról, którym trasy modułu i tak odetnie
+ * allowlista projectScopedPolicy - inaczej każde ich logowanie zostawiałoby w logach
+ * backendu wpis o odmowie dostępu, choć nikt o nic naprawdę nie prosił.
+ */
+export function useModuleAccess(path: string, enabled = true) {
+    const [hasAccess, setHasAccess] = React.useState(false);
+    React.useEffect(() => {
+        if (!enabled) {
+            setHasAccess(false);
+            return;
+        }
+        fetch(`${MainSetup.serverUrl}${path}`, { credentials: "include" })
+            .then((r) => (r.ok ? r.json() : { hasAccess: false }))
+            .then((d) => setHasAccess(!!d.hasAccess))
+            .catch(() => {});
+    }, [path, enabled]);
+    return hasAccess;
+}
+
 export default function MainMenu() {
     const location = useLocation();
     const currentUser = MainSetup.currentUserOrNull;
 
-    // Dostęp do "Wizyty na budowie" (rola 1/2 lub flaga StaffMembers) - decyduje
-    // backend, dlatego pytamy /site-visits/access i pokazujemy pozycję tylko upoważnionym.
-    const [visitsAccess, setVisitsAccess] = React.useState(false);
-    React.useEffect(() => {
-        fetch(`${MainSetup.serverUrl}site-visits/access`, { credentials: "include" })
-            .then((r) => (r.ok ? r.json() : { hasAccess: false }))
-            .then((d) => setVisitsAccess(!!d.hasAccess))
-            .catch(() => {});
-    }, []);
-
-    // Kilometrówka - tak samo jak wizyty: decyduje flaga StaffMembers.IsDriver po stronie
-    // backendu, nie rola. Pracownicy ENVI mają ją domyślnie, pracownik kontraktowy nie.
-    const [mileageAccess, setMileageAccess] = React.useState(false);
-    React.useEffect(() => {
-        fetch(`${MainSetup.serverUrl}mileage/access`, { credentials: "include" })
-            .then((r) => (r.ok ? r.json() : { hasAccess: false }))
-            .then((d) => setMileageAccess(!!d.hasAccess))
-            .catch(() => {});
-    }, []);
+    // Wizyty na budowie - rola 1/2 albo flaga StaffMembers.CanLogSiteVisits.
+    const visitsAccess = useModuleAccess("site-visits/access");
+    // Kilometrówka - flaga StaffMembers.IsDriver. Pracownicy ENVI mają ją domyślnie,
+    // pracownik kontraktowy nie.
+    const mileageAccess = useModuleAccess("mileage/access");
+    // Faktury kosztowe i wyciągi bankowe - osobne flagi StaffMembers
+    // (HasCostInvoiceAccess, HasBankAccess), więc i osobne pozycje w menu.
+    // Oba moduły są firmowe, więc pytamy tylko dla pracowników ENVI.
+    const isStaff = !!currentUser && MainSetup.STAFF_ROLES.includes(currentUser.systemRoleName);
+    const costInvoicesAccess = useModuleAccess("cost-invoices/access", isStaff);
+    const bankAccess = useModuleAccess("bank-transfers/access", isStaff);
 
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
@@ -115,12 +131,12 @@ export default function MainMenu() {
                             </Nav.Link>
                             {(() => {
                                 const canViewInvoices = MainSetup.STAFF_ROLES.includes(systemRoleName);
-                                const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(systemRoleName);
 
                                 if (!canViewInvoices) return null;
 
-                                // If user can view cost invoices, show expandable menu like other sections
-                                if (canViewCostInvoices) {
+                                // Rozwijane menu tylko wtedy, gdy jest co rozwijać: same faktury
+                                // sprzedażowe zostają zwykłym linkiem, bez strzałki.
+                                if (costInvoicesAccess || bankAccess) {
                                     return (
                                         <NavDropdown
                                             title="Faktury"
@@ -134,28 +150,36 @@ export default function MainMenu() {
                                             >
                                                 Faktury
                                             </NavDropdown.Item>
-                                            <NavDropdown.Item
-                                                as={Link}
-                                                to="/costInvoices"
-                                                className={isActive("/costInvoices")}
-                                            >
-                                                Faktury kosztowe
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Item
-                                                as={Link}
-                                                to="/costInvoices/report"
-                                                className={isActive("/costInvoices/report")}
-                                            >
-                                                Raport miesięczny
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item
-                                                as={Link}
-                                                to="/bankSync"
-                                                className={isActive("/bankSync")}
-                                            >
-                                                Wyciągi bankowe
-                                            </NavDropdown.Item>
+                                            {costInvoicesAccess && (
+                                                <>
+                                                    <NavDropdown.Item
+                                                        as={Link}
+                                                        to="/costInvoices"
+                                                        className={isActive("/costInvoices")}
+                                                    >
+                                                        Faktury kosztowe
+                                                    </NavDropdown.Item>
+                                                    <NavDropdown.Item
+                                                        as={Link}
+                                                        to="/costInvoices/report"
+                                                        className={isActive("/costInvoices/report")}
+                                                    >
+                                                        Raport miesięczny
+                                                    </NavDropdown.Item>
+                                                </>
+                                            )}
+                                            {bankAccess && (
+                                                <>
+                                                    <NavDropdown.Divider />
+                                                    <NavDropdown.Item
+                                                        as={Link}
+                                                        to="/bankSync"
+                                                        className={isActive("/bankSync")}
+                                                    >
+                                                        Wyciągi bankowe
+                                                    </NavDropdown.Item>
+                                                </>
+                                            )}
                                         </NavDropdown>
                                     );
                                 }
