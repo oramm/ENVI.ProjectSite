@@ -9,12 +9,16 @@ import FilterableTable from "../../../View/Resultsets/FilterableTable/Filterable
 import { contractsSettlementRepository, invoicesRepository } from "../ContractsController";
 import { useContractDetails } from "./ContractDetailsContext";
 import { InvoiceAddNewModalButton } from "../../../Erp/InvoicesList/Modals/InvoiceModalButtons";
+import ToolsFetch from "../../../React/Tools/ToolsFetch";
 
 export default function ContractOurDetails() {
     const { contract, setContract, contractsRepository } = useContractDetails();
     const [settlemenData, setSettlemenData] = useState(undefined as ContractsSettlementData | undefined);
     const [invoices, setInvoices] = useState([] as Invoice[]);
     const [externalUpdate, setExternalUpdate] = useState(0);
+    const [summarySheet, setSummarySheet] = useState(undefined as { url: string } | undefined);
+    const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+    const [summaryError, setSummaryError] = useState(undefined as string | undefined);
 
     if (!contract) return <Alert variant="danger">Nie wybrano umowy</Alert>;
     if (!contract._lastUpdated) return <Alert variant="danger">Umowa nie ma daty aktualizacji</Alert>;
@@ -67,7 +71,38 @@ export default function ContractOurDetails() {
         return <>{`Koordynator(ka): ${coordinatorName}`}</>;
     }
 
+    /**
+     * Arkusz powstaje po stronie serwera na Dysku kontraktu - tu tylko wołamy endpoint
+     * i otwieramy wynik. Link zostaje też w alercie, bo przeglądarka potrafi zablokować
+     * window.open otwierane po odpowiedzi serwera (poza gestem użytkownika).
+     */
+    async function generateSummarySheet() {
+        if (!contract?.id) return;
+        setIsGeneratingSummary(true);
+        setSummaryError(undefined);
+        setSummarySheet(undefined);
+        try {
+            const result = await ToolsFetch.fetchJsonWithSafeError(
+                MainSetup.serverUrl + "contractInvoiceSummarySheet",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contractId: contract.id }),
+                },
+                "Nie udało się wygenerować arkusza podsumowującego"
+            );
+            setSummarySheet(result);
+            if (result?.url) window.open(result.url, "_blank");
+        } catch (error) {
+            setSummaryError(error instanceof Error ? error.message : String(error));
+        } finally {
+            setIsGeneratingSummary(false);
+        }
+    }
+
     function renderActionsMenu() {
+        const contractTyped = contract as OurContract;
         return (
             <>
                 <InvoiceAddNewModalButton
@@ -79,6 +114,20 @@ export default function ContractOurDetails() {
                     }}
                     buttonProps={{ buttonCaption: "Dodaj fakturę" }}
                 />
+                {/* Bez folderu na Dysku nie ma gdzie zapisać arkusza - backend i tak by odmówił. */}
+                {MainSetup.canViewInvoices() && contractTyped.gdFolderId && (
+                    <Button
+                        variant="outline-secondary"
+                        // size="sm" jak w GeneralAddNewModalButton - inaczej ten przycisk
+                        // jest wyższy od sąsiada w tym samym rzędzie.
+                        size="sm"
+                        className="ms-2"
+                        disabled={isGeneratingSummary}
+                        onClick={generateSummarySheet}
+                    >
+                        {isGeneratingSummary ? "Generuję..." : "Arkusz podsumowujący"}
+                    </Button>
+                )}
             </>
         );
     }
@@ -92,6 +141,27 @@ export default function ContractOurDetails() {
                     <Row className="mt-3">
                         <Col>{renderActionsMenu()}</Col>
                     </Row>
+                    {summaryError && (
+                        <Row className="mt-3">
+                            <Col>
+                                <Alert variant="danger" dismissible onClose={() => setSummaryError(undefined)}>
+                                    {summaryError}
+                                </Alert>
+                            </Col>
+                        </Row>
+                    )}
+                    {summarySheet?.url && (
+                        <Row className="mt-3">
+                            <Col>
+                                <Alert variant="success" dismissible onClose={() => setSummarySheet(undefined)}>
+                                    Arkusz podsumowujący gotowy.{" "}
+                                    <Alert.Link href={summarySheet.url} target="_blank" rel="noreferrer">
+                                        Otwórz arkusz
+                                    </Alert.Link>
+                                </Alert>
+                            </Col>
+                        </Row>
+                    )}
                     <Row className="mt-3 text-end">
                         <Col sm={4} md={2}>
                             <div>Wartość netto, zł:</div>
