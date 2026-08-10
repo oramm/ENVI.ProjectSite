@@ -34,8 +34,6 @@ export interface RepositoryDataItem {
     id: number;
     _gdFolderUrl?: string;
     _documentOpenUrl?: string;
-    /** czytelna ścieżka folderu (kontrakt | kamień | sprawa) — badge w modalu "Dodaj do folderu" */
-    _folderPath?: string;
     /** właściciele zadań w poddrzewie — lista osób w oknie "Spis spraw" przy kontrakcie */
     _taskOwners?: PersonData[];
 }
@@ -362,7 +360,6 @@ export interface CaseType extends RepositoryDataItem {
     _milestoneType: MilestoneType;
     gdFolderId?: string;
     _gdFolderUrl?: string;
-    _folderPath?: string;
 }
 
 export interface GenericDocument extends RepositoryDataItem {

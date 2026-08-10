@@ -30,11 +30,8 @@ import {
     CaseAddNewModalButton,
     CaseAndSubCaseAddButtonGroup,
     CaseEditModalButton,
-    buildContractFirstLineLabel,
-    buildMilestoneNameLabel,
 } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
-import { AddFilesToFolderButton } from "./Modals/AddFilesToFolderButton";
 import { CaseListSheetButton } from "./Modals/CaseListSheetButton";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
@@ -506,15 +503,8 @@ function taskMatchesStatusFilter(task: Task, taskStatuses?: string[]): boolean {
     return taskStatuses.includes(task.status);
 }
 
-// Akcje menu dla węzłów-folderów (kamień/sprawa/podsprawa).
-// AddFilesToFolderButton sam się ukrywa, gdy węzeł nie ma gdFolderId.
-const folderRowActionMenuComponents = [AddFilesToFolderButton];
-
-// Kontrakt ma najwięcej akcji, więc rzadziej używane chowamy pod trzykropek —
-// na pasku zostają tylko edycja i dodawanie kamienia.
-const contractCollapsedRowActionMenuComponents = [CaseListSheetButton, AddFilesToFolderButton];
-
-// Stała tablica: nowa przy każdym renderze przerysowywałaby akcje wiersza bez powodu.
+// Stałe tablice: nowa przy każdym renderze przerysowywałaby akcje wiersza bez powodu.
+const contractRowActionMenuComponents = [CaseListSheetButton];
 const projectRowActionMenuComponents = [ProjectCaseListSheetButton];
 
 /**
@@ -536,27 +526,6 @@ function collectTaskOwners(milestonesWithCases: ContractsWithChildren["milestone
     return [...ownersById.values()].sort((a, b) =>
         `${a.surname} ${a.name}`.localeCompare(`${b.surname} ${b.name}`, "pl")
     );
-}
-
-// Czytelna ścieżka folderu (kontrakt | kamień | sprawa | podsprawa) — pokazywana
-// jako badge w modalu "Dodaj do folderu", analogicznie do badge'a przy edycji sprawy.
-function makeCaseNameLabel(c?: Case) {
-    return c ? c.name || c._type?.name || c._typeFolderNumber_TypeName_Number_Name || "" : "";
-}
-function makeFolderPath(
-    contract: OurContract | OtherContract,
-    milestone?: MilestoneData,
-    caseItem?: Case,
-    subCaseItem?: Case
-) {
-    return [
-        buildContractFirstLineLabel(contract),
-        buildMilestoneNameLabel(milestone),
-        makeCaseNameLabel(caseItem),
-        makeCaseNameLabel(subCaseItem),
-    ]
-        .filter(Boolean)
-        .join(" | ");
 }
 
 export function buildTree(
@@ -606,9 +575,8 @@ export function buildTree(
             shouldRetrieveDataBeforeEdit: true,
             specialRetrieveActionRoute: "contracts",
             isDeletable: false,
-            collapsedRowActionMenuComponents: contractCollapsedRowActionMenuComponents,
+            rowActionMenuComponents: contractRowActionMenuComponents,
         };
-        (contract as RepositoryDataItem)._folderPath = makeFolderPath(contract);
         const ownersSource =
             options?.taskOwnersSource?.find((c) => c.contract.id === contract.id)
                 ?.milestonesWithCases ?? milestonesWithCases;
@@ -643,9 +611,7 @@ export function buildTree(
                 >,
                 editHandler: milestoneNodeEditHandler,
                 isDeletable: true,
-                rowActionMenuComponents: folderRowActionMenuComponents,
             };
-            (milestone as RepositoryDataItem)._folderPath = makeFolderPath(contract, milestone);
             contractNode.children.push(milestoneNode);
 
             const allCasesWithTasks = casesWithTasks || [];
@@ -681,9 +647,7 @@ export function buildTree(
                     editHandler: (node: SectionNode<Task>) => {
                         node.title = <>{makeCaseTitleLabel(node.dataItem as Case, isInTypeFolder)}</>;
                     },
-                    rowActionMenuComponents: folderRowActionMenuComponents,
                 };
-                (caseItem as RepositoryDataItem)._folderPath = makeFolderPath(contract, milestone, caseItem);
                 parentNode.children.push(caseNode);
                 allTasks.push(...caseTasks);
 
@@ -711,14 +675,7 @@ export function buildTree(
                             editHandler: (node: SectionNode<Task>) => {
                                 node.title = <>{makeCaseTitleLabel(node.dataItem as Case, isInTypeFolder)}</>;
                             },
-                            rowActionMenuComponents: folderRowActionMenuComponents,
                         };
-                        (subCaseWithParent as RepositoryDataItem)._folderPath = makeFolderPath(
-                            contract,
-                            milestone,
-                            caseItem,
-                            subCase
-                        );
                         caseNode.children.push(subCaseNode);
                         allTasks.push(...subCaseTasks);
                     }
@@ -747,14 +704,6 @@ export function buildTree(
                 const typeId = caseItem._type.id;
                 let caseTypeNode = caseTypeFolderNodes.get(typeId);
                 if (!caseTypeNode) {
-                    const caseTypeFolderLabel =
-                        caseItem._type._folderName ??
-                        `${caseItem._type.folderNumber} ${caseItem._type.name}`;
-                    (caseItem._type as RepositoryDataItem)._folderPath = makeFolderPath(
-                        contract,
-                        milestone,
-                        { name: caseTypeFolderLabel } as Case
-                    );
                     caseTypeNode = {
                         id: `casetype${milestone.id}_${typeId}${sfx}`,
                         isInAccordion: true,
@@ -767,7 +716,6 @@ export function buildTree(
                         title: <>{makeCaseTypeTitleLabel(caseItem._type)}</>,
                         children: [],
                         isDeletable: false,
-                        rowActionMenuComponents: folderRowActionMenuComponents,
                         AddNewButtonComponent: CaseAddNewInTypeFolderButton as unknown as ComponentType<
                             SpecificAddNewModalButtonProps<RepositoryDataItem>
                         >,

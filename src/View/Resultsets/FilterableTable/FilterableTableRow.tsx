@@ -113,9 +113,6 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     /** dodatkowe akcje wiersza (ikony) — np. "Odpowiedz" na liście pism */
     rowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<DataItemType>>[];
-    /** akcje schowane pod trzykropkiem — odsłaniane dopiero po jego kliknięciu,
-     *  żeby nie zagęszczać paska ikon rzadziej używanymi operacjami */
-    collapsedRowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<DataItemType>>[];
     handleDeleteObject?: (objectId: number) => void;
     isDeletable: boolean | ((item: DataItemType) => boolean);
     isCopyable?: boolean;
@@ -131,7 +128,6 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     handleCopyObject,
     EditButtonComponent,
     rowActionMenuComponents = [],
-    collapsedRowActionMenuComponents = [],
     handleDeleteObject,
     isDeletable,
     isCopyable = false,
@@ -146,10 +142,8 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
 
     // Oblicz isDeletable - może być boolean lub funkcja
     const canDelete = typeof isDeletable === "function" ? isDeletable(dataObject) : isDeletable;
-    // Trzykropek nie jest już przywiązany do usuwania — otwiera go także sama obecność
-    // akcji schowanych (np. kontrakt: isDeletable=false, ale ma "Spis spraw" i "Dodaj pliki").
-    const hasCollapsedActions = collapsedRowActionMenuComponents.length > 0;
-    const showMenuExpand = (canDelete && !!handleDeleteObject) || hasCollapsedActions;
+    // Trzykropek odsłania usuwanie — bez niego nie ma czego rozwijać.
+    const showMenuExpand = canDelete && !!handleDeleteObject;
 
     function toggleMenu() {
         setIsMenuExpanded((prevState) => !prevState);
@@ -195,9 +189,6 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                     <MenuExpandIconButton layout={layout} onClick={toggleMenu} />
                     {isMenuExpanded && (
                         <>
-                            {collapsedRowActionMenuComponents.map((RowActionComponent, index) => (
-                                <RowActionComponent key={`collapsed${index}`} dataObject={dataObject} layout={layout} />
-                            ))}
                             {canDelete && handleDeleteObject && (
                                 <DeleteModalButton
                                     modalProps={{

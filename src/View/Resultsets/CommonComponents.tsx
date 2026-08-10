@@ -17,7 +17,6 @@ import {
     faTrash,
     faEllipsisV,
     faEllipsisH,
-    faFileCirclePlus,
     faListCheck,
     faLocationDot,
     faFilePdf,
@@ -176,10 +175,6 @@ export function ReplyIconButton({ layout, onClick }: SpecificIconButtonProps) {
 
 export function PdfIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faFilePdf} layout={layout} onClick={onClick} className="text-danger" />;
-}
-
-export function UploadIconButton({ layout, onClick }: SpecificIconButtonProps) {
-    return <IconButton icon={faFileCirclePlus} layout={layout} onClick={onClick} className="text-primary" />;
 }
 
 /** Generowanie spisu spraw kontraktu (arkusz Google) */

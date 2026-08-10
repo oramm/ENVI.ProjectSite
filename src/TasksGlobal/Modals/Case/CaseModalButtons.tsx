@@ -174,7 +174,7 @@ export function buildContractHeaderBadge(contract?: OurContract | OtherContract)
     );
 }
 
-export function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
+function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
     if (!contract || typeof contract !== "object") {
         if (contract) console.warn("buildContractFirstLineLabel: oczekiwano obiektu kontraktu, otrzymano:", contract);
         return "";
@@ -197,7 +197,7 @@ export function buildContractFirstLineLabel(contract?: OurContract | OtherContra
     return [contractId, aliasPart].filter(Boolean).join(" | ").trim();
 }
 
-export function buildMilestoneNameLabel(milestone?: MilestoneData) {
+function buildMilestoneNameLabel(milestone?: MilestoneData) {
     if (!milestone) return "";
 
     const milestoneName = milestone.name || milestone._type?.name;
