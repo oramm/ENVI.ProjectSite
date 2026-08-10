@@ -48,6 +48,8 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
 export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     criteria: FieldValues;
     storedObjects?: DataItemType[];
+    /** Ostatnio kliknięty wiersz - po powrocie ze szczegółów widać, gdzie się było. */
+    activeRowId?: number;
 };
 
 export type FilterPanelProps = {

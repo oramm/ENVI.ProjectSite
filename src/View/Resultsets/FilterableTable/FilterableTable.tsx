@@ -46,7 +46,9 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     const snapshotName = `filtersableTableSnapshot_${id}`;
 
     const [isReady, setIsReady] = useState(true);
-    const [activeRowId, setActiveRowId] = useState(0);
+    // Ze snapshotu, a nie z repository.currentItems: powrót do listy zwykle przeładowuje
+    // ją z serwera, a loadItemsFromServerPOST czyści currentItems.
+    const [activeRowId, setActiveRowId] = useState(getActiveRowIdFromStorage);
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
     const [activeSectionId, setActiveSectionId] = useState("");
     const [editingSectionId, setEditingSectionId] = useState("");
@@ -96,6 +98,26 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
         const { storedObjects } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<LeafDataItemType>;
         return storedObjects;
+    }
+
+    function getActiveRowIdFromStorage() {
+        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        if (!storedSnapshot) return 0;
+
+        const { activeRowId } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<LeafDataItemType>;
+        return activeRowId ?? 0;
+    }
+
+    /** 0 = nic nie zaznaczone (kliknięcie w nagłówek sekcji odznacza wiersz). */
+    function storeActiveRowId(id: number) {
+        setActiveRowId(id);
+        try {
+            const storedSnapshot = sessionStorage.getItem(snapshotName);
+            const parsedSnapshot = storedSnapshot ? JSON.parse(storedSnapshot) : { criteria: {} };
+            sessionStorage.setItem(snapshotName, JSON.stringify({ ...parsedSnapshot, activeRowId: id }));
+        } catch (error) {
+            console.warn(`Nie udało się zapamiętać zaznaczonego wiersza tabeli ${snapshotName}.`, error);
+        }
     }
 
     function updateSnapshot() {
@@ -236,7 +258,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         // Ustaw fokus edycji (menu widoczne tylko tutaj)
         setEditingSectionId(sectionNode.id);
         // Odznacz wiersz tabeli (liść)
-        setActiveRowId(0);
+        storeActiveRowId(0);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
@@ -251,7 +273,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     const handleRowClick = (id: number, parentSectionId?: string) => {
-        setActiveRowId(id);
+        storeActiveRowId(id);
         // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
         setEditingSectionId("");
         // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
