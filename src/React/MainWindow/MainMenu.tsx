@@ -10,7 +10,18 @@ import MainSetup from "../MainSetupReact";
  * O dostępie do modułów flagowych decyduje backend (flagi w StaffMembers), nie rola -
  * dlatego pytamy go wprost i pokazujemy pozycję menu tylko upoważnionym. Błąd sieci
  * albo 401 traktujemy jak brak dostępu: menu ma być węższe, nie szersze.
- *
+ */
+export async function fetchModuleAccess(path: string) {
+    try {
+        const response = await fetch(`${MainSetup.serverUrl}${path}`, { credentials: "include" });
+        const data = response.ok ? await response.json() : { hasAccess: false };
+        return !!data.hasAccess;
+    } catch {
+        return false;
+    }
+}
+
+/**
  * `enabled=false` wyłącza samo zapytanie dla ról, którym trasy modułu i tak odetnie
  * allowlista projectScopedPolicy - inaczej każde ich logowanie zostawiałoby w logach
  * backendu wpis o odmowie dostępu, choć nikt o nic naprawdę nie prosił.
@@ -22,10 +33,7 @@ export function useModuleAccess(path: string, enabled = true) {
             setHasAccess(false);
             return;
         }
-        fetch(`${MainSetup.serverUrl}${path}`, { credentials: "include" })
-            .then((r) => (r.ok ? r.json() : { hasAccess: false }))
-            .then((d) => setHasAccess(!!d.hasAccess))
-            .catch(() => {});
+        fetchModuleAccess(path).then(setHasAccess);
     }, [path, enabled]);
     return hasAccess;
 }
