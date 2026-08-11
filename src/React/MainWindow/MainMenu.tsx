@@ -151,22 +151,13 @@ export default function MainMenu() {
                                                 Faktury
                                             </NavDropdown.Item>
                                             {costInvoicesAccess && (
-                                                <>
-                                                    <NavDropdown.Item
-                                                        as={Link}
-                                                        to="/costInvoices"
-                                                        className={isActive("/costInvoices")}
-                                                    >
-                                                        Faktury kosztowe
-                                                    </NavDropdown.Item>
-                                                    <NavDropdown.Item
-                                                        as={Link}
-                                                        to="/costInvoices/report"
-                                                        className={isActive("/costInvoices/report")}
-                                                    >
-                                                        Raport miesięczny
-                                                    </NavDropdown.Item>
-                                                </>
+                                                <NavDropdown.Item
+                                                    as={Link}
+                                                    to="/costInvoices"
+                                                    className={isActive("/costInvoices")}
+                                                >
+                                                    Faktury kosztowe
+                                                </NavDropdown.Item>
                                             )}
                                             {bankAccess && (
                                                 <>

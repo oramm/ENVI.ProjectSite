@@ -966,26 +966,9 @@ export interface CostInvoice extends RepositoryDataItem {
     grossAmount: number;
     currency: string;
 
-    // Status faktury: "NEW" | "EXCLUDED" | "BOOKED"
-    status: "NEW" | "EXCLUDED" | "BOOKED";
-
     // Status płatności
     paymentStatus?: "UNPAID" | "PARTIALLY_PAID" | "PAID" | "NOT_APPLICABLE";
     paidAmount?: number;
-
-    // Ustawienia księgowania
-    /** Procent kwoty netto do zaksięgowania (0-100) */
-    bookingPercentage: number;
-    /** Procent VAT do odliczenia (0-100) */
-    vatDeductionPercentage: number;
-    /** Wyliczona kwota netto do zaksięgowania */
-    bookableNetAmount?: number;
-    /** Wyliczona kwota VAT do odliczenia */
-    deductibleVatAmount?: number;
-
-    // Kategoria kosztu
-    categoryId?: number | null;
-    _category?: CostInvoiceCategory | null;
 
     // Pozycje faktury
     _items?: CostInvoiceItem[];
@@ -993,26 +976,10 @@ export interface CostInvoice extends RepositoryDataItem {
     // Notatki
     notes?: string | null;
 
-    // Info o zaksięgowaniu
-    bookedBy?: number | null;
-    bookedAt?: string | null;
-    _bookedByPerson?: PersonData | null;
-
     // Metadane
     createdAt?: string;
     _lastUpdated?: string;
     _editor?: PersonData;
-}
-
-/**
- * Kategoria kosztu
- */
-export interface CostInvoiceCategory {
-    id: number;
-    name: string;
-    color: string;
-    /** Domyślny % odliczenia VAT dla tej kategorii */
-    vatDeductionDefault: number;
 }
 
 /**
@@ -1029,15 +996,6 @@ export interface CostInvoiceItem {
     vatRate: number;
     vatValue: number;
     grossValue: number;
-    /** Czy pozycja wybrana do księgowania */
-    isSelectedForBooking: boolean;
-    /** Procent kwoty netto do zaksięgowania (0-100) */
-    bookingPercentage: number;
-    /** Procent VAT do odliczenia (0-100) */
-    vatDeductionPercentage: number;
-    /** Kategoria pozycji (opcjonalna, nadpisuje kategorię faktury) */
-    categoryId?: number | null;
-    _category?: CostInvoiceCategory | null;
 }
 
 /**
@@ -1052,25 +1010,6 @@ export interface CostInvoiceSyncResponse {
         failedCount: number;
         errorDetails: string[];
     };
-}
-
-/**
- * Raport miesięczny faktur kosztowych
- */
-export interface CostInvoiceMonthlyReport {
-    summary: {
-        year: number;
-        month: number;
-        totalInvoices: number;
-        totalNet: number;
-        totalVat: number;
-        totalGross: number;
-        bookableNet: number;
-        deductibleVat: number;
-        byCategory: Record<string, { count: number; net: number; vat: number }>;
-        byStatus: Record<string, number>;
-    };
-    invoices: CostInvoice[];
 }
 
 export type MatchingStatus = 'UNMATCHED' | 'PROPOSED' | 'CONFIRMED' | 'MANUAL';

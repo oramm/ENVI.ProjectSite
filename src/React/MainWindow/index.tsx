@@ -25,7 +25,6 @@ import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
 import BankSyncSearch from "../../Erp/BankSyncList/BankSyncSearch";
 import CostInvoicesSearch from "../../Erp/CostInvoicesList/CostInvoicesSearch";
 import CostInvoiceDetails from "../../Erp/CostInvoicesList/CostInvoiceDetails";
-import CostInvoicesReport from "../../Erp/CostInvoicesList/CostInvoicesReport";
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
 import MilestoneDatesSearch from "../../Contracts/Dates/MilestoneDatesSearch";
@@ -250,7 +249,6 @@ function AppRoutes() {
                         <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
                             <Route path="/costInvoices" element={<CostInvoicesSearch title="Faktury kosztowe" />} />
                             <Route path="/cost-invoice/:id" element={<CostInvoiceDetails />} />
-                            <Route path="/costInvoices/report" element={<CostInvoicesReport />} />
                         </Route>
                     )}
                     {/* Wyciągi bankowe - flaga StaffMembers.HasBankAccess (ADMIN zawsze). */}

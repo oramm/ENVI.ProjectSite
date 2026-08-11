@@ -1,9 +1,4 @@
-import {
-    CostInvoice,
-    CostInvoiceCategory,
-    CostInvoiceMonthlyReport,
-    CostInvoiceSyncResponse,
-} from "../../../Typings/bussinesTypes";
+import { CostInvoice, CostInvoiceSyncResponse } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
 import RepositoryReact from "../../React/RepositoryReact";
 
@@ -11,53 +6,20 @@ type CostInvoiceApiErrorPayload = {
     error?: string;
     message?: string;
     errorMessage?: string;
-    details?: unknown;
-    validationErrors?: unknown;
-    errors?: unknown;
     [key: string]: unknown;
 };
 
 export class CostInvoiceApiError extends Error {
     status?: number;
-    details: string[];
     payload?: CostInvoiceApiErrorPayload;
 
-    constructor(message: string, options?: { status?: number; details?: string[]; payload?: CostInvoiceApiErrorPayload }) {
+    constructor(message: string, options?: { status?: number; payload?: CostInvoiceApiErrorPayload }) {
         super(message);
         this.name = "CostInvoiceApiError";
         this.status = options?.status;
-        this.details = options?.details || [];
         this.payload = options?.payload;
     }
 }
-
-const toDetailList = (value: unknown): string[] => {
-    if (!value) return [];
-
-    if (Array.isArray(value)) {
-        return value
-            .map((entry) => (typeof entry === "string" ? entry : JSON.stringify(entry)))
-            .filter((entry): entry is string => typeof entry === "string" && entry.trim().length > 0);
-    }
-
-    if (typeof value === "object") {
-        return Object.entries(value as Record<string, unknown>).flatMap(([key, detailsValue]) => {
-            if (Array.isArray(detailsValue)) {
-                return detailsValue.map((entry) => `${key}: ${String(entry)}`);
-            }
-            if (detailsValue) {
-                return `${key}: ${String(detailsValue)}`;
-            }
-            return [];
-        });
-    }
-
-    if (typeof value === "string") {
-        return [value];
-    }
-
-    return [];
-};
 
 async function throwCostInvoiceApiError(response: Response, fallbackMessage: string): Promise<never> {
     let payload: CostInvoiceApiErrorPayload | undefined;
@@ -74,29 +36,11 @@ async function throwCostInvoiceApiError(response: Response, fallbackMessage: str
         payload?.errorMessage ||
         `${fallbackMessage} (${response.status})`;
 
-    const details = [
-        ...toDetailList(payload?.details),
-        ...toDetailList(payload?.validationErrors),
-        ...toDetailList(payload?.errors),
-    ];
-
     throw new CostInvoiceApiError(message, {
         status: response.status,
-        details,
         payload,
     });
 }
-
-/**
- * Statusy faktur kosztowych
- */
-export const CostInvoiceStatuses = {
-    NEW: "NEW",
-    EXCLUDED: "EXCLUDED",
-    BOOKED: "BOOKED",
-} as const;
-
-export type CostInvoiceStatus = typeof CostInvoiceStatuses[keyof typeof CostInvoiceStatuses];
 
 /**
  * Statusy płatności faktur kosztowych
@@ -150,69 +94,6 @@ export const costInvoicesRepository = new RepositoryReact<CostInvoice>({
     },
     name: "costInvoices",
 });
-
-/**
- * Cache kategorii kosztów
- */
-let categoriesCache: CostInvoiceCategory[] | null = null;
-
-function normalizeCategoryName(name: string): string {
-    return name.trim().toLocaleLowerCase("pl-PL");
-}
-
-function getCategoryDedupKey(category: CostInvoiceCategory): string {
-    return `${normalizeCategoryName(category.name)}|${category.vatDeductionDefault}`;
-}
-
-function deduplicateCategories(categories: CostInvoiceCategory[]): CostInvoiceCategory[] {
-    const seen = new Map<string, CostInvoiceCategory>();
-    const duplicates = new Map<string, number[]>();
-
-    for (const category of categories) {
-        const key = getCategoryDedupKey(category);
-        const existing = seen.get(key);
-
-        if (!existing) {
-            seen.set(key, category);
-            continue;
-        }
-
-        const existingIds = duplicates.get(key) || [existing.id];
-        existingIds.push(category.id);
-        duplicates.set(key, existingIds);
-    }
-
-    if (duplicates.size > 0) {
-        console.warn("[CostInvoices] API zwróciło zduplikowane kategorie kosztów", {
-            duplicates: Array.from(duplicates.entries()).map(([key, ids]) => ({
-                key,
-                ids,
-            })),
-        });
-    }
-
-    return Array.from(seen.values());
-}
-
-/**
- * Pobiera listę kategorii kosztów
- */
-export async function fetchCategories(): Promise<CostInvoiceCategory[]> {
-    if (categoriesCache) return categoriesCache;
-
-    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/categories`, {
-        method: "GET",
-        credentials: "include",
-    });
-
-    if (!response.ok) {
-        await throwCostInvoiceApiError(response, "Błąd pobierania kategorii");
-    }
-
-    const result = await response.json();
-    categoriesCache = deduplicateCategories(result.data || []);
-    return categoriesCache!;
-}
 
 /**
  * Synchronizacja faktur z KSeF
@@ -273,17 +154,13 @@ export async function fetchCostInvoiceQr(id: number): Promise<CostInvoiceQrData>
 }
 
 /**
- * Aktualizuje ustawienia księgowania faktury
+ * Aktualizuje dane faktury edytowalne ręcznie: notatkę i stan płatności
  */
 export async function updateCostInvoice(
     id: number,
     data: Partial<{
-        status: CostInvoiceStatus;
         paymentStatus: PaymentStatus;
         paidAmount: number;
-        bookingPercentage: number;
-        vatDeductionPercentage: number;
-        categoryId: number | null;
         notes: string | null;
     }>
 ): Promise<CostInvoice> {
@@ -298,56 +175,6 @@ export async function updateCostInvoice(
 
     if (!response.ok) {
         await throwCostInvoiceApiError(response, "Błąd aktualizacji faktury");
-    }
-
-    const result = await response.json();
-    return result.data || result;
-}
-
-/**
- * Aktualizuje pozycję faktury
- */
-export async function updateCostInvoiceItem(
-    invoiceId: number,
-    itemId: number,
-    data: Partial<{
-        isSelectedForBooking: boolean;
-        bookingPercentage: number;
-        vatDeductionPercentage: number;
-        categoryId: number | null;
-    }>
-): Promise<void> {
-    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/${invoiceId}/items/${itemId}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-        await throwCostInvoiceApiError(response, "Błąd aktualizacji pozycji");
-    }
-}
-
-/**
- * Księguje fakturę
- */
-export async function bookCostInvoice(id: number): Promise<CostInvoice> {
-    const response = await fetch(`${MainSetup.serverUrl}cost-invoices/${id}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            status: CostInvoiceStatuses.BOOKED,
-        }),
-    });
-
-    if (!response.ok) {
-        await throwCostInvoiceApiError(response, "Błąd księgowania faktury");
     }
 
     const result = await response.json();
@@ -376,53 +203,6 @@ export async function checkWhiteList(id: number, date?: string): Promise<CostInv
 
     const result = await response.json();
     return result.data || result;
-}
-
-/**
- * Pobiera raport miesięczny
- */
-export async function fetchMonthlyReport(
-    year: number,
-    month: number,
-    format: "json" | "csv" | "xml" = "json"
-): Promise<CostInvoiceMonthlyReport | Blob> {
-    const response = await fetch(
-        `${MainSetup.serverUrl}cost-invoices/report/monthly?year=${year}&month=${month}&format=${format}`,
-        {
-            method: "GET",
-            credentials: "include",
-        }
-    );
-
-    if (!response.ok) {
-        await throwCostInvoiceApiError(response, "Błąd pobierania raportu");
-    }
-
-    if (format === "json") {
-        const result = await response.json();
-        return result.data as CostInvoiceMonthlyReport;
-    } else {
-        return response.blob();
-    }
-}
-
-/**
- * Eksportuje raport miesięczny jako plik
- */
-export async function downloadMonthlyReport(
-    year: number,
-    month: number,
-    format: "csv" | "xml"
-): Promise<void> {
-    const blob = await fetchMonthlyReport(year, month, format) as Blob;
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `koszty_${year}_${String(month).padStart(2, "0")}.${format}`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
 }
 
 /**

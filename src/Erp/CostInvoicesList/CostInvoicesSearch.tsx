@@ -5,7 +5,6 @@ import { CostInvoicesFilterBody } from "./CostInvoicesFilterBody";
 import { CostInvoice } from "../../../Typings/bussinesTypes";
 import {
     costInvoicesRepository,
-    CostInvoiceStatuses,
     syncFromKsef,
     fetchCostInvoiceReparsePreview,
     applyCostInvoiceReparse,
@@ -14,9 +13,6 @@ import {
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
 import {
-    CostInvoiceStatusBadge,
-    CategoryBadge,
-    VatDeductionBadge,
     PaymentStatusBadge,
     PaymentMethodBadge,
     InvoiceTypeBadge,
@@ -180,11 +176,6 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
 
     function renderInvoiceCard(invoice: CostInvoice, isActive?: boolean) {
         void isActive;
-        const category = invoice._category || null;
-        const vatDeductionPercentage = toNumber(invoice.vatDeductionPercentage);
-        const bookingPercentage = toNumber(invoice.bookingPercentage);
-        const netAmount = toNumber(invoice.netAmount);
-        const bookableNetAmount = invoice.bookableNetAmount !== undefined ? toNumber(invoice.bookableNetAmount) : null;
         const notes = invoice.notes?.trim();
 
         return (
@@ -200,7 +191,6 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                     </div>
                     <div className="cost-invoice-card__status-wrap">
                         <InvoiceTypeBadge invoiceType={invoice.invoiceType} />
-                        <CostInvoiceStatusBadge status={invoice.status} />
                         <PaymentStatusBadge
                             status={invoice.paymentStatus}
                             paidAmount={invoice.paidAmount}
@@ -240,29 +230,11 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                         <div className="cost-invoice-card__amount-detail">
                             VAT: {formatAmount(invoice.vatAmount, invoice.currency)}
                         </div>
-                        {bookableNetAmount !== null && bookableNetAmount !== netAmount && (
-                            <div className="cost-invoice-card__amount-detail cost-invoice-card__amount-detail--info">
-                                Do ksieg.: {formatAmount(bookableNetAmount, invoice.currency)}
-                            </div>
-                        )}
                     </div>
                 </div>
 
                 <div className="cost-invoice-card__bottom">
                     <div className="cost-invoice-card__tags">
-                        <CategoryBadge category={category} />
-                        <VatDeductionBadge percentage={vatDeductionPercentage} />
-                        <span className="badge bg-info-subtle text-info-emphasis border border-info-subtle">
-                            Ksiegowanie {bookingPercentage}%
-                        </span>
-                        {invoice.status === CostInvoiceStatuses.BOOKED && invoice.bookedAt && (
-                            <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">
-                                Zaksiegowano {ToolsDate.dateToDDmmmYYYYHHMM(invoice.bookedAt)}
-                                {invoice._bookedByPerson
-                                    ? ` (${invoice._bookedByPerson.name} ${invoice._bookedByPerson.surname})`
-                                    : ""}
-                            </span>
-                        )}
                         {notes && (
                             <span className="badge bg-secondary-subtle text-secondary-emphasis">Notatka: {notes}</span>
                         )}

@@ -77,13 +77,9 @@ const tips: Tip[] = [
         category: "costInvoices",
     },
     {
-        text: "Każdej fakturze kosztowej możesz przypisać kategorię kosztową oraz określić procent odliczenia VAT.",
+        text: "Na fakturze kosztowej możesz oznaczyć stan płatności i sprawdzić rachunek dostawcy na Białej Liście VAT.",
         category: "costInvoices",
     },
-    // {
-    //     text: 'W sekcji "Raport miesięczny" sprawdzisz zestawienie faktur kosztowych za wybrany miesiąc. Raport możesz wyeksportować do CSV lub XML.',
-    //     category: "costInvoices",
-    // },
 ];
 
 interface GoodTipToastProps {
