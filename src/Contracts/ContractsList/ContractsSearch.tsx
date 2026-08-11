@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { OtherContract, OurContract } from "../../../Typings/bussinesTypes";
-import { ContractStatusBadge, ContractTypeBadge } from "../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
+import { ContractRowContent } from "./ContractRowContent";
 import { contractsRepository } from "./ContractsController";
 import { ContractsFilterBody } from "./ContractsFilterBody";
 import {
@@ -9,46 +9,11 @@ import {
     OtherContractAddNewModalButton,
     OurContractAddNewModalButton,
 } from "./Modals/ContractModalButtons";
-import { Badge } from "react-bootstrap";
 
 export default function ContractsSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
-
-    function renderName(contract: OurContract | OtherContract) {
-        return (
-            <>
-                <strong>{ourIdLabel(contract)}</strong> {numberLabel(contract)} {contract.name}{" "}
-                <ContractTypeBadge type={contract._type} settlementMethod={contract.settlementMethod} />{" "}
-                <ContractStatusBadge status={contract.status} />
-                <div>{renderRangeNames(contract)}</div>
-            </>
-        );
-    }
-
-    function renderRangeNames(contract: OurContract | OtherContract) {
-        if (!contract._contractRangesNames) return null;
-        return (
-            <div>
-                {contract._contractRangesNames.map((name, index) => (
-                    <Badge key={index} pill bg="light" className="mr-1 mt-2 mb-3 text-dark">
-                        {name}
-                    </Badge>
-                ))}
-            </div>
-        );
-    }
-
-    function numberLabel(contract: OurContract | OtherContract) {
-        if ("ourId" in contract && contract.number === contract.ourId) return null;
-        return `[${contract.number}]` || null;
-    }
-
-    function ourIdLabel(contract: OurContract | OtherContract) {
-        if (!("ourId" in contract)) return null;
-        return (contract as OurContract).ourId;
-    }
 
     return (
         <FilterableTable<OurContract | OtherContract>
@@ -56,19 +21,21 @@ export default function ContractsSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={ContractsFilterBody}
             tableStructure={[
+                // Wszystkie kolumny poza jedną zeszły do bloku kontraktu (decyzja właściciela
+                // 2026-08-11, makieta `tmp/makieta-lista-kontraktow-v3.html`, wariant A):
+                // „Projekt”, „Oznaczenie”, „Rozpoczęcie”, „Zakończenie”, „Gwarancja”, a także
+                // kolumna znaczników z wcześniejszej wersji makiety. Umowę ENVI od umowy
+                // wykonawcy odróżnia sam kształt wiersza — tak jak w widoku zadań.
+                // colLg 11, nie 12: dwunasta kolumna musi zostać wolna na RowActionMenu
+                // aktywnego wiersza, inaczej menu zawija się na nowy wiersz i ląduje po lewej
+                // (powód opisany szerzej w LettersSearch.tsx).
                 {
-                    header: "Projekt",
-                    renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
-                    colLg: 2,
+                    header: "Kontrakt",
+                    renderTdBody: (contract: OurContract | OtherContract) => (
+                        <ContractRowContent contract={contract} />
+                    ),
+                    colLg: 11,
                 },
-                {
-                    header: "Oznaczenie",
-                    renderTdBody: (contract: OurContract | OtherContract) => renderName(contract),
-                    colLg: 6,
-                },
-                { header: "Rozpoczęcie", objectAttributeToShow: "startDate", colLg: 1 },
-                { header: "Zakończenie", objectAttributeToShow: "endDate", colLg: 1 },
-                { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate", colLg: 1 },
             ]}
             AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             EditButtonComponent={ContractEditModalButton}

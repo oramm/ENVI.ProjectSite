@@ -71,6 +71,20 @@ export function ContractsFilterBody() {
                     {...register("onlyAtypicalSettlement")}
                 />
             </Form.Group>
+            {/* Integracja z FIDmanem. Pole zbudowane 1:1 jak „Dokumentacja zatwierdzona"
+                w rejestrze pism (Letters/LettersList/LetterFilterBody.tsx) — pusta wartość
+                domyślna nie zawęża niczego. „Do zintegrowania" to NIE dopełnienie zbioru
+                „Zintegrowane": obejmuje wyłącznie typy, które sync realnie wysyła, więc umowy
+                IK, PT czy Dostawy nie wpadają do żadnej z dwóch opcji. Warunek po stronie API:
+                ContractRepository.makeFidmanIntegrationCondition(). */}
+            <Form.Group as={Col} xs={12} md={6} xl={4}>
+                <Form.Label>Integracja z FIDmanem</Form.Label>
+                <Form.Select {...register("fidmanIntegrationFilter")}>
+                    <option value="">-- wszystkie --</option>
+                    <option value="INTEGRATED">Zintegrowane</option>
+                    <option value="NOT_INTEGRATED">Do zintegrowania (Żółty, Czerwony)</option>
+                </Form.Select>
+            </Form.Group>
         </Row>
     );
 }

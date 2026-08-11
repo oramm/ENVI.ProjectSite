@@ -8,6 +8,25 @@ import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
+/**
+ * Czy umowa ma Okres Zgłaszania Wad (FIDIC DNP). Instytucja występuje wyłącznie w umowach
+ * na roboty w trybie Żółtym i Czerwonym — dla pozostałych typów pole nie ma sensu i nie
+ * pokazujemy go wcale.
+ *
+ * ŚWIADOMA ROZBIEŻNOŚĆ wobec filtra integracji z FIDmanem, który pyta o `TypeId` z allowlisty
+ * syncu. To dwa różne pytania: tutaj domenowe („czy ta umowa w ogóle ma taki termin"), tam
+ * techniczne („czy system wyśle ją do FIDmana"). Dlatego tu po pierwszym słowie nazwy typu —
+ * tak samo jak ContractTypeBadge wyprowadza kolor — i dlatego „Czerwony ryczałtowy" DOSTAJE
+ * to pole, choć do FIDmana dziś nie idzie. Nie ujednolicać obu miejsc bez nowej decyzji.
+ *
+ * Skutek uboczny do zapamiętania: zmiana typu umowy na taki bez OZW ukrywa pole, ale NIE
+ * kasuje wpisanej wcześniej daty w bazie. Dane zostają — zamierzone.
+ */
+export function hasDefectsNotificationPeriod(type: { name?: string } | null | undefined): boolean {
+    const firstWord = (type?.name ?? "").trim().split(/\s+/)[0];
+    return firstWord === "Czerwony" || firstWord === "Żółty";
+}
+
 export function ContractModalBodyStatus({ initialData }: ModalBodyProps<OurContract | OtherContract>) {
     const {
         setValue,
@@ -88,6 +107,13 @@ export function ContractModalBodyDates({
         setValue("startDate", startDateSugestion, { shouldValidate: true });
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
+        // Terminy nieobowiązkowe: pusty string, gdy ich nie ma. Nie `undefined` — pole
+        // niekontrolowane przeszłoby w kontrolowane przy pierwszym wpisaniu daty i React
+        // zgłosiłby ostrzeżenie; pusty string trzyma je kontrolowanym od początku.
+        setValue("warrantyEndDate", initialData?.warrantyEndDate ?? "", { shouldValidate: true });
+        setValue("defectsNotificationEndDate", initialData?.defectsNotificationEndDate ?? "", {
+            shouldValidate: true,
+        });
     }, [initialData, setValue]);
 
     return (
@@ -150,6 +176,48 @@ export function ContractModalBodyDates({
                 />
                 <ErrorMessage errors={errors} name="guaranteeEndDate" />
             </Form.Group>
+            <OptionalContractDateFields type={initialData?._type} />
         </Row>
+    );
+}
+
+/**
+ * Terminy nieobowiązkowe: rękojmia (każda umowa) i koniec Okresu Zgłaszania Wad (tylko Żółty
+ * i Czerwony — zob. hasDefectsNotificationPeriod).
+ *
+ * Świadomie BEZ wartości podpowiadanej i bez `ToolsForms.getSuggestedClass`, inaczej niż przy
+ * gwarancji obok. Podpowiedź w polu, którego wolno nie wypełnić, zamienia „nie ustalono" na
+ * „wpisano datę wziętą z sufitu” — a te terminy trafiają potem do pilnowania zobowiązań.
+ * Pusto ma znaczyć pusto.
+ */
+export function OptionalContractDateFields({ type }: { type?: { name?: string } | null }) {
+    const {
+        register,
+        formState: { errors },
+    } = useFormContext();
+
+    return (
+        <>
+            <Form.Group as={Col} controlId="warrantyEndDate">
+                <Form.Label>Rękojmia</Form.Label>
+                <Form.Control
+                    type="date"
+                    isInvalid={!!errors.warrantyEndDate}
+                    {...register("warrantyEndDate")}
+                />
+                <ErrorMessage errors={errors} name="warrantyEndDate" />
+            </Form.Group>
+            {hasDefectsNotificationPeriod(type) && (
+                <Form.Group as={Col} controlId="defectsNotificationEndDate">
+                    <Form.Label>Zgłaszanie wad do</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isInvalid={!!errors.defectsNotificationEndDate}
+                        {...register("defectsNotificationEndDate")}
+                    />
+                    <ErrorMessage errors={errors} name="defectsNotificationEndDate" />
+                </Form.Group>
+            )}
+        </>
     );
 }

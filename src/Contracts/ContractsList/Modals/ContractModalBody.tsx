@@ -13,6 +13,7 @@ import ToolsDate from "../../../React/Tools/ToolsDate";
 import ToolsForms from "../../../React/Tools/ToolsForms";
 import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { OptionalContractDateFields } from "./ContractModalBodiesPartial";
 
 // Typy kontraktów, które mają kamień „Projektowanie - nadzór” (MilestoneType 6)
 // wg MilestoneTypes_ContractTypes: 3 = „Żółty”, 8 = „Usługa”. Tylko dla nich
@@ -66,6 +67,13 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("startDate", startDateSugestion, { shouldValidate: true });
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
+        // Terminy nieobowiązkowe (rękojmia, Okres Zgłaszania Wad) — bez podpowiedzi, pusto
+        // znaczy „nie ustalono". Pusty string, a nie `undefined`, żeby pole było kontrolowane
+        // od pierwszego renderu (zob. OptionalContractDateFields).
+        setValue("warrantyEndDate", initialData?.warrantyEndDate ?? "", { shouldValidate: true });
+        setValue("defectsNotificationEndDate", initialData?.defectsNotificationEndDate ?? "", {
+            shouldValidate: true,
+        });
     }, [initialData, setValue]);
 
     return (
@@ -187,6 +195,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     />
                     <ErrorMessage errors={errors} name="guaranteeEndDate" />
                 </Form.Group>
+                <OptionalContractDateFields type={watch("_type") as { name?: string } | undefined} />
             </Row>
             <ContractStatusSelector />
             <Form.Group controlId="lettersShortcutsInSubfolder" className="mt-2">

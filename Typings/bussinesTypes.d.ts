@@ -69,6 +69,12 @@ export interface Contract extends RepositoryDataItem {
     startDate?: string;
     endDate?: string;
     guaranteeEndDate?: string;
+    /** Koniec rękojmi za wady — instytucja ustawowa, odrębna od gwarancji. Nieobowiązkowy:
+     *  brak znaczy „termin nieustalony", nie „brak rękojmi". Jawny `null` czyści pole. */
+    warrantyEndDate?: string | null;
+    /** Koniec Okresu Zgłaszania Wad (FIDIC DNP). Formularz pokazuje to pole wyłącznie dla umów
+     *  na roboty typu Żółty i Czerwony; baza reguły nie wymusza (migracja 009 w PS-nodeJS). */
+    defectsNotificationEndDate?: string | null;
     _project: ProjectData;
     projectOurId?: string;
     status: string;
@@ -95,6 +101,10 @@ export interface Contract extends RepositoryDataItem {
      *  `null`/brak = jeszcze nie wpisano, nie jest trzecim stanem domenowym. Oś niezależna
      *  od `_type` (tryb FIDIC) — patrz 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent. */
     settlementMethod?: 'LUMP_SUM' | 'MEASUREMENT' | null;
+    /** Stan integracji z FIDmanem, liczony po stronie API z `Contracts.FidmanContractId`.
+     *  `undefined` = typ umowy w ogóle nie podlega synchronizacji — wtedy lista NIE rysuje
+     *  plakietki. `false` = mógłby być zintegrowany, ale nie jest. Tylko do odczytu. */
+    _isFidmanIntegrated?: boolean;
 }
 
 export interface OurContract extends Contract {

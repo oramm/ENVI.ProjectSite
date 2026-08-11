@@ -115,15 +115,18 @@ const S = {
 };
 
 /** „2026-07-30” albo ISO -> „30-07-2026”. Nie rzuca na pustej ani niespodziewanej wartości —
- *  wiersz rejestru nie ma prawa wywalić listy przez złą datę. */
-function formatDate(value?: string | null): string {
+ *  wiersz rejestru nie ma prawa wywalić listy przez złą datę.
+ *  Eksportowana, bo rejestr kontraktów (Contracts/ContractsList/ContractRowContent.tsx) formatuje
+ *  daty identycznie — kopia rozjechałaby oba rejestry przy pierwszej poprawce formatu. */
+export function formatDate(value?: string | null): string {
     if (!value) return "—";
     const parts = value.slice(0, 10).split("-");
     if (parts.length !== 3 || parts[0].length !== 4) return String(value);
     return `${parts[2]}-${parts[1]}-${parts[0]}`;
 }
 
-function isOverdue(dueDate: string): boolean {
+/** Termin minął (data wcześniejsza niż dzisiaj). Eksportowana z tego samego powodu co formatDate. */
+export function isOverdue(dueDate: string): boolean {
     const due = new Date(dueDate.slice(0, 10));
     if (Number.isNaN(due.getTime())) return false;
     const today = new Date();

@@ -11,6 +11,24 @@ const _contractRanges = Yup.array().min(1, "Zakresy są wymagane").required("Zak
 const status = Yup.string().required("Status jest wymagany");
 const value = valueValidation;
 
+/**
+ * Termin nieobowiązkowy, który — jeśli podany — nie może wypaść przed zakończeniem umowy.
+ *
+ * `transform` zamienia pustą wartość na `null` PRZED rzutowaniem na datę. Bez tego Yup.date()
+ * robi z "" Invalid Date, walidacja pada i pole, którego wolno nie wypełniać, blokuje zapis —
+ * a GeneralModal wyłącza przycisk zapisu przy `!formState.isValid`, więc byłby to twardy
+ * blocker rejestracji, nie tylko czerwony komunikat.
+ */
+function optionalDateAfterEnd(testName: string, message: string) {
+    return Yup.date()
+        .nullable()
+        .transform((value, originalValue) => (originalValue === "" || originalValue === null ? null : value))
+        .test(testName, message, function (value: Date | null | undefined) {
+            if (!value || !this.parent.endDate) return true;
+            return value >= this.parent.endDate;
+        });
+}
+
 const dateFields = {
     startDate: Yup.date()
         .required("Data rozpoczęcia jest wymagana")
@@ -31,6 +49,17 @@ const dateFields = {
             }
             return value > this.parent.endDate;
         }
+    ),
+    // Terminy nieobowiązkowe. `nullable()` + `transform` są tu konieczne, bo puste pole daty
+    // przychodzi jako "", a Yup.date() rzutuje "" na Invalid Date i wywala walidację — czyli
+    // niewypełnione pole blokowałoby zapis, dokładnie odwrotnie do wymagania właściciela.
+    warrantyEndDate: optionalDateAfterEnd(
+        "warrantyEndDateValidation",
+        "Rękojmia nie może kończyć się przed zakończeniem umowy"
+    ),
+    defectsNotificationEndDate: optionalDateAfterEnd(
+        "defectsNotificationEndDateValidation",
+        "Okres zgłaszania wad nie może kończyć się przed zakończeniem umowy"
     ),
 };
 

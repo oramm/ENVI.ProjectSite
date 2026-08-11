@@ -139,6 +139,21 @@ export function ContractMainHeader() {
                     <div>Gwarancja:</div>
                     <DateEditTrigger date={contract.guaranteeEndDate} />
                 </Col>
+                {/* Terminy nieobowiązkowe pokazujemy tylko wtedy, gdy są wpisane — inaczej
+                    nagłówek każdej starszej umowy puchłby o dwa „Jeszcze nie ustalono".
+                    Wpisać je można z dowolnego terminu obok: modal edycji dat jest wspólny. */}
+                {contract.warrantyEndDate && (
+                    <Col sm={4} md={2}>
+                        <div>Rękojmia:</div>
+                        <DateEditTrigger date={contract.warrantyEndDate} />
+                    </Col>
+                )}
+                {contract.defectsNotificationEndDate && (
+                    <Col sm={4} md={2}>
+                        <div>Zgłaszanie wad do:</div>
+                        <DateEditTrigger date={contract.defectsNotificationEndDate} />
+                    </Col>
+                )}
             </Row>
         </Container>
     );
@@ -308,7 +323,13 @@ function DateEditTrigger({ date }: DateEditTriggerProps) {
                 onEdit: (contract) => {
                     setContract(contract);
                 },
-                fieldsToUpdate: ["startDate", "endDate", "guaranteeEndDate"],
+                fieldsToUpdate: [
+                    "startDate",
+                    "endDate",
+                    "guaranteeEndDate",
+                    "warrantyEndDate",
+                    "defectsNotificationEndDate",
+                ],
                 makeValidationSchema: contractDatesValidationSchema,
             }}
         >
