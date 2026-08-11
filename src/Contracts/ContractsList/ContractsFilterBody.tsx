@@ -57,20 +57,6 @@ export function ContractsFilterBody() {
             <Form.Group as={Col} xl={2}>
                 <ContractRangeSelector repository={contractRangesRepository} showValidationInfo={false} />
             </Form.Group>
-            {/* RZL-5 — kanon plakietki typu kontraktu (40_wiki/firma/technologie/
-                plakietka-typu-kontraktu-akcent, sekcja „Uzupełnienie po stronie listy"):
-                akcent na plakietce mówi „czy TA umowa jest nietypowa", ten filtr — „pokaż
-                WSZYSTKIE nietypowe". Warunek po stronie API: ContractRepository.
-                makeAtypicalSettlementCondition(). */}
-            <Form.Group as={Col} xl={4} className="d-flex align-items-end mb-2">
-                <Form.Check
-                    type="checkbox"
-                    id="contracts-only-atypical-settlement"
-                    className="text-nowrap"
-                    label="Tylko nietypowe rozliczenie"
-                    {...register("onlyAtypicalSettlement")}
-                />
-            </Form.Group>
             {/* Integracja z FIDmanem. Pole zbudowane 1:1 jak „Dokumentacja zatwierdzona"
                 w rejestrze pism (Letters/LettersList/LetterFilterBody.tsx) — pusta wartość
                 domyślna nie zawęża niczego. „Do zintegrowania" to NIE dopełnienie zbioru
@@ -84,6 +70,20 @@ export function ContractsFilterBody() {
                     <option value="INTEGRATED">Zintegrowane</option>
                     <option value="NOT_INTEGRATED">Do zintegrowania (Żółty, Czerwony)</option>
                 </Form.Select>
+            </Form.Group>
+            {/* RZL-5 — kanon plakietki typu kontraktu (40_wiki/firma/technologie/
+                plakietka-typu-kontraktu-akcent, sekcja „Uzupełnienie po stronie listy"):
+                akcent na plakietce mówi „czy TA umowa jest nietypowa", ten filtr — „pokaż
+                WSZYSTKIE nietypowe". Warunek po stronie API: ContractRepository.
+                makeAtypicalSettlementCondition(). */}
+            <Form.Group as={Col} xl={4} className="d-flex align-items-end mb-2">
+                <Form.Check
+                    type="checkbox"
+                    id="contracts-only-atypical-settlement"
+                    className="text-nowrap"
+                    label="Tylko nietypowe rozliczenie"
+                    {...register("onlyAtypicalSettlement")}
+                />
             </Form.Group>
         </Row>
     );

@@ -29,9 +29,11 @@ export function ContractMainHeader() {
     const { contract, setContract, contractsRepository } = useContractDetails();
     if (!contract || !setContract) return <Alert variant="danger">Nie wybrano umowy</Alert>;
     if (!contractsRepository) return <Alert variant="danger">Nie znaleziono repozytorium</Alert>;
-    if (!contract.startDate) return <Alert variant="danger">Umowa nie ma daty rozpoczęcia</Alert>;
-    if (!contract.endDate) return <Alert variant="danger">Umowa nie ma daty zakończenia</Alert>;
-    if (!contract.guaranteeEndDate) return <Alert variant="danger">Umowa nie ma daty gwarancji</Alert>;
+    // Brakująca data NIE zasłania już karty. Wcześniejsze trzy strażniki zwracały sam alert
+    // zamiast całej góry umowy, przez co braku nie dało się nawet naprawić — modal edycji dat
+    // otwiera się właśnie stąd. Nie były zresztą regułą domenową, tylko dopasowaniem do typu
+    // `date: string` w DateEditTrigger; ten od zawsze umiał wyrenderować pusty termin.
+    // Brak pokazujemy teraz w miejscu danej daty (decyzja właściciela 2026-08-11).
 
     function renderEntityDetails() {
         if (!contract) return <></>;
@@ -129,11 +131,11 @@ export function ContractMainHeader() {
                 </Col>
                 <Col sm={4} md={2}>
                     <div>Data podpisania:</div>
-                    <DateEditTrigger date={contract.startDate} />
+                    <DateEditTrigger date={contract.startDate} isRequired />
                 </Col>
                 <Col sm={4} md={2}>
                     <div>Termin zakończenia:</div>
-                    <DateEditTrigger date={contract.endDate} />
+                    <DateEditTrigger date={contract.endDate} isRequired />
                 </Col>
                 <Col sm={4} md={2}>
                     <div>Gwarancja:</div>
@@ -305,10 +307,14 @@ function FidmanSyncSection() {
 }
 
 type DateEditTriggerProps = {
-    date: string;
+    date?: string | null;
+    /** Termin, bez którego umowa jest niekompletna — brak jest błędem do uzupełnienia,
+     *  a nie stanem normalnym. Rozpoczęcie i zakończenie są obowiązkowe w walidacji
+     *  (ContractValidationSchema.dateFields), gwarancja nie — stąd łagodniejszy komunikat. */
+    isRequired?: boolean;
 };
 
-function DateEditTrigger({ date }: DateEditTriggerProps) {
+function DateEditTrigger({ date, isRequired }: DateEditTriggerProps) {
     const { contract, setContract, contractsRepository } = useContractDetails();
     if (!contract || !setContract) return <Alert variant="danger">Nie wybrano umowy</Alert>;
     if (!contractsRepository) return <Alert variant="danger">Nie znaleziono repozytorium</Alert>;
@@ -333,7 +339,15 @@ function DateEditTrigger({ date }: DateEditTriggerProps) {
                 makeValidationSchema: contractDatesValidationSchema,
             }}
         >
-            {date ? <h5>{ToolsDate.dateYMDtoDMY(date)}</h5> : <>{"Jeszcze nie ustalono"}</>}
+            {date ? (
+                <h5>{ToolsDate.dateYMDtoDMY(date)}</h5>
+            ) : (
+                // Komunikat siedzi tam, gdzie stałaby data, i jest klikalny tak samo jak ona —
+                // czyli jest zarazem informacją o braku i drogą do jego usunięcia.
+                <h5 className={isRequired ? "text-danger" : "text-muted fst-italic"}>
+                    {isRequired ? "Brak — uzupełnij" : "Jeszcze nie ustalono"}
+                </h5>
+            )}
         </PartialEditTrigger>
     );
 }
