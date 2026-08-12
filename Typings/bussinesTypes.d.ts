@@ -365,7 +365,7 @@ export interface CaseType extends RepositoryDataItem {
     isDefault: boolean;
     isUniquePerMilestone: boolean;
     isSubCaseOnly?: boolean;
-    allowsSubCases?: boolean;
+    _allowsSubCases?: boolean;
     _allowedSubCaseTypeIds?: number[];
     _milestoneType: MilestoneType;
     gdFolderId?: string;
@@ -730,6 +730,51 @@ export interface Security extends RepositoryDataItem {
 export interface CityData extends RepositoryDataItem {
     name: string;
     code: string;
+}
+
+/* ---------- Panel administracyjny ---------- */
+
+/** Samochód służbowy (kilometrówka). Lustro CarData z backendu. */
+export interface CarData extends RepositoryDataItem {
+    brand: string;
+    model?: string | null;
+    licensePlateNumber: string;
+    mileageSpreadsheetId?: string | null;
+    mileageSheetGid?: number | null;
+    isActive: boolean;
+    comment?: string | null;
+}
+
+/** Typ nieobecności. Flagi decydują, z której puli schodzi nieobecność. */
+export interface AbsenceTypeData extends RepositoryDataItem {
+    name: string;
+    color: string;
+    countsAgainstLimit: boolean;
+    countsAsCare: boolean;
+    /** Liczba nieobecności używających tego typu - tylko do odczytu. */
+    _usageCount?: number;
+}
+
+/**
+ * Uprawnienia funkcyjne osoby.
+ *
+ * UWAGA: `id` to PersonId, a NIE numer wiersza w StaffMembers. Tożsamością rekordu
+ * jest osoba - wiersz uprawnień może jeszcze nie istnieć. Klient składa adres zapisu
+ * jako `${trasa}/${id}`, więc backend celowo zwraca tu PersonId.
+ */
+export interface StaffMemberData extends RepositoryDataItem {
+    personId: number;
+    isDriver: boolean;
+    isInScrum: boolean;
+    hasCostInvoiceAccess: boolean;
+    hasBankAccess: boolean;
+    canLogSiteVisits: boolean;
+    isActive: boolean;
+    _personName?: string;
+    _personSurname?: string;
+    _personEmail?: string;
+    _systemRoleId?: number | null;
+    _hasStaffRow?: boolean;
 }
 
 interface Offer extends RepositoryDataItem {

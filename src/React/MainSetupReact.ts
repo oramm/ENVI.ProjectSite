@@ -328,6 +328,16 @@ export default class MainSetup {
         "ENVI_EMPLOYEE",
     ];
 
+    /**
+     * Panel administracyjny – słowniki i uprawnienia. Węższy niż STAFF_ROLES,
+     * bo ten wykaz obejmuje też ENVI_EMPLOYEE.
+     *
+     * Musi odpowiadać ADMIN_PANEL_ROLES po stronie backendu (src/Admin/adminPanelGuard.ts).
+     * Rozjechanie się obu list daje albo pozycję w menu prowadzącą w 403, albo
+     * funkcję ukrytą w menu, ale dostępną po wpisaniu adresu. Backend rozstrzyga.
+     */
+    static readonly ADMIN_PANEL_ROLES: SystemRoleName[] = ["ADMIN", "ENVI_MANAGER"];
+
     /** Role, którym backend zawęża dane do projektów przypisanych w PersonProjects.
      * Tym rolom wskazuje się projekty w modalu użytkownika. */
     static readonly PROJECT_SCOPED_ROLES: SystemRoleName[] = ["CONTRACT_WORKER", "CLIENT"];

@@ -19,6 +19,10 @@ import MainMenu, { useModuleAccess } from "./MainMenu";
 import { installClientErrorReporter } from "./clientErrorReporter";
 
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
+import CarsSearch from "../../Admin/Cars/CarsSearch";
+import AbsenceTypesSearch from "../../Admin/AbsenceTypes/AbsenceTypesSearch";
+import StaffMembersSearch from "../../Admin/StaffMembers/StaffMembersSearch";
+import TypesTreeView from "../../Admin/TypesTree/TypesTreeView";
 import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
@@ -205,6 +209,20 @@ function AppRoutes() {
                         z przypisanych projektów (zawęża backend). */}
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.VISITS_OVERVIEW_ROLES} />}>
                         <Route path="/visits/admin" element={<SiteVisitsPage />} />
+                    </Route>
+                    {/* Panel administracyjny - węższy niż STAFF_ROLES, bo ten obejmuje
+                        też ENVI_EMPLOYEE. Musi odpowiadać bramce /admin w backendzie. */}
+                    <Route element={<ProtectedRoute allowedRoles={MainSetup.ADMIN_PANEL_ROLES} />}>
+                        <Route path="/admin/cars" element={<CarsSearch title="Samochody" />} />
+                        <Route
+                            path="/admin/absenceTypes"
+                            element={<AbsenceTypesSearch title="Typy nieobecności" />}
+                        />
+                        <Route
+                            path="/admin/staffMembers"
+                            element={<StaffMembersSearch title="Personel i uprawnienia" />}
+                        />
+                        <Route path="/admin/typesTree" element={<TypesTreeView title="Hierarchia typów" />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
                         <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />

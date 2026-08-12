@@ -271,6 +271,26 @@ export default function MainMenu() {
                                         </NavDropdown.Item>
                                     </>
                                 )}
+                                {/* Panel administracyjny - węższe grono niż STAFF_ROLES.
+                                    Musi odpowiadać bramce /admin w backendzie. */}
+                                {MainSetup.ADMIN_PANEL_ROLES.includes(systemRoleName) && (
+                                    <>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Header>Panel administracyjny</NavDropdown.Header>
+                                        <NavDropdown.Item as={Link} to="/admin/staffMembers">
+                                            Personel i uprawnienia
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/admin/cars">
+                                            Samochody
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/admin/absenceTypes">
+                                            Typy nieobecności
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/admin/typesTree">
+                                            Hierarchia typów
+                                        </NavDropdown.Item>
+                                    </>
+                                )}
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>

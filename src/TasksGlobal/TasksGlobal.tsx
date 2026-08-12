@@ -435,7 +435,7 @@ function makeMilestoneTitleLabel(milestone: MilestoneData) {
 }
 
 function makeCaseTitleLabel(caseItem: Case, isInTypeFolder = false) {
-    const isParentCase = Boolean(caseItem._type.allowsSubCases) && !caseItem.parentCaseId;
+    const isParentCase = Boolean(caseItem._type._allowsSubCases) && !caseItem.parentCaseId;
     // W folderze typu nazwa typu jest już w nagłówku folderu — pokazujemy tylko numer i nazwę sprawy
     const label = isInTypeFolder
         ? `${caseItem._displayNumber || ""} ${caseItem.name || ""}`.trim()
@@ -624,7 +624,7 @@ export function buildTree(
                 parentNode: SectionNode<Task>,
                 isInTypeFolder = false
             ) => {
-                const allowsSubCases = Boolean(caseItem._type.allowsSubCases);
+                const canHaveSubCases = Boolean(caseItem._type._allowsSubCases);
                 const caseTasks = (tasks ?? []).filter((t) => taskMatchesStatusFilter(t, taskStatuses));
                 const caseNode = {
                     id: "case" + caseItem.id + sfx,
@@ -636,7 +636,7 @@ export function buildTree(
                     children: [] as SectionNode<Task>[],
                     leaves: caseTasks.length > 0 ? caseTasks : [],
                     isDeletable: true,
-                    AddNewButtonComponent: (allowsSubCases
+                    AddNewButtonComponent: (canHaveSubCases
                         ? CaseAndSubCaseAddButtonGroup
                         : TaskAddNewModalButton) as unknown as ComponentType<
                         SpecificAddNewModalButtonProps<RepositoryDataItem>
@@ -651,7 +651,7 @@ export function buildTree(
                 parentNode.children.push(caseNode);
                 allTasks.push(...caseTasks);
 
-                if (allowsSubCases) {
+                if (canHaveSubCases) {
                     for (const { caseItem: subCase, tasks: subTasks } of subCasesWithTasks || []) {
                         if (!caseMatchesStatusFilter(subCase, caseStatuses, targetCaseId)) continue;
                         const subCaseTasks = (subTasks ?? []).filter((t) => taskMatchesStatusFilter(t, taskStatuses));
