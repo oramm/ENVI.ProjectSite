@@ -116,14 +116,6 @@ export default function MainMenu() {
                                     <NavDropdown.Item as={Link} to="/contracts/znwu" className={isActive("/contracts/znwu")}>
                                         ZNWU
                                     </NavDropdown.Item>
-                                    {mileageAccess && (
-                                        <NavDropdown.Item as={Link} to="/mileage" className={isActive("/mileage")}>
-                                            Kilometrówka{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
-                                        </NavDropdown.Item>
-                                    )}
                                     {visitsAccess && (
                                         <NavDropdown.Item as={Link} to="/visits" className={isActive("/visits")}>
                                             Wizyty na budowie{" "}
@@ -194,6 +186,45 @@ export default function MainMenu() {
                                 <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
                                     Podmioty
                                 </Nav.Link>
+                            )}
+                            {/* Sprawy biurowe: kilometrówka i zaliczki. Każda pozycja ma własną
+                                bramkę, więc menu pokazuje się tylko wtedy, gdy jest w nim cokolwiek. */}
+                            {(mileageAccess || isStaff) && (
+                                <NavDropdown
+                                    title="Biuro"
+                                    id="office-nav-dropdown"
+                                    className={
+                                        location.pathname.startsWith("/mileage") ||
+                                        location.pathname.startsWith("/pettyCash")
+                                            ? "active"
+                                            : ""
+                                    }
+                                >
+                                    {mileageAccess && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/mileage"
+                                            className={isActive("/mileage")}
+                                        >
+                                            Kilometrówka{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/pettyCash"
+                                            className={isActive("/pettyCash")}
+                                        >
+                                            Zaliczki{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
+                                </NavDropdown>
                             )}
                             {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
                                 <>

@@ -48,6 +48,7 @@ import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ProtectedRoute from "../ProtectedRoute";
 import MileagePage from "../../Mileage/MileagePage";
 import SiteVisitsPage from "../../SiteVisits/SiteVisitsPage";
+import PettyCashEntryPage from "../../Erp/PettyCash/PettyCashEntryPage";
 import Dashboard from "./Content/Dashboard/Dashboard";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
@@ -226,6 +227,10 @@ function AppRoutes() {
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
                         <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
+                        {/* Zaliczki - ekran projektowany pod telefon, bo tam powstają wpisy
+                            (kamera laptopa nie czyta kodu z potwierdzenia nadania).
+                            Musi odpowiadać bramce /pettyCash w backendzie. */}
+                        <Route path="/pettyCash" element={<PettyCashEntryPage />} />
                         <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
                         <Route path="/invoice/:id" element={<InvoiceDetails />} />
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
