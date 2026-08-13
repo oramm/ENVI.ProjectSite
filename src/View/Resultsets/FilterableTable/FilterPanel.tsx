@@ -14,6 +14,7 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
     repository,
     validationSchema = undefined,
     fixedCriteria,
+    resetCriteria,
     autoSearchOnReset = false,
 }: FilterPanelProps) {
     const [error, setError] = useState<string | null>(null);
@@ -119,10 +120,13 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
 
     const handleReset = async () => {
         const allFields = formMethods.getValues();
+        // "Wyczyść" czyści pola do pustych, ale pola z resetCriteria wracają do wartości
+        // domyślnej (np. status "aktywny") — inaczej kolejne "Szukaj" nic nie znajduje.
         const resetValues = Object.keys(allFields).reduce((acc: any, curr) => {
             acc[curr] = curr in effectiveFixedCriteria ? effectiveFixedCriteria[curr] : "";
             return acc;
         }, {});
+        Object.assign(resetValues, resetCriteria, effectiveFixedCriteria);
 
         console.log("Wartości po resecie:", resetValues);
         reset(resetValues);

@@ -187,6 +187,7 @@ export default function TasksGlobal() {
                                 showTableHeader={false}
                                 AddNewButtonComponents={[ProjectAddNewModalButton]}
                                 FilterBodyComponent={ProjectsFilterBody}
+                                resetCriteria={{ status: "ACTIVE" }}
                                 EditButtonComponent={ProjectEditModalButton}
                                 RowActionMenuComponents={projectRowActionMenuComponents}
                                 tableStructure={[

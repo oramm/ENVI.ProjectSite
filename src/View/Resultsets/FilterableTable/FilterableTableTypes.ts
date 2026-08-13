@@ -39,6 +39,8 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
     fixedCriteria?: FieldValues;
+    /** Wartości przywracane przez "Wyczyść" zamiast pustych — np. domyślny status "aktywny". */
+    resetCriteria?: FieldValues;
     autoSearchOnReset?: boolean;
 
     snapshotMode?: SnapshotMode;
@@ -57,6 +59,7 @@ export type FilterPanelProps = {
     repository: RepositoryReact;
     validationSchema?: yup.ObjectSchema<any> | undefined;
     fixedCriteria?: FieldValues;
+    resetCriteria?: FieldValues;
     autoSearchOnReset?: boolean;
 };
 
