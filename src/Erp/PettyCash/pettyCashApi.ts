@@ -1,4 +1,5 @@
 import MainSetup from "../../React/MainSetupReact";
+import { AiUsageInfo } from "../../../Typings/bussinesTypes";
 
 export type EntryKind = "POSTAL" | "INVOICE" | "RECEIPT" | "NO_DOCUMENT" | "ADVANCE";
 export type SettlementMethod = "CASH" | "CARD" | "ADVANCE";
@@ -77,6 +78,37 @@ export async function submitEntry(payload: PettyCashEntryPayload): Promise<Commi
     });
     if (!response.ok) await parseError(response, "Nie udało się zapisać wpisu");
     return (await response.json()) as CommitResult;
+}
+
+export type ReceiptSuggestion = {
+    documentNumber: string | null;
+    netAmount: number | null;
+    grossAmount: number | null;
+    /** false = nie rozpoznano; `reason` mówi dlaczego i co zrobić */
+    recognized: boolean;
+    reason?: string;
+    /** Zużycie modelu — pokazywane tak samo jak przy pismach. Brak, gdy model nie był wołany. */
+    _model?: string;
+    _usage?: AiUsageInfo;
+};
+
+/**
+ * Zdjęcie albo PDF paragonu/faktury → podpowiedzi kwot i numeru.
+ *
+ * Serwer odczytuje tekst i pyta model; obraz nie opuszcza backendu. Nagłówka
+ * `Content-Type` nie ustawiamy — przy `FormData` przeglądarka musi dopisać własną
+ * granicę multipart, a ręczne ustawienie ją psuje.
+ */
+export async function analyzeDocument(file: File): Promise<ReceiptSuggestion> {
+    const body = new FormData();
+    body.append("file", file);
+    const response = await fetch(`${MainSetup.serverUrl}pettyCash/documents/analyze`, {
+        method: "POST",
+        credentials: "include",
+        body,
+    });
+    if (!response.ok) await parseError(response, "Nie udało się przeanalizować dokumentu");
+    return (await response.json()) as ReceiptSuggestion;
 }
 
 export type SheetLinks = { pettyCashUrl: string | null; registerUrl: string | null };

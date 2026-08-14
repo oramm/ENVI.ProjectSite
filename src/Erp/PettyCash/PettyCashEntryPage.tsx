@@ -18,10 +18,12 @@ import {
     PettyCashApiError,
     PettyCashEntryPayload,
     SettlementMethod,
+    ReceiptSuggestion,
     SheetLinks,
     submitEntry,
     wroteAnything,
 } from "./pettyCashApi";
+import DocumentScanPanel from "./DocumentScanPanel";
 
 const KIND_LABELS: Record<EntryKind, string> = {
     POSTAL: "poczta — listy",
@@ -30,6 +32,9 @@ const KIND_LABELS: Record<EntryKind, string> = {
     NO_DOCUMENT: "wydatek bez dokumentu",
     ADVANCE: "wypłata zaliczki",
 };
+
+/** Opis, który wysyłki pocztowe mają w arkuszu od zawsze — podpowiadamy go zamiast kazać pisać. */
+const POSTAL_DESCRIPTION = "poczta - listy";
 
 const FORM_WIDTH = 640;
 
@@ -120,7 +125,7 @@ export default function PettyCashEntryPage() {
         defaultValues: {
             entryKind: "POSTAL",
             entryDate: today(),
-            description: "poczta - listy",
+            description: POSTAL_DESCRIPTION,
             settlementMethod: "CASH",
             payerLabel: defaultPayer(),
             note: "",
@@ -157,11 +162,35 @@ export default function PettyCashEntryPage() {
         setValue("settlementMethod", next === "ADVANCE" ? "ADVANCE" : "CASH", {
             shouldValidate: true,
         });
-        if (next === "POSTAL" && !values.description.trim())
-            setValue("description", "poczta - listy", { shouldValidate: true });
+        // Podpowiedziany opis chodzi za rodzajem w obie strony. Zabieramy go tylko wtedy, gdy
+        // to nadal nasz tekst — tego, co ktoś wpisał sam, zmiana rodzaju nie kasuje.
+        const description = values.description.trim();
+        if (next === "POSTAL" && !description)
+            setValue("description", POSTAL_DESCRIPTION, { shouldValidate: true });
+        if (next !== "POSTAL" && description === POSTAL_DESCRIPTION)
+            setValue("description", "", { shouldValidate: true });
         if (next !== "POSTAL") replace([]);
         setResult(null);
         setServerErrors([]);
+    };
+
+    /**
+     * Podpowiedzi z odczytanego dokumentu. Wypełniamy tylko to, co model faktycznie znalazł —
+     * brak wartości zostaje pustym polem, bo puste rzuca się w oczy bardziej niż liczba
+     * wzięta z sufitu. Kwoty zapisujemy z przecinkiem, tak jak wpisuje je człowiek i arkusz.
+     */
+    const applySuggestion = (suggestion: ReceiptSuggestion) => {
+        const amount = (value: number | null) =>
+            value === null ? null : value.toFixed(2).replace(".", ",");
+
+        const patch: Array<[CashField, string | null]> = [
+            ["documentNumber", suggestion.documentNumber],
+            ["grossAmount", amount(suggestion.grossAmount)],
+            ["netAmount", amount(suggestion.netAmount)],
+        ];
+        patch.forEach(([fieldName, value]) => {
+            if (value !== null) setValue(fieldName, value, { shouldValidate: true, shouldDirty: true });
+        });
     };
 
     /** Tabela edytuje ten sam stan co pola wyżej — jedno źródło prawdy, dwie powierzchnie. */
@@ -229,7 +258,7 @@ export default function PettyCashEntryPage() {
             });
             reset({
                 ...form,
-                description: form.entryKind === "POSTAL" ? "poczta - listy" : "",
+                description: form.entryKind === "POSTAL" ? POSTAL_DESCRIPTION : "",
                 documentNumber: "",
                 netAmount: "",
                 grossAmount: "",
@@ -298,6 +327,7 @@ export default function PettyCashEntryPage() {
 
                     {hasDocumentAmounts && (
                         <>
+                            <DocumentScanPanel onSuggestion={applySuggestion} />
                             <Form.Group className="mb-2">
                                 <Form.Label className="mb-1 small text-muted">
                                     {isPostal ? "Numer faktury Poczty" : "Numer dokumentu"}
