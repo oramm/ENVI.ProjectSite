@@ -20,6 +20,7 @@ import {
     SettlementMethod,
     SheetLinks,
     submitEntry,
+    wroteAnything,
 } from "./pettyCashApi";
 
 const KIND_LABELS: Record<EntryKind, string> = {
@@ -255,6 +256,8 @@ export default function PettyCashEntryPage() {
         </Form.Control.Feedback>
     );
 
+    const saved = result !== null && wroteAnything(result);
+
     return (
         <Container style={{ maxWidth: 1180 }}>
             <div style={{ maxWidth: FORM_WIDTH }} className="mx-auto">
@@ -413,20 +416,22 @@ export default function PettyCashEntryPage() {
                 )}
 
                 {result && (
-                    <Alert variant="success" className="py-2">
-                        Zapisano.
-                        {result.register?.action === "write" && (
+                    <Alert variant={saved ? "success" : "warning"} className="py-2">
+                        {saved ? "Zapisano." : "Pominięto — nic nie zostało dopisane."}
+                        {result.register && (
                             <div className="small">
-                                Rejestr listów: blok {result.register.blockNumber}, wiersz{" "}
-                                {result.register.headerRow}.
+                                Rejestr listów:{" "}
+                                {result.register.action === "write"
+                                    ? `blok ${result.register.blockNumber}, wiersz ${result.register.headerRow}.`
+                                    : result.register.reason}
                             </div>
                         )}
-                        {result.cash.action === "write" && (
-                            <div className="small">Zaliczki: wiersz {result.cash.targetRow}.</div>
-                        )}
-                        {result.cash.action === "skip" && (
-                            <div className="small">Zaliczki: {result.cash.reason}</div>
-                        )}
+                        <div className="small">
+                            Zaliczki:{" "}
+                            {result.cash.action === "write"
+                                ? `wiersz ${result.cash.targetRow}.`
+                                : result.cash.reason}
+                        </div>
                     </Alert>
                 )}
 

@@ -30,6 +30,17 @@ export type CommitResult = {
     cash: { action: string; targetRow?: number; reason?: string };
 };
 
+/**
+ * Czy cokolwiek naprawdę trafiło do arkusza.
+ *
+ * Backend odpowiada 201 także wtedy, gdy pominął zapis, bo ten sam wpis już tam jest —
+ * z punktu widzenia HTTP nic się nie stało złego. Dla człowieka to jednak różnica między
+ * „dodane" a „nie dodane", i to ona decyduje o kolorze komunikatu.
+ */
+export function wroteAnything(result: CommitResult): boolean {
+    return result.cash.action === "write" || result.register?.action === "write";
+}
+
 export class PettyCashApiError extends Error {
     /** Lista błędów walidacji z backendu; pusta, gdy błąd nie był walidacyjny. */
     readonly errors: string[];
