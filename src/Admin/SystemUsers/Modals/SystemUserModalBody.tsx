@@ -45,6 +45,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
             comment: initialData?.comment || "",
             systemRoleId: initialData?.systemRoleId || "",
             systemEmail: initialData?.systemEmail || "",
+            fidmanEnabled: initialData?.fidmanEnabled ?? false,
             // Celowo BEZ _projectAssignments: przypisania dojeżdżają osobnym żądaniem.
             // Pusta tablica znaczyłaby "użytkownik wyczyścił listę", więc zapis wykonany
             // zanim dane dotrą skasowałby przypisania. Brak pola blokuje zapis (patrz
@@ -80,6 +81,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                             ...getValues(),
                             systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
                             systemEmail: accountData.systemEmail ?? resetData.systemEmail,
+                            fidmanEnabled: accountData.fidmanEnabled ?? resetData.fidmanEnabled,
                             _projectAssignments: assignments,
                         });
                         trigger();
@@ -192,6 +194,19 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
             </Form.Group>
 
             <SystemRoleSelector name="systemRoleId" />
+
+            <Form.Group controlId="fidmanEnabled" className="mt-2">
+                <Form.Check
+                    type="checkbox"
+                    label="Użytkownik FIDmana (loguje się tym samym kontem Google)"
+                    isInvalid={!!errors?.fidmanEnabled}
+                    {...register("fidmanEnabled")}
+                />
+                <Form.Text className="text-muted">
+                    Konto w FIDmanie zakłada się z e-maila systemowego. Odznaczenie wyłącza je, nie kasuje.
+                </Form.Text>
+                <ErrorMessage name="fidmanEnabled" errors={errors} />
+            </Form.Group>
 
             {isProjectScopedRole && (
                 <Form.Group className="mt-2">

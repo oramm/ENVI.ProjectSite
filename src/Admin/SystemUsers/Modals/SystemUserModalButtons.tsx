@@ -1,5 +1,5 @@
 import React from "react";
-import { SystemUserData } from "../../../../Typings/bussinesTypes";
+import { PersonAccountV2Payload, SystemUserData } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { systemUserRepository } from "../SystemUserController";
@@ -33,6 +33,20 @@ export async function saveProjectAssignments(person: SystemUserData) {
     );
 }
 
+/**
+ * Pola konta systemowego (PersonAccounts) wyciągnięte z formularza. Dodanie i edycja
+ * wysyłają dokładnie to samo - jedna funkcja zamiast dwóch kopii, które potrafią się rozjechać.
+ */
+export function buildAccountPayload(person: SystemUserData): Partial<PersonAccountV2Payload> {
+    return {
+        systemRoleId: person.systemRoleId ? Number(person.systemRoleId) : undefined,
+        systemEmail: person.systemEmail || undefined,
+        // Zawsze jawnie, także przy false: brak pola serwer czyta jako "nie ruszaj flagi",
+        // więc odznaczenie bez tej linii nigdy by nie doszło.
+        fidmanEnabled: Boolean(person.fidmanEnabled),
+    };
+}
+
 export function SystemUserEditModalButton({
     modalProps: { onEdit, initialData },
 }: SpecificEditModalButtonProps<SystemUserData>) {
@@ -41,12 +55,7 @@ export function SystemUserEditModalButton({
         if (editedObject?.id) {
             await savePersonV2AccountAndProfile(
                 editedObject.id,
-                {
-                    systemRoleId: editedObject.systemRoleId
-                        ? Number(editedObject.systemRoleId)
-                        : undefined,
-                    systemEmail: editedObject.systemEmail || undefined,
-                },
+                buildAccountPayload(editedObject),
                 {},
                 "SystemUsers"
             );
@@ -78,12 +87,7 @@ export function SystemUserAddNewModalButton({ modalProps: { onAddNew } }: Specif
         if (newObject?.id) {
             await savePersonV2AccountAndProfile(
                 newObject.id,
-                {
-                    systemRoleId: newObject.systemRoleId
-                        ? Number(newObject.systemRoleId)
-                        : undefined,
-                    systemEmail: newObject.systemEmail || undefined,
-                },
+                buildAccountPayload(newObject),
                 {},
                 "SystemUsers"
             );

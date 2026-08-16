@@ -486,6 +486,8 @@ export interface SystemUserData extends RepositoryDataItem {
     _nameSurnameEmail: string;
     systemRoleId: string;
     systemEmail: string;
+    /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
+    fidmanEnabled?: boolean;
 }
 
 export interface PersonAccountV2Payload {
@@ -497,6 +499,8 @@ export interface PersonAccountV2Payload {
     microsoftId?: string;
     microsoftRefreshToken?: string;
     isActive?: boolean;
+    /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
+    fidmanEnabled?: boolean;
 }
 
 export interface PersonProfileV2Payload {

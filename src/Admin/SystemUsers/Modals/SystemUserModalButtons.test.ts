@@ -6,11 +6,48 @@ vi.mock("../../../Persons/personsV2Helpers", () => ({
 }));
 
 import { savePersonProjectAssignments } from "../../../Persons/personsV2Helpers";
-import { saveProjectAssignments } from "./SystemUserModalButtons";
+import { buildAccountPayload, saveProjectAssignments } from "./SystemUserModalButtons";
 
 const save = savePersonProjectAssignments as unknown as ReturnType<typeof vi.fn>;
 const CONTRACT_WORKER = 6;
 const CLIENT = 7;
+
+describe("buildAccountPayload - flaga uzytkownika FIDmana (GLO-P1)", () => {
+    it("zaznaczony checkbox jedzie do payloadu konta jako true", () => {
+        const payload = buildAccountPayload({
+            id: 7,
+            systemRoleId: "2",
+            systemEmail: "anna@envi.com.pl",
+            fidmanEnabled: true,
+        } as any);
+
+        expect(payload).toMatchObject({
+            systemRoleId: 2,
+            systemEmail: "anna@envi.com.pl",
+            fidmanEnabled: true,
+        });
+    });
+
+    it("odznaczony jedzie jako false, a NIE znika z payloadu", () => {
+        // Brak pola serwer czyta jako "nie ruszaj flagi", więc pominięcie false
+        // sprawiłoby, że odznaczenia nie da się zapisać.
+        const payload = buildAccountPayload({
+            id: 7,
+            systemRoleId: "2",
+            systemEmail: "anna@envi.com.pl",
+            fidmanEnabled: false,
+        } as any);
+
+        expect(payload.fidmanEnabled).toBe(false);
+        expect("fidmanEnabled" in payload).toBe(true);
+    });
+
+    it("formularz bez tego pola zapisuje flage jako wylaczona, a nie undefined", () => {
+        const payload = buildAccountPayload({ id: 7, systemRoleId: "2" } as any);
+
+        expect(payload.fidmanEnabled).toBe(false);
+    });
+});
 
 describe("saveProjectAssignments", () => {
     beforeEach(() => save.mockReset());
