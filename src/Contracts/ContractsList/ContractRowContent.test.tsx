@@ -88,9 +88,14 @@ describe("ContractRowContent — umowa wykonawcy", () => {
     it("prowadzi hero alias · wykonawca i wskazuje strzałką naszą umowę", () => {
         render(<ContractRowContent contract={otherContract()} />);
 
-        // Hero to jeden element z separatorem w środku, więc sprawdzamy jego całą zawartość —
-        // getByText dopasowuje tekst elementu, nie jego fragment.
-        expect(screen.getByText("Ciąg biologiczny · Budimex")).toBeInTheDocument();
+        // Separator jest osobnym <span>, więc hero to kilka węzłów. Domyślny matcher `getByText`
+        // skleja wyłącznie bezpośrednie węzły tekstowe i pomija tekst dzieci, dlatego całą
+        // zawartość hero sprawdzamy przez `textContent`.
+        expect(
+            screen.getByText((_, element) => element?.textContent === "Ciąg biologiczny · Budimex", {
+                selector: "span",
+            })
+        ).toBeInTheDocument();
         expect(screen.getByText(/Żółty · 12\/ZP\/2024/)).toBeInTheDocument();
         expect(screen.getByText("WAW.IK.03")).toBeInTheDocument();
     });
