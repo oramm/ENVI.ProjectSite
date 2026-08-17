@@ -216,7 +216,21 @@ export default function TypesTreeView({ title }: { title: string }) {
                                 <svg width="22" height="8">
                                     <line x1="0" y1="4" x2="22" y2="4" stroke="#198754" strokeWidth="2.5" />
                                 </svg>{" "}
-                                powstaje domyślnie przy nowej umowie
+                                powstaje samo przy nowej umowie
+                            </span>
+                            <span>
+                                <svg width="22" height="8">
+                                    <line
+                                        x1="0"
+                                        y1="4"
+                                        x2="22"
+                                        y2="4"
+                                        stroke="#fd7e14"
+                                        strokeWidth="2.5"
+                                        strokeDasharray="6 4"
+                                    />
+                                </svg>{" "}
+                                oznaczone jako domyślne, ale bez szablonu - nie powstanie
                             </span>
                             <span>
                                 <svg width="22" height="8">

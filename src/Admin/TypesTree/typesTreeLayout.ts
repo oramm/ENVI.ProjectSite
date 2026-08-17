@@ -1,6 +1,8 @@
 import {
     TypesTreeData,
     caseTypesForMilestoneType,
+    hasTemplateGap,
+    isCreatedAutomatically,
     milestoneTypesForContractType,
     subCaseTypesFor,
 } from "./typesTreeModel";
@@ -31,6 +33,8 @@ export type LayoutNode = {
     badge?: string;
     /** Typ dopuszczalny wyłącznie jako podsprawa - rysowany przerywaną obwódką. */
     isSubCaseOnly?: boolean;
+    /** Czy typ ma szablon - bez niego nie powstaje automatycznie. */
+    hasTemplate?: boolean;
     description?: string;
     x: number;
     y: number;
@@ -43,7 +47,10 @@ export type LayoutEdge = {
     toId: string;
     /** Numer folderu - należy do KRAWĘDZI, nie do węzła, więc rysowany na linii. */
     label?: string;
+    /** Powstaje samo przy nowej umowie: flaga „domyślny” ORAZ szablon. */
     isDefault?: boolean;
+    /** Oznaczone jako domyślne, ale bez szablonu - nie powstanie. */
+    hasGap?: boolean;
 };
 
 export type Layout = {
@@ -108,6 +115,8 @@ export function layout(data: TypesTreeData, selectedContractTypeId: number | nul
     const milestoneNodes: LayoutNode[] = [];
     /** Identyfikatory węzłów spraw zakładanych automatycznie razem z kamieniem. */
     const defaultCaseNodeIds = new Set<string>();
+    /** Węzły oznaczone jako domyślne, ale bez szablonu - nie powstaną. */
+    const gapNodeIds = new Set<string>();
     /** subCaseTypeId -> węzły spraw, pod którymi jest dopuszczony. */
     const parentsOfSubCase = new Map<number, LayoutNode[]>();
     /** subCaseTypeId -> dane typu, potrzebne przy tworzeniu węzła w przebiegu 2. */
@@ -125,7 +134,8 @@ export function layout(data: TypesTreeData, selectedContractTypeId: number | nul
             // Flagę „domyślny” typu sprawy niesie krawędź z kamienia - tak samo jak
             // przy kamieniach. Dzięki temu jednym rzutem oka widać, które sprawy
             // powstają automatycznie przy zakładaniu umowy.
-            defaultCaseNodeIds.add(caseType.isDefault ? caseNode.id : "");
+            if (isCreatedAutomatically(caseType)) defaultCaseNodeIds.add(caseNode.id);
+            if (hasTemplateGap(caseType)) gapNodeIds.add(caseNode.id);
 
             for (const subCaseType of subCaseTypesFor(data, caseType.id)) {
                 subCaseTypeById.set(subCaseType.id, subCaseType);
@@ -137,6 +147,7 @@ export function layout(data: TypesTreeData, selectedContractTypeId: number | nul
 
         const milestoneNode = makeNode("milestoneType", 1, milestoneType.id, milestoneType.name, centerOf(caseNodes), {
             description: milestoneType.description,
+            hasTemplate: milestoneType._templateId !== null,
         });
         milestoneNodes.push(milestoneNode);
         caseNodes.forEach((caseNode) =>
@@ -144,6 +155,7 @@ export function layout(data: TypesTreeData, selectedContractTypeId: number | nul
                 fromId: milestoneNode.id,
                 toId: caseNode.id,
                 isDefault: defaultCaseNodeIds.has(caseNode.id),
+                hasGap: gapNodeIds.has(caseNode.id),
             }),
         );
 
@@ -192,7 +204,9 @@ export function layout(data: TypesTreeData, selectedContractTypeId: number | nul
             fromId: contractNode.id,
             toId: milestoneNode.id,
             label: edge?.folderNumber ?? undefined,
-            isDefault: edge?.isDefault,
+            // Zielona linia znaczy „powstaje samo", a to wymaga flagi I szablonu.
+            isDefault: !!edge?.isDefault && milestoneNode.hasTemplate,
+            hasGap: !!edge?.isDefault && !milestoneNode.hasTemplate,
         });
     });
 

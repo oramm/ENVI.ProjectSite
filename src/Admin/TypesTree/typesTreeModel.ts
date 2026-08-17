@@ -30,6 +30,10 @@ export type TypesTreeMilestoneType = {
     _usageCount: number;
     /** Kod odwołuje się do typu wprost - nazwa zablokowana do edycji. */
     _isNameLocked: boolean;
+    /** Szablon kamienia. Bez niego kamień NIE powstaje automatycznie. */
+    _templateId: number | null;
+    _templateName: string;
+    _templateDescription: string;
 };
 
 export type TypesTreeContractTypeMilestoneType = {
@@ -58,6 +62,18 @@ export type TypesTreeCaseType = {
     _usageCount: number;
     /** Kod rozpoznaje typ po identyfikatorze albo nazwie - nazwa zablokowana. */
     _isNameLocked: boolean;
+    /** Szablon sprawy. Bez niego sprawa NIE powstaje automatycznie. */
+    _templateId: number | null;
+    _templateName: string;
+    _templateDescription: string;
+    _taskTemplates: TypesTreeTaskTemplate[];
+};
+
+export type TypesTreeTaskTemplate = {
+    id: number;
+    name: string;
+    description: string;
+    status: string;
 };
 
 export type TypesTreeSubCaseLink = {
@@ -144,4 +160,21 @@ export function offerMilestoneTypes(data: TypesTreeData) {
 /** Typy spraw nieprzypisane do żadnego kamienia - też muszą być widoczne. */
 export function caseTypesWithoutMilestone(data: TypesTreeData) {
     return data.caseTypes.filter((caseType) => caseType.milestoneTypeId === null);
+}
+
+/**
+ * Czy pozycja powstaje przy nowej umowie SAMA.
+ *
+ * Sama flaga „domyślny” nie wystarcza: zapytanie budujące strukturę umowy startuje
+ * od tabeli szablonów, więc pozycja bez szablonu nie powstanie mimo flagi. Ta sama
+ * reguła obowiązuje w drzewie przy zakładaniu umowy (isCreatedByLegacyDefault) -
+ * jedno miejsce na warstwę, żeby obie nie mogły się rozjechać.
+ */
+export function isCreatedAutomatically(item: { isDefault: boolean; _templateId: number | null }) {
+    return item.isDefault && item._templateId !== null;
+}
+
+/** Oznaczony jako domyślny, ale bez szablonu - obietnica bez pokrycia. */
+export function hasTemplateGap(item: { isDefault: boolean; _templateId: number | null }) {
+    return item.isDefault && item._templateId === null;
 }

@@ -71,11 +71,14 @@ export function TypesTreeGraph({
                     const midY = (from.y + from.h / 2 + to.y + to.h / 2) / 2;
                     return (
                         <g key={`${edge.fromId}->${edge.toId}-${index}`}>
+                            {/* Pomarańczowa przerywana = oznaczone jako domyślne, ale bez
+                                szablonu, więc mimo flagi nie powstanie. */}
                             <path
                                 d={path}
                                 fill="none"
-                                stroke={edge.isDefault ? "#198754" : "#ced4da"}
-                                strokeWidth={edge.isDefault ? 2.5 : 1.5}
+                                stroke={edge.hasGap ? "#fd7e14" : edge.isDefault ? "#198754" : "#ced4da"}
+                                strokeWidth={edge.isDefault || edge.hasGap ? 2.5 : 1.5}
+                                strokeDasharray={edge.hasGap ? "6 4" : undefined}
                             />
                             {edge.label && (
                                 <>

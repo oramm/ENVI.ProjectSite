@@ -54,6 +54,9 @@ export function AddTypeModal({
     const [isSubCaseOnly, setIsSubCaseOnly] = useState(false);
     const [parentCaseTypeIds, setParentCaseTypeIds] = useState<number[]>([]);
     const [milestoneTypeId, setMilestoneTypeId] = useState<number | "">("");
+    const [templateName, setTemplateName] = useState("");
+    const [templateDescription, setTemplateDescription] = useState("");
+    const [taskTemplates, setTaskTemplates] = useState<{ name: string; description: string; status: string }[]>([]);
     const [wasSubmitted, setWasSubmitted] = useState(false);
 
     const isEditing = !!editTarget;
@@ -82,6 +85,9 @@ export function AddTypeModal({
             setIsUnique(!!entity.isUniquePerContract);
             setIsSubCaseOnly(false);
             setMilestoneTypeId("");
+            setTemplateName(entity._templateName ?? "");
+            setTemplateDescription(entity._templateDescription ?? "");
+            setTaskTemplates([]);
             return;
         }
         if (editTarget?.kind === "caseType") {
@@ -98,6 +104,9 @@ export function AddTypeModal({
                     .filter((link) => link.subCaseTypeId === entity.id)
                     .map((link) => link.parentCaseTypeId),
             );
+            setTemplateName(entity._templateName ?? "");
+            setTemplateDescription(entity._templateDescription ?? "");
+            setTaskTemplates((entity._taskTemplates ?? []).map((t) => ({ name: t.name, description: t.description, status: t.status })));
             return;
         }
 
@@ -108,6 +117,9 @@ export function AddTypeModal({
         setIsUnique(false);
         setIsSubCaseOnly(false);
         setParentCaseTypeIds([]);
+        setTemplateName("");
+        setTemplateDescription("");
+        setTaskTemplates([]);
         setMilestoneTypeId(defaultMilestoneTypeId ?? "");
     }, [kind, editTarget, defaultMilestoneTypeId, milestoneEdge?.folderNumber, milestoneEdge?.isDefault]);
 
@@ -116,6 +128,25 @@ export function AddTypeModal({
     const maxFolderLength = isMilestone ? 2 : 8;
     const isNameLocked = !!editTarget && editTarget.entity._isNameLocked;
     const usageCount = editTarget?.entity._usageCount ?? 0;
+
+    /**
+     * Rozjazd, który ISTNIAŁ przed otwarciem okna: pozycja oznaczona jako domyślna,
+     * ale bez szablonu, więc mimo flagi nie powstawała. Liczymy ze stanu ZAPISANEGO,
+     * nie z pola formularza - inaczej komunikat wyskakiwałby każdemu, kto właśnie
+     * zaznacza przełącznik po raz pierwszy.
+     */
+    const hadTemplateGap = !editTarget
+        ? false
+        : editTarget.kind === "milestoneType"
+          ? !!milestoneEdge?.isDefault && editTarget.entity._templateId === null
+          : editTarget.entity.isDefault && editTarget.entity._templateId === null;
+
+    /**
+     * Ustawienia tworzenia pokazujemy tylko wtedy, gdy szablon istnieje albo powstanie.
+     * W stanie „nie powstaje samo i szablonu nie ma” te pola nie miałyby gdzie trafić,
+     * więc ich obecność wprowadzałaby w błąd.
+     */
+    const showTemplateSection = isDefault || (!!editTarget && editTarget.entity._templateId !== null);
 
     /** Komunikaty pokazujemy dopiero po próbie zapisu, żeby pusty formularz nie krzyczał. */
     const nameError = name.trim().length === 0 ? "Podaj nazwę." : null;
@@ -179,6 +210,8 @@ export function AddTypeModal({
                     // żądania i samo "9" dotarłoby tam jako liczba.
                     folderNumber: String(folderNumber).trim(),
                     isDefault,
+                    templateName: showTemplateSection ? templateName.trim() : "",
+                    templateDescription: showTemplateSection ? templateDescription.trim() : "",
                 },
                 editTarget?.entity.id,
             );
@@ -196,6 +229,9 @@ export function AddTypeModal({
                 isInScrumByDefault: false,
                 isSubCaseOnly,
                 parentCaseTypeIds,
+                templateName: showTemplateSection ? templateName.trim() : "",
+                templateDescription: showTemplateSection ? templateDescription.trim() : "",
+                taskTemplates: showTemplateSection ? taskTemplates.filter((t) => t.name.trim().length > 0) : [],
             },
             editTarget?.entity.id,
         );
@@ -211,7 +247,14 @@ export function AddTypeModal({
     const titleSubject = isMilestone ? "typ kamienia milowego" : "typ sprawy";
 
     return (
-        <Modal show onHide={onClose} centered>
+        // Szerzej niż domyślnie: wiersz zadania startowego to nazwa, opis, status
+        // i przycisk usuwania - w wąskim oknie zwijają się do nieczytelnych pól.
+        //
+        // BEZ `centered`: wyśrodkowane w pionie okno przy każdej zmianie wysokości
+        // przelicza swoje położenie, więc rozwinięcie ustawień tworzenia przesuwało
+        // w górę całą treść i przełącznik uciekał spod kursora. Okno zakotwiczone
+        // u góry rośnie tylko w dół, a to, co nad zmianą, zostaje na miejscu.
+        <Modal show onHide={onClose} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title className="fs-5">{`${titleAction} ${titleSubject}`}</Modal.Title>
             </Modal.Header>
@@ -309,12 +352,60 @@ export function AddTypeModal({
                     <Form.Control.Feedback type="invalid">{descriptionError}</Form.Control.Feedback>
                 </Form.Group>
 
+                {/* Jeden przełącznik zamiast dwóch miejsc konfiguracji: zaznaczenie
+                    ustawia flagę „domyślny” ORAZ zakłada szablon, bez którego pozycja
+                    i tak by nie powstała. Odznaczenie szablonu nie kasuje - trzyma
+                    nazwę, a przy sprawach także zadania startowe. */}
                 <Form.Check
                     type="switch"
-                    label={isMilestone ? "Domyślny dla tego typu umowy" : "Domyślny w kamieniu"}
+                    label="Powstaje automatycznie przy nowej umowie"
                     checked={isDefault}
                     onChange={(event) => setIsDefault(event.target.checked)}
                 />
+                {hadTemplateGap && (
+                    <Form.Text className="text-warning d-block">
+                        Dotąd nie powstawało, mimo zaznaczenia - brakowało szablonu. Zapis to naprawi.
+                    </Form.Text>
+                )}
+
+                {!showTemplateSection && (
+                    <Form.Text muted className="d-block">
+                        Zaznacz, żeby ustawić nazwę i {isMilestone ? "opis" : "zadania startowe"} pozycji tworzonej
+                        automatycznie.
+                    </Form.Text>
+                )}
+
+                {showTemplateSection && (
+                <div className="border rounded p-2 mt-2 mb-2">
+                    <Row>
+                        <Form.Group as={Col} md={6}>
+                            <Form.Label className="small mb-1">
+                                Nazwa {isMilestone ? "tworzonego kamienia" : "tworzonej sprawy"}
+                            </Form.Label>
+                            <Form.Control
+                                size="sm"
+                                value={templateName}
+                                placeholder="puste = nazwa typu"
+                                onChange={(event) => setTemplateName(event.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group as={Col} md={6}>
+                            <Form.Label className="small mb-1">Opis</Form.Label>
+                            <Form.Control
+                                size="sm"
+                                value={templateDescription}
+                                onChange={(event) => setTemplateDescription(event.target.value)}
+                            />
+                        </Form.Group>
+                    </Row>
+                    {isMilestone && (
+                        <Form.Text muted>
+                            Nazwa jest wspólna dla wszystkich typów umów używających tego kamienia - to, czy kamień
+                            powstaje, ustawia się osobno dla każdego typu umowy.
+                        </Form.Text>
+                    )}
+                </div>
+                )}
                 <Form.Check
                     className="mt-2"
                     type="switch"
@@ -324,8 +415,102 @@ export function AddTypeModal({
                 />
                 {!isMilestone && (
                     <>
+                        {/* Zadania startowe. Do tej pory ta konfiguracja nie miała
+                            żadnego interfejsu, choć decyduje o pierwszym kontakcie
+                            zespołu z nową sprawą. */}
+                        {showTemplateSection && (
+                        <div className="mt-2">
+                            <Form.Label className="mb-1">Zadania zakładane razem ze sprawą</Form.Label>
+                            {taskTemplates.length === 0 && (
+                                <div className="text-muted small mb-2">
+                                    Brak - sprawa powstanie pusta.
+                                </div>
+                            )}
+                            {taskTemplates.map((task, index) => (
+                                <Row key={index} className="g-1 mb-1 align-items-start">
+                                    <Col md={4}>
+                                        <Form.Control
+                                            size="sm"
+                                            placeholder="Nazwa zadania"
+                                            value={task.name}
+                                            onChange={(event) =>
+                                                setTaskTemplates((current) =>
+                                                    current.map((item, i) =>
+                                                        i === index ? { ...item, name: event.target.value } : item,
+                                                    ),
+                                                )
+                                            }
+                                        />
+                                    </Col>
+                                    <Col md={4}>
+                                        <Form.Control
+                                            size="sm"
+                                            placeholder="Opis"
+                                            value={task.description}
+                                            onChange={(event) =>
+                                                setTaskTemplates((current) =>
+                                                    current.map((item, i) =>
+                                                        i === index
+                                                            ? { ...item, description: event.target.value }
+                                                            : item,
+                                                    ),
+                                                )
+                                            }
+                                        />
+                                    </Col>
+                                    <Col md={3}>
+                                        <Form.Select
+                                            size="sm"
+                                            value={task.status}
+                                            onChange={(event) =>
+                                                setTaskTemplates((current) =>
+                                                    current.map((item, i) =>
+                                                        i === index ? { ...item, status: event.target.value } : item,
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            {/* Pusty status backend zamienia przy tworzeniu
+                                                zadania na „Nie rozpoczęty”, więc osobna
+                                                pozycja o tej samej nazwie byłaby duplikatem. */}
+                                            <option value="">Nie rozpoczęty</option>
+                                            <option value="Backlog">Backlog</option>
+                                        </Form.Select>
+                                    </Col>
+                                    <Col md={1}>
+                                        <Button
+                                            size="sm"
+                                            variant="outline-secondary"
+                                            className="w-100"
+                                            title="Usuń zadanie"
+                                            onClick={() =>
+                                                setTaskTemplates((current) =>
+                                                    current.filter((_, i) => i !== index),
+                                                )
+                                            }
+                                        >
+                                            &times;
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            ))}
+                            <Button
+                                size="sm"
+                                variant="outline-success"
+                                onClick={() =>
+                                    setTaskTemplates((current) => [
+                                        ...current,
+                                        { name: "", description: "", status: "" },
+                                    ])
+                                }
+                            >
+                                Dodaj zadanie
+                            </Button>
+                        </div>
+                        )}
+
                         <Form.Check
-                            className="mt-2"
+                            className="mt-3"
                             type="switch"
                             label="Wyłącznie jako podsprawa"
                             checked={isSubCaseOnly}
