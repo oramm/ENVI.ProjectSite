@@ -19,7 +19,7 @@ export default function PersonsSearch({ title }: { title: string }) {
     }
 
     function renderContact(person: PersonData) {
-        const phone = person.phone || person.cellPhone || "-";
+        const phone = person.phone || person.cellphone || "-";
         const email = person.email || "-";
 
         return (

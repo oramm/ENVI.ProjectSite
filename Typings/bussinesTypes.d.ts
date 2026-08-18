@@ -463,7 +463,7 @@ export interface PersonData extends RepositoryDataItem {
     name: string;
     surname: string;
     email: string;
-    cellPhone: string;
+    cellphone: string;
     phone: string;
     comment: string;
     _alias: string;
@@ -477,7 +477,7 @@ export interface SystemUserData extends RepositoryDataItem {
     name: string;
     surname: string;
     email: string;
-    cellPhone: string;
+    cellphone: string;
     phone: string;
     comment: string;
     _alias: string;

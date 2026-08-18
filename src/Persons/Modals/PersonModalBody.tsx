@@ -30,7 +30,7 @@ export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Perso
             surname: initialData?.surname || "",
             position: initialData?.position || "",
             email: initialData?.email || "",
-            cellPhone: initialData?.cellPhone || "",
+            cellphone: initialData?.cellphone || "",
             phone: initialData?.phone || "",
             comment: initialData?.comment || "",
             //systemRoleId: initialData?.systemRoleId,
@@ -127,15 +127,15 @@ export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Perso
                 <ErrorMessage name="position" errors={errors} />
             </Form.Group>
 
-            <Form.Group controlId="cellPhone">
+            <Form.Group controlId="cellphone">
                 <Form.Label>Telefon komórkowy</Form.Label>
                 <Form.Control
                     placeholder="Podaj numer komórki"
-                    isInvalid={!!errors?.cellPhone}
-                    isValid={!errors?.cellPhone}
-                    {...register("cellPhone")}
+                    isInvalid={!!errors?.cellphone}
+                    isValid={!errors?.cellphone}
+                    {...register("cellphone")}
                 />
-                <ErrorMessage name="cellPhone" errors={errors} />
+                <ErrorMessage name="cellphone" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="phone">
