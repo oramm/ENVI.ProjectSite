@@ -105,6 +105,15 @@ export interface Contract extends RepositoryDataItem {
      *  `undefined` = typ umowy w ogóle nie podlega synchronizacji — wtedy lista NIE rysuje
      *  plakietki. `false` = mógłby być zintegrowany, ale nie jest. Tylko do odczytu. */
     _isFidmanIntegrated?: boolean;
+    /** Kontrola „czy wgrano umowę na Dysk". `true` = sprawdzono i brakuje, `false` = sprawdzono
+     *  i jest, `undefined` = NIE sprawdzano (umowa bez sprawy „umowa", czyli starsza struktura
+     *  folderów, albo kontrola tam nie dotarła). Plakietkę rysujemy WYŁĄCZNIE przy `true`. */
+    _isContractDocumentMissing?: boolean;
+    /** Kiedy kontrola ostatnio to ustaliła. Bez tej daty flaga nie mówi, czy opisuje dzisiejszy
+     *  stan, i nie tłumaczy, dlaczego świeżo wgrana umowa nadal jest oznaczona. */
+    _contractDocumentCheckedAt?: string;
+    /** Folder, w którym umowa ma leżeć — plakietka braku jest odnośnikiem prowadzącym tam. */
+    _contractDocumentFolderUrl?: string;
 }
 
 export interface OurContract extends Contract {

@@ -27,6 +27,7 @@
  *  - terminy nieobowiązkowe pojawiają się tylko wtedy, gdy są wpisane.
  */
 import React from "react";
+import { Badge } from "react-bootstrap";
 import { EntityData, OtherContract, OurContract, PersonData } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
 import {
@@ -333,7 +334,8 @@ function ContractDates({ contract }: { contract: ContractRowContract }) {
 function ContractRowBottomBar({ contract }: { contract: ContractRowContract }) {
     const names = contract._contractRangesNames ?? [];
     const isIntegrated = contract._isFidmanIntegrated === true;
-    if (!names.length && !isIntegrated) return null;
+    const isDocumentMissing = contract._isContractDocumentMissing === true;
+    if (!names.length && !isIntegrated && !isDocumentMissing) return null;
 
     return (
         <div style={S.bottom}>
@@ -345,9 +347,52 @@ function ContractRowBottomBar({ contract }: { contract: ContractRowContract }) {
                 ))}
             </div>
             {/* ponytail: bez opakowania i bez `margin-left:auto` — pusty div zakresów zostaje
-                pierwszym dzieckiem, więc `space-between` sam dosuwa plakietkę do prawej. */}
-            {isIntegrated && <FidmanSyncBadge status="SENT" />}
+                pierwszym dzieckiem, więc `space-between` sam dosuwa plakietki do prawej. */}
+            <span className="d-flex flex-wrap align-items-center gap-2">
+                <ContractDocumentBadge contract={contract} />
+                {isIntegrated && <FidmanSyncBadge status="SENT" />}
+            </span>
         </div>
+    );
+}
+
+/**
+ * Plakietka braku umowy na Dysku — wynik kontroli z zadania cyklicznego
+ * (PS-nodeJS: contractDocuments/ContractDocumentsCheck).
+ *
+ * Rysowana WYŁĄCZNIE przy `true`. `false` znaczy „sprawdzono, umowa jest" — nie ma czego
+ * pokazywać. `undefined` znaczy „NIE sprawdzano", bo umowa nie ma sprawy „umowa" (starsza
+ * struktura folderów, ok. 166 z 785) albo kontrola tam jeszcze nie dotarła; oznaczanie takiej
+ * umowy byłoby zarzutem bez pokrycia.
+ *
+ * Jest odnośnikiem otwierającym dokładnie ten folder, w którym pliku brakuje — komunikat
+ * o braku ma być drogą do jego usunięcia, a nie samym zarzutem. Gdy backend nie oddał adresu
+ * folderu, zostaje sama plakietka bez odnośnika.
+ *
+ * Kolor: `danger`, a nie `warning`. Obok stoi zielona plakietka FIDmana o odwrotnej wymowie
+ * („wszystko w porządku") — dwie plakietki w jednej linii muszą się różnić na tyle, żeby nikt
+ * nie odczytał ich jako dwóch stopni tego samego stanu.
+ */
+export function ContractDocumentBadge({ contract }: { contract: ContractRowContract }) {
+    if (contract._isContractDocumentMissing !== true) return null;
+
+    const checkedAt = contract._contractDocumentCheckedAt;
+    const badge = (
+        <Badge bg="danger" text="light" title={checkedAt ? `Sprawdzono ${formatDate(checkedAt)}` : undefined}>
+            Uzupełnij umowę na dysku
+        </Badge>
+    );
+    if (!contract._contractDocumentFolderUrl) return badge;
+
+    return (
+        <a
+            href={contract._contractDocumentFolderUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none" }}
+        >
+            {badge}
+        </a>
     );
 }
 

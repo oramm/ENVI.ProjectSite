@@ -23,6 +23,7 @@ import {
     contractNameValidationSchema,
     contractStatusValidationSchema,
 } from "../Modals/ContractValidationSchema";
+import { ContractDocumentBadge } from "../ContractRowContent";
 import { useContractDetails } from "./ContractDetailsContext";
 
 export function ContractMainHeader() {
@@ -108,6 +109,7 @@ export function ContractMainHeader() {
                 </Col>
                 <Col sm={12} md={6} className="d-flex align-items-center gap-2">
                     <FidmanSyncSection />
+                    <ContractDocumentSection />
                 </Col>
                 <Col sm={12} md={6}>
                     <PartialEditTrigger
@@ -301,6 +303,30 @@ function FidmanSyncSection() {
                 <Alert variant="danger" className="mb-0 py-1 px-2">
                     {error}
                 </Alert>
+            )}
+        </>
+    );
+}
+
+/**
+ * Wynik cyklicznej kontroli „czy wgrano umowę na Dysk". Ta sama plakietka co na liście —
+ * jeden wygląd tego stanu w całej aplikacji.
+ *
+ * W karcie dokładamy DATĘ sprawdzenia, i to nie jest ozdobnik: bez niej użytkownik, który
+ * właśnie wgrał umowę, widzi ostrzeżenie i nie ma jak się dowiedzieć, że pochodzi ono
+ * z nocnego przebiegu, a nie z bieżącego stanu folderu.
+ */
+function ContractDocumentSection() {
+    const { contract } = useContractDetails();
+    if (!contract || contract._isContractDocumentMissing !== true) return null;
+
+    return (
+        <>
+            <ContractDocumentBadge contract={contract} />
+            {contract._contractDocumentCheckedAt && (
+                <span className="text-muted small">
+                    sprawdzono {ToolsDate.dateYMDtoDMY(contract._contractDocumentCheckedAt.slice(0, 10))}
+                </span>
             )}
         </>
     );

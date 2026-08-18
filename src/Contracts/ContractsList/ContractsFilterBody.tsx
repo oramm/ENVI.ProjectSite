@@ -71,6 +71,21 @@ export function ContractsFilterBody() {
                     <option value="NOT_INTEGRATED">Do zintegrowania (Żółty, Czerwony)</option>
                 </Form.Select>
             </Form.Group>
+            {/* Wynik cyklicznej kontroli folderów na Dysku. Pole wyboru, a nie lista rozwijana:
+                sensowna opcja jest dokładnie jedna, więc select byłby listą z jedną pozycją.
+                Zaznaczenie pokazuje wyłącznie umowy SPRAWDZONE, w których pliku nie znaleziono —
+                umowy bez sprawy „umowa" (starsza struktura folderów) nie są sprawdzane i nie
+                wpadają tu, bo nie ma im czego zarzucić.
+                Warunek po stronie API: ContractRepository.makeContractDocumentCondition(). */}
+            <Form.Group as={Col} xl={4} className="d-flex align-items-end mb-2">
+                <Form.Check
+                    type="checkbox"
+                    id="contracts-only-missing-document"
+                    className="text-nowrap"
+                    label="Tylko z brakującą umową na dysku"
+                    {...register("onlyMissingContractDocument")}
+                />
+            </Form.Group>
             {/* RZL-5 — kanon plakietki typu kontraktu (40_wiki/firma/technologie/
                 plakietka-typu-kontraktu-akcent, sekcja „Uzupełnienie po stronie listy"):
                 akcent na plakietce mówi „czy TA umowa jest nietypowa", ten filtr — „pokaż
