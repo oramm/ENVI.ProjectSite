@@ -2,6 +2,7 @@ import React from "react";
 import { StaffMemberData } from "../../../../Typings/bussinesTypes";
 import { GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
+import { throwOnSaveErrors } from "../../../Persons/personsV2Helpers";
 import { saveProjectAssignments } from "../../SystemUsers/Modals/SystemUserModalButtons";
 import { staffMembersRepository } from "../StaffMembersController";
 import { StaffMemberModalBody } from "./StaffMemberModalBody";
@@ -19,14 +20,22 @@ export function StaffMemberEditModalButton({
     modalProps: { onEdit, initialData },
 }: SpecificEditModalButtonProps<StaffMemberData>) {
     async function handleEdit(editedObject: StaffMemberData) {
-        // saveProjectAssignments oczekuje osoby: `id` to PersonId, bo tak właśnie
-        // backend identyfikuje rekord uprawnień.
-        await saveProjectAssignments({
-            id: editedObject.personId ?? editedObject.id,
-            systemRoleId: (editedObject as any).systemRoleId,
-            _projectAssignments: (editedObject as any)._projectAssignments,
-        } as any);
+        const errors: string[] = [];
+        try {
+            // saveProjectAssignments oczekuje osoby: `id` to PersonId, bo tak właśnie
+            // backend identyfikuje rekord uprawnień.
+            await saveProjectAssignments({
+                id: editedObject.personId ?? editedObject.id,
+                systemRoleId: (editedObject as any).systemRoleId,
+                _projectAssignments: (editedObject as any)._projectAssignments,
+            } as any);
+        } catch (error) {
+            errors.push(`Przypisania projektów: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        // Lista dostaje zapisane flagi niezależnie od wyniku przypisań - one już są w bazie.
         onEdit(editedObject);
+        // Dopiero teraz błąd: modal zostaje otwarty i pokazuje, czego NIE zapisał.
+        throwOnSaveErrors(errors);
     }
 
     return (

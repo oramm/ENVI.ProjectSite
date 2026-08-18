@@ -214,14 +214,34 @@ export type SavePersonV2Result = {
 };
 
 /**
+ * Payload bez ani jednego zdefiniowanego pola nie ma czego zapisać — nie wysyłamy żądania.
+ *
+ * Dla konta jest to wręcz konieczne: serwer odrzuca pusty PUT (400 "Brak danych konta do
+ * aktualizacji" — patrz `hasAccountUpsertWriteField` w PS-nodeJS/src/persons/PersonsRouters.ts),
+ * a moduł Persons woła zapis z pustym `{}` przy KAŻDEJ edycji osoby. Dopóki błędy szły tylko
+ * do konsoli, nikt tego nie widział; skoro teraz trafiają do modala, pusty payload musi
+ * po prostu nie generować żądania.
+ *
+ * Dla profilu serwer pustego PUT-a nie odrzuca, tylko zakłada PUSTY wiersz `PersonProfiles`
+ * — czyli robi zapis "na zapas" za każdą edycję osoby. Nie jest potrzebny: moduły profilu
+ * (wykształcenie, doświadczenie, umiejętności) tworzą ten wiersz same, leniwie, przy
+ * pierwszym realnym wpisie (`ensurePersonProfileId` w ich repozytoriach), a `GET .../profile`
+ * dla brakującego wiersza zwraca `null`, co UI obsługuje ("Brak profilu").
+ */
+function hasAnyFieldToWrite(payload: Record<string, unknown>): boolean {
+    return Object.values(payload).some((value) => value !== undefined);
+}
+
+/**
  * Wspolna funkcja zapisu account + profile v2 z ujednolicona obsluga bledow.
  * Kolejnosc: account -> profile (sekwencyjnie).
- * Bledy nie blokuja UI -- dane legacy zapisaly sie poprawnie.
- * Kazdy blad jest logowany i zwracany w tablicy errors.
+ * Funkcja nie rzuca -- kazdy blad jest logowany i zwracany w tablicy errors, zeby
+ * wywolujacy sam zdecydowal, co z nim zrobic. Modale osob i uzytkownikow systemu
+ * podaja te tablice do `throwOnSaveErrors`, dzieki czemu blad widac w pasku bledu.
  *
  * @param personId - identyfikator osoby
- * @param accountPayload - payload account (moze byc pusty {})
- * @param profilePayload - payload profile (moze byc pusty {})
+ * @param accountPayload - payload account (pusty {} => PUT jest pomijany)
+ * @param profilePayload - payload profile (pusty {} => PUT jest pomijany)
  * @param callerContext - kontekst wywolania do logow (np. "SystemUsers", "Persons")
  */
 export async function savePersonV2AccountAndProfile(
@@ -233,21 +253,25 @@ export async function savePersonV2AccountAndProfile(
     const result: SavePersonV2Result = { account: null, profile: null, errors: [] };
 
     // Account pierwszy -- musi istniec przed profile
-    try {
-        result.account = await putPersonAccountV2(personId, accountPayload);
-    } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
-        result.errors.push(`PUT account: ${msg}`);
-        console.warn("[%s] savePersonV2: blad PUT account dla personId=%d: %s", callerContext, personId, msg);
+    if (hasAnyFieldToWrite(accountPayload)) {
+        try {
+            result.account = await putPersonAccountV2(personId, accountPayload);
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            result.errors.push(`Konto systemowe: ${msg}`);
+            console.warn("[%s] savePersonV2: blad PUT account dla personId=%d: %s", callerContext, personId, msg);
+        }
     }
 
     // Profile drugi
-    try {
-        result.profile = await putPersonProfileV2(personId, profilePayload);
-    } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
-        result.errors.push(`PUT profile: ${msg}`);
-        console.warn("[%s] savePersonV2: blad PUT profile dla personId=%d: %s", callerContext, personId, msg);
+    if (hasAnyFieldToWrite(profilePayload)) {
+        try {
+            result.profile = await putPersonProfileV2(personId, profilePayload);
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            result.errors.push(`Profil osoby: ${msg}`);
+            console.warn("[%s] savePersonV2: blad PUT profile dla personId=%d: %s", callerContext, personId, msg);
+        }
     }
 
     if (result.errors.length > 0) {
@@ -260,6 +284,22 @@ export async function savePersonV2AccountAndProfile(
     }
 
     return result;
+}
+
+/**
+ * Zamienia zebrane błędy domknięcia zapisu w wyjątek, który `GeneralModal` pokaże
+ * w pasku błędu (`handleSubmitRepository` łapie go i ustawia `errorMessage`).
+ *
+ * Tak dotąd ginął konflikt SystemEmail (`PERSON_ACCOUNT_SYSTEM_EMAIL_CONFLICT`):
+ * dane osoby zapisywały się, konto NIE, a modal zamykał się jak po udanym zapisie —
+ * użytkownik nie miał żadnego sygnału, że coś nie przeszło.
+ *
+ * Wołać PO callbacku odświeżającym listę: dane legacy są już w bazie, więc lista
+ * ma pokazać ich nową wersję niezależnie od tego, że domknięcie się nie udało.
+ */
+export function throwOnSaveErrors(errors: string[]): void {
+    if (errors.length === 0) return;
+    throw new Error(`Dane osoby zapisano, ale część danych NIE została zapisana:\n${errors.join("\n")}`);
 }
 
 /** Projekt przypisany pracownikowi kontraktowemu (kształt zgodny z ProjectSelector). */

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Alert, Spinner, Container, Placeholder, Row, Col, ProgressBar } from "react-bootstrap";
 import { useForm, FieldValues, set } from "react-hook-form";
 import RepositoryReact from "../../React/RepositoryReact";
@@ -7,7 +7,7 @@ import { parseFieldValuestoFormData as parseFieldValuesToFormData } from "../Res
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "../../Css/styles.css";
-import { ModalBodyProps } from "./ModalsTypes";
+import { ModalBodyProps, ModalSaveCallback } from "./ModalsTypes";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ErrorBoundary from "./ErrorBoundary";
 import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
@@ -21,10 +21,10 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     subtitle?: string;
     headerBadge?: React.ReactNode;
     isEditing: boolean;
-    onEdit?: (object: DataItemType) => void;
+    onEdit?: ModalSaveCallback<DataItemType>;
     specialActionRoute?: string;
     specialRetrieveActionRoute?: string;
-    onAddNew?: (object: DataItemType) => void;
+    onAddNew?: ModalSaveCallback<DataItemType>;
     onClose: () => void;
     repository: RepositoryReact<DataItemType>;
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
@@ -138,6 +138,17 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
 }: GeneralModalProps<DataItemType>) {
     const [dataObjectFromServer, setDataObjectFromServer] = useState<DataItemType | undefined>(undefined);
     const [isLoadingData, setIsLoadingData] = useState(false);
+    /**
+     * Rekord utworzony w poprzedniej próbie dodania. Gdy sam `addNewItem` przeszedł, a padło
+     * dopiero domknięcie zapisu (`onAddNew` — np. PUT konta systemowego), modal zostaje otwarty
+     * z błędem. Ponowne "Zatwierdź" musi wtedy powtórzyć TYLKO domknięcie: bez tego drugie
+     * kliknięcie zakładałoby drugi rekord.
+     *
+     * Konsekwencja: przy ponowieniu zmiany w polach rekordu bazowego nie idą już na serwer —
+     * poprawiać trzeba to, na czym poległo domknięcie. `GeneralModalContent` montuje się ze
+     * świeżym `key` przy każdym otwarciu, więc ref nie przecieka między otwarciami modala.
+     */
+    const createdItemRef = useRef<DataItemType | null>(null);
 
     const [errorMessage, setErrorMessage] = useState("");
     const [requestPending, setRequestPending] = useState(false);
@@ -284,7 +295,10 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
         // dołącz oryginalne dane jako JSON-string
         data.append("_originalData", JSON.stringify(currentDataItem));
         const editedObject = await repository.editItem(data as FormData, specialActionRoute, fieldsToUpdate);
-        if (onEdit) onEdit(editedObject);
+        // `await`, bo część handlerów domyka zapis własnymi żądaniami (np. PUT konta v2).
+        // Bez tego ich odrzucona obietnica nie wracała do `handleSubmitRepository`, modal
+        // zamykał się jak po udanym zapisie, a błąd lądował najwyżej w konsoli.
+        if (onEdit) await onEdit(editedObject);
     }
 
     /** uzupełnij o dane z obiektu currentDataItem, które nie zostały przesłane w formularzu */
@@ -320,7 +334,8 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
             fieldsToUpdate,
             handleProgress
         );
-        if (onEdit) onEdit(editedObject);
+        // patrz komentarz w handleEditWithFiles — czekamy, żeby błąd handlera dotarł do modala
+        if (onEdit) await onEdit(editedObject);
     }
 
     async function handleAdd(data: FormData | FieldValues) {
@@ -333,20 +348,24 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
             };
         }
 
-        const newObject = await repository.addNewItem(data, undefined, handleProgress);
+        const newObject = createdItemRef.current ?? (await repository.addNewItem(data, undefined, handleProgress));
+        createdItemRef.current = newObject;
         if (onAddNew) {
             // Merge form data into server response so callbacks retain form fields
             // (e.g. systemRoleId, systemEmail) that the backend strips before saving.
             // Server values take precedence; _contextData is stripped to avoid leaking
             // internal modal state into domain callbacks.
+            // `await` z tego samego powodu co przy onEdit — handler może dopiero
+            // dopisywać dane (konto systemowe, przypisania projektów) i jego błąd
+            // musi zatrzymać modal, a nie zniknąć.
             if (data instanceof FormData) {
-                onAddNew(newObject);
+                await onAddNew(newObject);
             } else {
                 const { _contextData: _stripped, ...cleanFormData } = data as any;
                 const enriched = { ...cleanFormData, ...newObject } as DataItemType;
                 // Keep repository.items in sync so FilterableTable reads enriched data
                 if (newObject.id) repository.replaceItemById(newObject.id, enriched);
-                onAddNew(enriched);
+                await onAddNew(enriched);
             }
         }
     }

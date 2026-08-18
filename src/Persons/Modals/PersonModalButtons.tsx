@@ -5,23 +5,34 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { personsRepository } from "../PersonsController";
 import { PersonModalBody } from "./PersonModalBody";
 import { makePersonValidationSchema } from "./PersonValidationSchema";
-import { savePersonV2AccountAndProfile } from "../personsV2Helpers";
+import { savePersonV2AccountAndProfile, throwOnSaveErrors } from "../personsV2Helpers";
+
+/**
+ * Domknięcie zapisu osoby danymi v2.
+ *
+ * UWAGA: oba payloady są dziś puste, więc `savePersonV2AccountAndProfile` pomija oba PUT-y
+ * i to wywołanie NIE generuje żadnego żądania. Zostaje jako jedno miejsce podpięcia, gdy
+ * formularz Osób dostanie pola konta (`systemRoleId`, `systemEmail` są w nim zakomentowane)
+ * albo profilu (`headline`, `summary`) - wtedy trzeba tu wstawić realne payloady.
+ *
+ * Wiersz `PersonProfiles` nie jest już zakładany przy zapisie osoby: tworzą go leniwie
+ * moduły profilu przy pierwszym wpisie (wykształcenie / doświadczenie / specjalizacja).
+ */
+async function savePersonV2Data(person: PersonData): Promise<string[]> {
+    if (!person?.id) return [];
+    const result = await savePersonV2AccountAndProfile(person.id, {}, {}, "Persons");
+    return result.errors;
+}
 
 export function PersonEditModalButton({
     modalProps: { onEdit, initialData },
 }: SpecificEditModalButtonProps<PersonData>) {
     async function handleEdit(editedObject: PersonData) {
-        // Po zapisie legacy, wyslij PUT v2 account + profile
-        // Pola account (systemRoleId, systemEmail) sa zakomentowane w formularzu Persons
-        // Wysylamy puste payloady -- endpointy v2 tworza/aktualizuja rekordy
-        if (editedObject?.id) {
-            try {
-                await savePersonV2AccountAndProfile(editedObject.id, {}, {}, "Persons");
-            } catch (err) {
-                console.error("[Persons] savePersonV2: błąd przy edycji osoby id=%d", editedObject.id, err);
-            }
-        }
+        const errors = await savePersonV2Data(editedObject);
+        // Lista dostaje dane legacy niezależnie od wyniku v2 - one już są w bazie.
         onEdit(editedObject);
+        // Dopiero teraz błąd: modal zostaje otwarty i pokazuje, czego NIE zapisał.
+        throwOnSaveErrors(errors);
     }
 
     return (
@@ -45,14 +56,9 @@ export function PersonEditModalButton({
 
 export function PersonAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<PersonData>) {
     async function handleAddNew(newObject: PersonData) {
-        if (newObject?.id) {
-            try {
-                await savePersonV2AccountAndProfile(newObject.id, {}, {}, "Persons");
-            } catch (err) {
-                console.error("[Persons] savePersonV2: błąd po dodaniu osoby id=%d", newObject.id, err);
-            }
-        }
+        const errors = await savePersonV2Data(newObject);
         onAddNew(newObject);
+        throwOnSaveErrors(errors);
     }
 
     return (

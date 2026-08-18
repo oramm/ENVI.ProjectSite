@@ -108,7 +108,14 @@ export default function ContractOurDetails() {
                 <InvoiceAddNewModalButton
                     modalProps={{
                         onAddNew: async () => {
-                            await fetchData();
+                            // Faktura jest już zapisana, a modal czeka na ten callback - nieudane
+                            // odświeżenie widoku nie może wyglądać jak nieudany zapis i blokować
+                            // zamknięcia. Dane wrócą przy następnym wejściu w kontrakt.
+                            try {
+                                await fetchData();
+                            } catch (error) {
+                                console.error("Nie udało się odświeżyć danych kontraktu po dodaniu faktury", error);
+                            }
                         },
                         contextData: contract,
                     }}

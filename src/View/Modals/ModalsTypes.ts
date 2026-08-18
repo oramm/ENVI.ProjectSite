@@ -19,6 +19,17 @@ export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryD
     additionalProps?: any;
 };
 
+/**
+ * Callback wołany po udanym zapisie w repozytorium.
+ *
+ * Może być asynchroniczny — `GeneralModal` na niego CZEKA. Dzięki temu błąd domknięcia
+ * zapisu (np. PUT konta systemowego v2) trafia do paska błędu modala zamiast zniknąć
+ * jako odrzucona obietnica, której nikt nie odbiera.
+ */
+export type ModalSaveCallback<DataItemType extends RepositoryDataItem = RepositoryDataItem> = (
+    object: DataItemType
+) => void | Promise<void>;
+
 type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     additionalModalBodyProps?: any;
@@ -53,7 +64,7 @@ export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = Re
 
 type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
     GeneralModalButtonModalProps<DataItemType> & {
-        onAddNew: (object: DataItemType) => void;
+        onAddNew: ModalSaveCallback<DataItemType>;
         initialData?: DataItemType;
     };
 
@@ -68,7 +79,7 @@ export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataIte
 
 type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
     GeneralModalButtonModalProps<DataItemType> & {
-        onEdit: (object: DataItemType) => void;
+        onEdit: ModalSaveCallback<DataItemType>;
         specialActionRoute?: string;
         specialRetrieveActionRoute?: string;
         initialData: DataItemType;
@@ -138,7 +149,7 @@ type SpecificEditModalButtonModalProps<DataItemType extends RepositoryDataItem =
     "ModalBodyComponent" | "modalTitle" | "repository"
 > & {
     repository?: RepositoryReact<DataItemType>;
-    onEdit: (object: DataItemType) => void;
+    onEdit: ModalSaveCallback<DataItemType>;
     initialData: DataItemType;
 };
 
