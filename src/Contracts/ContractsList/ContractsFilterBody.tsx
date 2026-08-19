@@ -77,7 +77,7 @@ export function ContractsFilterBody() {
                 umowy bez sprawy „umowa" (starsza struktura folderów) nie są sprawdzane i nie
                 wpadają tu, bo nie ma im czego zarzucić.
                 Warunek po stronie API: ContractRepository.makeContractDocumentCondition(). */}
-            <Form.Group as={Col} xl={4} className="d-flex align-items-end mb-2">
+            <Form.Group as={Col} xl={3} className="d-flex align-items-end mb-2">
                 <Form.Check
                     type="checkbox"
                     id="contracts-only-missing-document"
