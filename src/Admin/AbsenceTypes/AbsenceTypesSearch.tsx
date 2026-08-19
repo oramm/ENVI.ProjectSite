@@ -4,7 +4,8 @@ import { AbsenceTypeData } from "../../../Typings/bussinesTypes";
 import { AbsenceTypeAddNewModalButton, AbsenceTypeEditModalButton } from "./Modals/AbsenceTypeModalButtons";
 import { absenceTypesRepository } from "./AbsenceTypesController";
 import { AbsenceTypesFilterBody } from "./AbsenceTypeFilterBody";
-import { BoolCell, ColorCell, TextCell } from "../adminTableCells";
+import { ColorCell, TextCell } from "../adminTableCells";
+import { poolLabel } from "./absenceTypePool";
 
 /**
  * Lista typów nieobecności.
@@ -34,14 +35,9 @@ export default function AbsenceTypesSearch({ title }: { title: string }) {
                     colMd: 3,
                 },
                 {
-                    header: "Z limitu urlopu",
-                    renderTdBody: (type: AbsenceTypeData) => <BoolCell value={type.countsAgainstLimit} />,
-                    colMd: 2,
-                },
-                {
-                    header: "Z puli opieki",
-                    renderTdBody: (type: AbsenceTypeData) => <BoolCell value={type.countsAsCare} />,
-                    colMd: 2,
+                    header: "Schodzi z puli",
+                    renderTdBody: (type: AbsenceTypeData) => <TextCell value={poolLabel(type)} />,
+                    colMd: 3,
                 },
                 {
                     header: "Użyć",

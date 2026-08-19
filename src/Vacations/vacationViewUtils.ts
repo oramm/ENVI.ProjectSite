@@ -1,4 +1,4 @@
-import { ScrumboardAbsence } from "../../../Typings/bussinesTypes";
+import { ScrumboardAbsence } from "../../Typings/bussinesTypes";
 
 export const MONTHS_PL_SHORT = [
     "sty", "lut", "mar", "kwi", "maj", "cze",

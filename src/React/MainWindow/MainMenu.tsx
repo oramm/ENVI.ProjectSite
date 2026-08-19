@@ -98,17 +98,9 @@ export default function MainMenu() {
                                         Projekty i zadania
                                     </NavDropdown.Item>
                                     {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
-                                        <>
-                                            <NavDropdown.Item as={Link} to="/scrumboard" className={isActive("/scrumboard")}>
-                                                Scrumboard{" "}
-                                                <Badge bg="info" text="light">
-                                                    nowe
-                                                </Badge>
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Item as={Link} to="/contracts/roles" className={isActive("/contracts/roles")}>
-                                                Role kontrakowe
-                                            </NavDropdown.Item>
-                                        </>
+                                        <NavDropdown.Item as={Link} to="/contracts/roles" className={isActive("/contracts/roles")}>
+                                            Role kontrakowe
+                                        </NavDropdown.Item>
                                     )}
                                     <NavDropdown.Item as={Link} to="/contracts/dates" className={isActive("/contracts/dates")}>
                                         Terminy
@@ -187,15 +179,18 @@ export default function MainMenu() {
                                     Podmioty
                                 </Nav.Link>
                             )}
-                            {/* Sprawy biurowe: kilometrówka i zaliczki. Każda pozycja ma własną
-                                bramkę, więc menu pokazuje się tylko wtedy, gdy jest w nim cokolwiek. */}
+                            {/* Sprawy biurowe: organizacja pracy (urlopy, scrumboard) i koszty
+                                (kilometrówka, zaliczki). Każda pozycja ma własną bramkę, więc menu
+                                pokazuje się tylko wtedy, gdy jest w nim cokolwiek. */}
                             {(mileageAccess || isStaff) && (
                                 <NavDropdown
                                     title="Biuro"
                                     id="office-nav-dropdown"
                                     className={
                                         location.pathname.startsWith("/mileage") ||
-                                        location.pathname.startsWith("/pettyCash")
+                                        location.pathname.startsWith("/pettyCash") ||
+                                        location.pathname.startsWith("/vacations") ||
+                                        location.pathname.startsWith("/scrumboard")
                                             ? "active"
                                             : ""
                                     }
@@ -219,6 +214,30 @@ export default function MainMenu() {
                                             className={isActive("/pettyCash")}
                                         >
                                             Zaliczki{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/vacations"
+                                            className={isActive("/vacations")}
+                                        >
+                                            Urlopy{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/scrumboard"
+                                            className={isActive("/scrumboard")}
+                                        >
+                                            Scrumboard{" "}
                                             <Badge bg="info" text="light">
                                                 nowe
                                             </Badge>

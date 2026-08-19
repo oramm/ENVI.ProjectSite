@@ -41,6 +41,7 @@ import PersonProfilePage from "../../Persons/PersonProfile/PersonProfilePage";
 import PublicProfileSubmissionPage from "../../Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import ScrumboardMainView from "../../Scrumboard/ScrumboardMainView";
+import VacationsPage from "../../Vacations/VacationsPage";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
 import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
 import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch";
@@ -235,6 +236,7 @@ function AppRoutes() {
                         <Route path="/invoice/:id" element={<InvoiceDetails />} />
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
+                        <Route path="/vacations" element={<VacationsPage title="Urlopy" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />

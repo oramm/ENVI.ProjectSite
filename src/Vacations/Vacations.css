@@ -1,0 +1,278 @@
+/* Style zakładki Urlopy (Biuro → Urlopy). Wydzielone ze Scrumboard.css razem
+   z komponentem: strona nie jest już częścią scrumboardu, więc nie powinna ciągnąć
+   za sobą jego arkusza. */
+
+.vacations-scroll {
+    overflow-x: auto;
+}
+
+.vacation-legend {
+    font-size: 0.85rem;
+}
+
+.vacation-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.vacation-swatch,
+.vacation-bar {
+    border-radius: 0.2rem;
+}
+
+.vacation-swatch {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* Kolumny osoby i urlopu — dynamiczne, zwężone do treści (width:1% + nowrap),
+   dzięki czemu dni miesiąca / timeline dostają całą pozostałą szerokość. */
+.vacation-name-col {
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.vacation-balance-col {
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Wspólna wysokość treści sald: zwiniętej, rozwiniętej i nagłówka. Bez niej
+   zwinięcie skracałoby wiersze, bo goła liczba jest niższa niż pole edycji.
+   Szerokości zostają naturalne (width: 1% + nowrap), więc nic nie jest wpisane
+   na sztywno i nic się nie obetnie przy nietypowo długiej wartości. */
+.vacation-balance-head-row,
+.vacation-pool-grid,
+.vacation-balance-row {
+    min-height: 1.65rem;
+}
+
+/* Nagłówek sald jest przełącznikiem zwijania — stąd kursor i brak zaznaczania
+   tekstu przy podwójnym kliku. Bez podkreślenia: reaguje sama strzałka. */
+.vacation-balance-head {
+    cursor: pointer;
+    user-select: none;
+}
+
+.vacation-balance-head-row {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+/* margin-left: auto dosuwa strzałkę do prawej krawędzi kolumny — zwiniętej tuż za
+   "święta", rozwiniętej na końcu kolumny "Za święta". */
+.vacation-chevron {
+    flex: none;
+    margin-left: auto;
+    padding-left: 0.5rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+/* Widok zwinięty: trzy pule obok siebie. Ta sama siatka w nagłówku (etykiety)
+   i w komórkach (liczby), więc "2" zawsze stoi pod "opieka" bez ręcznego
+   dobierania szerokości. */
+.vacation-pool-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 3.1rem);
+    align-items: center;
+    gap: 0.15rem;
+    text-align: center;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.vacation-pool-labels {
+    min-height: 0;
+    font-size: 0.65rem;
+    font-weight: 400;
+    text-transform: lowercase;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+.vacation-balance-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.vacation-limit-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin: 0;
+}
+
+.vacation-limit-input {
+    width: 3rem;
+    padding: 0.1rem 0.25rem;
+    min-height: 0; /* zdejmuje stałą min-height form-control-sm, by input miał tę samą wysokość co span odczytu */
+    text-align: center;
+}
+
+/* Stała szerokość etykiety miesiąca — strzałki ‹ › nie przeskakują między miesiącami. */
+.vacation-month-label {
+    width: 7rem;
+}
+
+/* Wartość limitu w trybie odczytu — ten sam gabaryt co input (form-control-sm),
+   dzięki czemu wiersz nie zmienia wysokości przy wejściu/wyjściu z edycji. */
+.vacation-limit-value {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 3rem;
+    padding: 0.1rem 0.25rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* Podświetlenie pod kursorem — to jedyne, co polu limitu dawała wspólna klasa
+   .scrum-inline-value ze Scrumboard.css; reszta jej reguł i tak była nadpisana. */
+.vacation-limit-value:hover {
+    background-color: var(--bs-warning-bg-subtle, #fff3cd);
+}
+
+/* Widok roczny — proporcjonalny timeline */
+.vacation-year td,
+.vacation-year th {
+    vertical-align: middle;
+}
+
+.vacation-track {
+    position: relative;
+    height: 100%;
+    min-height: 1.9rem;
+    min-width: 40rem;
+    width: 100%;
+}
+
+.vacation-track-header {
+    height: 1.1rem;
+    min-height: 0;
+}
+
+.vacation-tick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-2px);
+    font-size: 0.7rem;
+    color: var(--bs-secondary, #6c757d);
+}
+
+.vacation-gridline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--bs-border-color, #dee2e6);
+}
+
+.vacation-bar {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1rem;
+    min-width: 3px;
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+.vacation-bar:hover {
+    opacity: 1;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* Widok miesięczny — siatka dni rozciąga się na całą dostępną szerokość */
+.vacation-month {
+    width: 100%;
+}
+
+.vacation-day-head,
+.vacation-day-cell {
+    min-width: 1.4rem;
+    text-align: center;
+    padding: 0.15rem 0;
+}
+
+.vacation-day-head {
+    font-size: 0.75rem;
+}
+
+.vacation-day-cell {
+    height: 1.6rem;
+    cursor: pointer;
+}
+
+.vacation-day-cell:hover {
+    outline: 1px solid var(--bs-primary, #0d6efd);
+    outline-offset: -1px;
+}
+
+/* Weekend zawsze wyszarzony (także wewnątrz zakresu urlopu — nie liczy się do dni) */
+.vacation-weekend {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    color: var(--bs-secondary, #6c757d);
+}
+
+/* Kolumna timeline: bez pionowych marginesów + trik height:1px, dzięki któremu
+   .vacation-track (height:100%) wypełnia pełną wysokość wiersza —
+   linia "dziś" jest wtedy ciągła (bez przerw między wierszami). */
+.vacation-timeline-cell {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: 1px;
+}
+
+/* Wskaźnik "dziś" — widok roczny: jedna ciągła pionowa linia.
+   Anchor = komórka (pełna wysokość wiersza), wyciek ±1px kryje obramowania. */
+.vacation-today-line {
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    width: 2px;
+    transform: translateX(-1px);
+    background: rgba(220, 53, 69, 0.55);
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Wskaźnik "dziś" — widok miesięczny: subtelna ramka kolumny dnia. */
+.vacation-day-cell.vacation-today {
+    box-shadow: inset 1px 0 0 rgba(220, 53, 69, 0.55),
+        inset -1px 0 0 rgba(220, 53, 69, 0.55);
+}
+
+/* Domknięcie ramki dołem na ostatnim wierszu. */
+.vacation-month tbody tr:last-child .vacation-day-cell.vacation-today {
+    box-shadow: inset 1px 0 0 rgba(220, 53, 69, 0.55),
+        inset -1px 0 0 rgba(220, 53, 69, 0.55),
+        inset 0 -1px 0 rgba(220, 53, 69, 0.55);
+}
+
+.vacation-day-head.vacation-today {
+    background-color: rgba(220, 53, 69, 0.08);
+    font-weight: 600;
+    box-shadow: inset 1px 0 0 rgba(220, 53, 69, 0.55),
+        inset -1px 0 0 rgba(220, 53, 69, 0.55),
+        inset 0 1px 0 rgba(220, 53, 69, 0.55);
+}

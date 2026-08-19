@@ -181,17 +181,19 @@ export default class ScrumboardApi {
         year: number,
         limitDays: number,
         carryoverDays: number,
-        careDays: number
+        careDays: number,
+        holidayDays: number
     ): Promise<{
         personId: number;
         year: number;
         limitDays: number;
         carryoverDays: number;
         careDays: number;
+        holidayDays: number;
     }> {
         return ToolsFetch.fetchWithRetry(
             `${base}scrumboard/vacationLimit/${personId}/${year}`,
-            jsonOptions("PUT", { limitDays, carryoverDays, careDays })
+            jsonOptions("PUT", { limitDays, carryoverDays, careDays, holidayDays })
         );
     }
 }

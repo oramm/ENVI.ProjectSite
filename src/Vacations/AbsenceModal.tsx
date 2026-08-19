@@ -3,7 +3,7 @@ import { Alert, Button, Form, Modal } from "react-bootstrap";
 import {
     ScrumboardAbsence,
     ScrumboardAbsenceType,
-} from "../../../Typings/bussinesTypes";
+} from "../../Typings/bussinesTypes";
 
 export interface AbsenceDraft {
     id?: number;
@@ -29,6 +29,17 @@ interface Props {
     }) => Promise<void>;
     onDelete: (id: number) => void;
     onClose: () => void;
+}
+
+/**
+ * Z której puli schodzi typ nieobecności. Kolejność musi odpowiadać kontrolerowi
+ * (assertTypeWithinPool): opieka → za święta → limit urlopu.
+ */
+function poolHint(type: ScrumboardAbsenceType): string {
+    if (type.countsAsCare) return " (z puli opieki)";
+    if (type.countsAsHoliday) return " (z puli za święta)";
+    if (type.countsAgainstLimit) return "";
+    return " (nie liczy do limitu)";
 }
 
 /** Modal dodawania/edycji urlopu. Osobę wybieramy tylko przy dodawaniu. */
@@ -65,6 +76,12 @@ export default function AbsenceModal({
         if (!dateFrom || !dateTo) return setError("Podaj zakres dat");
         if (dateTo < dateFrom)
             return setError("Data końcowa nie może być wcześniejsza niż początkowa");
+        // Serwer i tak to odrzuci — tu tylko po to, żeby odpowiedź przyszła od razu,
+        // tak jak przy odwróconym zakresie dat.
+        if (dateFrom.slice(0, 4) !== dateTo.slice(0, 4))
+            return setError(
+                "Nieobecność na przełomie roku wpisz osobno dla każdego roku — pule dni rozliczają się rocznikami."
+            );
         setError(null);
         try {
             // Błąd serwera (np. brak dni opieki) pokazujemy TU, w modalu — modal zostaje otwarty,
@@ -112,7 +129,7 @@ export default function AbsenceModal({
                         {types.map((t) => (
                             <option key={t.id} value={t.id}>
                                 {t.name}
-                                {t.countsAgainstLimit ? "" : " (nie liczy do limitu)"}
+                                {poolHint(t)}
                             </option>
                         ))}
                     </Form.Select>

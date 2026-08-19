@@ -257,6 +257,7 @@ export interface ScrumboardAbsenceType {
     color: string;
     countsAgainstLimit: boolean;
     countsAsCare: boolean;
+    countsAsHoliday: boolean;
 }
 
 export interface ScrumboardAbsence {
@@ -271,6 +272,7 @@ export interface ScrumboardAbsence {
     _typeName?: string;
     _typeColor?: string;
     _countsAgainstLimit?: boolean;
+    _countsAsHoliday?: boolean;
 }
 
 export interface ScrumboardVacationRow {
@@ -284,6 +286,9 @@ export interface ScrumboardVacationRow {
     careDays: number;
     careUsedDays: number;
     careRemainingDays: number;
+    holidayDays: number;
+    holidayUsedDays: number;
+    holidayRemainingDays: number;
     absences: ScrumboardAbsence[];
 }
 
@@ -764,6 +769,7 @@ export interface AbsenceTypeData extends RepositoryDataItem {
     color: string;
     countsAgainstLimit: boolean;
     countsAsCare: boolean;
+    countsAsHoliday: boolean;
     /** Liczba nieobecności używających tego typu - tylko do odczytu. */
     _usageCount?: number;
 }

@@ -7,7 +7,6 @@ import MyTasksTab from "./MyTasks/MyTasksTab";
 import PlanningTab from "./Planning/PlanningTab";
 import ScrumboardApi from "./ScrumboardApi";
 import TimesSummaryTab from "./TimesSummary/TimesSummaryTab";
-import VacationsTab from "./Vacations/VacationsTab";
 import "./Scrumboard.css";
 
 interface ConfirmState {
@@ -16,10 +15,14 @@ interface ConfirmState {
     action: () => void;
 }
 
-const TAB_KEYS = ["currentSprint", "timesSummary", "myTasks", "planning", "vacations"];
+const TAB_KEYS = ["currentSprint", "timesSummary", "myTasks", "planning"];
 const DEFAULT_TAB = "currentSprint";
 
-/** Główny widok Scrumboarda z 4 zakładkami (następca arkuszy Google). */
+/**
+ * Główny widok Scrumboarda (następca arkuszy Google).
+ * Urlopy mieszkały tu jako piąta zakładka - wyprowadzone do Biuro → Urlopy,
+ * bo to sprawa kadrowa, nie scrumowa. Trasy backendu zostały pod /scrumboard/*.
+ */
 export default function ScrumboardMainView() {
     // Aktywna zakładka w URL (#/scrumboard?tab=...), aby przetrwała odświeżenie i była linkowalna.
     const [searchParams, setSearchParams] = useSearchParams();
@@ -112,9 +115,6 @@ export default function ScrumboardMainView() {
                         </Tab>
                         <Tab eventKey="planning" title="Planowanie">
                             <PlanningTab />
-                        </Tab>
-                        <Tab eventKey="vacations" title="Urlopy">
-                            <VacationsTab active={activeKey === "vacations"} />
                         </Tab>
                     </Tabs>
                 </div>

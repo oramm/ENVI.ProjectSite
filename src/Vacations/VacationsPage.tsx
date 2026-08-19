@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Button, ButtonGroup, Form, Table } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Card, Form, Table } from "react-bootstrap";
 import {
     ScrumboardVacationRow,
     ScrumboardVacationsData,
-} from "../../../Typings/bussinesTypes";
-import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
-import ScrumboardApi from "../ScrumboardApi";
-import { useScrumboardEvents } from "../useScrumboardEvents";
+} from "../../Typings/bussinesTypes";
+import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import ScrumboardApi from "../Scrumboard/ScrumboardApi";
+import { useScrumboardEvents } from "../Scrumboard/useScrumboardEvents";
 import AbsenceModal, { AbsenceDraft } from "./AbsenceModal";
+import "./Vacations.css";
 import {
     daysInMonth,
     findAbsenceOn,
@@ -22,12 +23,21 @@ import {
 
 type ViewMode = "year" | "month";
 
-/** Zakładka Urlopy — następca arkusza "urlopy". Widok roczny (timeline) lub miesięczny (siatka dni). */
-export default function VacationsTab({ active }: { active?: boolean }) {
+/**
+ * Strona Urlopy (Biuro → Urlopy) — następca arkusza "urlopy".
+ * Widok roczny (timeline) albo miesięczny (siatka dni).
+ *
+ * Dane bierze z tras /scrumboard/* i ze wspólnego kanału zdarzeń scrumboardu:
+ * urlopy wyszły ze scrumboardu jako WIDOK, backend został na miejscu.
+ */
+export default function VacationsPage({ title }: { title?: string }) {
     const now = new Date();
     const [year, setYear] = useState(now.getFullYear());
     const [month0, setMonth0] = useState(now.getMonth());
     const [viewMode, setViewMode] = useState<ViewMode>("year");
+    // Salda (urlop / opieka / za święta) domyślnie zwinięte — na co dzień liczy się
+    // kalendarz, a nie liczniki; rozwinięte zjadają szerokość timeline'u.
+    const [showBalances, setShowBalances] = useState(false);
     const [data, setData] = useState<ScrumboardVacationsData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -44,9 +54,13 @@ export default function VacationsTab({ active }: { active?: boolean }) {
     }
 
     useEffect(() => {
-        if (active !== false) load();
+        if (title) document.title = title;
+    }, [title]);
+
+    useEffect(() => {
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [year, active]);
+    }, [year]);
 
     useScrumboardEvents({ "absence-changed": load }, load);
 
@@ -105,7 +119,8 @@ export default function VacationsTab({ active }: { active?: boolean }) {
         personId: number,
         limitDays: number,
         carryoverDays: number,
-        careDays: number
+        careDays: number,
+        holidayDays: number
     ) {
         try {
             await ScrumboardApi.setVacationLimit(
@@ -113,7 +128,8 @@ export default function VacationsTab({ active }: { active?: boolean }) {
                 year,
                 limitDays,
                 carryoverDays,
-                careDays
+                careDays,
+                holidayDays
             );
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
@@ -122,7 +138,7 @@ export default function VacationsTab({ active }: { active?: boolean }) {
 
     function updateLimitLocal(
         personId: number,
-        field: "limitDays" | "carryoverDays" | "careDays",
+        field: "limitDays" | "carryoverDays" | "careDays" | "holidayDays",
         value: number
     ) {
         setData((prev) =>
@@ -152,8 +168,9 @@ export default function VacationsTab({ active }: { active?: boolean }) {
     }));
 
     return (
-        <div className="scrum-vacations">
-            <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <Card>
+            <Card.Body className="vacations">
+                <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
                 <ButtonGroup size="sm">
                     <Button variant="outline-secondary" onClick={() => setYear(year - 1)}>
                         ‹
@@ -192,7 +209,7 @@ export default function VacationsTab({ active }: { active?: boolean }) {
                         <Button
                             variant="outline-secondary"
                             disabled
-                            className="scrum-vacation-month-label"
+                            className="vacation-month-label"
                         >
                             {MONTHS_PL_LONG[month0]}
                         </Button>
@@ -209,11 +226,11 @@ export default function VacationsTab({ active }: { active?: boolean }) {
                     + Dodaj urlop
                 </Button>
 
-                <div className="d-flex flex-wrap gap-2 ms-auto scrum-vacation-legend">
+                <div className="d-flex flex-wrap gap-2 ms-auto vacation-legend">
                     {data.types.map((t) => (
-                        <span key={t.id} className="scrum-vacation-legend-item">
+                        <span key={t.id} className="vacation-legend-item">
                             <span
-                                className="scrum-vacation-swatch"
+                                className="vacation-swatch"
                                 style={{ background: t.color }}
                             />
                             {t.name}
@@ -223,12 +240,21 @@ export default function VacationsTab({ active }: { active?: boolean }) {
             </div>
 
             {viewMode === "year" ? (
-                <YearView data={data} onOpenEdit={openEditFor} onLimitChange={updateLimitLocal} onLimitSave={saveLimit} />
+                <YearView
+                    data={data}
+                    showBalances={showBalances}
+                    onToggleBalances={() => setShowBalances(!showBalances)}
+                    onOpenEdit={openEditFor}
+                    onLimitChange={updateLimitLocal}
+                    onLimitSave={saveLimit}
+                />
             ) : (
                 <MonthView
                     data={data}
                     year={year}
                     month0={month0}
+                    showBalances={showBalances}
+                    onToggleBalances={() => setShowBalances(!showBalances)}
                     onOpenEdit={openEditFor}
                     onLimitChange={updateLimitLocal}
                     onLimitSave={saveLimit}
@@ -244,29 +270,107 @@ export default function VacationsTab({ active }: { active?: boolean }) {
                 onDelete={handleDelete}
                 onClose={() => setDraft(null)}
             />
-        </div>
+            </Card.Body>
+        </Card>
     );
 }
 
 interface ViewProps {
     data: ScrumboardVacationsData;
+    /** false => kolumny sald (Urlop / Opieka / Za święta) są zwinięte. */
+    showBalances: boolean;
+    /** Zwija/rozwija salda — podpięte pod klik w nagłówek kolumny. */
+    onToggleBalances: () => void;
     onOpenEdit: (row: ScrumboardVacationRow, dateStr: string) => void;
     onLimitChange: (
         personId: number,
-        field: "limitDays" | "carryoverDays" | "careDays",
+        field: "limitDays" | "carryoverDays" | "careDays" | "holidayDays",
         value: number
     ) => void;
     onLimitSave: (
         personId: number,
         limitDays: number,
         carryoverDays: number,
-        careDays: number
+        careDays: number,
+        holidayDays: number
     ) => void;
 }
 
 type BalanceProps = Pick<ViewProps, "onLimitChange" | "onLimitSave"> & {
     row: ScrumboardVacationRow;
 };
+
+/**
+ * Zapis wymiaru urlopu. Endpoint przyjmuje KOMPLET pul (urlop + zaległy + opieka
+ * + za święta) i nadpisuje wiersz, więc każde pole musi wysłać wszystkie cztery —
+ * inaczej edycja jednej puli wyzerowałaby pozostałe.
+ */
+function saveAll(
+    row: ScrumboardVacationRow,
+    onLimitSave: ViewProps["onLimitSave"]
+) {
+    onLimitSave(
+        row.personId,
+        row.limitDays,
+        row.carryoverDays,
+        row.careDays,
+        row.holidayDays
+    );
+}
+
+/**
+ * Etykiety trzech pul. Kolejność jest kontraktem — nagłówki i komórki widoku
+ * zwiniętego renderują się z tej samej tablicy, więc liczby stoją pod opisami.
+ */
+const POOLS = [
+    { key: "vacation", short: "Urlop" },
+    { key: "care", short: "Opieka" },
+    { key: "holiday", short: "Święta" },
+] as const;
+
+/**
+ * Saldo każdej puli w jednym miejscu: liczba pozostałych dni + opis do tooltipa.
+ * Widok rozwinięty i zwinięty czytają stąd, żeby opisy nie rozjechały się z liczbami.
+ */
+function poolBalances(row: ScrumboardVacationRow) {
+    const vacation = row.limitDays + row.carryoverDays - row.usedDays;
+    const care = row.careDays - row.careUsedDays;
+    const holiday = row.holidayDays - row.holidayUsedDays;
+    return {
+        vacation: {
+            remaining: vacation,
+            title: `Urlop wykorzystany: ${row.usedDays}, pozostały: ${vacation} (Obecny ${row.limitDays} + Zaległy ${row.carryoverDays} − wykorzystany ${row.usedDays})`,
+        },
+        care: {
+            remaining: care,
+            title: `Opieka wykorzystana: ${row.careUsedDays}, pozostała: ${care} (pula ${row.careDays} − wykorzystana ${row.careUsedDays})`,
+        },
+        holiday: {
+            remaining: holiday,
+            title: `Wolne za święta wykorzystane: ${row.holidayUsedDays}, pozostałe: ${holiday} (pula ${row.holidayDays} − wykorzystane ${row.holidayUsedDays})`,
+        },
+    };
+}
+
+/** Liczba pozostałych dni — na minusie czerwona, w obu widokach tak samo. */
+function RemainingValue({
+    balance,
+    children,
+}: {
+    balance: { remaining: number; title: string };
+    children?: React.ReactNode;
+}) {
+    return (
+        <span
+            title={balance.title}
+            className={
+                balance.remaining < 0 ? "text-danger fw-semibold" : "fw-semibold"
+            }
+        >
+            {children ?? balance.remaining}
+        </span>
+    );
+}
 
 /** Pole limitu: w trybie odczytu pokazuje wartość; klik → input (jak godziny w zadaniach). */
 function LimitInput({
@@ -286,7 +390,7 @@ function LimitInput({
     const originalRef = useRef(value);
 
     return (
-        <label className="scrum-vacation-limit-field" title={title}>
+        <label className="vacation-limit-field" title={title}>
             <span className="text-muted">{label}</span>
             {editing ? (
                 <Form.Control
@@ -295,7 +399,7 @@ function LimitInput({
                     step={1}
                     size="sm"
                     autoFocus
-                    className="scrum-vacation-limit-input"
+                    className="vacation-limit-input"
                     value={value}
                     onChange={(e) => onChange(Number(e.target.value))}
                     onBlur={() => {
@@ -312,7 +416,7 @@ function LimitInput({
                 />
             ) : (
                 <span
-                    className="scrum-inline-value scrum-vacation-limit-value"
+                    className="vacation-limit-value"
                     title="Kliknij, aby edytować"
                     onClick={() => {
                         originalRef.current = value;
@@ -328,11 +432,10 @@ function LimitInput({
 
 /** Kolumna salda urlopu: Obecny/Zaległy (edytowalne) + Wyk./Poz. */
 function VacationBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
-    const remaining = row.limitDays + row.carryoverDays - row.usedDays;
-    const save = () =>
-        onLimitSave(row.personId, row.limitDays, row.carryoverDays, row.careDays);
+    const balance = poolBalances(row).vacation;
+    const save = () => saveAll(row, onLimitSave);
     return (
-        <div className="scrum-vacation-balance-row">
+        <div className="vacation-balance-row">
             <LimitInput
                 label="Obecny"
                 title="urlop za bieżący rok"
@@ -347,23 +450,19 @@ function VacationBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) 
                 onChange={(v) => onLimitChange(row.personId, "carryoverDays", v)}
                 onBlur={save}
             />
-            <span
-                title={`Urlop wykorzystany: ${row.usedDays}, pozostały: ${remaining} (Obecny ${row.limitDays} + Zaległy ${row.carryoverDays} − wykorzystany ${row.usedDays})`}
-                className={remaining < 0 ? "text-danger fw-semibold" : "fw-semibold"}
-            >
-                {row.usedDays} / {remaining}
-            </span>
+            <RemainingValue balance={balance}>
+                {row.usedDays} / {balance.remaining}
+            </RemainingValue>
         </div>
     );
 }
 
 /** Kolumna salda opieki: pula (edytowalna) + Wyk./Poz. */
 function CareBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
-    const careRemaining = row.careDays - row.careUsedDays;
-    const save = () =>
-        onLimitSave(row.personId, row.limitDays, row.carryoverDays, row.careDays);
+    const balance = poolBalances(row).care;
+    const save = () => saveAll(row, onLimitSave);
     return (
-        <div className="scrum-vacation-balance-row">
+        <div className="vacation-balance-row">
             <LimitInput
                 label="Pula"
                 title="pula dni opieki na dany rok"
@@ -371,34 +470,158 @@ function CareBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
                 onChange={(v) => onLimitChange(row.personId, "careDays", v)}
                 onBlur={save}
             />
-            <span
-                title={`Opieka wykorzystana: ${row.careUsedDays}, pozostała: ${careRemaining} (pula ${row.careDays} − wykorzystana ${row.careUsedDays})`}
-                className={careRemaining < 0 ? "text-danger fw-semibold" : "fw-semibold"}
-            >
-                {row.careUsedDays} / {careRemaining}
-            </span>
+            <RemainingValue balance={balance}>
+                {row.careUsedDays} / {balance.remaining}
+            </RemainingValue>
         </div>
     );
 }
 
+/**
+ * Kolumna salda wolnego za święta: pula (edytowalna) + Wyk./Poz.
+ * Pula to liczba świąt, które w danym roku wypadły w sobotę (art. 130 §2 KP) —
+ * wpisywana ręcznie, bo system nie zna kalendarza świąt.
+ */
+function HolidayBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
+    const balance = poolBalances(row).holiday;
+    const save = () => saveAll(row, onLimitSave);
+    return (
+        <div className="vacation-balance-row">
+            <LimitInput
+                label="Pula"
+                title="dni wolne za święta wypadające w sobotę, na dany rok"
+                value={row.holidayDays}
+                onChange={(v) => onLimitChange(row.personId, "holidayDays", v)}
+                onBlur={save}
+            />
+            <RemainingValue balance={balance}>
+                {row.holidayUsedDays} / {balance.remaining}
+            </RemainingValue>
+        </div>
+    );
+}
+
+const COLLAPSE_HINT = "Kliknij, aby zwinąć salda.";
+
+/**
+ * Nagłówki kolumn sald. Sam nagłówek jest przełącznikiem — klik w dowolny z nich
+ * zwija panel, klik w zwinięty rozwija go z powrotem. Strzałka siedzi w ostatniej
+ * kolumnie, więc po rozwinięciu jest na prawym końcu bloku sald.
+ */
+function BalanceHeaders({
+    show,
+    onToggle,
+}: {
+    show: boolean;
+    onToggle: () => void;
+}) {
+    const toggle = {
+        className: "vacation-balance-col vacation-balance-head",
+        onClick: onToggle,
+        role: "button",
+        "aria-expanded": show,
+    };
+
+    if (!show)
+        return (
+            <th
+                {...toggle}
+                title="Pozostało dni w każdej puli. Kliknij, aby rozwinąć i edytować wymiary."
+            >
+                <div className="vacation-balance-head-row">
+                    <div className="vacation-pool-grid vacation-pool-labels">
+                        {POOLS.map((pool) => (
+                            <span key={pool.key}>{pool.short}</span>
+                        ))}
+                    </div>
+                    <span className="vacation-chevron">▸</span>
+                </div>
+            </th>
+        );
+
+    return (
+        <>
+            <th {...toggle} title={COLLAPSE_HINT}>
+                <div className="vacation-balance-head-row">Urlop</div>
+            </th>
+            <th {...toggle} title={COLLAPSE_HINT}>
+                <div className="vacation-balance-head-row">Opieka</div>
+            </th>
+            <th
+                {...toggle}
+                title={`Wolne za święta wypadające w sobotę. ${COLLAPSE_HINT}`}
+            >
+                <div className="vacation-balance-head-row">
+                    Za święta
+                    <span className="vacation-chevron">◂</span>
+                </div>
+            </th>
+        </>
+    );
+}
+
+/**
+ * Komórki sald jednego wiersza. Zwinięte: trzy liczby "ile pozostało", ustawione
+ * w tej samej siatce co etykiety w nagłówku. Rozwinięte: pełne kolumny z edycją pul.
+ */
+function BalanceCells({
+    show,
+    row,
+    onLimitChange,
+    onLimitSave,
+}: BalanceProps & { show: boolean }) {
+    if (!show) {
+        const balances = poolBalances(row);
+        return (
+            <td className="vacation-balance-col">
+                <div className="vacation-pool-grid">
+                    {POOLS.map((pool) => (
+                        <RemainingValue key={pool.key} balance={balances[pool.key]} />
+                    ))}
+                </div>
+            </td>
+        );
+    }
+    const cellProps = { row, onLimitChange, onLimitSave };
+    return (
+        <>
+            <td className="vacation-balance-col">
+                <VacationBalanceCell {...cellProps} />
+            </td>
+            <td className="vacation-balance-col">
+                <CareBalanceCell {...cellProps} />
+            </td>
+            <td className="vacation-balance-col">
+                <HolidayBalanceCell {...cellProps} />
+            </td>
+        </>
+    );
+}
+
 /** Widok roczny: proporcjonalny timeline urlopów per osoba. */
-function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
+function YearView({
+    data,
+    showBalances,
+    onToggleBalances,
+    onOpenEdit,
+    onLimitChange,
+    onLimitSave,
+}: ViewProps) {
     const ticks = monthTicks(data.year);
     const todayPct = todayMarkerPct(data.year);
     return (
-        <div className="scrum-vacations-scroll">
-            <Table bordered hover size="sm" className="scrum-vacation-year">
+        <div className="vacations-scroll">
+            <Table bordered hover size="sm" className="vacation-year">
                 <thead>
                     <tr>
-                        <th className="scrum-vacation-name-col">Osoba</th>
-                        <th className="scrum-vacation-balance-col">Urlop</th>
-                        <th className="scrum-vacation-balance-col">Opieka</th>
+                        <th className="vacation-name-col">Osoba</th>
+                        <BalanceHeaders show={showBalances} onToggle={onToggleBalances} />
                         <th>
-                            <div className="scrum-vacation-track scrum-vacation-track-header">
+                            <div className="vacation-track vacation-track-header">
                                 {ticks.map((t) => (
                                     <span
                                         key={t.label}
-                                        className="scrum-vacation-tick"
+                                        className="vacation-tick"
                                         style={{ left: `${t.leftPct}%` }}
                                     >
                                         {t.label}
@@ -411,25 +634,25 @@ function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
                 <tbody>
                     {data.rows.map((row) => (
                         <tr key={row.personId}>
-                            <td className="scrum-vacation-name-col">{row.personName}</td>
-                            <td className="scrum-vacation-balance-col">
-                                <VacationBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
-                            </td>
-                            <td className="scrum-vacation-balance-col">
-                                <CareBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
-                            </td>
-                            <td className="scrum-vacation-timeline-cell">
-                                <div className="scrum-vacation-track">
+                            <td className="vacation-name-col">{row.personName}</td>
+                            <BalanceCells
+                                show={showBalances}
+                                row={row}
+                                onLimitChange={onLimitChange}
+                                onLimitSave={onLimitSave}
+                            />
+                            <td className="vacation-timeline-cell">
+                                <div className="vacation-track">
                                     {todayPct !== null && (
                                         <span
-                                            className="scrum-vacation-today-line"
+                                            className="vacation-today-line"
                                             style={{ left: `${todayPct}%` }}
                                         />
                                     )}
                                     {ticks.map((t) => (
                                         <span
                                             key={t.label}
-                                            className="scrum-vacation-gridline"
+                                            className="vacation-gridline"
                                             style={{ left: `${t.leftPct}%` }}
                                         />
                                     ))}
@@ -439,7 +662,7 @@ function YearView({ data, onOpenEdit, onLimitChange, onLimitSave }: ViewProps) {
                                         return (
                                             <div
                                                 key={a.id}
-                                                className="scrum-vacation-bar"
+                                                className="vacation-bar"
                                                 style={{
                                                     left: `${style.leftPct}%`,
                                                     width: `${style.widthPct}%`,
@@ -465,6 +688,8 @@ function MonthView({
     data,
     year,
     month0,
+    showBalances,
+    onToggleBalances,
     onOpenEdit,
     onLimitChange,
     onLimitSave,
@@ -473,22 +698,21 @@ function MonthView({
     const days = Array.from({ length: dayCount }, (_, i) => i + 1);
     const today = todayYmd();
     return (
-        <div className="scrum-vacations-scroll">
-            <Table bordered size="sm" className="scrum-vacation-month">
+        <div className="vacations-scroll">
+            <Table bordered size="sm" className="vacation-month">
                 <thead>
                     <tr>
-                        <th className="scrum-vacation-name-col">Osoba</th>
-                        <th className="scrum-vacation-balance-col">Urlop</th>
-                        <th className="scrum-vacation-balance-col">Opieka</th>
+                        <th className="vacation-name-col">Osoba</th>
+                        <BalanceHeaders show={showBalances} onToggle={onToggleBalances} />
                         {days.map((d) => {
                             const dateStr = ymd(year, month0, d);
                             return (
                                 <th
                                     key={d}
                                     className={
-                                        "scrum-vacation-day-head" +
-                                        (isWeekendYmd(dateStr) ? " scrum-vacation-weekend" : "") +
-                                        (dateStr === today ? " scrum-vacation-today" : "")
+                                        "vacation-day-head" +
+                                        (isWeekendYmd(dateStr) ? " vacation-weekend" : "") +
+                                        (dateStr === today ? " vacation-today" : "")
                                     }
                                 >
                                     {d}
@@ -500,13 +724,13 @@ function MonthView({
                 <tbody>
                     {data.rows.map((row) => (
                         <tr key={row.personId}>
-                            <td className="scrum-vacation-name-col">{row.personName}</td>
-                            <td className="scrum-vacation-balance-col">
-                                <VacationBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
-                            </td>
-                            <td className="scrum-vacation-balance-col">
-                                <CareBalanceCell row={row} onLimitChange={onLimitChange} onLimitSave={onLimitSave} />
-                            </td>
+                            <td className="vacation-name-col">{row.personName}</td>
+                            <BalanceCells
+                                show={showBalances}
+                                row={row}
+                                onLimitChange={onLimitChange}
+                                onLimitSave={onLimitSave}
+                            />
                             {days.map((d) => {
                                 const dateStr = ymd(year, month0, d);
                                 const weekend = isWeekendYmd(dateStr);
@@ -517,9 +741,9 @@ function MonthView({
                                     <td
                                         key={d}
                                         className={
-                                            "scrum-vacation-day-cell" +
-                                            (weekend ? " scrum-vacation-weekend" : "") +
-                                            (dateStr === today ? " scrum-vacation-today" : "")
+                                            "vacation-day-cell" +
+                                            (weekend ? " vacation-weekend" : "") +
+                                            (dateStr === today ? " vacation-today" : "")
                                         }
                                         style={
                                             showColor
