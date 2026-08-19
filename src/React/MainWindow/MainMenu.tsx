@@ -195,6 +195,30 @@ export default function MainMenu() {
                                             : ""
                                     }
                                 >
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/scrumboard"
+                                            className={isActive("/scrumboard")}
+                                        >
+                                            Scrumboard{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/vacations"
+                                            className={isActive("/vacations")}
+                                        >
+                                            Urlopy{" "}
+                                            <Badge bg="info" text="light">
+                                                nowe
+                                            </Badge>
+                                        </NavDropdown.Item>
+                                    )}
                                     {mileageAccess && (
                                         <NavDropdown.Item
                                             as={Link}
@@ -214,30 +238,6 @@ export default function MainMenu() {
                                             className={isActive("/pettyCash")}
                                         >
                                             Zaliczki{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
-                                        </NavDropdown.Item>
-                                    )}
-                                    {isStaff && (
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="/vacations"
-                                            className={isActive("/vacations")}
-                                        >
-                                            Urlopy{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
-                                        </NavDropdown.Item>
-                                    )}
-                                    {isStaff && (
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="/scrumboard"
-                                            className={isActive("/scrumboard")}
-                                        >
-                                            Scrumboard{" "}
                                             <Badge bg="info" text="light">
                                                 nowe
                                             </Badge>
