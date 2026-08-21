@@ -51,6 +51,7 @@ import MileagePage from "../../Mileage/MileagePage";
 import SiteVisitsPage from "../../SiteVisits/SiteVisitsPage";
 import PettyCashEntryPage from "../../Erp/PettyCash/PettyCashEntryPage";
 import Dashboard from "./Content/Dashboard/Dashboard";
+import SbInstallerPage from "../../SecondBrain/SbInstallerPage";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
 const rootPath = "/";
@@ -238,6 +239,7 @@ function AppRoutes() {
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/vacations" element={<VacationsPage title="Urlopy" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
+                        <Route path="/sbInstaller" element={<SbInstallerPage />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
                         <Route

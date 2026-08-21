@@ -321,6 +321,15 @@ export default function MainMenu() {
                                         </NavDropdown.Item>
                                     </>
                                 )}
+                                {/* Instalator Second Brain - sprawa osobista pracownika, a nie moduł
+                                    domenowy, więc siedzi w menu użytkownika, nie w nawigacji. Trasa
+                                    serwera wymaga tylko sesji; tutaj zawężamy do pracowników ENVI,
+                                    bo to im wydajemy firmową bazę wiedzy. */}
+                                {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
+                                    <NavDropdown.Item as={Link} to="/sbInstaller">
+                                        Second Brain - instalator
+                                    </NavDropdown.Item>
+                                )}
                                 {/* Panel administracyjny - węższe grono niż STAFF_ROLES.
                                     Musi odpowiadać bramce /admin w backendzie. */}
                                 {MainSetup.ADMIN_PANEL_ROLES.includes(systemRoleName) && (
