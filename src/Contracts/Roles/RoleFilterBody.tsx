@@ -43,7 +43,7 @@ export function RolesFilterBody() {
                     />
                 </Form.Group>
                 <Form.Group as={Col} xl={3}>
-                    <ContractStatusSelector showValidationInfo={false} multiple={true} label="Statusy kontratu" />
+                    <ContractStatusSelector showValidationInfo={false} multiple={true} label="Statusy kontraktu" />
                 </Form.Group>
             </Row>
 

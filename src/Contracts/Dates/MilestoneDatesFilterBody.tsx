@@ -57,7 +57,7 @@ export function MilestoneDatesFilterBody() {
                         showValidationInfo={false}
                         multiple={true}
                         name="contractStatuses"
-                        label="Statusy kontratu"
+                        label="Statusy kontraktu"
                     />
                 </Form.Group>
             </Row>

@@ -14,7 +14,7 @@ import {
 export function ProjectStatusSelector({
     showValidationInfo = true,
     name,
-    label = name,
+    label,
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
@@ -22,7 +22,7 @@ export function ProjectStatusSelector({
         statuses: Object.values(MainSetup.ProjectStatuses),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -39,7 +39,7 @@ export function ContractStatusSelector({
         statuses: Object.values(MainSetup.ContractStatuses),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -72,7 +72,7 @@ export function OfferStatusSelector({
         statuses: Object.values(MainSetup.OfferStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -89,7 +89,7 @@ export function OfferBondStatusSelector({
         statuses: Object.values(MainSetup.OfferBondStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -99,7 +99,7 @@ export function OfferBondFormSelector({
     showValidationInfo = true,
     name = "form",
     as,
-    label = name,
+    label = "Forma",
 }: SpecificTextOptionProps) {
     return statusSelector({
         statuses: Object.values(MainSetup.OfferBondForm),
@@ -122,7 +122,7 @@ export function OfferInvitationMailStatusSelector({
         statuses: Object.values(MainSetup.OfferInvitationMailStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -139,7 +139,7 @@ export function MilestoneStatusSelector({
         statuses: Object.values(MainSetup.MilestoneStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -148,7 +148,7 @@ export function MilestoneStatusSelector({
 export function CaseStatusSelector({
     showValidationInfo = true,
     name,
-    label = "Status",
+    label,
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
@@ -173,7 +173,7 @@ export function TaksStatusSelector({
         statuses: Object.values(MainSetup.TaskStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -190,7 +190,7 @@ export function InvoiceStatusSelector({
         statuses: Object.values(MainSetup.InvoiceStatuses),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -207,7 +207,7 @@ export function LetterStatusMultipleSelector({
         statuses: [...Object.values(MainSetup.OurLetterStatus), ...Object.values(MainSetup.IncomingLetterStatus)],
         showValidationInfo,
         name: "statuses",
-        label: "Statusy",
+        label,
         multiple,
         as,
     });
@@ -224,7 +224,7 @@ export function ApplicationCallStatusSelector({
         statuses: Object.values(MainSetup.ApplicationCallStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -241,7 +241,7 @@ export function ClientNeedStatusSelector({
         statuses: Object.values(MainSetup.ClientNeedStatus),
         showValidationInfo,
         name: name ?? (multiple ? "statuses" : "status"),
-        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        label,
         multiple,
         as,
     });
@@ -307,7 +307,7 @@ function statusSelector({
     as,
 }: SpecificTextOptionProps & { statuses: string[] }) {
     const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
+    const resolvedLabel = label ?? (multiple ? "Statusy" : "Status");
 
     return multiple ? (
         <TypeaheadStringSelector

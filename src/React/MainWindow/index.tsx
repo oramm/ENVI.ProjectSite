@@ -246,7 +246,7 @@ function AppRoutes() {
                         />
                         <Route
                             path="/admin/contractRanges"
-                            element={<ContractRangesSearch title="Zakresy kontratków" />}
+                            element={<ContractRangesSearch title="Zakresy kontraktów" />}
                         />
                         <Route path="/offers" element={<OffersMainView title="Oferty" />} />
                         <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />

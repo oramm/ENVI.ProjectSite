@@ -61,7 +61,7 @@ export function TasksGlobalFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} md={3}>
-                <ContractStatusSelector showValidationInfo={false} multiple={true} label="Statusy kontratu" />
+                <ContractStatusSelector showValidationInfo={false} multiple={true} label="Statusy kontraktu" />
             </Form.Group>
             {_contract && (
                 <Form.Group as={Col} md={12} className="mt-2">
