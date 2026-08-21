@@ -64,6 +64,7 @@ export default function CarsSearch({ title }: { title: string }) {
             EditButtonComponent={CarEditModalButton}
             isDeletable={false}
             repository={carsRepository}
+            searchOnMount={true}
         />
     );
 }

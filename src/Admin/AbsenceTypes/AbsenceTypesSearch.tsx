@@ -49,6 +49,7 @@ export default function AbsenceTypesSearch({ title }: { title: string }) {
             EditButtonComponent={AbsenceTypeEditModalButton}
             isDeletable={true}
             repository={absenceTypesRepository}
+            searchOnMount={true}
         />
     );
 }

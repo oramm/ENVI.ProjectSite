@@ -42,6 +42,8 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     /** Wartości przywracane przez "Wyczyść" zamiast pustych — np. domyślny status "aktywny". */
     resetCriteria?: FieldValues;
     autoSearchOnReset?: boolean;
+    /** Lista ładuje się sama po wejściu - użytkownik nie musi klikać „Szukaj”. */
+    searchOnMount?: boolean;
 
     snapshotMode?: SnapshotMode;
     sectionsFilterHandlers?: SectionsFilterHandlers<DataItemType>;
@@ -61,6 +63,7 @@ export type FilterPanelProps = {
     fixedCriteria?: FieldValues;
     resetCriteria?: FieldValues;
     autoSearchOnReset?: boolean;
+    searchOnMount?: boolean;
 };
 
 export type FilterBodyProps = {};

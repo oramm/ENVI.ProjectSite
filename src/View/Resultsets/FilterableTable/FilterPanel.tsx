@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { FieldValues, useForm } from "react-hook-form";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
@@ -16,6 +16,7 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
     fixedCriteria,
     resetCriteria,
     autoSearchOnReset = false,
+    searchOnMount = false,
 }: FilterPanelProps) {
     const [error, setError] = useState<string | null>(null);
     const [isReady, setIsReady] = useState(true);
@@ -117,6 +118,16 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         if (sectionsFilterHandlers) return handleSubmitSearchSections(data);
         return handleSubmitSearchFlat(data);
     }
+
+    // Listy słownikowe ładują się same: dane mają być widoczne od razu po wejściu,
+    // bez klikania „Szukaj”. Ref blokuje drugie żądanie, bo w StrictMode efekty
+    // montowania uruchamiają się dwa razy.
+    const hasSearchedOnMount = useRef(false);
+    useEffect(() => {
+        if (!searchOnMount || hasSearchedOnMount.current) return;
+        hasSearchedOnMount.current = true;
+        void formMethods.handleSubmit(handleSubmitSearch)();
+    }, [searchOnMount]);
 
     const handleReset = async () => {
         const allFields = formMethods.getValues();

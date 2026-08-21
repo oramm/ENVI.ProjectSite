@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Badge } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { InvoicesFilterBody } from "./InvoiceFilterBody";
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from "./Modals/InvoiceModalButtons";
@@ -8,58 +7,11 @@ import { Invoice } from "../../../Typings/bussinesTypes";
 import { InvoiceStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { invoicesRepository } from "./InvoicesController";
 import Tools from "../../React/Tools/Tools";
-import MainSetup from "../../React/MainSetupReact";
 
 export default function InvoicesSearch({ title }: { title: string }) {
-    const location = useLocation();
-    const [initialObjects, setInitialObjects] = useState<Invoice[] | undefined>(undefined);
-    const [externalUpdate, setExternalUpdate] = useState(0);
-
     useEffect(() => {
         document.title = title;
     }, [title]);
-
-    const refreshFromSnapshot = useCallback(async () => {
-        const snapshotKey = "filtersableTableSnapshot_invoices";
-        // Domyślne filtry zgodne z formularzem (InvoiceFilterBody) — użyte, gdy nie ma jeszcze snapshotu
-        let criteria: Record<string, unknown> = {
-            issueDateFrom: MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM,
-            issueDateTo: MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO,
-        };
-
-        try {
-            const snapshotRaw = sessionStorage.getItem(snapshotKey);
-            if (snapshotRaw) {
-                const snapshotParsed = JSON.parse(snapshotRaw) as { criteria?: Record<string, unknown> };
-                criteria = snapshotParsed?.criteria || {};
-            }
-        } catch (error) {
-            console.warn("[InvoicesSearch] Nie udało się odczytać snapshotu listy", error);
-        }
-
-        const result = (await invoicesRepository.loadItemsFromServerPOST([criteria])) as Invoice[];
-        setInitialObjects(result);
-        setExternalUpdate((prev) => prev + 1);
-
-        try {
-            const snapshotRaw = sessionStorage.getItem(snapshotKey);
-            const snapshotParsed = snapshotRaw ? JSON.parse(snapshotRaw) : { criteria };
-            sessionStorage.setItem(
-                snapshotKey,
-                JSON.stringify({
-                    ...snapshotParsed,
-                    criteria,
-                    storedObjects: result,
-                })
-            );
-        } catch (error) {
-            console.warn("[InvoicesSearch] Nie udało się zaktualizować snapshotu listy", error);
-        }
-    }, []);
-
-    useEffect(() => {
-        void refreshFromSnapshot();
-    }, [location.key, refreshFromSnapshot]);
 
     function renderRow(invoice: Invoice, isActive?: boolean) {
         return (
@@ -98,8 +50,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
             id="invoices"
             title={title}
             FilterBodyComponent={InvoicesFilterBody}
-            initialObjects={initialObjects}
-            externalUpdate={externalUpdate}
+            searchOnMount={true}
             tableStructure={[
                 { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
                 { header: "Dane faktury", renderTdBody: renderRow, colMd: 4 },

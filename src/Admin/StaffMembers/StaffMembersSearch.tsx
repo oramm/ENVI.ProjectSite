@@ -92,6 +92,7 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                 EditButtonComponent={StaffMemberEditModalButton}
                 isDeletable={false}
                 repository={staffMembersRepository}
+                searchOnMount={true}
         />
     );
 }

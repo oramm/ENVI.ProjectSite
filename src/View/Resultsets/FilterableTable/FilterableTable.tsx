@@ -41,6 +41,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     fixedCriteria,
     resetCriteria,
     autoSearchOnReset = false,
+    searchOnMount = false,
     snapshotMode = "criteria+objects",
     sectionsFilterHandlers,
 }: FilterableTableProps<LeafDataItemType>) {
@@ -355,6 +356,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                             fixedCriteria={fixedCriteria}
                             resetCriteria={resetCriteria}
                             autoSearchOnReset={autoSearchOnReset}
+                            searchOnMount={searchOnMount}
                         />
                     </Row>
                 )}
