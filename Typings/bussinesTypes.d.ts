@@ -90,6 +90,11 @@ export interface Contract extends RepositoryDataItem {
     _ourIdOrNumber_Name?: string;
     _lastUpdated?: string;
     _contractors?: EntityData[];
+    /** Lider konsorcjum: Id podmiotu z `_contractors`. Kontrakt API-owy jest własnością
+     *  backendu (`PS-nodeJS/src/types/types.d.ts`) — znacznik mieszka na wierszu powiązania
+     *  kontrakt-podmiot, nie na kontrakcie, stąd prefiks `_`. `null`/brak = kontrakt bez
+     *  wskazanego lidera; to stan normalny, nie brak danych. */
+    _leaderEntityId?: number | null;
     _engineers?: EntityData[];
     _employers?: EntityData[];
     _contractRanges?: ContractRangeData[];

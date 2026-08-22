@@ -185,6 +185,10 @@ export function otherContractValidationSchema(isEditing: boolean) {
         _contractFoldersSelection: Yup.array().notRequired(),
         _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
         _contractors: Yup.array(),
+        // Lider konsorcjum — pole nieobowiązkowe. Deklarowane jawnie, żeby yupResolver oddał
+        // je do zapisu jako LICZBĘ: backend porównuje Id lidera z Id wykonawcy przez ścisłą
+        // równość, więc string "241" wróciłby jako 400.
+        _leaderEntityId: Yup.number().nullable().notRequired(),
         _ourContract: Yup.object().required("Powiązana umowa Envi jest wymagana"),
     });
 }
