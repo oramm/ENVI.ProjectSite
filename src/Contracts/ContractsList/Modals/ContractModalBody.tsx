@@ -60,6 +60,13 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("status", initialData?.status || "", { shouldValidate: true });
         setValue("lettersShortcutsInSubfolder", initialData?.lettersShortcutsInSubfolder ?? false, { shouldValidate: true });
         setValue("approvedDocumentation", initialData?.approvedDocumentation ?? false, { shouldValidate: true });
+        // „Objęta synchronizacją" (WYK): stan wczytujemy z umowy, żeby po ponownym otwarciu
+        // formularza kratka pokazywała to, co jest w bazie, a nie stan domyślny. `?? false`
+        // dotyczy tylko NOWEJ umowy i umowy odczytanej zapytaniem bez tej kolumny — w obu
+        // wypadkach „wykluczona" jest poprawną odpowiedzią, bo bramka wysyłki i tak jest
+        // fail-closed. Pole jedzie w zapisie zawsze, także jako false — brak pola w żądaniu
+        // serwer czyta jako „nie ruszaj wartości w bazie" (Contract.parseOptionalBoolean).
+        setValue("fidmanSyncEnabled", initialData?.fidmanSyncEnabled ?? false, { shouldValidate: true });
         // Metoda rozliczenia (RZL pack): pole nieobowiązkowe, dokładnie dwie opcje domenowe.
         // "" = jeszcze nie wpisano (789 kontraktów historycznych) — to stan pusty pola,
         // NIE trzecia opcja do wyboru. Backend normalizuje "" do null (Contract.ts).
@@ -214,6 +221,21 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     />
                 </Form.Group>
             )}
+            {/* „Objęta synchronizacją" (WYK, Q-WYK-3 = wariant B właściciela). Etykieta opisuje
+                STAN umowy, nie czynność — nazwa jest rozstrzygnięciem właściciela, nie propozycją.
+                Widoczne ZAWSZE, bez warunku na typie umowy jak przy „Dokumentacja zatwierdzona":
+                allowlista typów syncu żyje po stronie serwera w zmiennej środowiskowej
+                (FIDMAN_SYNC_CONTRACT_TYPE_IDS), a druga lista przepisana tutaj rozjechałaby się
+                po cichu i ukryła kratkę dla świeżo dopuszczonego typu. Ukrycie jest zresztą
+                zbędne: bramka wysyłki to koniunkcja typu i znacznika, więc sam znacznik na typie
+                spoza allowlisty niczego nie wyśle. */}
+            <Form.Group controlId="fidmanSyncEnabled" className="mt-2">
+                <Form.Check
+                    type="checkbox"
+                    label="Objęta synchronizacją"
+                    {...register("fidmanSyncEnabled")}
+                />
+            </Form.Group>
             {/* Metoda rozliczenia (RZL pack, 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent):
                 dokładnie dwie opcje domenowe + pusty stan początkowy „—" dla kontraktów bez wpisanej
                 wartości. Pole nieobowiązkowe — NIE dodawać trzeciej opcji („nieustalona"/„mieszana");

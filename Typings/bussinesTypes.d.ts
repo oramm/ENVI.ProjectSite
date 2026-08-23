@@ -102,6 +102,11 @@ export interface Contract extends RepositoryDataItem {
     _contractRangesPerContract?: any[];
     lettersShortcutsInSubfolder?: boolean;
     approvedDocumentation?: boolean;
+    /** „Objęta synchronizacją" (WYK, `Contracts.FidmanSyncEnabled`) — zgoda na wysyłkę tej
+     *  umowy do FIDmana. Zapisywalne, więc BEZ prefiksu `_`; nie mylić z `_isFidmanIntegrated`
+     *  niżej, które mówi o fakcie dokonanym („umowa JUŻ tam jest"), nie o zgodzie na wysyłkę.
+     *  Brak = serwer nie wybrał tej kolumny; zapis nieniosący pola nie kasuje wartości w bazie. */
+    fidmanSyncEnabled?: boolean;
     /** Metoda rozliczenia robót (RZL pack): 'LUMP_SUM' = ryczałt, 'MEASUREMENT' = obmiar.
      *  `null`/brak = jeszcze nie wpisano, nie jest trzecim stanem domenowym. Oś niezależna
      *  od `_type` (tryb FIDIC) — patrz 40_wiki/firma/technologie/plakietka-typu-kontraktu-akcent. */
