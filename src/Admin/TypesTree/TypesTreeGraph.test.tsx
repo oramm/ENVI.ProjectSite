@@ -283,26 +283,30 @@ describe("TypesTreeGraph", () => {
         expect(Number(canvas.style.zoom)).toBe(0.4);
     });
 
-    it("ciągnięcie tła przesuwa widok, ciągnięcie kafla nie", () => {
-        const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    it("ciągnięcie tła przesuwa płótno w obu osiach, ciągnięcie kafla nie rusza nic", () => {
         render(<TypesTreeGraph layout={layoutOf([node()])} />);
         const scroll = screen.getByTestId("types-tree-scroll");
         scroll.scrollLeft = 100;
-        fireEvent(scroll, pointer("pointerdown", 500, 300));
+        scroll.scrollTop = 50;
+        // Strona stoi w miejscu - rusza się samo płótno (decyzja ownera 2026-08-24).
+        const down = pointer("pointerdown", 500, 300);
+        fireEvent(scroll, down);
+        // Bez preventDefault przeglądarka po kilku pikselach zaczyna zaznaczać tekst
+        // i przeciąganie się urywa.
+        expect(down.defaultPrevented).toBe(true);
         fireEvent(scroll, pointer("pointermove", 460, 280));
         expect(scroll.scrollLeft).toBe(140);
-        expect(scrollTo).toHaveBeenCalledWith(0, 20);
+        expect(scroll.scrollTop).toBe(70);
         fireEvent(scroll, pointer("pointerup", 460, 280));
 
         // Kafel zostaje klikalny: gdyby ciągnięcie łapało też kafle, drgnięcie myszy
         // przy kliknięciu przesuwałoby widok zamiast otwierać panel.
         scroll.scrollLeft = 100;
-        scrollTo.mockClear();
+        scroll.scrollTop = 50;
         fireEvent(tile("caseType:45"), pointer("pointerdown", 500, 300));
         fireEvent(scroll, pointer("pointermove", 460, 280));
         expect(scroll.scrollLeft).toBe(100);
-        expect(scrollTo).not.toHaveBeenCalled();
-        scrollTo.mockRestore();
+        expect(scroll.scrollTop).toBe(50);
     });
 
     it("pusty układ zostaje komunikatem, nie pustym płótnem", () => {

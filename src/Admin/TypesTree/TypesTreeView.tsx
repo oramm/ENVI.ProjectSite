@@ -101,6 +101,7 @@ export default function TypesTreeView({ title }: { title: string }) {
     // Szuflady spoza gałęzi: informacja z pierwszego kontaktu z widokiem („co odbiega
     // od reszty"), nie codzienna - domyślnie zwinięte, żeby drzewo dostało miejsce.
     const [showExtras, setShowExtras] = useState(false);
+    const [showLegend, setShowLegend] = useState(false);
     // Edycja tylko dla panelu administracyjnego. Reszta pracowników ENVI ogląda.
     // Ta sama granica stoi w backendzie (zapis pod /admin) - tutaj chodzi o to, żeby
     // widok nie proponował czegoś, co i tak skończy się odmową.
@@ -393,30 +394,36 @@ export default function TypesTreeView({ title }: { title: string }) {
                             )}
                         </Card.Header>
                         <Card.Body className="p-2" style={{ position: "relative" }}>
-                            {/* Legenda w rogu drzewa, nie paskiem pod nim: pasek zabierał
-                                pełną szerokość karty i wysokość, której potrzebuje drzewo.
-                                Zwinięta do jednego słowa, bo rozwinięta zasłania kafle podspraw
-                                na 1366 px (zmierzone: subCaseType 109, 110, 111). Zwijaniem
-                                zajmuje się <details> - własny stan nie dałby tu nic więcej. */}
-                            <details
-                                data-testid="types-tree-legend"
-                                className="small text-muted"
-                                style={{
-                                    position: "absolute",
-                                    top: 8,
-                                    right: 8,
-                                    zIndex: 2,
-                                    maxWidth: 260,
-                                    padding: "4px 8px",
-                                    borderRadius: 6,
-                                    border: "1px solid #e9ecef",
-                                    background: "rgba(255, 255, 255, 0.92)",
-                                }}
-                            >
-                                <summary style={{ cursor: "pointer" }}>Legenda</summary>
+                            {/* Legenda w LEWYM GÓRNYM rogu drzewa, nie paskiem pod nim: pasek
+                                zabierał pełną szerokość karty i wysokość, której potrzebuje
+                                drzewo. Zwinięta do przycisku, bo rozwinięta na stałe zasłania
+                                kafle na wąskim ekranie. Przycisk wygląda tak samo jak ten pod
+                                drzewem - obie rzeczy robią to samo, więc mają wyglądać tak samo. */}
+                            <div style={{ position: "absolute", top: 8, left: 8, zIndex: 2, maxWidth: 280 }}>
+                                <Button
+                                    size="sm"
+                                    variant="outline-secondary"
+                                    className="rounded-pill py-0 px-2 small"
+                                    aria-expanded={showLegend}
+                                    data-testid="types-tree-legend"
+                                    onClick={() => setShowLegend((current) => !current)}
+                                >
+                                    {showLegend ? "▾" : "▸"} Legenda
+                                </Button>
+                                {showLegend && (
                                 <div
                                     data-testid="types-tree-legend-items"
-                                    style={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 4 }}
+                                    className="small text-muted"
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: 2,
+                                        marginTop: 4,
+                                        padding: "6px 8px",
+                                        borderRadius: 8,
+                                        border: "1px solid #e9ecef",
+                                        background: "rgba(255, 255, 255, 0.96)",
+                                    }}
                                 >
                                 <span>
                                     <svg width="22" height="8">
@@ -472,7 +479,8 @@ export default function TypesTreeView({ title }: { title: string }) {
                                     zadanie startowe - powstaje razem ze sprawą
                                 </span>
                                 </div>
-                            </details>
+                                )}
+                            </div>
                             {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
                                 dzięki temu da się przejrzeć gałąź bez otwierania okna. */}
                             <TypesTreeGraph
@@ -507,14 +515,14 @@ export default function TypesTreeView({ title }: { title: string }) {
                 Zwinięte domyślnie, ale LICZBA STOI W PRZYCISKU - zwinięcie nie chowa
                 niczego po cichu, tak samo jak zwinięcie gałęzi w drzewie. */}
             <Button
-                variant="link"
+                variant="outline-secondary"
                 size="sm"
-                className="px-0 mt-3"
+                className="rounded-pill py-0 px-2 small mt-3"
                 aria-expanded={showExtras}
                 data-testid="types-tree-extras-toggle"
                 onClick={() => setShowExtras((current) => !current)}
             >
-                {showExtras ? "Ukryj" : "Pokaż"} typy spoza wybranej gałęzi (
+                {showExtras ? "▾" : "▸"} Nieprzypisane typy (
                 {offerBranch.length + orphanMilestones.length + orphanCaseTypes.length})
             </Button>
             {showExtras && (

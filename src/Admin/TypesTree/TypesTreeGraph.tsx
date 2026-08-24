@@ -60,6 +60,14 @@ const PAD_X = 12;
 const TASK_ROW_H = 20;
 
 /**
+ * Wysokość płótna. Odjęte 280 px to wszystko, co stoi nad płótnem i pod nim: pasek nawigacji,
+ * nagłówek strony z przyciskami, pasek narzędzi karty i przycisk pod drzewem. Liczba wzięta
+ * z POMIARU (przy 1080 px okna reszta zajmowała 277 px), nie z oka - przy mniejszej strona
+ * zaczyna się przewijać, a o to właśnie szło, żeby nie musiała.
+ */
+const CANVAS_HEIGHT = "calc(100vh - 280px)";
+
+/**
  * Wiersz zadania startowego wewnątrz kafla sprawy.
  *
  * Wnętrze kafla jest o 3 px węższe, niż mówi szerokość węzła (obwódka HTML leży
@@ -384,14 +392,16 @@ export function TypesTreeGraph({
         // layout w zależnościach, bo przy pustym drzewie kontenera jeszcze nie ma.
     }, [layout]);
 
-    // Przeciąganie TŁA przesuwa widok: w poziomie paskiem kontenera, w pionie stroną -
-    // karta nie ma własnego pionowego paska i celowo go nie dostaje. Kafle, chevrony
-    // i plakietki zostają klikalne, bo ciągnie się wyłącznie tło.
+    // Przeciąganie TŁA przesuwa widok w OBU osiach - wewnątrz kontenera, nie stroną.
+    // `preventDefault` na wciśnięciu: bez niego przeglądarka po kilku pikselach uznaje
+    // ruch za zaznaczanie tekstu i przeciąganie się urywa.
+    // Kafle, chevrony i plakietki zostają klikalne, bo ciągnie się wyłącznie tło.
     const startPan = (event: React.PointerEvent<HTMLDivElement>) => {
         const scroll = scrollRef.current;
         if (!scroll || event.button !== 0) return;
         if ((event.target as HTMLElement).closest("[data-node-id]")) return;
-        panRef.current = { x: event.clientX, y: event.clientY, left: scroll.scrollLeft, top: window.scrollY };
+        event.preventDefault();
+        panRef.current = { x: event.clientX, y: event.clientY, left: scroll.scrollLeft, top: scroll.scrollTop };
         scroll.setPointerCapture(event.pointerId);
     };
     const movePan = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -399,7 +409,7 @@ export function TypesTreeGraph({
         const scroll = scrollRef.current;
         if (!pan || !scroll) return;
         scroll.scrollLeft = pan.left - (event.clientX - pan.x);
-        window.scrollTo(window.scrollX, pan.top - (event.clientY - pan.y));
+        scroll.scrollTop = pan.top - (event.clientY - pan.y);
     };
     const endPan = (event: React.PointerEvent<HTMLDivElement>) => {
         if (!panRef.current) return;
@@ -416,11 +426,12 @@ export function TypesTreeGraph({
     const byId = new Map(layout.nodes.map((node) => [node.id, node]));
 
     return (
-        // Bez własnego przewijania w pionie: karta rośnie na pełną wysokość drzewa,
-        // a przewija się cała strona. Zagnieżdżony pasek zmuszałby do przewijania
-        // dwóch rzeczy naraz i ucinał obraz w połowie gałęzi.
+        // Płótno o ograniczonej wysokości z własnym przewijaniem w OBU osiach.
+        // Wcześniej karta rosła na pełną wysokość drzewa i przewijała się cała strona;
+        // owner poprosił 2026-08-24, żeby ruszało się samo płótno, a strona stała.
+        // Wysokość liczona od okna, żeby nagłówek strony, pasek narzędzi i przycisk
+        // pod drzewem zostały widoczne.
         //
-        // W poziomie zostaje overflow, bo głębokie drzewo bywa szersze niż karta.
         // Wyśrodkowanie przez margin auto, NIE przez flexa: ten przy zawartości
         // szerszej od kontenera wypycha ją poza obie krawędzie i lewej strony
         // nie da się doscrollować.
@@ -431,7 +442,17 @@ export function TypesTreeGraph({
             onPointerMove={movePan}
             onPointerUp={endPan}
             onPointerCancel={endPan}
-            style={{ overflowX: "auto", maxWidth: "100%", cursor: "grab" }}
+            style={{
+                overflow: "auto",
+                maxWidth: "100%",
+                height: CANVAS_HEIGHT,
+                minHeight: 320,
+                cursor: "grab",
+                // Zaznaczanie tekstu psuło przeciąganie; w drzewie nie ma czego zaznaczać.
+                userSelect: "none",
+                // Dojechanie do krawędzi płótna nie przewija strony pod spodem.
+                overscrollBehavior: "contain",
+            }}
         >
             <div
                 data-testid="types-tree-canvas"
