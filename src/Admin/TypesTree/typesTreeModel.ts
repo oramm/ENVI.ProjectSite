@@ -178,3 +178,18 @@ export function isCreatedAutomatically(item: { isDefault: boolean; _templateId: 
 export function hasTemplateGap(item: { isDefault: boolean; _templateId: number | null }) {
     return item.isDefault && item._templateId === null;
 }
+
+/**
+ * Zadania startowe typu sprawy.
+ *
+ * Backend dokleja je do typu sprawy jako `_taskTemplates` - to szablony, z których
+ * przy zakładaniu sprawy powstają realne zadania. W hierarchii są RODZEŃSTWEM
+ * podspraw: jedne i drugie wiszą pod typem sprawy, żadne nie jest dzieckiem drugiego.
+ *
+ * Selektor istnieje po to, żeby „co jest zadaniem tego typu" miało jedno miejsce -
+ * gdyby kiedyś trzeba było odsiać szablony wycofane, zmiana idzie tutaj, a nie
+ * w układ i w renderer osobno.
+ */
+export function taskTemplatesFor(caseType: TypesTreeCaseType): TypesTreeTaskTemplate[] {
+    return caseType._taskTemplates ?? [];
+}

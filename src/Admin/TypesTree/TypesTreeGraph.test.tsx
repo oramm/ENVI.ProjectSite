@@ -12,19 +12,31 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { TypesTreeGraph } from "./TypesTreeGraph";
-import { Layout, LayoutNode } from "./typesTreeLayout";
+import { Layout, LayoutNode, LayoutTask } from "./typesTreeLayout";
 
 const DLUGA_NAZWA = "Uzgodnienia branżowe i decyzje administracyjne etapu drugiego";
 
-const node = (over: Partial<LayoutNode> = {}): LayoutNode => ({
-    id: "caseType:45",
-    kind: "caseType",
-    entityId: 45,
-    label: "Inicjacja umowy",
-    x: 660,
-    y: 20,
-    w: 260,
-    h: 42,
+const node = (over: Partial<LayoutNode> = {}): LayoutNode => {
+    const y = over.y ?? 20;
+    return {
+        id: "caseType:45",
+        kind: "caseType",
+        entityId: 45,
+        label: "Inicjacja umowy",
+        x: 660,
+        y,
+        w: 260,
+        h: 42,
+        // Punkt zaczepienia linii: środek nagłówka, nie środek kafla.
+        anchorY: y + 21,
+        ...over,
+    };
+};
+
+const task = (over: Partial<LayoutTask> = {}): LayoutTask => ({
+    id: 1,
+    name: "Sprawdzić i zatwierdzić polisę",
+    status: "Nie rozpoczęty",
     ...over,
 });
 
@@ -116,6 +128,76 @@ describe("TypesTreeGraph", () => {
         render(<TypesTreeGraph layout={layoutOf([node()])} onNodeClick={onNodeClick} />);
         tile("caseType:45").click();
         expect(onNodeClick).toHaveBeenCalledWith(expect.objectContaining({ id: "caseType:45" }));
+    });
+
+    it("zadania rysują się w kaflu jako osobne wiersze, poniżej nazwy", () => {
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    node({
+                        h: 42 + 4 + 2 * 20,
+                        tasks: [task(), task({ id: 2, name: "Pilotowanie przedłużenia", status: "Backlog" })],
+                        taskCount: 2,
+                    }),
+                ])}
+            />,
+        );
+        const rows = screen.getAllByTestId("types-tree-task");
+        expect(rows).toHaveLength(2);
+        expect(screen.getByText("Sprawdzić i zatwierdzić polisę")).toBeInTheDocument();
+        // Lista stoi POD nagłówkiem z nazwą sprawy, nie obok niej.
+        const header = screen.getByTestId("types-tree-node-header");
+        expect(header.compareDocumentPosition(screen.getByTestId("types-tree-task-list"))).toBe(
+            Node.DOCUMENT_POSITION_FOLLOWING,
+        );
+        expect(screen.queryByTestId("types-tree-task-count")).toBeNull();
+    });
+
+    it("zadanie w Backlogu niesie skrót statusu, zwykłe nie", () => {
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    node({
+                        h: 42 + 4 + 2 * 20,
+                        tasks: [task(), task({ id: 2, name: "wysłanie maila", status: "Backlog" })],
+                        taskCount: 2,
+                    }),
+                ])}
+            />,
+        );
+        expect(screen.getAllByText("Backlog")).toHaveLength(1);
+    });
+
+    it("schowane zadania zostawiają licznik na kaflu, a nie pustkę", () => {
+        render(<TypesTreeGraph layout={layoutOf([node({ taskCount: 3 })])} />);
+        expect(screen.queryByTestId("types-tree-task-list")).toBeNull();
+        const chip = screen.getByTestId("types-tree-task-count");
+        expect(chip.textContent).toBe("3 zad.");
+        expect(chip.title).toContain("Zadania startowe: 3");
+    });
+
+    it("kafel bez zadań nie dostaje ani listy, ani licznika", () => {
+        render(<TypesTreeGraph layout={layoutOf([node({ taskCount: 0 })])} />);
+        expect(screen.queryByTestId("types-tree-task-list")).toBeNull();
+        expect(screen.queryByTestId("types-tree-task-count")).toBeNull();
+    });
+
+    it("linia zaczepia się o środek nagłówka, nie o środek wysokiego kafla", () => {
+        const parent = node({
+            id: "milestoneType:2",
+            kind: "milestoneType",
+            entityId: 2,
+            x: 330,
+            y: 20,
+            w: 230,
+        });
+        const tall = node({ y: 20, h: 42 + 4 + 3 * 20, taskCount: 3 });
+        const { container } = render(
+            <TypesTreeGraph layout={layoutOf([parent, tall], [{ fromId: "milestoneType:2", toId: "caseType:45" }])} />,
+        );
+        const d = container.querySelector("svg path")!.getAttribute("d")!;
+        // anchorY obu węzłów = 41; gdyby liczyć środek kafla, koniec byłby na 73.
+        expect(d).toBe("M 560 41 C 610 41, 610 41, 660 41");
     });
 
     it("pusty układ zostaje komunikatem, nie pustym płótnem", () => {

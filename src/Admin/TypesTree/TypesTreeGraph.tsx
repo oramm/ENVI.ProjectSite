@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, LayoutNode } from "./typesTreeLayout";
+import { Layout, LayoutNode, LayoutTask } from "./typesTreeLayout";
 
 /**
  * Renderer grafu hierarchii - dwie warstwy, bez nowej zależności.
@@ -20,6 +20,15 @@ const FILL: Record<string, string> = {
     subCaseType: "#adb5bd",
 };
 
+/**
+ * Fiolet dla zadań startowych - kolor w tym widoku dotąd nieużywany.
+ *
+ * Nie da się tu sięgnąć po zieleń ani pomarańcz: zielona linia znaczy „powstaje samo
+ * przy nowej umowie", pomarańczowa przerywana „domyślne bez szablonu, nie powstanie",
+ * a pomarańcz kafla to rodzaj „sprawa". Nowy sygnał nie zajmuje zajętego miejsca.
+ */
+const TASK_COLOR = "#6f42c1";
+
 function nodeTitle(node: LayoutNode) {
     return node.description ? `${node.label}\n\n${node.description}` : node.label;
 }
@@ -27,9 +36,9 @@ function nodeTitle(node: LayoutNode) {
 /** Krzywa Béziera z prawej krawędzi węzła źródłowego do lewej krawędzi celu. */
 function edgePath(from: LayoutNode, to: LayoutNode) {
     const x1 = from.x + from.w;
-    const y1 = from.y + from.h / 2;
+    const y1 = from.anchorY;
     const x2 = to.x;
-    const y2 = to.y + to.h / 2;
+    const y2 = to.anchorY;
     const midX = (x1 + x2) / 2;
     return `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
 }
@@ -37,6 +46,62 @@ function edgePath(from: LayoutNode, to: LayoutNode) {
 /** Slot na numer folderu - w SVG była to różnica 46 - 12 współrzędnych tekstu. */
 const BADGE_SLOT = 34;
 const PAD_X = 12;
+
+const TASK_ROW_H = 20;
+
+/**
+ * Wiersz zadania startowego wewnątrz kafla sprawy.
+ *
+ * Wnętrze kafla jest o 3 px węższe, niż mówi szerokość węzła (obwódka HTML leży
+ * w całości wewnątrz), więc nazwa dostaje ellipsis, a nie sztywne ucinanie.
+ */
+function TaskRow({ task }: { task: LayoutTask }) {
+    return (
+        <div
+            data-testid="types-tree-task"
+            title={task.status ? `${task.name} (${task.status})` : task.name}
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                height: TASK_ROW_H,
+                minWidth: 0,
+            }}
+        >
+            <span style={{ flex: "0 0 5px", width: 5, height: 5, borderRadius: 3, background: TASK_COLOR }} />
+            <span
+                style={{
+                    fontSize: 11,
+                    color: TASK_COLOR,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                }}
+            >
+                {task.name}
+            </span>
+            {/* „Backlog" znaczy: zadanie czeka poza bieżącą listą. Szare, nie fioletowe -
+                fiolet niesie tu „to jest zadanie", status nie może mu tego odbierać. */}
+            {task.status === "Backlog" && (
+                <span
+                    style={{
+                        marginLeft: "auto",
+                        flex: "0 0 auto",
+                        fontSize: 9,
+                        lineHeight: "12px",
+                        color: "#6c757d",
+                        border: "1px solid #dee2e6",
+                        borderRadius: 3,
+                        padding: "0 3px",
+                    }}
+                >
+                    Backlog
+                </span>
+            )}
+        </div>
+    );
+}
 
 function NodeTile({
     node,
@@ -48,6 +113,9 @@ function NodeTile({
     onNodeClick?: (node: LayoutNode) => void;
 }) {
     const color = FILL[node.kind];
+    const tasks = node.tasks ?? [];
+    // Zadania schowane przełącznikiem nie znikają bez śladu - zostaje licznik.
+    const hiddenTaskCount = tasks.length ? 0 : node.taskCount ?? 0;
     return (
         <div
             data-testid="types-tree-node"
@@ -61,10 +129,12 @@ function NodeTile({
                 width: node.w,
                 height: node.h,
                 boxSizing: "border-box",
+                // Kolumna, nie wiersz: pod nagłówkiem z nazwą wisi lista zadań.
+                // Nagłówek bierze całą resztę wysokości, więc przy kaflu bez zadań
+                // wychodzi dokładnie to samo, co przed zmianą.
                 display: "flex",
-                alignItems: "center",
-                paddingLeft: PAD_X,
-                paddingRight: 10,
+                flexDirection: "column",
+                alignItems: "stretch",
                 background: "#fff",
                 borderRadius: 6,
                 // Przerywana obwódka znaczy "wyłącznie jako podsprawa" - znaczenie
@@ -88,31 +158,80 @@ function NodeTile({
                     background: color,
                 }}
             />
-            {node.badge && (
-                <span
-                    style={{
-                        flex: `0 0 ${BADGE_SLOT}px`,
-                        fontSize: 11,
-                        fontFamily: "monospace",
-                        color: "#6c757d",
-                        whiteSpace: "nowrap",
-                    }}
-                >
-                    {node.badge}
-                </span>
-            )}
-            <span
+            <div
+                data-testid="types-tree-node-header"
                 style={{
-                    fontSize: 12,
-                    color: "#212529",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    flex: "1 1 auto",
+                    display: "flex",
+                    alignItems: "center",
+                    paddingLeft: PAD_X,
+                    paddingRight: 10,
                     minWidth: 0,
                 }}
             >
-                {node.label}
-            </span>
+                {node.badge && (
+                    <span
+                        style={{
+                            flex: `0 0 ${BADGE_SLOT}px`,
+                            fontSize: 11,
+                            fontFamily: "monospace",
+                            color: "#6c757d",
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {node.badge}
+                    </span>
+                )}
+                <span
+                    style={{
+                        fontSize: 12,
+                        color: "#212529",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        minWidth: 0,
+                        // Odstęp tylko wtedy, gdy jest od czego - bez licznika kafel
+                        // wygląda co do piksela tak, jak przed tą zmianą.
+                        marginRight: hiddenTaskCount > 0 ? 6 : 0,
+                    }}
+                >
+                    {node.label}
+                </span>
+                {hiddenTaskCount > 0 && (
+                    <span
+                        data-testid="types-tree-task-count"
+                        title={`Zadania startowe: ${hiddenTaskCount}. Włącz przełącznik „Zadania", żeby je zobaczyć.`}
+                        style={{
+                            marginLeft: "auto",
+                            flex: "0 0 auto",
+                            fontSize: 10,
+                            lineHeight: "14px",
+                            color: TASK_COLOR,
+                            border: `1px solid ${TASK_COLOR}`,
+                            borderRadius: 8,
+                            padding: "0 5px",
+                        }}
+                    >
+                        {hiddenTaskCount} zad.
+                    </span>
+                )}
+            </div>
+            {tasks.length > 0 && (
+                <div
+                    data-testid="types-tree-task-list"
+                    style={{
+                        flex: "0 0 auto",
+                        borderTop: "1px solid #e9ecef",
+                        paddingTop: 3,
+                        paddingLeft: PAD_X,
+                        paddingRight: 10,
+                    }}
+                >
+                    {tasks.map((task) => (
+                        <TaskRow key={task.id} task={task} />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

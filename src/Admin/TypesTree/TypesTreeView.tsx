@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Badge, Button, Card, Col, Container, ListGroup, Row, Spinner } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Col, Container, Form, ListGroup, Row, Spinner } from "react-bootstrap";
 import { addCaseType, addMilestoneType, editCaseType, editMilestoneType, fetchTypesTree } from "./typesTreeApi";
 import { AddTypeKind, AddTypeModal, EditTarget } from "./AddTypeModal";
 import {
@@ -27,6 +27,9 @@ export default function TypesTreeView({ title }: { title: string }) {
     const [isLoading, setIsLoading] = useState(true);
     const [addKind, setAddKind] = useState<AddTypeKind | null>(null);
     const [editTarget, setEditTarget] = useState<EditTarget>(null);
+    // Zadania startowe widoczne od razu - to one są powodem tej przebudowy.
+    // Przełącznik istnieje po to, żeby dało się je schować, a nie żeby ich szukać.
+    const [showTasks, setShowTasks] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -99,7 +102,14 @@ export default function TypesTreeView({ title }: { title: string }) {
         };
     }, []);
 
-    const layout = useMemo(() => buildLayout(data, selectedContractTypeId), [data, selectedContractTypeId]);
+    const layout = useMemo(
+        () => buildLayout(data, selectedContractTypeId, { showTasks }),
+        [data, selectedContractTypeId, showTasks],
+    );
+    const visibleTaskCount = useMemo(
+        () => layout.nodes.reduce((sum, node) => sum + (node.taskCount ?? 0), 0),
+        [layout],
+    );
     const orphanMilestones = useMemo(() => unassignedMilestoneTypes(data), [data]);
     const orphanCaseTypes = useMemo(() => caseTypesWithoutMilestone(data), [data]);
     const offerBranch = useMemo(() => offerMilestoneTypes(data), [data]);
@@ -196,6 +206,26 @@ export default function TypesTreeView({ title }: { title: string }) {
 
                 <Col md={9}>
                     <Card>
+                        {/* Pasek narzędzi nad drzewem. Na razie jeden przełącznik;
+                            HTY-3 dołoży tu głębokość i reset widoku. */}
+                        <Card.Header className="py-2 d-flex align-items-center gap-3 flex-wrap">
+                            <Form.Check
+                                type="switch"
+                                id="types-tree-show-tasks"
+                                data-testid="types-tree-tasks-toggle"
+                                className="mb-0"
+                                label="Zadania"
+                                checked={showTasks}
+                                onChange={(event) => setShowTasks(event.currentTarget.checked)}
+                            />
+                            <span className="small text-muted">
+                                {visibleTaskCount === 0
+                                    ? "Ten typ umowy nie ma zadań startowych."
+                                    : showTasks
+                                      ? `Zadania startowe w kaflach spraw: ${visibleTaskCount}.`
+                                      : `Zadania startowe schowane: ${visibleTaskCount}. Licznik zostaje na kaflu.`}
+                            </span>
+                        </Card.Header>
                         <Card.Body className="p-2">
                             {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
                                 dzięki temu da się przejrzeć gałąź bez otwierania okna. */}
@@ -252,6 +282,18 @@ export default function TypesTreeView({ title }: { title: string }) {
                                     />
                                 </svg>{" "}
                                 wyłącznie jako podsprawa
+                            </span>
+                            <span>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: 7,
+                                        height: 7,
+                                        borderRadius: 4,
+                                        background: "#6f42c1",
+                                    }}
+                                />{" "}
+                                zadanie startowe - powstaje razem ze sprawą
                             </span>
                             <span>ten sam typ może stać w obu kolumnach - to dwie jego role, nie duplikat</span>
                             <span>liczba na linii = numer folderu</span>
