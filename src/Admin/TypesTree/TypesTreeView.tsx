@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
     Alert,
-    Badge,
     Button,
     Card,
     Col,
     Container,
     Form,
-    ListGroup,
     Row,
     Spinner,
     ToggleButton,
@@ -55,6 +53,15 @@ function countPhrase(
 
 function summaryText(summary: LayoutSummary): string {
     const parts = [
+        // Kolumna typów umów zajmuje jedną czwartą szerokości widoku - zdanie,
+        // które ją przemilcza, opisuje inny obraz niż ten na ekranie.
+        countPhrase(
+            summary.contractTypes.visible,
+            summary.contractTypes.total,
+            "typ umowy",
+            "typy umów",
+            "typów umów",
+        ),
         countPhrase(summary.milestoneTypes.visible, summary.milestoneTypes.total, "kamień", "kamienie", "kamieni"),
         countPhrase(summary.caseTypes.visible, summary.caseTypes.total, "sprawa", "sprawy", "spraw"),
         countPhrase(
@@ -188,6 +195,18 @@ export default function TypesTreeView({ title }: { title: string }) {
         setExpanded({});
     }
 
+    /**
+     * Przełączenie typu umowy to inna gałąź, więc wyjątki chevronów nie mają się
+     * do czego odnosić - kasujemy je razem z zaznaczeniem węzła. Poziom zostaje:
+     * mówi, jak głęboko użytkownik chce patrzeć, a nie na co patrzy.
+     */
+    function selectContractType(contractTypeId: number) {
+        if (contractTypeId === selectedContractTypeId) return;
+        setSelectedContractTypeId(contractTypeId);
+        setSelectedNodeId(null);
+        setExpanded({});
+    }
+
     function resetView() {
         setDepth(DEFAULT_DEPTH);
         setExpanded({});
@@ -207,6 +226,8 @@ export default function TypesTreeView({ title }: { title: string }) {
         );
 
     if (error) return <Alert variant="danger">{error}</Alert>;
+
+    const selectedContractType = data.contractTypes.find((type) => type.id === selectedContractTypeId);
 
     const selectedMilestoneTypeId =
         selectedNodeId && selectedNodeId.startsWith("milestoneType:")
@@ -259,37 +280,11 @@ export default function TypesTreeView({ title }: { title: string }) {
                 </div>
             </div>
 
+            {/* Lista typów umów przeniosła się do kolumny zerowej drzewa (decyzja A4),
+                więc karta drzewa bierze całą szerokość. Row i Col zostają, żeby drzewo
+                stało w tej samej pionowej linii co karty w dolnym rzędzie. */}
             <Row>
-                <Col md={3}>
-                    <Card>
-                        <Card.Header className="py-2">Typ umowy</Card.Header>
-                        {/* Bez ograniczenia wysokości: lista typów umów jest krótka,
-                            a drugi pasek przewijania obok wysokiego drzewa przeszkadza. */}
-                        <ListGroup variant="flush">
-                            {data.contractTypes.map((contractType) => (
-                                <ListGroup.Item
-                                    key={contractType.id}
-                                    action
-                                    active={contractType.id === selectedContractTypeId}
-                                    onClick={() => {
-                                        setSelectedContractTypeId(contractType.id);
-                                        setSelectedNodeId(null);
-                                    }}
-                                    className="py-2"
-                                >
-                                    {contractType.name}{" "}
-                                    {contractType.status === "OLD" && (
-                                        <Badge bg="secondary" className="ms-1">
-                                            wycofany
-                                        </Badge>
-                                    )}
-                                </ListGroup.Item>
-                            ))}
-                        </ListGroup>
-                    </Card>
-                </Col>
-
-                <Col md={9}>
+                <Col md={12}>
                     <Card>
                         {/* Pasek narzędzi nad drzewem: głębokość, zadania, reset
                             i zdanie mówiące, ile z czego widać. */}
@@ -340,6 +335,15 @@ export default function TypesTreeView({ title }: { title: string }) {
                             <span data-testid="types-tree-summary" className="small text-muted">
                                 {summaryText(layout.summary)}
                             </span>
+                            {/* Rekompensata za E2: samo przekreślenie nie mówi, DLACZEGO
+                                nazwa jest przekreślona. Czerwień, bo jedyny wolny kolor
+                                o wystarczającym kontraście - zieleń, pomarańcz, fiolet
+                                i szarość mają w tym widoku swoje znaczenia. */}
+                            {selectedContractType?.status === "OLD" && (
+                                <span data-testid="types-tree-retired" className="small text-danger">
+                                    Ten typ umowy jest wycofany.
+                                </span>
+                            )}
                             {!showTasks && layout.summary.tasks.total > 0 && (
                                 <span className="small text-muted">Licznik zadań zostaje na kaflu.</span>
                             )}
@@ -351,8 +355,14 @@ export default function TypesTreeView({ title }: { title: string }) {
                                 layout={layout}
                                 selectedNodeId={selectedNodeId}
                                 onNodeClick={(node) => {
+                                    // Kolumna zerowa przejęła rolę listy po lewej:
+                                    // klik w typ umowy przełącza gałąź, a nie zaznacza węzeł.
+                                    if (node.kind === "contractType") {
+                                        selectContractType(node.entityId);
+                                        return;
+                                    }
                                     if (node.id === selectedNodeId) {
-                                        if (node.kind !== "contractType") openEditFor(node.id);
+                                        openEditFor(node.id);
                                         return;
                                     }
                                     setSelectedNodeId(node.id);

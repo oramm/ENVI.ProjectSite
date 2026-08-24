@@ -23,7 +23,13 @@ import {
  * węzeł. Gdyby umieszczać go od razu przy pierwszym napotkanym rodzicu, wylądowałby
  * wysoko, podczas gdy jego rodzice byliby daleko niżej. Dlatego:
  *   przebieg 1 - kamienie i sprawy (kolumny 1 i 2),
- *   przebieg 2 - podsprawy, każda na średniej wysokości WSZYSTKICH swoich rodziców.
+ *   przebieg 2 - podsprawy, każda na średniej wysokości WSZYSTKICH swoich rodziców,
+ *   przebieg 3 - kolumna zerowa z WSZYSTKIMI typami umów (wybrany naprzeciwko
+ *                swojej gałęzi, reszta zwartą listą nad nim i pod nim).
+ *
+ * Kolumna zerowa jest ostatnia, bo dopiero po dwóch pierwszych przebiegach wiadomo,
+ * gdzie leży środek gałęzi wybranego typu. Gdy lista typów wyjdzie nad płótno,
+ * w dół przesuwa się całość - inaczej wybrany typ rozjechałby się ze swoją gałęzią.
  *
  * Rodzic jest wyśrodkowany względem dzieci, a nie dosunięty do góry.
  *
@@ -33,7 +39,7 @@ import {
  * faktycznie zostało narysowane.
  */
 
-export type NodeKind = "contractType" | "milestoneType" | "caseType" | "subCaseType";
+export type NodeKind = "contractType" | "milestoneType" | "caseType" | "subCaseType" | "emptyBranch";
 
 /**
  * Do której kolumny drzewo jest rozwinięte w stanie wyjściowym.
@@ -76,6 +82,15 @@ export type LayoutNode = {
     badge?: string;
     /** Typ dopuszczalny wyłącznie jako podsprawa - rysowany przerywaną obwódką. */
     isSubCaseOnly?: boolean;
+    /** Typ umowy ze statusem OLD - nazwa przekreślona (decyzja E2 packa HTY). */
+    isRetired?: boolean;
+    /**
+     * Kafel przygaszony: typ umowy, którego gałęzi teraz nie widać.
+     *
+     * Nie to samo co zaznaczenie węzła - to mówi „ta gałąź nie jest rozwinięta",
+     * a nie „na to patrzysz". Wybrany typ umowy jest jedynym nieprzygaszonym.
+     */
+    isDimmed?: boolean;
     /** Czy typ ma szablon - bez niego nie powstaje automatycznie. */
     hasTemplate?: boolean;
     description?: string;
@@ -124,6 +139,7 @@ export type LayoutEdge = {
 export type VisibleTotal = { visible: number; total: number };
 
 export type LayoutSummary = {
+    contractTypes: VisibleTotal;
     milestoneTypes: VisibleTotal;
     caseTypes: VisibleTotal;
     subCaseTypes: VisibleTotal;
@@ -141,6 +157,7 @@ export type Layout = {
 const NOTHING: VisibleTotal = { visible: 0, total: 0 };
 
 export const EMPTY_SUMMARY: LayoutSummary = {
+    contractTypes: NOTHING,
     milestoneTypes: NOTHING,
     caseTypes: NOTHING,
     subCaseTypes: NOTHING,
@@ -402,12 +419,69 @@ export function layout(
         parents.forEach((parent) => edges.push({ fromId: parent.id, toId: subCaseNode.id }));
     }
 
-    /* ---------- typ umowy, wyśrodkowany na kamieniach ---------- */
+    /* ---------- pusta gałąź: typ umowy bez kamieni ---------- */
 
-    const contractNode = makeNode("contractType", 0, contractType.id, contractType.name, centerOf(milestoneNodes), {
-        badge: contractType.status === "OLD" ? "wycofany" : undefined,
-        description: contractType.description,
+    // Bez tego kafla widok wygląda na zepsuty. Dotychczasowy komunikat pustego
+    // stanu pokazywał się tylko przy CAŁKIEM pustym płótnie, a od kolumny zerowej
+    // płótno puste nigdy nie jest - stoi na nim lista wszystkich typów umów.
+    const emptyBranchNode = branches.length
+        ? null
+        : makeNode("emptyBranch", 1, contractType.id, "brak przypisanych kamieni", null);
+
+    /* ---------- kolumna zerowa: wszystkie typy umów ---------- */
+
+    // Kolejność bierzemy z danych i niczego nie sortujemy: to ta sama lista, którą
+    // widok pokazywał do tej pory w kolumnie po lewej (backend oddaje ją alfabetycznie).
+    // Przestawienie jej przy okazji przebudowy układu byłoby zmianą, o którą nikt nie prosił.
+    const contractTypes = data.contractTypes;
+    const selectedIndex = contractTypes.findIndex((type) => type.id === contractType.id);
+    const CONTRACT_PITCH = NODE_H + GAP_Y;
+    // Wybrany typ stoi naprzeciwko środka SWOJEJ gałęzi - jak każdy inny rodzic
+    // w tym drzewie. Przy pustej gałęzi naprzeciwko kafla „brak kamieni".
+    const anchorNodes = milestoneNodes.length ? milestoneNodes : emptyBranchNode ? [emptyBranchNode] : [];
+    const selectedY = centerOf(anchorNodes) ?? PAD;
+    const firstContractY = selectedY - selectedIndex * CONTRACT_PITCH;
+    // Gdy lista wyjdzie nad płótno, w dół przesuwa się CAŁOŚĆ, a nie sama kolumna -
+    // inaczej wybrany typ przestałby stać naprzeciwko swojej gałęzi.
+    const shift = Math.max(0, PAD - firstContractY);
+
+    const contractNodes = contractTypes.map((type, index) => {
+        const isCurrent = type.id === contractType.id;
+        // Odstęp jest jeden dla całej listy, także wokół wybranego typu: przerwa
+        // w kolumnie czytałaby się jako „tu czegoś brakuje".
+        const y = firstContractY + index * CONTRACT_PITCH;
+        const node: LayoutNode = {
+            id: `contractType:${type.id}`,
+            kind: "contractType",
+            entityId: type.id,
+            label: type.name,
+            description: type.description,
+            // E2: sam znacznik przekreślenia, bez plakietki. Pełne słowo wraca
+            // w podpowiedzi kafla i w pasku narzędzi nad drzewem.
+            isRetired: type.status === "OLD",
+            isDimmed: !isCurrent,
+            x: COL_X[0],
+            y,
+            w: NODE_W[0],
+            h: NODE_H,
+            anchorY: y + NODE_H / 2,
+            // Nierozwinięty typ niesie licznik kamieni TYM SAMYM mechanizmem, co
+            // każdy inny zwinięty kafel - nic nie znika bez śladu.
+            ...(isCurrent
+                ? {}
+                : hiddenExtra(
+                      milestoneTypesForContractType(data, type.id).length,
+                      "typ kamienia",
+                      "typy kamieni",
+                      "typów kamieni",
+                  )),
+        };
+        nodes.push(node);
+        return node;
     });
+    const contractNode = contractNodes[selectedIndex];
+
+    if (emptyBranchNode) edges.push({ fromId: contractNode.id, toId: emptyBranchNode.id });
     milestoneNodes.forEach((milestoneNode) => {
         const edge = data.contractTypeMilestoneTypes.find(
             (candidate) =>
@@ -424,12 +498,26 @@ export function layout(
         });
     });
 
+    // Kolumna typów umów bywa wyższa od gałęzi i wtedy wychodzi nad płótno.
+    // Przesuwamy wszystko naraz, żeby geometria względna została nietknięta.
+    if (shift > 0)
+        nodes.forEach((node) => {
+            node.y += shift;
+            node.anchorY += shift;
+        });
+
     // Szerokość liczona z faktycznie użytych kolumn - gdy nie ma podspraw, nie
     // rezerwujemy pustego pasa po prawej, dzięki czemu graf da się wyśrodkować.
     // Przy zwiniętym drzewie działa to tak samo: nieużyta kolumna nie zajmuje miejsca.
     const width = Math.max(...nodes.map((node) => node.x + node.w)) + PAD;
     const height = Math.max(...nodes.map((node) => node.y + node.h)) + PAD;
-    return { nodes, edges, width, height, summary: summarize(branches, nodes) };
+    return {
+        nodes,
+        edges,
+        width,
+        height,
+        summary: summarize(branches, nodes, contractTypes.length),
+    };
 }
 
 /**
@@ -439,7 +527,7 @@ export function layout(
  * dwa kafle i pokazuje swoje zadania w obu, więc licząc po typach zdanie nad drzewem
  * rozjeżdżałoby się z tym, co widać na ekranie.
  */
-function summarize(branches: Branch[], nodes: LayoutNode[]): LayoutSummary {
+function summarize(branches: Branch[], nodes: LayoutNode[], contractTypeCount: number): LayoutSummary {
     const allCases = branches.flatMap((branch) => branch.cases);
     const allSubCaseTypes = new Map<number, TypesTreeCaseType>();
     allCases.forEach(({ subCaseTypes }) =>
@@ -450,6 +538,10 @@ function summarize(branches: Branch[], nodes: LayoutNode[]): LayoutSummary {
     const taskCountOf = (caseType: TypesTreeCaseType) => taskTemplatesFor(caseType).length;
 
     return {
+        // Typy umów są w kolumnie zerowej WSZYSTKIE, więc te dwie liczby są równe.
+        // Zdanie nad drzewem i tak musi je wymienić - inaczej przemilczałoby kolumnę,
+        // która zajmuje jedną czwartą szerokości widoku.
+        contractTypes: { visible: visibleOf("contractType"), total: contractTypeCount },
         milestoneTypes: { visible: visibleOf("milestoneType"), total: branches.length },
         caseTypes: { visible: visibleOf("caseType"), total: allCases.length },
         subCaseTypes: { visible: visibleOf("subCaseType"), total: allSubCaseTypes.size },

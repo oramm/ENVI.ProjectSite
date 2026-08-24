@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { TypesTreeCaseType, TypesTreeData, TypesTreeMilestoneType } from "./typesTreeModel";
-import { LayoutNode, TreeDepth, caseNodeHeight, layout } from "./typesTreeLayout";
+import { EMPTY_SUMMARY, LayoutNode, TreeDepth, caseNodeHeight, layout } from "./typesTreeLayout";
 
 const NODE_H = 42;
 
@@ -280,5 +280,146 @@ describe("typesTreeLayout - zwijanie poziomów i gałęzi", () => {
         expect(domyslny.width).toBe(jawny.width);
         expect(domyslny.height).toBe(jawny.height);
         expect(domyslny.nodes.every((node) => (node.hiddenCount ?? 0) === 0)).toBe(true);
+    });
+});
+
+/**
+ * HTY-4: kolumna zerowa z typami umów (A4) i typy wycofane (E2).
+ *
+ * Trzy rzeczy, które ta kolumna może zepsuć po cichu: rozjechać wybrany typ z jego
+ * gałęzią, zostawić w liście dziurę udającą brak danych i wypchnąć kafle nad płótno,
+ * gdzie nikt ich nie zobaczy. Każda ma tu swój test.
+ */
+const contractType = (
+    id: number,
+    name: string,
+    status = "ACTIVE",
+): TypesTreeData["contractTypes"][number] => ({ id, name, description: "", status, isOur: true });
+
+/** Cztery typy umów; wybierany „Żółty" (id 3) stoi trzeci, wycofany (id 14) - czwarty. */
+function makeManyContractTypes(): TypesTreeData {
+    const data = makeData();
+    data.contractTypes = [
+        contractType(1, "AGL"),
+        contractType(2, "Dostawy"),
+        contractType(3, "Żółty"),
+        contractType(14, "Czerwony ryczałtowy", "OLD"),
+    ];
+    // Ten sam kamień wisi też pod AGL - licznik nierozwiniętego typu ma go policzyć.
+    data.contractTypeMilestoneTypes.push({
+        contractTypeId: 1,
+        milestoneTypeId: 1,
+        folderNumber: "00",
+        isDefault: false,
+    });
+    return data;
+}
+
+/** Krótka gałąź (jeden kamień, jedna sprawa) przy typie stojącym na końcu listy. */
+function makeShortBranch(): TypesTreeData {
+    const data = makeManyContractTypes();
+    data.caseTypes = [caseType(11, "Umowa")];
+    data.contractTypes = [
+        contractType(1, "AGL"),
+        contractType(2, "Dostawy"),
+        contractType(4, "SIWZ"),
+        contractType(3, "Żółty"),
+    ];
+    return data;
+}
+
+const contractColumn = (nodes: LayoutNode[]) => nodes.filter((node) => node.kind === "contractType");
+
+describe("typesTreeLayout - typy umów jako kolumna zerowa", () => {
+    it("kolumna niesie WSZYSTKIE typy umów, w kolejności z danych", () => {
+        const { nodes } = layout(makeManyContractTypes(), 3);
+        expect(contractColumn(nodes).map((node) => node.entityId)).toEqual([1, 2, 3, 14]);
+    });
+
+    it("wybrany typ stoi naprzeciwko środka swojej gałęzi", () => {
+        const { nodes } = layout(makeManyContractTypes(), 3);
+        expect(byId(nodes, "contractType:3").anchorY).toBe(byId(nodes, "milestoneType:1").anchorY);
+    });
+
+    it("odstęp jest jednakowy w całej kolumnie - także wokół wybranego typu", () => {
+        const kolumna = contractColumn(layout(makeManyContractTypes(), 3).nodes);
+        const odstepy = kolumna.slice(1).map((node, index) => node.y - kolumna[index].y);
+        // Przerwa w kolumnie czytałaby się jako „tu czegoś brakuje".
+        expect(new Set(odstepy).size).toBe(1);
+        expect(odstepy[0]).toBe(NODE_H + 10);
+    });
+
+    it("kolumna zerowa nie zmienia szerokości płótna", () => {
+        // Kolumna typu umowy stała tam już wcześniej - jako pojedynczy kafel.
+        // Trzynaście kafli zamiast jednego to zmiana wysokości, nie szerokości.
+        expect(layout(makeManyContractTypes(), 3).width).toBe(layout(makeData(), 3).width);
+    });
+
+    it("krótka gałąź: całość zjeżdża w dół, nic nie wychodzi nad płótno", () => {
+        const { nodes } = layout(makeShortBranch(), 3);
+        const kolumna = contractColumn(nodes);
+        expect(Math.min(...kolumna.map((node) => node.y))).toBe(20);
+        // Przesuwa się CAŁOŚĆ, nie sama kolumna - wybrany typ dalej stoi
+        // naprzeciwko swojej gałęzi, a gałąź zjechała razem z nim.
+        expect(byId(nodes, "contractType:3").anchorY).toBe(byId(nodes, "milestoneType:1").anchorY);
+        expect(byId(nodes, "milestoneType:1").y).toBeGreaterThan(20);
+        expect(byId(nodes, "caseType:11").y).toBeGreaterThan(20);
+    });
+
+    it("nierozwinięty typ jest przygaszony i niesie licznik kamieni", () => {
+        const { nodes } = layout(makeManyContractTypes(), 3);
+        const agl = byId(nodes, "contractType:1");
+        expect(agl.isDimmed).toBe(true);
+        expect(agl.hiddenCount).toBe(1);
+        expect(agl.hiddenLabel).toBe("Ukryte: 1 typ kamienia");
+        const wybrany = byId(nodes, "contractType:3");
+        expect(wybrany.isDimmed).toBe(false);
+        expect(wybrany.hiddenCount).toBeUndefined();
+        // Typ bez kamieni nie udaje, że coś chowa.
+        expect(byId(nodes, "contractType:14").hiddenCount).toBeUndefined();
+    });
+
+    it("typ ze statusem OLD jest oznaczony jako wycofany, i tylko on", () => {
+        const { nodes } = layout(makeManyContractTypes(), 3);
+        expect(byId(nodes, "contractType:14").isRetired).toBe(true);
+        expect(byId(nodes, "contractType:3").isRetired).toBe(false);
+    });
+
+    it("typ bez kamieni dostaje kafel pustej gałęzi, a nie puste płótno", () => {
+        const { nodes, edges } = layout(makeManyContractTypes(), 14);
+        const puste = nodes.filter((node) => node.kind === "emptyBranch");
+        expect(puste).toHaveLength(1);
+        expect(puste[0].label).toBe("brak przypisanych kamieni");
+        // Kafel wisi na linii od swojego typu - inaczej wyglądałby na zgubiony.
+        expect(edges).toEqual([{ fromId: "contractType:14", toId: puste[0].id }]);
+        // Lista typów zostaje w komplecie, żeby dało się wyjść z pustej gałęzi.
+        expect(contractColumn(nodes)).toHaveLength(4);
+        expect(byId(nodes, "contractType:14").anchorY).toBe(puste[0].anchorY);
+    });
+
+    it("żadne dwa kafle nie zachodzą na siebie przy żadnej głębokości", () => {
+        const depths: TreeDepth[] = ["milestones", "cases", "subCases"];
+        [3, 14].forEach((selected) => {
+            depths.forEach((depth) => {
+                const { nodes } = layout(makeManyContractTypes(), selected, { depth });
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        expect(overlaps(nodes[i], nodes[j])).toBe(false);
+                    }
+                }
+            });
+        });
+    });
+
+    it("podsumowanie wymienia kolumnę typów umów", () => {
+        // Zdanie nad drzewem, które przemilcza kolumnę zajmującą jedną czwartą
+        // szerokości, opisuje inny obraz niż ten na ekranie.
+        expect(layout(makeManyContractTypes(), 3).summary.contractTypes).toEqual({ visible: 4, total: 4 });
+    });
+
+    it("brak wybranego typu zostaje pustym układem - kolumna nie rysuje się sama", () => {
+        const pusty = layout(makeManyContractTypes(), null);
+        expect(pusty.nodes).toEqual([]);
+        expect(pusty.summary).toBe(EMPTY_SUMMARY);
     });
 });

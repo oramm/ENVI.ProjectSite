@@ -252,8 +252,132 @@ describe("TypesTreeGraph", () => {
     });
 
     it("pusty układ zostaje komunikatem, nie pustym płótnem", () => {
+        // Od kolumny zerowej pusty układ znaczy już tylko „nie wybrano typu umowy":
+        // typ bez kamieni ma własny kafel i tłumaczy się sam.
         render(<TypesTreeGraph layout={{ nodes: [], edges: [], width: 0, height: 0, summary: EMPTY_SUMMARY }} />);
-        expect(screen.getByText(/nie ma przypisanych typów kamieni milowych/)).toBeInTheDocument();
+        expect(screen.getByText(/Nie wybrano typu umowy/)).toBeInTheDocument();
         expect(screen.queryByTestId("types-tree-canvas")).toBeNull();
+    });
+});
+
+/**
+ * Kolumna zerowa: typy umów w drzewie (A4) i typy wycofane (E2).
+ *
+ * Renderer ma tu trzy nowe obowiązki i każdy z nich da się zgubić po cichu:
+ * przekreślić nazwę wycofanego typu, przygasić typ, którego gałęzi nie widać,
+ * i nie udawać, że kafel pustej gałęzi jest klikalny.
+ */
+const contractNode = (over: Partial<LayoutNode> = {}): LayoutNode => {
+    const y = over.y ?? 20;
+    return {
+        id: "contractType:14",
+        kind: "contractType",
+        entityId: 14,
+        label: "Czerwony ryczałtowy",
+        x: 0,
+        y,
+        w: 230,
+        h: 42,
+        anchorY: y + 21,
+        isDimmed: false,
+        ...over,
+    };
+};
+
+/** Nazwa kafla siedzi w nagłówku, w jedynym elemencie z tekstem etykiety. */
+function labelSpan(nodeId: string, label: string) {
+    const found = Array.from(tile(nodeId).querySelectorAll("span")).find(
+        (element) => element.textContent === label,
+    );
+    if (!found) throw new Error(`Brak etykiety ${label} w kaflu ${nodeId}`);
+    return found as HTMLElement;
+}
+
+describe("TypesTreeGraph - kolumna typów umów", () => {
+    it("wycofany typ ma nazwę przekreśloną, a pełne słowo w podpowiedzi", () => {
+        render(<TypesTreeGraph layout={layoutOf([contractNode({ isRetired: true })])} />);
+        expect(labelSpan("contractType:14", "Czerwony ryczałtowy").style.textDecoration).toBe("line-through");
+        // E2 zrezygnowało z plakietki, więc podpowiedź jest jedynym miejscem,
+        // które mówi, DLACZEGO nazwa jest przekreślona.
+        expect(tile("contractType:14").getAttribute("title")).toContain("Ten typ umowy jest wycofany.");
+        expect(tile("contractType:14").getAttribute("data-retired")).toBe("true");
+    });
+
+    it("typ aktywny nie jest przekreślony", () => {
+        render(<TypesTreeGraph layout={layoutOf([contractNode({ label: "Żółty", isRetired: false })])} />);
+        expect(labelSpan("contractType:14", "Żółty").style.textDecoration).toBe("");
+        expect(tile("contractType:14").getAttribute("data-retired")).toBeNull();
+    });
+
+    it("typ, którego gałęzi nie widać, jest przygaszony; wybrany - nie", () => {
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    contractNode({ id: "contractType:1", entityId: 1, label: "AGL", isDimmed: true }),
+                    contractNode({ y: 72 }),
+                ])}
+            />,
+        );
+        expect(tile("contractType:1").style.opacity).toBe("0.55");
+        expect(tile("contractType:1").getAttribute("data-dimmed")).toBe("true");
+        expect(tile("contractType:14").style.opacity).toBe("1");
+    });
+
+    it("wybrany typ umowy jest wyróżniony tak samo jak zaznaczony węzeł", () => {
+        render(<TypesTreeGraph layout={layoutOf([contractNode()])} />);
+        // Wybrany typ decyduje o tym, którą gałąź widać - to JEST zaznaczenie
+        // tego widoku, więc nie dostaje osobnego, konkurencyjnego sygnału.
+        expect(tile("contractType:14").style.border).toContain("3px");
+        expect(tile("contractType:14").style.border).toContain("rgb(13, 110, 253)");
+    });
+
+    it("licznik kamieni na nierozwiniętym typie to ten sam mechanizm, co przy zwiniętej gałęzi", () => {
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    contractNode({ isDimmed: true, hiddenCount: 5, hiddenLabel: "Ukryte: 5 typów kamieni" }),
+                ])}
+            />,
+        );
+        expect(screen.getByTestId("types-tree-hidden-count").textContent).toBe("+5");
+        expect(tile("contractType:14").getAttribute("title")).toContain("Ukryte: 5 typów kamieni");
+    });
+
+    it("kafel pustej gałęzi tłumaczy się sam i nie udaje klikalnego", () => {
+        const onNodeClick = vi.fn();
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    {
+                        id: "emptyBranch:14",
+                        kind: "emptyBranch",
+                        entityId: 14,
+                        label: "brak przypisanych kamieni",
+                        x: 330,
+                        y: 20,
+                        w: 230,
+                        h: 42,
+                        anchorY: 41,
+                    },
+                ])}
+                onNodeClick={onNodeClick}
+            />,
+        );
+        const kafel = tile("emptyBranch:14");
+        expect(kafel.textContent).toContain("brak przypisanych kamieni");
+        // Przerywana obwódka - to samo, co przy „wyłącznie jako podsprawa",
+        // ale w innej kolumnie, więc znaczenia nie kolidują.
+        expect(kafel.style.border).toContain("dashed");
+        expect(kafel.style.cursor).toBe("default");
+        fireEvent.click(kafel);
+        expect(onNodeClick).not.toHaveBeenCalled();
+    });
+
+    it("klik w typ umowy dochodzi do widoku - to on przełącza gałąź", () => {
+        const onNodeClick = vi.fn();
+        render(<TypesTreeGraph layout={layoutOf([contractNode({ isDimmed: true })])} onNodeClick={onNodeClick} />);
+        fireEvent.click(tile("contractType:14"));
+        expect(onNodeClick).toHaveBeenCalledTimes(1);
+        expect(onNodeClick.mock.calls[0][0].entityId).toBe(14);
     });
 });

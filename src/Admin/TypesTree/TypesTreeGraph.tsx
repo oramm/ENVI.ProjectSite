@@ -18,6 +18,7 @@ const FILL: Record<string, string> = {
     milestoneType: "#20c997",
     caseType: "#f7941d",
     subCaseType: "#adb5bd",
+    emptyBranch: "#adb5bd",
 };
 
 /**
@@ -31,6 +32,9 @@ const TASK_COLOR = "#6f42c1";
 
 function nodeTitle(node: LayoutNode) {
     const lines = [node.label];
+    // E2 zostawia na kaflu samo przekreślenie, więc pełne słowo musi być tutaj -
+    // inaczej znacznik nie mówi, DLACZEGO nazwa jest przekreślona.
+    if (node.isRetired) lines.push("Ten typ umowy jest wycofany.");
     if (node.description) lines.push(node.description);
     // Licznik na kaflu jest skrótem („+8"); pełne zdanie mówi, czego dotyczy.
     if (node.hiddenLabel) lines.push(node.hiddenLabel);
@@ -173,12 +177,21 @@ function NodeTile({
     const hiddenCount = node.hiddenCount ?? 0;
     const hasChevron = Boolean(node.canCollapse && onToggleCollapse);
     const hasTrailing = hiddenTaskCount > 0 || hiddenCount > 0 || hasChevron;
+    // Kafel „brak przypisanych kamieni" jest wyjaśnieniem, nie węzłem - nie ma
+    // czego zaznaczać ani edytować, więc nie udaje klikalnego.
+    const isExplanation = node.kind === "emptyBranch";
+    const isClickable = Boolean(onNodeClick) && !isExplanation;
+    // Wybrany typ umowy JEST zaznaczeniem tego widoku - to on decyduje, którą
+    // gałąź widać. Rysujemy go tak samo jak zaznaczony węzeł, bo to ta sama rzecz.
+    const isEmphasized = isSelected || (node.kind === "contractType" && node.isDimmed === false);
     return (
         <div
             data-testid="types-tree-node"
             data-node-id={node.id}
+            data-retired={node.isRetired ? "true" : undefined}
+            data-dimmed={node.isDimmed ? "true" : undefined}
             title={nodeTitle(node)}
-            onClick={() => onNodeClick?.(node)}
+            onClick={isClickable ? () => onNodeClick?.(node) : undefined}
             style={{
                 position: "absolute",
                 left: node.x,
@@ -196,10 +209,16 @@ function NodeTile({
                 borderRadius: 6,
                 // Przerywana obwódka znaczy "wyłącznie jako podsprawa" - znaczenie
                 // przeniesione 1:1 ze strokeDasharray, nie osłabione.
-                border: `${isSelected ? 3 : 1.5}px ${node.isSubCaseOnly ? "dashed" : "solid"} ${
-                    isSelected ? "#0d6efd" : color
-                }`,
-                cursor: onNodeClick ? "pointer" : "default",
+                // Przerywana obwódka niesie tu dwa znaczenia, ale w rozłącznych
+                // kolumnach: w kolumnie podspraw „wyłącznie jako podsprawa",
+                // w kolumnie kamieni pusty stan gałęzi, który nazywa się sam.
+                border: `${isEmphasized ? 3 : 1.5}px ${
+                    node.isSubCaseOnly || isExplanation ? "dashed" : "solid"
+                } ${isEmphasized ? "#0d6efd" : color}`,
+                cursor: isClickable ? "pointer" : "default",
+                // Przygaszony kafel = gałąź, której teraz nie widać. Sygnał
+                // celowo słaby: ma ustąpić pierwszeństwa wybranej gałęzi.
+                opacity: node.isDimmed ? 0.55 : 1,
                 overflow: "hidden",
             }}
         >
@@ -242,7 +261,11 @@ function NodeTile({
                 <span
                     style={{
                         fontSize: 12,
-                        color: "#212529",
+                        color: isExplanation ? "#6c757d" : "#212529",
+                        fontStyle: isExplanation ? "italic" : undefined,
+                        // E2: sama przekreślona nazwa, bez plakietki „wycofany" -
+                        // plakietka w kolumnie 230 px zjadałaby nazwę.
+                        textDecoration: node.isRetired ? "line-through" : undefined,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
@@ -341,7 +364,9 @@ export function TypesTreeGraph({
     onToggleCollapse?: (node: LayoutNode) => void;
 }) {
     if (!layout.nodes.length) {
-        return <div className="text-muted p-3">Ten typ umowy nie ma przypisanych typów kamieni milowych.</div>;
+        // Od kolumny zerowej pusta jest już tylko sytuacja „nie wybrano typu" -
+        // typ bez kamieni ma własny kafel w kolumnie kamieni i tłumaczy się sam.
+        return <div className="text-muted p-3">Nie wybrano typu umowy.</div>;
     }
 
     const byId = new Map(layout.nodes.map((node) => [node.id, node]));
