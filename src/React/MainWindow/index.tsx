@@ -225,9 +225,13 @@ function AppRoutes() {
                             path="/admin/staffMembers"
                             element={<StaffMembersSearch title="Personel i uprawnienia" />}
                         />
-                        <Route path="/admin/typesTree" element={<TypesTreeView title="Hierarchia typów" />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
+                        {/* Hierarchia typów: PODGLĄD dla każdego pracownika ENVI, edycja
+                            tylko dla panelu administracyjnego - rozstrzyga o tym sam widok
+                            i bramka zapisu w backendzie, nie ta trasa. Adres zostaje
+                            z prefiksem /admin, żeby nie psuć zapisanych odnośników. */}
+                        <Route path="/admin/typesTree" element={<TypesTreeView title="Hierarchia typów" />} />
                         <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
                         {/* Zaliczki - ekran projektowany pod telefon, bo tam powstają wpisy
                             (kamera laptopa nie czyta kodu z potwierdzenia nadania).

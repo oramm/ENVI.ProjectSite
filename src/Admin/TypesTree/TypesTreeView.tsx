@@ -11,6 +11,7 @@ import {
     ToggleButton,
     ToggleButtonGroup,
 } from "react-bootstrap";
+import MainSetup from "../../React/MainSetupReact";
 import { addCaseType, addMilestoneType, editCaseType, editMilestoneType, fetchTypesTree } from "./typesTreeApi";
 import { AddTypeKind, AddTypeModal, EditTarget, TYPES_PANEL_WIDTH } from "./AddTypeModal";
 import {
@@ -97,6 +98,13 @@ export default function TypesTreeView({ title }: { title: string }) {
     // Poziom ustawia STAN WYJŚCIOWY całego drzewa, chevron robi od niego wyjątek.
     const [depth, setDepth] = useState<TreeDepth>(DEFAULT_DEPTH);
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+    // Szuflady spoza gałęzi: informacja z pierwszego kontaktu z widokiem („co odbiega
+    // od reszty"), nie codzienna - domyślnie zwinięte, żeby drzewo dostało miejsce.
+    const [showExtras, setShowExtras] = useState(false);
+    // Edycja tylko dla panelu administracyjnego. Reszta pracowników ENVI ogląda.
+    // Ta sama granica stoi w backendzie (zapis pod /admin) - tutaj chodzi o to, żeby
+    // widok nie proponował czegoś, co i tak skończy się odmową.
+    const canEdit = MainSetup.isRoleAllowed(MainSetup.ADMIN_PANEL_ROLES);
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -276,7 +284,14 @@ export default function TypesTreeView({ title }: { title: string }) {
             />
             <div className="d-flex align-items-center gap-2 flex-wrap">
                 <h4 className="mb-0">{title}</h4>
+                {!canEdit && (
+                    <span className="small text-muted" data-testid="types-tree-readonly">
+                        Podgląd - zmiany wprowadza się w panelu administracyjnym.
+                    </span>
+                )}
                 <div className="ms-auto d-flex gap-2">
+                    {canEdit && (
+                    <>
                     <Button
                         size="sm"
                         variant="outline-success"
@@ -304,6 +319,8 @@ export default function TypesTreeView({ title }: { title: string }) {
                     >
                         Dodaj typ sprawy
                     </Button>
+                    </>
+                    )}
                 </div>
             </div>
 
@@ -375,7 +392,87 @@ export default function TypesTreeView({ title }: { title: string }) {
                                 <span className="small text-muted">Licznik zadań zostaje na kaflu.</span>
                             )}
                         </Card.Header>
-                        <Card.Body className="p-2">
+                        <Card.Body className="p-2" style={{ position: "relative" }}>
+                            {/* Legenda w rogu drzewa, nie paskiem pod nim: pasek zabierał
+                                pełną szerokość karty i wysokość, której potrzebuje drzewo.
+                                Zwinięta do jednego słowa, bo rozwinięta zasłania kafle podspraw
+                                na 1366 px (zmierzone: subCaseType 109, 110, 111). Zwijaniem
+                                zajmuje się <details> - własny stan nie dałby tu nic więcej. */}
+                            <details
+                                data-testid="types-tree-legend"
+                                className="small text-muted"
+                                style={{
+                                    position: "absolute",
+                                    top: 8,
+                                    right: 8,
+                                    zIndex: 2,
+                                    maxWidth: 260,
+                                    padding: "4px 8px",
+                                    borderRadius: 6,
+                                    border: "1px solid #e9ecef",
+                                    background: "rgba(255, 255, 255, 0.92)",
+                                }}
+                            >
+                                <summary style={{ cursor: "pointer" }}>Legenda</summary>
+                                <div
+                                    data-testid="types-tree-legend-items"
+                                    style={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 4 }}
+                                >
+                                <span>
+                                    <svg width="22" height="8">
+                                        <line x1="0" y1="4" x2="22" y2="4" stroke="#198754" strokeWidth="2.5" />
+                                    </svg>{" "}
+                                    powstaje samo przy nowej umowie
+                                </span>
+                                <span>
+                                    <svg width="22" height="8">
+                                        <line
+                                            x1="0"
+                                            y1="4"
+                                            x2="22"
+                                            y2="4"
+                                            stroke="#fd7e14"
+                                            strokeWidth="2.5"
+                                            strokeDasharray="6 4"
+                                        />
+                                    </svg>{" "}
+                                    oznaczone jako domyślne, ale bez szablonu - nie powstanie
+                                </span>
+                                <span>
+                                    <svg width="22" height="8">
+                                        <line x1="0" y1="4" x2="22" y2="4" stroke="#ced4da" strokeWidth="1.5" />
+                                    </svg>{" "}
+                                    zwykłe
+                                </span>
+                                <span>
+                                    <svg width="16" height="12">
+                                        <rect
+                                            x="1"
+                                            y="1"
+                                            width="14"
+                                            height="10"
+                                            rx="2"
+                                            fill="#fff"
+                                            stroke="#adb5bd"
+                                            strokeDasharray="4 2"
+                                        />
+                                    </svg>{" "}
+                                    wyłącznie jako podsprawa
+                                </span>
+                                <span>
+                                    <span
+                                        style={{
+                                            display: "inline-block",
+                                            width: 7,
+                                            height: 7,
+                                            borderRadius: 4,
+                                            background: "#6f42c1",
+                                        }}
+                                    />{" "}
+                                    zadanie startowe - powstaje razem ze sprawą
+                                </span>
+                                </div>
+                            </details>
                             {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
                                 dzięki temu da się przejrzeć gałąź bez otwierania okna. */}
                             <TypesTreeGraph
@@ -393,68 +490,12 @@ export default function TypesTreeView({ title }: { title: string }) {
                                     // od nowa. Dopóki panel jest zamknięty, zostaje wejście
                                     // dwuklikiem: pierwszy klik zaznacza, drugi otwiera.
                                     setSelectedNodeId(node.id);
+                                    if (!canEdit) return;
                                     if (isPanelOpen || node.id === selectedNodeId) openEditFor(node.id);
                                 }}
                                 onToggleCollapse={toggleCollapse}
                             />
                         </Card.Body>
-                        <Card.Footer className="small text-muted d-flex flex-wrap gap-3">
-                            <span>
-                                <svg width="22" height="8">
-                                    <line x1="0" y1="4" x2="22" y2="4" stroke="#198754" strokeWidth="2.5" />
-                                </svg>{" "}
-                                powstaje samo przy nowej umowie
-                            </span>
-                            <span>
-                                <svg width="22" height="8">
-                                    <line
-                                        x1="0"
-                                        y1="4"
-                                        x2="22"
-                                        y2="4"
-                                        stroke="#fd7e14"
-                                        strokeWidth="2.5"
-                                        strokeDasharray="6 4"
-                                    />
-                                </svg>{" "}
-                                oznaczone jako domyślne, ale bez szablonu - nie powstanie
-                            </span>
-                            <span>
-                                <svg width="22" height="8">
-                                    <line x1="0" y1="4" x2="22" y2="4" stroke="#ced4da" strokeWidth="1.5" />
-                                </svg>{" "}
-                                zwykłe
-                            </span>
-                            <span>
-                                <svg width="16" height="12">
-                                    <rect
-                                        x="1"
-                                        y="1"
-                                        width="14"
-                                        height="10"
-                                        rx="2"
-                                        fill="#fff"
-                                        stroke="#adb5bd"
-                                        strokeDasharray="4 2"
-                                    />
-                                </svg>{" "}
-                                wyłącznie jako podsprawa
-                            </span>
-                            <span>
-                                <span
-                                    style={{
-                                        display: "inline-block",
-                                        width: 7,
-                                        height: 7,
-                                        borderRadius: 4,
-                                        background: "#6f42c1",
-                                    }}
-                                />{" "}
-                                zadanie startowe - powstaje razem ze sprawą
-                            </span>
-                            <span>ten sam typ może stać w obu kolumnach - to dwie jego role, nie duplikat</span>
-                            <span>liczba na linii = numer folderu</span>
-                        </Card.Footer>
                     </Card>
                 </Col>
             </Row>
@@ -462,8 +503,22 @@ export default function TypesTreeView({ title }: { title: string }) {
             {/* Szuflady na węzły spoza wybranej gałęzi. Bez nich obraz wygląda
                 na kompletny, a nim nie jest - i te typy nigdy nie zostaną zauważone.
                 UWAGA: to NIE są elementy martwe - część z nich jest używana
-                w istniejących kamieniach i sprawach mimo braku powiązania. */}
-            <Row className="mt-3">
+                w istniejących kamieniach i sprawach mimo braku powiązania.
+                Zwinięte domyślnie, ale LICZBA STOI W PRZYCISKU - zwinięcie nie chowa
+                niczego po cichu, tak samo jak zwinięcie gałęzi w drzewie. */}
+            <Button
+                variant="link"
+                size="sm"
+                className="px-0 mt-3"
+                aria-expanded={showExtras}
+                data-testid="types-tree-extras-toggle"
+                onClick={() => setShowExtras((current) => !current)}
+            >
+                {showExtras ? "Ukryj" : "Pokaż"} typy spoza wybranej gałęzi (
+                {offerBranch.length + orphanMilestones.length + orphanCaseTypes.length})
+            </Button>
+            {showExtras && (
+            <Row className="mt-1">
                 <Col md={4}>
                     <Card>
                         <Card.Header className="py-2 small">Kamienie ofertowe ({offerBranch.length})</Card.Header>
@@ -509,6 +564,7 @@ export default function TypesTreeView({ title }: { title: string }) {
                     </Card>
                 </Col>
             </Row>
+            )}
         </Container>
     );
 }

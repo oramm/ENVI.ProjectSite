@@ -15,3 +15,11 @@ if (!window.matchMedia) {
         dispatchEvent: () => false,
     })) as unknown as typeof window.matchMedia;
 }
+
+// jsdom nie ma przechwytywania wskaźnika, a przeciąganie tła w drzewie typów o nie prosi
+// (bez niego ciągnięcie gubiłoby się po wyjściu kursora poza kontener). Zaślepka pusta:
+// testy sprawdzają, DOKĄD przesuwa się widok, a nie kto łapie zdarzenia myszy.
+if (!Element.prototype.setPointerCapture) {
+    Element.prototype.setPointerCapture = () => undefined;
+    Element.prototype.releasePointerCapture = () => undefined;
+}

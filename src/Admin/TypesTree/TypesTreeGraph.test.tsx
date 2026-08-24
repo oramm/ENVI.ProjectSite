@@ -49,6 +49,14 @@ const layoutOf = (nodes: LayoutNode[], edges: Layout["edges"] = []): Layout => (
     summary: EMPTY_SUMMARY,
 });
 
+/**
+ * Zdarzenie wskaźnika zbudowane z `MouseEvent`: jsdom nie ma `PointerEvent`,
+ * a domyślna ścieżka `fireEvent.pointerDown` gubi wtedy współrzędne i przycisk.
+ */
+function pointer(type: string, clientX: number, clientY: number) {
+    return new MouseEvent(type, { bubbles: true, cancelable: true, button: 0, clientX, clientY });
+}
+
 function tile(nodeId: string) {
     const found = document.querySelector(`[data-node-id="${nodeId}"]`);
     if (!found) throw new Error(`Brak kafla ${nodeId}`);
@@ -79,11 +87,17 @@ describe("TypesTreeGraph", () => {
         expect(canvas.firstElementChild).toBe(svg);
     });
 
-    it("nie ucina długiej nazwy w kodzie - pełna zostaje w DOM i w podpowiedzi", () => {
+    it("nie ucina długiej nazwy w kodzie - pełna zostaje w DOM, a podpowiedź niesie sam opis", () => {
         render(<TypesTreeGraph layout={layoutOf([node({ label: DLUGA_NAZWA, description: "Opis typu" })])} />);
         expect(screen.getByText(DLUGA_NAZWA)).toBeInTheDocument();
         expect(screen.getByText(DLUGA_NAZWA).style.textOverflow).toBe("ellipsis");
-        expect(tile("caseType:45").title).toBe(`${DLUGA_NAZWA}\n\nOpis typu`);
+        // Nazwa stoi na kaflu, więc w podpowiedzi jej nie ma (decyzja ownera 2026-08-24).
+        expect(tile("caseType:45").title).toBe("Opis typu");
+    });
+
+    it("kafel bez opisu nie ma podpowiedzi w ogóle", () => {
+        render(<TypesTreeGraph layout={layoutOf([node()])} />);
+        expect(tile("caseType:45").getAttribute("title")).toBeNull();
     });
 
     it("przerywana obwódka zostaje przy typie wyłącznie podsprawowym", () => {
@@ -248,7 +262,47 @@ describe("TypesTreeGraph", () => {
             />,
         );
         expect(screen.getByTestId("types-tree-hidden-count").textContent).toBe("+8");
-        expect(tile("caseType:45").getAttribute("title")).toContain("Ukryte: 8 typów podspraw");
+        // Zdanie siedzi na plakietce, nie na kaflu: kafel powtarzałby to, co widać obok.
+        expect(screen.getByTestId("types-tree-hidden-count").title).toBe("Ukryte: 8 typów podspraw");
+        expect(tile("caseType:45").getAttribute("title")).toBeNull();
+    });
+
+    it("Ctrl+kółko przybliża drzewo, samo kółko nie rusza powiększenia", () => {
+        render(<TypesTreeGraph layout={layoutOf([node()])} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        const canvas = screen.getByTestId("types-tree-canvas");
+        // Bez Ctrl kółko ma dalej przewijać stronę, nie przybliżać.
+        fireEvent.wheel(scroll, { deltaY: -100 });
+        expect(canvas.style.zoom).toBe("1");
+        fireEvent.wheel(scroll, { deltaY: -100, ctrlKey: true });
+        expect(Number(canvas.style.zoom)).toBeCloseTo(1.1, 5);
+        // Sufit i podłoga: bez nich jedno mocniejsze kręcenie gubi drzewo z ekranu.
+        for (let i = 0; i < 40; i += 1) fireEvent.wheel(scroll, { deltaY: -100, ctrlKey: true });
+        expect(Number(canvas.style.zoom)).toBe(2);
+        for (let i = 0; i < 80; i += 1) fireEvent.wheel(scroll, { deltaY: 100, ctrlKey: true });
+        expect(Number(canvas.style.zoom)).toBe(0.4);
+    });
+
+    it("ciągnięcie tła przesuwa widok, ciągnięcie kafla nie", () => {
+        const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+        render(<TypesTreeGraph layout={layoutOf([node()])} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        scroll.scrollLeft = 100;
+        fireEvent(scroll, pointer("pointerdown", 500, 300));
+        fireEvent(scroll, pointer("pointermove", 460, 280));
+        expect(scroll.scrollLeft).toBe(140);
+        expect(scrollTo).toHaveBeenCalledWith(0, 20);
+        fireEvent(scroll, pointer("pointerup", 460, 280));
+
+        // Kafel zostaje klikalny: gdyby ciągnięcie łapało też kafle, drgnięcie myszy
+        // przy kliknięciu przesuwałoby widok zamiast otwierać panel.
+        scroll.scrollLeft = 100;
+        scrollTo.mockClear();
+        fireEvent(tile("caseType:45"), pointer("pointerdown", 500, 300));
+        fireEvent(scroll, pointer("pointermove", 460, 280));
+        expect(scroll.scrollLeft).toBe(100);
+        expect(scrollTo).not.toHaveBeenCalled();
+        scrollTo.mockRestore();
     });
 
     it("pusty układ zostaje komunikatem, nie pustym płótnem", () => {
@@ -340,7 +394,8 @@ describe("TypesTreeGraph - kolumna typów umów", () => {
             />,
         );
         expect(screen.getByTestId("types-tree-hidden-count").textContent).toBe("+5");
-        expect(tile("contractType:14").getAttribute("title")).toContain("Ukryte: 5 typów kamieni");
+        expect(screen.getByTestId("types-tree-hidden-count").title).toBe("Ukryte: 5 typów kamieni");
+        expect(tile("contractType:14").getAttribute("title")).toBeNull();
     });
 
     it("kafel pustej gałęzi tłumaczy się sam i nie udaje klikalnego", () => {

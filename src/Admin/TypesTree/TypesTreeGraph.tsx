@@ -10,7 +10,8 @@ import { Layout, LayoutNode, LayoutTask } from "./typesTreeLayout";
  * Pierwszą ofiarą tamtego liczenia było ucinanie nazwy na sztywno po 26 znakach
  * - teraz robi to CSS, a pełna nazwa zostaje w podpowiedzi.
  *
- * Komponent jest celowo głupi i bezstanowy: cały układ liczy typesTreeLayout.
+ * Komponent jest celowo głupi: cały układ liczy typesTreeLayout. Własnego stanu ma
+ * tyle, co powiększenie i przeciąganie widoku - to obsługa myszy, nie układ.
  */
 
 const FILL: Record<string, string> = {
@@ -31,14 +32,15 @@ const FILL: Record<string, string> = {
 const TASK_COLOR = "#6f42c1";
 
 function nodeTitle(node: LayoutNode) {
-    const lines = [node.label];
+    const lines: string[] = [];
     // E2 zostawia na kaflu samo przekreślenie, więc pełne słowo musi być tutaj -
     // inaczej znacznik nie mówi, DLACZEGO nazwa jest przekreślona.
     if (node.isRetired) lines.push("Ten typ umowy jest wycofany.");
     if (node.description) lines.push(node.description);
-    // Licznik na kaflu jest skrótem („+8"); pełne zdanie mówi, czego dotyczy.
-    if (node.hiddenLabel) lines.push(node.hiddenLabel);
-    return lines.join("\n\n");
+    // Nazwy ani licznika ukrytych dzieci tu nie ma CELOWO (decyzja ownera 2026-08-24):
+    // nazwa stoi na kaflu, a licznik ma własną plakietkę „+N" z własną podpowiedzią.
+    // Brak treści = brak atrybutu, nie pusty dymek.
+    return lines.join("\n\n") || undefined;
 }
 
 /** Krzywa Béziera z prawej krawędzi węzła źródłowego do lewej krawędzi celu. */
@@ -363,6 +365,48 @@ export function TypesTreeGraph({
     onNodeClick?: (node: LayoutNode) => void;
     onToggleCollapse?: (node: LayoutNode) => void;
 }) {
+    const scrollRef = React.useRef<HTMLDivElement>(null);
+    const panRef = React.useRef<{ x: number; y: number; left: number; top: number } | null>(null);
+    const [zoom, setZoom] = React.useState(1);
+
+    // Ctrl+kółko przybliża. Listener wieszany ręcznie, bo React podpina „wheel" jako
+    // pasywny - preventDefault w propsie nic by nie dał i przybliżałaby się cała strona.
+    React.useEffect(() => {
+        const scroll = scrollRef.current;
+        if (!scroll) return;
+        const onWheel = (event: WheelEvent) => {
+            if (!event.ctrlKey) return;
+            event.preventDefault();
+            setZoom((current) => Math.min(2, Math.max(0.4, current * (event.deltaY < 0 ? 1.1 : 1 / 1.1))));
+        };
+        scroll.addEventListener("wheel", onWheel, { passive: false });
+        return () => scroll.removeEventListener("wheel", onWheel);
+        // layout w zależnościach, bo przy pustym drzewie kontenera jeszcze nie ma.
+    }, [layout]);
+
+    // Przeciąganie TŁA przesuwa widok: w poziomie paskiem kontenera, w pionie stroną -
+    // karta nie ma własnego pionowego paska i celowo go nie dostaje. Kafle, chevrony
+    // i plakietki zostają klikalne, bo ciągnie się wyłącznie tło.
+    const startPan = (event: React.PointerEvent<HTMLDivElement>) => {
+        const scroll = scrollRef.current;
+        if (!scroll || event.button !== 0) return;
+        if ((event.target as HTMLElement).closest("[data-node-id]")) return;
+        panRef.current = { x: event.clientX, y: event.clientY, left: scroll.scrollLeft, top: window.scrollY };
+        scroll.setPointerCapture(event.pointerId);
+    };
+    const movePan = (event: React.PointerEvent<HTMLDivElement>) => {
+        const pan = panRef.current;
+        const scroll = scrollRef.current;
+        if (!pan || !scroll) return;
+        scroll.scrollLeft = pan.left - (event.clientX - pan.x);
+        window.scrollTo(window.scrollX, pan.top - (event.clientY - pan.y));
+    };
+    const endPan = (event: React.PointerEvent<HTMLDivElement>) => {
+        if (!panRef.current) return;
+        panRef.current = null;
+        scrollRef.current?.releasePointerCapture(event.pointerId);
+    };
+
     if (!layout.nodes.length) {
         // Od kolumny zerowej pusta jest już tylko sytuacja „nie wybrano typu" -
         // typ bez kamieni ma własny kafel w kolumnie kamieni i tłumaczy się sam.
@@ -380,7 +424,15 @@ export function TypesTreeGraph({
         // Wyśrodkowanie przez margin auto, NIE przez flexa: ten przy zawartości
         // szerszej od kontenera wypycha ją poza obie krawędzie i lewej strony
         // nie da się doscrollować.
-        <div data-testid="types-tree-scroll" style={{ overflowX: "auto", maxWidth: "100%" }}>
+        <div
+            data-testid="types-tree-scroll"
+            ref={scrollRef}
+            onPointerDown={startPan}
+            onPointerMove={movePan}
+            onPointerUp={endPan}
+            onPointerCancel={endPan}
+            style={{ overflowX: "auto", maxWidth: "100%", cursor: "grab" }}
+        >
             <div
                 data-testid="types-tree-canvas"
                 role="group"
@@ -390,6 +442,10 @@ export function TypesTreeGraph({
                     width: layout.width,
                     height: layout.height,
                     margin: "0 auto",
+                    // Powiększenie z Ctrl+kółka. Właściwość „zoom", nie „transform: scale":
+                    // zoom zmienia układ, więc pasek przewijania sam wie, ile miejsca zajmuje
+                    // drzewo - przy transformacji trzeba by przeliczać płótno ręcznie.
+                    zoom,
                 }}
             >
                 <svg

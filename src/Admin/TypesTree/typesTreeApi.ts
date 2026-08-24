@@ -8,12 +8,15 @@ import { TypesTreeData } from "./typesTreeModel";
  * całego grafu (około 180 wierszy) bez paginacji i filtrów.
  */
 export async function fetchTypesTree(): Promise<TypesTreeData> {
-    const response = await fetch(MainSetup.serverUrl + "admin/typesTree", {
+    // Odczyt idzie trasą BEZ prefiksu /admin: tamten prefiks jest zamknięty dla
+    // ENVI_EMPLOYEE, a podgląd hierarchii ma być dla wszystkich pracowników ENVI.
+    // Zapis niżej zostaje pod /admin - to tam stoi bramka panelu.
+    const response = await fetch(MainSetup.serverUrl + "typesTree", {
         credentials: "include",
     });
 
     if (!response.ok) {
-        if (response.status === 403) throw new Error("Brak uprawnień do panelu administracyjnego.");
+        if (response.status === 403) throw new Error("Brak uprawnień do hierarchii typów.");
         if (response.status === 401) throw new Error("Sesja wygasła - zaloguj się ponownie.");
         throw new Error(`Nie udało się pobrać hierarchii typów (kod ${response.status}).`);
     }

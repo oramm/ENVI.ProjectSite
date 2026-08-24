@@ -207,6 +207,18 @@ export default function MainMenu() {
                                             </Badge>
                                         </NavDropdown.Item>
                                     )}
+                                    {/* Hierarchia typów - podgląd dla każdego pracownika ENVI.
+                                        Pozycja w panelu administracyjnym zostaje: tam wchodzi
+                                        się PO TO, żeby edytować. */}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/admin/typesTree"
+                                            className={isActive("/admin/typesTree")}
+                                        >
+                                            Hierarchia typów
+                                        </NavDropdown.Item>
+                                    )}
                                     {isStaff && (
                                         <NavDropdown.Item
                                             as={Link}

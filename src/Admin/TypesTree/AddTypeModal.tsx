@@ -10,8 +10,12 @@ import {
 /**
  * Szerokość panelu bocznego. Ta sama liczba zwęża obszar drzewa w `TypesTreeView`,
  * żeby drzewo przeliczyło się na węższe miejsce, zamiast schować się pod panelem.
+ *
+ * 420 px to szerokość panelu `InlineCreateDrawer` - jedynego drugiego panelu bocznego
+ * z formularzem w tej aplikacji. Jedna liczba dla obu, żeby panele nie różniły się
+ * bez powodu (decyzja ownera 2026-08-24).
  */
-export const TYPES_PANEL_WIDTH = 352;
+export const TYPES_PANEL_WIDTH = 420;
 
 export type AddTypeKind = "milestoneType" | "caseType";
 
@@ -381,27 +385,32 @@ export function AddTypeModal({
 
             {showTemplateSection && (
             <div className="border rounded p-2 mt-2 mb-2">
-                <Row>
-                    <Form.Group as={Col} md={col(12, 6)}>
-                        <Form.Label className="small mb-1">
-                            Nazwa {isMilestone ? "tworzonego kamienia" : "tworzonej sprawy"}
-                        </Form.Label>
-                        <Form.Control
-                            size="sm"
-                            value={templateName}
-                            placeholder="puste = nazwa typu"
-                            onChange={(event) => setTemplateName(event.target.value)}
-                        />
-                    </Form.Group>
-                    <Form.Group as={Col} md={6}>
-                        <Form.Label className="small mb-1">Opis</Form.Label>
-                        <Form.Control
-                            size="sm"
-                            value={templateDescription}
-                            onChange={(event) => setTemplateDescription(event.target.value)}
-                        />
-                    </Form.Group>
-                </Row>
+                <Form.Group className="mb-2">
+                    <Form.Label className="small mb-1">
+                        Nazwa {isMilestone ? "tworzonego kamienia" : "tworzonej sprawy"}
+                    </Form.Label>
+                    <Form.Control
+                        size="sm"
+                        value={templateName}
+                        placeholder="puste = nazwa typu"
+                        onChange={(event) => setTemplateName(event.target.value)}
+                    />
+                </Form.Group>
+                {/* Etykieta mówi wprost, czego opis dotyczy - samo „Opis" myliło się
+                    z opisem typu wyżej. Pole na całą szerokość i wielowierszowe: w pół
+                    kolumny mieściło kilkanaście znaków (uwaga ownera 2026-08-24). */}
+                <Form.Group>
+                    <Form.Label className="small mb-1">
+                        Opis {isMilestone ? "tworzonego kamienia" : "tworzonej sprawy"}
+                    </Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={2}
+                        size="sm"
+                        value={templateDescription}
+                        onChange={(event) => setTemplateDescription(event.target.value)}
+                    />
+                </Form.Group>
                 {isMilestone && (
                     <Form.Text muted>
                         Nazwa jest wspólna dla wszystkich typów umów używających tego kamienia - to, czy kamień
