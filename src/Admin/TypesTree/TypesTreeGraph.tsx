@@ -43,14 +43,22 @@ function nodeTitle(node: LayoutNode) {
     return lines.join("\n\n") || undefined;
 }
 
+/**
+ * Jak mocno wygina się linia między poziomami. Ułamek poziomego odstępu, o jaki punkt
+ * sterujący odchodzi od swojego końca: 0,5 to punkty w połowie drogi (tak było do
+ * 2026-08-24), powyżej 0,5 punkty się mijają i linia wychodzi z kafla bardziej poziomo,
+ * a w środku skręca ostrzej. Powyżej 1,0 krzywa zaczyna zawracać - stąd sufit.
+ */
+const EDGE_CURVE = 0.75;
+
 /** Krzywa Béziera z prawej krawędzi węzła źródłowego do lewej krawędzi celu. */
 function edgePath(from: LayoutNode, to: LayoutNode) {
     const x1 = from.x + from.w;
     const y1 = from.anchorY;
     const x2 = to.x;
     const y2 = to.anchorY;
-    const midX = (x1 + x2) / 2;
-    return `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+    const reach = (x2 - x1) * EDGE_CURVE;
+    return `M ${x1} ${y1} C ${x1 + reach} ${y1}, ${x2 - reach} ${y2}, ${x2} ${y2}`;
 }
 
 /** Slot na numer folderu - w SVG była to różnica 46 - 12 współrzędnych tekstu. */

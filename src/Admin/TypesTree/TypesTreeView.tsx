@@ -394,12 +394,23 @@ export default function TypesTreeView({ title }: { title: string }) {
                             )}
                         </Card.Header>
                         <Card.Body className="p-2" style={{ position: "relative" }}>
-                            {/* Legenda w LEWYM GÓRNYM rogu drzewa, nie paskiem pod nim: pasek
-                                zabierał pełną szerokość karty i wysokość, której potrzebuje
-                                drzewo. Zwinięta do przycisku, bo rozwinięta na stałe zasłania
-                                kafle na wąskim ekranie. Przycisk wygląda tak samo jak ten pod
-                                drzewem - obie rzeczy robią to samo, więc mają wyglądać tak samo. */}
-                            <div style={{ position: "absolute", top: 8, left: 8, zIndex: 2, maxWidth: 280 }}>
+                            {/* Obie warstwy stoją w LEWYM GÓRNYM rogu płótna, obok siebie.
+                                Prawy róg odpadł: pasek przewijania płótna wchodzi na przycisk
+                                (uwaga ownera 2026-08-24), a szerokość paska zależy od systemu,
+                                więc odsuwanie się od niego na sztywno byłoby zgadywaniem.
+                                Zwinięte do przycisków, bo rozwinięte zasłaniają kafle. */}
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: 8,
+                                    left: 8,
+                                    zIndex: 2,
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: 6,
+                                }}
+                            >
+                            <div style={{ maxWidth: 280 }}>
                                 <Button
                                     size="sm"
                                     variant="outline-secondary"
@@ -481,13 +492,10 @@ export default function TypesTreeView({ title }: { title: string }) {
                                 </div>
                                 )}
                             </div>
-                            {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
-                                dzięki temu da się przejrzeć gałąź bez otwierania okna. */}
-                            {/* „Nieprzypisane typy" jako druga warstwa na płótnie, tak samo
-                                jak legenda: pod drzewem zabierały wiersz, a zagląda się tam
-                                raz na jakiś czas. Liczba stoi w przycisku, więc zwinięcie
+                            {/* „Nieprzypisane typy": pod drzewem zabierały wiersz, a zagląda
+                                się tam raz na jakiś czas. Liczba stoi w przycisku, więc zwinięcie
                                 nadal nie chowa niczego po cichu. */}
-                            <div style={{ position: "absolute", top: 8, right: 8, zIndex: 2, maxWidth: 320 }}>
+                            <div style={{ maxWidth: 320 }}>
                                 <Button
                                     size="sm"
                                     variant="outline-secondary"
@@ -546,6 +554,9 @@ export default function TypesTreeView({ title }: { title: string }) {
                                     </div>
                                 )}
                             </div>
+                            </div>
+                            {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
+                                dzięki temu da się przejrzeć gałąź bez otwierania okna. */}
                             <TypesTreeGraph
                                 layout={layout}
                                 selectedNodeId={selectedNodeId}

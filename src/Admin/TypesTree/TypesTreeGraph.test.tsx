@@ -213,7 +213,9 @@ describe("TypesTreeGraph", () => {
         );
         const d = container.querySelector("svg path")!.getAttribute("d")!;
         // anchorY obu węzłów = 41; gdyby liczyć środek kafla, koniec byłby na 73.
-        expect(d).toBe("M 560 41 C 610 41, 610 41, 660 41");
+        // Punkty sterujące MIJAJĄ SIĘ (635 przed 585) - to jest ta mocniejsza krzywizna
+        // z 2026-08-24: przy punktach w połowie drogi oba stałyby na 610.
+        expect(d).toBe("M 560 41 C 635 41, 585 41, 660 41");
     });
 
     it("kafel z dziećmi dostaje chevron, a bez dzieci nie dostaje", () => {
