@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
+import MainSetup from "../../React/MainSetupReact";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import { paymentMethodFilterOptions, paymentStatusFilterOptions } from "./costInvoicePaymentFilters";
 
@@ -25,6 +26,8 @@ export function CostInvoicesFilterBody() {
                 fromName="dateFrom"
                 toName="dateTo"
                 showValidationInfo={false}
+                defaultFromValue={MainSetup.CostInvoicesFilterInitState.DATE_FROM}
+                defaultToValue={MainSetup.CostInvoicesFilterInitState.DATE_TO}
             />
             <Form.Group as={Col} sm={12} md={3}>
                 <Form.Label>Stan platnosci</Form.Label>

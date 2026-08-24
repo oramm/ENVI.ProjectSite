@@ -243,6 +243,11 @@ export default class MainSetup {
         ISSUE_DATE_TO: ToolsDate.addDays(new Date(), +10).toISOString().slice(0, 10),
     };
 
+    static CostInvoicesFilterInitState = {
+        DATE_FROM: ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10),
+        DATE_TO: ToolsDate.addDays(new Date(), 0).toISOString().slice(0, 10),
+    };
+
     static LettersFilterInitState = {
         CREATION_DATE_FROM: ToolsDate.addDays(new Date(), -120).toISOString().slice(0, 10),
         CREATION_DATE_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
