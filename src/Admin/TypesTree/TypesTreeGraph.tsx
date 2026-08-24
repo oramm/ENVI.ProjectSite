@@ -30,7 +30,11 @@ const FILL: Record<string, string> = {
 const TASK_COLOR = "#6f42c1";
 
 function nodeTitle(node: LayoutNode) {
-    return node.description ? `${node.label}\n\n${node.description}` : node.label;
+    const lines = [node.label];
+    if (node.description) lines.push(node.description);
+    // Licznik na kaflu jest skrótem („+8"); pełne zdanie mówi, czego dotyczy.
+    if (node.hiddenLabel) lines.push(node.hiddenLabel);
+    return lines.join("\n\n");
 }
 
 /** Krzywa Béziera z prawej krawędzi węzła źródłowego do lewej krawędzi celu. */
@@ -103,19 +107,72 @@ function TaskRow({ task }: { task: LayoutTask }) {
     );
 }
 
+/**
+ * Chevron zwijający gałąź. Osobny przycisk, nie całe pole kafla, bo klik w kafel
+ * ma już swoje znaczenie (zaznacz, a przy drugim - edytuj) i nie wolno mu go odbierać.
+ */
+function Chevron({ isExpanded, onToggle }: { isExpanded: boolean; onToggle: () => void }) {
+    return (
+        <button
+            type="button"
+            data-testid="types-tree-chevron"
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? "Zwiń gałąź" : "Rozwiń gałąź"}
+            title={isExpanded ? "Zwiń gałąź" : "Rozwiń gałąź"}
+            onClick={(event) => {
+                // Bez tego klik doszedłby do kafla i przy okazji otworzył edycję.
+                event.stopPropagation();
+                onToggle();
+            }}
+            style={{
+                flex: "0 0 auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 16,
+                height: 16,
+                padding: 0,
+                border: "none",
+                background: "transparent",
+                color: "#6c757d",
+                cursor: "pointer",
+                lineHeight: 0,
+            }}
+        >
+            <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                {/* Strzałka w dół = gałąź rozwinięta, w prawo = zwinięta. */}
+                <path
+                    d={isExpanded ? "M 1 3 L 5 7 L 9 3" : "M 3 1 L 7 5 L 3 9"}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        </button>
+    );
+}
+
 function NodeTile({
     node,
     isSelected,
     onNodeClick,
+    onToggleCollapse,
 }: {
     node: LayoutNode;
     isSelected: boolean;
     onNodeClick?: (node: LayoutNode) => void;
+    onToggleCollapse?: (node: LayoutNode) => void;
 }) {
     const color = FILL[node.kind];
     const tasks = node.tasks ?? [];
     // Zadania schowane przełącznikiem nie znikają bez śladu - zostaje licznik.
     const hiddenTaskCount = tasks.length ? 0 : node.taskCount ?? 0;
+    // Dzieci schowane zwinięciem albo globalną głębokością - też zostaje licznik.
+    const hiddenCount = node.hiddenCount ?? 0;
+    const hasChevron = Boolean(node.canCollapse && onToggleCollapse);
+    const hasTrailing = hiddenTaskCount > 0 || hiddenCount > 0 || hasChevron;
     return (
         <div
             data-testid="types-tree-node"
@@ -190,29 +247,65 @@ function NodeTile({
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                         minWidth: 0,
-                        // Odstęp tylko wtedy, gdy jest od czego - bez licznika kafel
-                        // wygląda co do piksela tak, jak przed tą zmianą.
-                        marginRight: hiddenTaskCount > 0 ? 6 : 0,
+                        // Odstęp tylko wtedy, gdy jest od czego - bez liczników i bez
+                        // chevronu kafel wygląda co do piksela tak, jak przed zmianą.
+                        marginRight: hasTrailing ? 6 : 0,
                     }}
                 >
                     {node.label}
                 </span>
-                {hiddenTaskCount > 0 && (
+                {/* Prawa strona nagłówka: liczniki i chevron zawsze w tym samym
+                    miejscu, żeby wzrok nie musiał ich szukać po kaflach. */}
+                {hasTrailing && (
                     <span
-                        data-testid="types-tree-task-count"
-                        title={`Zadania startowe: ${hiddenTaskCount}. Włącz przełącznik „Zadania", żeby je zobaczyć.`}
                         style={{
                             marginLeft: "auto",
                             flex: "0 0 auto",
-                            fontSize: 10,
-                            lineHeight: "14px",
-                            color: TASK_COLOR,
-                            border: `1px solid ${TASK_COLOR}`,
-                            borderRadius: 8,
-                            padding: "0 5px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 4,
                         }}
                     >
-                        {hiddenTaskCount} zad.
+                        {hiddenTaskCount > 0 && (
+                            <span
+                                data-testid="types-tree-task-count"
+                                title={`Zadania startowe: ${hiddenTaskCount}. Włącz przełącznik „Zadania", żeby je zobaczyć.`}
+                                style={{
+                                    flex: "0 0 auto",
+                                    fontSize: 10,
+                                    lineHeight: "14px",
+                                    color: TASK_COLOR,
+                                    border: `1px solid ${TASK_COLOR}`,
+                                    borderRadius: 8,
+                                    padding: "0 5px",
+                                }}
+                            >
+                                {hiddenTaskCount} zad.
+                            </span>
+                        )}
+                        {hiddenCount > 0 && (
+                            <span
+                                data-testid="types-tree-hidden-count"
+                                title={node.hiddenLabel}
+                                style={{
+                                    flex: "0 0 auto",
+                                    fontSize: 10,
+                                    lineHeight: "14px",
+                                    color: "#495057",
+                                    background: "#e9ecef",
+                                    borderRadius: 8,
+                                    padding: "0 5px",
+                                }}
+                            >
+                                +{hiddenCount}
+                            </span>
+                        )}
+                        {hasChevron && (
+                            <Chevron
+                                isExpanded={Boolean(node.isExpanded)}
+                                onToggle={() => onToggleCollapse?.(node)}
+                            />
+                        )}
                     </span>
                 )}
             </div>
@@ -240,10 +333,12 @@ export function TypesTreeGraph({
     layout,
     selectedNodeId,
     onNodeClick,
+    onToggleCollapse,
 }: {
     layout: Layout;
     selectedNodeId?: string | null;
     onNodeClick?: (node: LayoutNode) => void;
+    onToggleCollapse?: (node: LayoutNode) => void;
 }) {
     if (!layout.nodes.length) {
         return <div className="text-muted p-3">Ten typ umowy nie ma przypisanych typów kamieni milowych.</div>;
@@ -323,6 +418,7 @@ export function TypesTreeGraph({
                         node={node}
                         isSelected={node.id === selectedNodeId}
                         onNodeClick={onNodeClick}
+                        onToggleCollapse={onToggleCollapse}
                     />
                 ))}
             </div>

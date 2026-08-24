@@ -1,5 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Badge, Button, Card, Col, Container, Form, ListGroup, Row, Spinner } from "react-bootstrap";
+import {
+    Alert,
+    Badge,
+    Button,
+    Card,
+    Col,
+    Container,
+    Form,
+    ListGroup,
+    Row,
+    Spinner,
+    ToggleButton,
+    ToggleButtonGroup,
+} from "react-bootstrap";
 import { addCaseType, addMilestoneType, editCaseType, editMilestoneType, fetchTypesTree } from "./typesTreeApi";
 import { AddTypeKind, AddTypeModal, EditTarget } from "./AddTypeModal";
 import {
@@ -9,8 +22,52 @@ import {
     offerMilestoneTypes,
     unassignedMilestoneTypes,
 } from "./typesTreeModel";
-import { layout as buildLayout } from "./typesTreeLayout";
+import {
+    LayoutNode,
+    LayoutSummary,
+    TreeDepth,
+    layout as buildLayout,
+    isExpandedByDepth,
+    pluralPl,
+} from "./typesTreeLayout";
 import { TypesTreeGraph } from "./TypesTreeGraph";
+
+/** Stan wyjściowy widoku: całe drzewo rozwinięte, zadania widoczne, zero wyjątków. */
+const DEFAULT_DEPTH: TreeDepth = "subCases";
+
+const DEPTH_LABELS: { value: TreeDepth; label: string }[] = [
+    { value: "milestones", label: "kamienie" },
+    { value: "cases", label: "sprawy" },
+    { value: "subCases", label: "podsprawy" },
+];
+
+/** „3 z 25 spraw" albo „5 kamieni", gdy nic nie schowano. */
+function countPhrase(
+    visible: number,
+    total: number,
+    one: string,
+    few: string,
+    many: string,
+): string {
+    const noun = pluralPl(total, one, few, many);
+    return visible === total ? `${total} ${noun}` : `${visible} z ${total} ${noun}`;
+}
+
+function summaryText(summary: LayoutSummary): string {
+    const parts = [
+        countPhrase(summary.milestoneTypes.visible, summary.milestoneTypes.total, "kamień", "kamienie", "kamieni"),
+        countPhrase(summary.caseTypes.visible, summary.caseTypes.total, "sprawa", "sprawy", "spraw"),
+        countPhrase(
+            summary.subCaseTypes.visible,
+            summary.subCaseTypes.total,
+            "podsprawa",
+            "podsprawy",
+            "podspraw",
+        ),
+        countPhrase(summary.tasks.visible, summary.tasks.total, "zadanie", "zadania", "zadań"),
+    ];
+    return `widać: ${parts.join(" · ")}`;
+}
 
 /**
  * Podgląd hierarchii typów: umowa → kamień milowy → sprawa → podsprawa.
@@ -30,6 +87,9 @@ export default function TypesTreeView({ title }: { title: string }) {
     // Zadania startowe widoczne od razu - to one są powodem tej przebudowy.
     // Przełącznik istnieje po to, żeby dało się je schować, a nie żeby ich szukać.
     const [showTasks, setShowTasks] = useState(true);
+    // Poziom ustawia STAN WYJŚCIOWY całego drzewa, chevron robi od niego wyjątek.
+    const [depth, setDepth] = useState<TreeDepth>(DEFAULT_DEPTH);
+    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -103,13 +163,38 @@ export default function TypesTreeView({ title }: { title: string }) {
     }, []);
 
     const layout = useMemo(
-        () => buildLayout(data, selectedContractTypeId, { showTasks }),
-        [data, selectedContractTypeId, showTasks],
+        () => buildLayout(data, selectedContractTypeId, { showTasks, depth, expanded }),
+        [data, selectedContractTypeId, showTasks, depth, expanded],
     );
-    const visibleTaskCount = useMemo(
-        () => layout.nodes.reduce((sum, node) => sum + (node.taskCount ?? 0), 0),
-        [layout],
-    );
+
+    /**
+     * Chevron zapisuje wyjątek tylko wtedy, gdy faktycznie odbiega od poziomu.
+     * Powrót do stanu zgodnego z poziomem kasuje wpis, więc „Zresetuj widok"
+     * nie świeci się, kiedy nie ma czego resetować.
+     */
+    function toggleCollapse(node: LayoutNode) {
+        const next = !node.isExpanded;
+        setExpanded((current) => {
+            const updated = { ...current };
+            if (next === isExpandedByDepth(node.kind, depth)) delete updated[node.id];
+            else updated[node.id] = next;
+            return updated;
+        });
+    }
+
+    /** Zmiana poziomu to nowy stan wyjściowy - wcześniejsze wyjątki przestają obowiązywać. */
+    function changeDepth(next: TreeDepth) {
+        setDepth(next);
+        setExpanded({});
+    }
+
+    function resetView() {
+        setDepth(DEFAULT_DEPTH);
+        setExpanded({});
+        setShowTasks(true);
+    }
+
+    const isViewChanged = depth !== DEFAULT_DEPTH || Object.keys(expanded).length > 0 || !showTasks;
     const orphanMilestones = useMemo(() => unassignedMilestoneTypes(data), [data]);
     const orphanCaseTypes = useMemo(() => caseTypesWithoutMilestone(data), [data]);
     const offerBranch = useMemo(() => offerMilestoneTypes(data), [data]);
@@ -206,9 +291,30 @@ export default function TypesTreeView({ title }: { title: string }) {
 
                 <Col md={9}>
                     <Card>
-                        {/* Pasek narzędzi nad drzewem. Na razie jeden przełącznik;
-                            HTY-3 dołoży tu głębokość i reset widoku. */}
+                        {/* Pasek narzędzi nad drzewem: głębokość, zadania, reset
+                            i zdanie mówiące, ile z czego widać. */}
                         <Card.Header className="py-2 d-flex align-items-center gap-3 flex-wrap">
+                            <span className="small text-muted">Pokaż do:</span>
+                            <ToggleButtonGroup
+                                type="radio"
+                                name="types-tree-depth"
+                                size="sm"
+                                value={depth}
+                                onChange={changeDepth}
+                            >
+                                {DEPTH_LABELS.map(({ value, label }) => (
+                                    <ToggleButton
+                                        key={value}
+                                        id={`types-tree-depth-${value}`}
+                                        data-testid="types-tree-depth"
+                                        data-depth={value}
+                                        value={value}
+                                        variant="outline-secondary"
+                                    >
+                                        {label}
+                                    </ToggleButton>
+                                ))}
+                            </ToggleButtonGroup>
                             <Form.Check
                                 type="switch"
                                 id="types-tree-show-tasks"
@@ -218,13 +324,25 @@ export default function TypesTreeView({ title }: { title: string }) {
                                 checked={showTasks}
                                 onChange={(event) => setShowTasks(event.currentTarget.checked)}
                             />
-                            <span className="small text-muted">
-                                {visibleTaskCount === 0
-                                    ? "Ten typ umowy nie ma zadań startowych."
-                                    : showTasks
-                                      ? `Zadania startowe w kaflach spraw: ${visibleTaskCount}.`
-                                      : `Zadania startowe schowane: ${visibleTaskCount}. Licznik zostaje na kaflu.`}
+                            {/* Przycisk pojawia się dopiero, gdy jest co cofać -
+                                martwy przycisk uczy, że nic się po nim nie dzieje. */}
+                            {isViewChanged && (
+                                <Button
+                                    size="sm"
+                                    variant="link"
+                                    className="p-0 small"
+                                    data-testid="types-tree-reset"
+                                    onClick={resetView}
+                                >
+                                    Zresetuj widok
+                                </Button>
+                            )}
+                            <span data-testid="types-tree-summary" className="small text-muted">
+                                {summaryText(layout.summary)}
                             </span>
+                            {!showTasks && layout.summary.tasks.total > 0 && (
+                                <span className="small text-muted">Licznik zadań zostaje na kaflu.</span>
+                            )}
                         </Card.Header>
                         <Card.Body className="p-2">
                             {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
@@ -239,6 +357,7 @@ export default function TypesTreeView({ title }: { title: string }) {
                                     }
                                     setSelectedNodeId(node.id);
                                 }}
+                                onToggleCollapse={toggleCollapse}
                             />
                         </Card.Body>
                         <Card.Footer className="small text-muted d-flex flex-wrap gap-3">

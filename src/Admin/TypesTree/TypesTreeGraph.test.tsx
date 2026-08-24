@@ -9,10 +9,10 @@
  * Układ podajemy wprost, bez `layout()` - to test renderera, nie układu.
  */
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { TypesTreeGraph } from "./TypesTreeGraph";
-import { Layout, LayoutNode, LayoutTask } from "./typesTreeLayout";
+import { EMPTY_SUMMARY, Layout, LayoutNode, LayoutTask } from "./typesTreeLayout";
 
 const DLUGA_NAZWA = "Uzgodnienia branżowe i decyzje administracyjne etapu drugiego";
 
@@ -45,6 +45,8 @@ const layoutOf = (nodes: LayoutNode[], edges: Layout["edges"] = []): Layout => (
     edges,
     width: 1260,
     height: 1394,
+    // Podsumowanie liczy układ; renderer tylko je przekazuje dalej, więc tu puste.
+    summary: EMPTY_SUMMARY,
 });
 
 function tile(nodeId: string) {
@@ -200,8 +202,57 @@ describe("TypesTreeGraph", () => {
         expect(d).toBe("M 560 41 C 610 41, 610 41, 660 41");
     });
 
+    it("kafel z dziećmi dostaje chevron, a bez dzieci nie dostaje", () => {
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    node({ canCollapse: true, isExpanded: true }),
+                    node({ id: "subCaseType:9", kind: "subCaseType", entityId: 9, x: 1010, y: 120 }),
+                ])}
+                onToggleCollapse={() => undefined}
+            />,
+        );
+        expect(tile("caseType:45").querySelector('[data-testid="types-tree-chevron"]')).not.toBeNull();
+        expect(tile("subCaseType:9").querySelector('[data-testid="types-tree-chevron"]')).toBeNull();
+    });
+
+    it("klik w chevron zwija gałąź i NIE zaznacza kafla", () => {
+        const onNodeClick = vi.fn();
+        const onToggleCollapse = vi.fn();
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([node({ canCollapse: true, isExpanded: true })])}
+                onNodeClick={onNodeClick}
+                onToggleCollapse={onToggleCollapse}
+            />,
+        );
+        fireEvent.click(screen.getByTestId("types-tree-chevron"));
+        expect(onToggleCollapse).toHaveBeenCalledTimes(1);
+        // Gdyby klik doszedł do kafla, drugi klik otwierałby edycję - a użytkownik
+        // chciał tylko zwinąć gałąź.
+        expect(onNodeClick).not.toHaveBeenCalled();
+    });
+
+    it("kafel chowający dzieci pokazuje licznik i tłumaczy go w podpowiedzi", () => {
+        render(
+            <TypesTreeGraph
+                layout={layoutOf([
+                    node({
+                        canCollapse: true,
+                        isExpanded: false,
+                        hiddenCount: 8,
+                        hiddenLabel: "Ukryte: 8 typów podspraw",
+                    }),
+                ])}
+                onToggleCollapse={() => undefined}
+            />,
+        );
+        expect(screen.getByTestId("types-tree-hidden-count").textContent).toBe("+8");
+        expect(tile("caseType:45").getAttribute("title")).toContain("Ukryte: 8 typów podspraw");
+    });
+
     it("pusty układ zostaje komunikatem, nie pustym płótnem", () => {
-        render(<TypesTreeGraph layout={{ nodes: [], edges: [], width: 0, height: 0 }} />);
+        render(<TypesTreeGraph layout={{ nodes: [], edges: [], width: 0, height: 0, summary: EMPTY_SUMMARY }} />);
         expect(screen.getByText(/nie ma przypisanych typów kamieni milowych/)).toBeInTheDocument();
         expect(screen.queryByTestId("types-tree-canvas")).toBeNull();
     });

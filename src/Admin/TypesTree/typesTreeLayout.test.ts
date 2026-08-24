@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { TypesTreeCaseType, TypesTreeData, TypesTreeMilestoneType } from "./typesTreeModel";
-import { LayoutNode, caseNodeHeight, layout } from "./typesTreeLayout";
+import { LayoutNode, TreeDepth, caseNodeHeight, layout } from "./typesTreeLayout";
 
 const NODE_H = 42;
 
@@ -144,5 +144,141 @@ describe("typesTreeLayout - zadania w kaflu sprawy", () => {
             0,
         );
         expect(z.height - bez.height).toBe(przyrost);
+    });
+});
+
+/**
+ * Ten sam typ podsprawy dopuszczony pod DWOMA rodzicami - przypadek, dla którego
+ * układ ma dwa przebiegi, i jedyny, w którym zwinięcie jednej gałęzi nie może
+ * zabrać węzła drugiej.
+ */
+function makeSharedData(): TypesTreeData {
+    const data = makeData();
+    data.caseTypes.push(caseType(21, "Odcinek", { isSubCaseOnly: true }));
+    data.subCaseTypeLinks.push({ parentCaseTypeId: 11, subCaseTypeId: 21 });
+    data.subCaseTypeLinks.push({ parentCaseTypeId: 12, subCaseTypeId: 21 });
+    return data;
+}
+
+const idsOfKind = (nodes: LayoutNode[], kind: string) =>
+    nodes.filter((node) => node.kind === kind).map((node) => node.id);
+
+describe("typesTreeLayout - zwijanie poziomów i gałęzi", () => {
+    it("poziom kamieni zostawia same kamienie, a płótno zwęża się do ich kolumny", () => {
+        const pelne = layout(makeSharedData(), 3, { depth: "subCases" });
+        const { nodes, width } = layout(makeSharedData(), 3, { depth: "milestones" });
+        expect(idsOfKind(nodes, "caseType")).toEqual([]);
+        expect(idsOfKind(nodes, "subCaseType")).toEqual([]);
+        expect(idsOfKind(nodes, "milestoneType")).toEqual(["milestoneType:1"]);
+        // Kolumna spraw przestała istnieć, więc nie rezerwuje pasa po prawej.
+        expect(width).toBeLessThan(pelne.width);
+        expect(width).toBe(Math.max(...nodes.map((node) => node.x + node.w)) + 20);
+    });
+
+    it("poziom spraw chowa podsprawy, ale zostawia zadania w kaflach", () => {
+        const { nodes } = layout(makeSharedData(), 3, { depth: "cases", showTasks: true });
+        expect(idsOfKind(nodes, "subCaseType")).toEqual([]);
+        expect(byId(nodes, "caseType:13").tasks).toHaveLength(2);
+    });
+
+    it("zwinięty kafel ZAWSZE niesie licznik ukrytych dzieci", () => {
+        const depths: TreeDepth[] = ["milestones", "cases", "subCases"];
+        depths.forEach((depth) => {
+            const { nodes } = layout(makeSharedData(), 3, { depth });
+            nodes
+                .filter((node) => node.canCollapse && !node.isExpanded)
+                .forEach((node) => expect(node.hiddenCount ?? 0).toBeGreaterThan(0));
+        });
+    });
+
+    it("licznik podaje liczbę dzieci, nie liczbę wnuków", () => {
+        const { nodes } = layout(makeSharedData(), 3, { depth: "milestones" });
+        const kamien = byId(nodes, "milestoneType:1");
+        expect(kamien.hiddenCount).toBe(3);
+        expect(kamien.hiddenLabel).toBe("Ukryte: 3 typy spraw");
+    });
+
+    it("chevron zwija gałąź, którą poziom pokazuje", () => {
+        const { nodes } = layout(makeSharedData(), 3, {
+            depth: "subCases",
+            expanded: { "milestoneType:1": false },
+        });
+        expect(idsOfKind(nodes, "caseType")).toEqual([]);
+        expect(byId(nodes, "milestoneType:1").hiddenCount).toBe(3);
+    });
+
+    it("chevron rozwija gałąź, którą poziom chowa - jedna gałąź do dna", () => {
+        const { nodes } = layout(makeSharedData(), 3, {
+            depth: "milestones",
+            expanded: { "milestoneType:1": true, "caseType:11": true },
+        });
+        expect(idsOfKind(nodes, "caseType")).toHaveLength(3);
+        // Rozwinięta jest wyłącznie ta jedna sprawa; sąsiednie dalej liczą ukryte.
+        expect(idsOfKind(nodes, "subCaseType")).toEqual(["subCaseType:21"]);
+        expect(byId(nodes, "caseType:12").hiddenCount).toBe(1);
+        expect(byId(nodes, "caseType:11").hiddenCount).toBeUndefined();
+    });
+
+    it("podsprawa dzielona zostaje, dopóki choć jeden rodzic jest rozwinięty", () => {
+        const { nodes, edges } = layout(makeSharedData(), 3, {
+            depth: "subCases",
+            expanded: { "caseType:11": false },
+        });
+        expect(idsOfKind(nodes, "subCaseType")).toEqual(["subCaseType:21"]);
+        // Linia zostaje tylko od rodzica, który ją pokazuje.
+        const doPodsprawy = edges.filter((edge) => edge.toId === "subCaseType:21");
+        expect(doPodsprawy.map((edge) => edge.fromId)).toEqual(["caseType:12"]);
+        // Zwinięty rodzic policzył ją u siebie - nie znika bez śladu.
+        expect(byId(nodes, "caseType:11").hiddenCount).toBe(1);
+    });
+
+    it("zwinięcie wszystkich rodziców chowa podsprawę, a licznik zostaje u każdego", () => {
+        const { nodes } = layout(makeSharedData(), 3, {
+            depth: "subCases",
+            expanded: { "caseType:11": false, "caseType:12": false },
+        });
+        expect(idsOfKind(nodes, "subCaseType")).toEqual([]);
+        expect(byId(nodes, "caseType:11").hiddenCount).toBe(1);
+        expect(byId(nodes, "caseType:12").hiddenCount).toBe(1);
+    });
+
+    it("podsumowanie mówi, ile z czego widać przy ilu istniejących", () => {
+        const { summary } = layout(makeSharedData(), 3, { depth: "milestones" });
+        expect(summary.milestoneTypes).toEqual({ visible: 1, total: 1 });
+        expect(summary.caseTypes).toEqual({ visible: 0, total: 3 });
+        expect(summary.subCaseTypes).toEqual({ visible: 0, total: 1 });
+        // Trzy zadania są w danych, mimo że żadnego nie widać - i tak to trzeba powiedzieć.
+        expect(summary.tasks).toEqual({ visible: 0, total: 3 });
+    });
+
+    it("kolumny liczą się od nowa, a nie przez odjęcie stałej wysokości kafla", () => {
+        const chude = makeSharedData();
+        const grube = makeSharedData();
+        // Ta sama struktura, dziesięć razy więcej zadań w ukrytych kaflach spraw.
+        grube.caseTypes[2]._taskTemplates = tasks(20);
+        const a = layout(chude, 3, { depth: "milestones" });
+        const b = layout(grube, 3, { depth: "milestones" });
+        expect(b.height).toBe(a.height);
+        expect(b.width).toBe(a.width);
+    });
+
+    it("żadne dwa kafle nie zachodzą na siebie przy żadnej głębokości", () => {
+        const depths: TreeDepth[] = ["milestones", "cases", "subCases"];
+        depths.forEach((depth) => {
+            const { nodes } = layout(makeSharedData(), 3, { depth });
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    expect(overlaps(nodes[i], nodes[j])).toBe(false);
+                }
+            }
+        });
+    });
+
+    it("bez opcji drzewo jest rozwinięte do dna - stan wyjściowy nie chowa niczego", () => {
+        const domyslny = layout(makeSharedData(), 3);
+        const jawny = layout(makeSharedData(), 3, { depth: "subCases", expanded: {} });
+        expect(domyslny.width).toBe(jawny.width);
+        expect(domyslny.height).toBe(jawny.height);
+        expect(domyslny.nodes.every((node) => (node.hiddenCount ?? 0) === 0)).toBe(true);
     });
 });
