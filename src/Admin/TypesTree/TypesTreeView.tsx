@@ -283,54 +283,16 @@ export default function TypesTreeView({ title }: { title: string }) {
                 }}
                 onSubmit={handleSave}
             />
-            <div className="d-flex align-items-center gap-2 flex-wrap">
-                <h4 className="mb-0">{title}</h4>
-                {!canEdit && (
-                    <span className="small text-muted" data-testid="types-tree-readonly">
-                        Podgląd - zmiany wprowadza się w panelu administracyjnym.
-                    </span>
-                )}
-                <div className="ms-auto d-flex gap-2">
-                    {canEdit && (
-                    <>
-                    <Button
-                        size="sm"
-                        variant="outline-success"
-                        disabled={selectedContractTypeId === null}
-                        onClick={() => {
-                            setSaveError(null);
-                            // Dodawanie zostaje oknem modalnym (decyzja 4 planu), a okno
-                            // i panel to dwie powłoki tego samego formularza - otwarty
-                            // panel przesłoniłby okno i przycisk wyglądałby na martwy.
-                            setEditTarget(null);
-                            setAddKind("milestoneType");
-                        }}
-                    >
-                        Dodaj kamień milowy
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="outline-success"
-                        disabled={selectedContractTypeId === null}
-                        onClick={() => {
-                            setSaveError(null);
-                            setEditTarget(null);
-                            setAddKind("caseType");
-                        }}
-                    >
-                        Dodaj typ sprawy
-                    </Button>
-                    </>
-                    )}
-                </div>
-            </div>
-
             {/* Lista typów umów przeniosła się do kolumny zerowej drzewa (decyzja A4),
                 więc karta drzewa bierze całą szerokość. Row i Col zostają, żeby drzewo
                 stało w tej samej pionowej linii co karty w dolnym rzędzie. */}
             <Row>
                 <Col md={12}>
-                    <Card>
+                    {/* Nagłówek „Hierarchia typów" zniknął ze strony (decyzja ownera
+                        2026-08-24) - tytuł niósł jedno słowo, a zabierał wiersz nad drzewem.
+                        Zostaje jako nazwa obszaru, żeby czytnik ekranu dalej wiedział,
+                        co to za karta. */}
+                    <Card role="region" aria-label={title}>
                         {/* Pasek narzędzi nad drzewem: głębokość, zadania, reset
                             i zdanie mówiące, ile z czego widać. */}
                         <Card.Header className="py-2 d-flex align-items-center gap-3 flex-wrap">
@@ -391,6 +353,44 @@ export default function TypesTreeView({ title }: { title: string }) {
                             )}
                             {!showTasks && layout.summary.tasks.total > 0 && (
                                 <span className="small text-muted">Licznik zadań zostaje na kaflu.</span>
+                            )}
+                            {/* Dodawanie i notka podglądu po prawej stronie paska: wiersz
+                                nad drzewem zniknął, a te przyciski muszą gdzieś stać. */}
+                            {!canEdit && (
+                                <span className="small text-muted ms-auto" data-testid="types-tree-readonly">
+                                    Podgląd - zmiany wprowadza się w panelu administracyjnym.
+                                </span>
+                            )}
+                            {canEdit && (
+                                <div className="ms-auto d-flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline-success"
+                                        disabled={selectedContractTypeId === null}
+                                        onClick={() => {
+                                            setSaveError(null);
+                                            // Dodawanie zostaje oknem modalnym (decyzja 4 planu), a okno
+                                            // i panel to dwie powłoki tego samego formularza - otwarty
+                                            // panel przesłoniłby okno i przycisk wyglądałby na martwy.
+                                            setEditTarget(null);
+                                            setAddKind("milestoneType");
+                                        }}
+                                    >
+                                        Dodaj kamień milowy
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline-success"
+                                        disabled={selectedContractTypeId === null}
+                                        onClick={() => {
+                                            setSaveError(null);
+                                            setEditTarget(null);
+                                            setAddKind("caseType");
+                                        }}
+                                    >
+                                        Dodaj typ sprawy
+                                    </Button>
+                                </div>
                             )}
                         </Card.Header>
                         <Card.Body className="p-2" style={{ position: "relative" }}>
@@ -483,6 +483,69 @@ export default function TypesTreeView({ title }: { title: string }) {
                             </div>
                             {/* Pierwszy klik zaznacza węzeł, drugi otwiera edycję -
                                 dzięki temu da się przejrzeć gałąź bez otwierania okna. */}
+                            {/* „Nieprzypisane typy" jako druga warstwa na płótnie, tak samo
+                                jak legenda: pod drzewem zabierały wiersz, a zagląda się tam
+                                raz na jakiś czas. Liczba stoi w przycisku, więc zwinięcie
+                                nadal nie chowa niczego po cichu. */}
+                            <div style={{ position: "absolute", top: 8, right: 8, zIndex: 2, maxWidth: 320 }}>
+                                <Button
+                                    size="sm"
+                                    variant="outline-secondary"
+                                    className="rounded-pill py-0 px-2 small"
+                                    aria-expanded={showExtras}
+                                    data-testid="types-tree-extras-toggle"
+                                    onClick={() => setShowExtras((current) => !current)}
+                                >
+                                    {showExtras ? "▾" : "▸"} Nieprzypisane typy (
+                                    {offerBranch.length + orphanMilestones.length + orphanCaseTypes.length})
+                                </Button>
+                                {showExtras && (
+                                    <div
+                                        data-testid="types-tree-extras"
+                                        className="small"
+                                        style={{
+                                            marginTop: 4,
+                                            padding: "6px 8px",
+                                            borderRadius: 8,
+                                            border: "1px solid #e9ecef",
+                                            background: "rgba(255, 255, 255, 0.96)",
+                                            // Trzy listy potrafią być długie - warstwa przewija
+                                            // się sama, zamiast rosnąć poza płótno.
+                                            maxHeight: 420,
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        <div className="fw-semibold">Kamienie ofertowe ({offerBranch.length})</div>
+                                        {offerBranch.length === 0 ? (
+                                            <div className="text-muted">Brak.</div>
+                                        ) : (
+                                            offerBranch.map(({ edge, milestoneType }) => (
+                                                <div key={milestoneType.id}>
+                                                    <code>{edge.folderNumber}</code> {milestoneType.name}
+                                                </div>
+                                            ))
+                                        )}
+                                        <div className="fw-semibold mt-2">
+                                            Kamienie bez powiązania z typem umowy ({orphanMilestones.length})
+                                        </div>
+                                        {orphanMilestones.length === 0 ? (
+                                            <div className="text-muted">Brak.</div>
+                                        ) : (
+                                            orphanMilestones.map((type) => <div key={type.id}>{type.name}</div>)
+                                        )}
+                                        <div className="fw-semibold mt-2">
+                                            Typy spraw bez kamienia ({orphanCaseTypes.length})
+                                        </div>
+                                        {orphanCaseTypes.length === 0 ? (
+                                            <div className="text-muted">Brak.</div>
+                                        ) : (
+                                            orphanCaseTypes.map((caseType) => (
+                                                <div key={caseType.id}>{caseType.name}</div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                             <TypesTreeGraph
                                 layout={layout}
                                 selectedNodeId={selectedNodeId}
@@ -508,71 +571,6 @@ export default function TypesTreeView({ title }: { title: string }) {
                 </Col>
             </Row>
 
-            {/* Szuflady na węzły spoza wybranej gałęzi. Bez nich obraz wygląda
-                na kompletny, a nim nie jest - i te typy nigdy nie zostaną zauważone.
-                UWAGA: to NIE są elementy martwe - część z nich jest używana
-                w istniejących kamieniach i sprawach mimo braku powiązania.
-                Zwinięte domyślnie, ale LICZBA STOI W PRZYCISKU - zwinięcie nie chowa
-                niczego po cichu, tak samo jak zwinięcie gałęzi w drzewie. */}
-            <Button
-                variant="outline-secondary"
-                size="sm"
-                className="rounded-pill py-0 px-2 small mt-3"
-                aria-expanded={showExtras}
-                data-testid="types-tree-extras-toggle"
-                onClick={() => setShowExtras((current) => !current)}
-            >
-                {showExtras ? "▾" : "▸"} Nieprzypisane typy (
-                {offerBranch.length + orphanMilestones.length + orphanCaseTypes.length})
-            </Button>
-            {showExtras && (
-            <Row className="mt-1">
-                <Col md={4}>
-                    <Card>
-                        <Card.Header className="py-2 small">Kamienie ofertowe ({offerBranch.length})</Card.Header>
-                        <Card.Body className="py-2 small">
-                            {offerBranch.length === 0 ? (
-                                <span className="text-muted">Brak.</span>
-                            ) : (
-                                offerBranch.map(({ edge, milestoneType }) => (
-                                    <div key={milestoneType.id}>
-                                        <code>{edge.folderNumber}</code> {milestoneType.name}
-                                    </div>
-                                ))
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col md={4}>
-                    <Card>
-                        <Card.Header className="py-2 small">
-                            Kamienie bez powiązania z typem umowy ({orphanMilestones.length})
-                        </Card.Header>
-                        <Card.Body className="py-2 small">
-                            {orphanMilestones.length === 0 ? (
-                                <span className="text-muted">Brak.</span>
-                            ) : (
-                                orphanMilestones.map((type) => <div key={type.id}>{type.name}</div>)
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col md={4}>
-                    <Card>
-                        <Card.Header className="py-2 small">
-                            Typy spraw bez kamienia ({orphanCaseTypes.length})
-                        </Card.Header>
-                        <Card.Body className="py-2 small">
-                            {orphanCaseTypes.length === 0 ? (
-                                <span className="text-muted">Brak.</span>
-                            ) : (
-                                orphanCaseTypes.map((caseType) => <div key={caseType.id}>{caseType.name}</div>)
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-            )}
         </Container>
     );
 }

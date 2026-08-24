@@ -60,12 +60,12 @@ const PAD_X = 12;
 const TASK_ROW_H = 20;
 
 /**
- * Wysokość płótna. Odjęte 280 px to wszystko, co stoi nad płótnem i pod nim: pasek nawigacji,
- * nagłówek strony z przyciskami, pasek narzędzi karty i przycisk pod drzewem. Liczba wzięta
- * z POMIARU (przy 1080 px okna reszta zajmowała 277 px), nie z oka - przy mniejszej strona
- * zaczyna się przewijać, a o to właśnie szło, żeby nie musiała.
+ * Wysokość płótna. Odjęte 210 px to wszystko, co stoi nad płótnem i pod nim: pasek nawigacji,
+ * pasek narzędzi karty i stopka strony. Liczba wzięta z POMIARU, nie z oka: przy 200 px strona
+ * przewijała się o 7 px. Było 280 px, dopóki nad drzewem stał nagłówek strony z przyciskami,
+ * a pod nim przycisk „Nieprzypisane typy" - oba przeniesione, więc płótno dostało te 70 px.
  */
-const CANVAS_HEIGHT = "calc(100vh - 280px)";
+const CANVAS_HEIGHT = "calc(100vh - 210px)";
 
 /**
  * Wiersz zadania startowego wewnątrz kafla sprawy.
