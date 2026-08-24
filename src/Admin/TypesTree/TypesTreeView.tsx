@@ -12,7 +12,7 @@ import {
     ToggleButtonGroup,
 } from "react-bootstrap";
 import { addCaseType, addMilestoneType, editCaseType, editMilestoneType, fetchTypesTree } from "./typesTreeApi";
-import { AddTypeKind, AddTypeModal, EditTarget } from "./AddTypeModal";
+import { AddTypeKind, AddTypeModal, EditTarget, TYPES_PANEL_WIDTH } from "./AddTypeModal";
 import {
     EMPTY_TREE,
     TypesTreeData,
@@ -205,6 +205,9 @@ export default function TypesTreeView({ title }: { title: string }) {
         setSelectedContractTypeId(contractTypeId);
         setSelectedNodeId(null);
         setExpanded({});
+        // Panel pokazywał typ z gałęzi, której już nie widać - zostawiony otwarty
+        // opisywałby coś, czego nie ma na ekranie.
+        setEditTarget(null);
     }
 
     function resetView() {
@@ -227,6 +230,8 @@ export default function TypesTreeView({ title }: { title: string }) {
 
     if (error) return <Alert variant="danger">{error}</Alert>;
 
+    const isPanelOpen = editTarget !== null;
+
     const selectedContractType = data.contractTypes.find((type) => type.id === selectedContractTypeId);
 
     const selectedMilestoneTypeId =
@@ -237,7 +242,24 @@ export default function TypesTreeView({ title }: { title: string }) {
     return (
         // Container fluid, a nie zwykły div z paddingiem: Row ma ujemne marginesy
         // po 12 px z każdej strony i bez kompensacji wypycha stronę w poziomie.
-        <Container fluid className="py-2">
+        // Otwarty panel ZWĘŻA obszar widoku o swoją szerokość, zamiast położyć się
+        // na drzewie: kontener drzewa dostaje mniej miejsca, a płótno przelicza się
+        // na nową szerokość, więc nic nie chowa się pod panelem.
+        //
+        // Zwężamy SZEROKOŚĆ, nie padding i nie margines: `container-fluid` ma
+        // `width: 100%`, więc margines nic by nie ujął, a padding zjadłby te 12 px,
+        // które kontener i tak trzyma po prawej (obszar spadłby o 340, nie o 352 px).
+        // Marginesy zerujemy ręcznie, bo `container-fluid` ma je na `auto` i sam
+        // zwężony kontener WYŚRODKOWAŁBY się - prawą krawędzią wjeżdżając pod panel.
+        <Container
+            fluid
+            className="py-2"
+            style={
+                isPanelOpen
+                    ? { width: `calc(100% - ${TYPES_PANEL_WIDTH}px)`, marginLeft: 0, marginRight: TYPES_PANEL_WIDTH }
+                    : undefined
+            }
+        >
             <AddTypeModal
                 kind={addKind}
                 editTarget={editTarget}
@@ -261,6 +283,10 @@ export default function TypesTreeView({ title }: { title: string }) {
                         disabled={selectedContractTypeId === null}
                         onClick={() => {
                             setSaveError(null);
+                            // Dodawanie zostaje oknem modalnym (decyzja 4 planu), a okno
+                            // i panel to dwie powłoki tego samego formularza - otwarty
+                            // panel przesłoniłby okno i przycisk wyglądałby na martwy.
+                            setEditTarget(null);
                             setAddKind("milestoneType");
                         }}
                     >
@@ -272,6 +298,7 @@ export default function TypesTreeView({ title }: { title: string }) {
                         disabled={selectedContractTypeId === null}
                         onClick={() => {
                             setSaveError(null);
+                            setEditTarget(null);
                             setAddKind("caseType");
                         }}
                     >
@@ -361,11 +388,12 @@ export default function TypesTreeView({ title }: { title: string }) {
                                         selectContractType(node.entityId);
                                         return;
                                     }
-                                    if (node.id === selectedNodeId) {
-                                        openEditFor(node.id);
-                                        return;
-                                    }
+                                    // Przy otwartym panelu klik w sąsiedni kafel PODMIENIA
+                                    // jego zawartość - panel nie zamyka się i nie otwiera
+                                    // od nowa. Dopóki panel jest zamknięty, zostaje wejście
+                                    // dwuklikiem: pierwszy klik zaznacza, drugi otwiera.
                                     setSelectedNodeId(node.id);
+                                    if (isPanelOpen || node.id === selectedNodeId) openEditFor(node.id);
                                 }}
                                 onToggleCollapse={toggleCollapse}
                             />

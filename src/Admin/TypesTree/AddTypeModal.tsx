@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { Alert, Button, Col, Form, Modal, Offcanvas, Row, Spinner } from "react-bootstrap";
 import {
     TypesTreeCaseType,
     TypesTreeData,
     TypesTreeMilestoneType,
     milestoneTypesForContractType,
 } from "./typesTreeModel";
+
+/**
+ * Szerokość panelu bocznego. Ta sama liczba zwęża obszar drzewa w `TypesTreeView`,
+ * żeby drzewo przeliczyło się na węższe miejsce, zamiast schować się pod panelem.
+ */
+export const TYPES_PANEL_WIDTH = 352;
 
 export type AddTypeKind = "milestoneType" | "caseType";
 
@@ -246,6 +252,367 @@ export function AddTypeModal({
     const titleAction = isEditing ? "Edytuj" : "Dodaj";
     const titleSubject = isMilestone ? "typ kamienia milowego" : "typ sprawy";
 
+    const heading = `${titleAction} ${titleSubject}`;
+
+    /**
+     * W panelu bocznym (352 px) kolumny stojące obok siebie zwężają się do pól,
+     * w których nie widać własnego tekstu - tam wszystko idzie jedna pod drugą.
+     * W oknie modalnym (szerokie `size="lg"`) zostaje układ dotychczasowy.
+     */
+    const col = (panel: number, modal: number) => (isEditing ? panel : modal);
+
+    const body = (
+        <>
+            {error && (
+                <Alert variant="danger" className="py-2 small">
+                    {error}
+                </Alert>
+            )}
+
+            {isEditing && usageCount > 0 && (
+                <Alert variant="warning" className="py-2 small">
+                    Ten typ jest użyty <strong>{usageCount}</strong> raz(y). Zmiana nazwy albo numeru folderu
+                    nie przemianuje folderów już istniejących na Dysku - dotyczy tylko tych, które dopiero
+                    powstaną.
+                </Alert>
+            )}
+
+            {isNameLocked && (
+                <Alert variant="secondary" className="py-2 small">
+                    Nazwa jest zablokowana, bo kod odwołuje się do tego typu wprost. Pozostałe pola można zmieniać.
+                </Alert>
+            )}
+
+            {isMilestone ? (
+                <Alert variant="light" className="py-2 small border">
+                    {isEditing ? "Numer folderu dotyczy powiązania z typem umowy " : "Nowy kamień zostanie powiązany z typem umowy "}
+                    <strong>{contractTypeName}</strong>.
+                </Alert>
+            ) : isEditing ? (
+                <Form.Group className="mb-3">
+                    <Form.Label>Kamień milowy</Form.Label>
+                    <Form.Control value={milestoneName ?? "bez kamienia"} disabled />
+                    <Form.Text muted>
+                        Kamienia nie da się zmienić - istniejące sprawy zostałyby przypięte do typu wiszącego
+                        pod innym kamieniem.
+                    </Form.Text>
+                </Form.Group>
+            ) : (
+                <Form.Group className="mb-3">
+                    <Form.Label>Kamień milowy</Form.Label>
+                    <Form.Select
+                        value={milestoneTypeId}
+                        isInvalid={wasSubmitted && !!milestoneError}
+                        onChange={(event) =>
+                            setMilestoneTypeId(event.target.value ? Number(event.target.value) : "")
+                        }
+                    >
+                        <option value="">Wybierz kamień</option>
+                        {milestoneOptions.map((type) => (
+                            <option key={type.id} value={type.id}>
+                                {type.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">{milestoneError}</Form.Control.Feedback>
+                </Form.Group>
+            )}
+
+            <Row>
+                <Form.Group as={Col} md={col(12, 8)} className="mb-3">
+                    <Form.Label>Nazwa</Form.Label>
+                    <Form.Control
+                        value={name}
+                        disabled={isNameLocked}
+                        isInvalid={wasSubmitted && !!nameError}
+                        onChange={(event) => setName(event.target.value)}
+                        autoFocus={!isNameLocked}
+                    />
+                    <Form.Control.Feedback type="invalid">{nameError}</Form.Control.Feedback>
+                </Form.Group>
+                <Form.Group as={Col} md={col(12, 4)} className="mb-3">
+                    <Form.Label>Numer folderu</Form.Label>
+                    <Form.Control
+                        value={folderNumber}
+                        maxLength={maxFolderLength}
+                        placeholder={isMilestone ? "np. 09" : "np. 04.03"}
+                        isInvalid={wasSubmitted && !!folderError}
+                        onChange={(event) => setFolderNumber(event.target.value)}
+                    />
+                    <Form.Control.Feedback type="invalid">{folderError}</Form.Control.Feedback>
+                    <Form.Text muted>Maks. {maxFolderLength} znaki.</Form.Text>
+                </Form.Group>
+            </Row>
+
+            <Form.Group className="mb-3">
+                <Form.Label>Opis</Form.Label>
+                <Form.Control
+                    as="textarea"
+                    rows={2}
+                    value={description}
+                    isInvalid={wasSubmitted && !!descriptionError}
+                    onChange={(event) => setDescription(event.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">{descriptionError}</Form.Control.Feedback>
+            </Form.Group>
+
+            {/* Jeden przełącznik zamiast dwóch miejsc konfiguracji: zaznaczenie
+                ustawia flagę „domyślny” ORAZ zakłada szablon, bez którego pozycja
+                i tak by nie powstała. Odznaczenie szablonu nie kasuje - trzyma
+                nazwę, a przy sprawach także zadania startowe. */}
+            <Form.Check
+                type="switch"
+                label="Powstaje automatycznie przy nowej umowie"
+                checked={isDefault}
+                onChange={(event) => setIsDefault(event.target.checked)}
+            />
+            {hadTemplateGap && (
+                <Form.Text className="text-warning d-block">
+                    Dotąd nie powstawało, mimo zaznaczenia - brakowało szablonu. Zapis to naprawi.
+                </Form.Text>
+            )}
+
+            {!showTemplateSection && (
+                <Form.Text muted className="d-block">
+                    Zaznacz, żeby ustawić nazwę i {isMilestone ? "opis" : "zadania startowe"} pozycji tworzonej
+                    automatycznie.
+                </Form.Text>
+            )}
+
+            {showTemplateSection && (
+            <div className="border rounded p-2 mt-2 mb-2">
+                <Row>
+                    <Form.Group as={Col} md={col(12, 6)}>
+                        <Form.Label className="small mb-1">
+                            Nazwa {isMilestone ? "tworzonego kamienia" : "tworzonej sprawy"}
+                        </Form.Label>
+                        <Form.Control
+                            size="sm"
+                            value={templateName}
+                            placeholder="puste = nazwa typu"
+                            onChange={(event) => setTemplateName(event.target.value)}
+                        />
+                    </Form.Group>
+                    <Form.Group as={Col} md={6}>
+                        <Form.Label className="small mb-1">Opis</Form.Label>
+                        <Form.Control
+                            size="sm"
+                            value={templateDescription}
+                            onChange={(event) => setTemplateDescription(event.target.value)}
+                        />
+                    </Form.Group>
+                </Row>
+                {isMilestone && (
+                    <Form.Text muted>
+                        Nazwa jest wspólna dla wszystkich typów umów używających tego kamienia - to, czy kamień
+                        powstaje, ustawia się osobno dla każdego typu umowy.
+                    </Form.Text>
+                )}
+            </div>
+            )}
+            <Form.Check
+                className="mt-2"
+                type="switch"
+                label={isMilestone ? "Unikalny w ramach umowy" : "Unikalny w ramach kamienia"}
+                checked={isUnique}
+                onChange={(event) => setIsUnique(event.target.checked)}
+            />
+            {!isMilestone && (
+                <>
+                    {/* Zadania startowe. Do tej pory ta konfiguracja nie miała
+                        żadnego interfejsu, choć decyduje o pierwszym kontakcie
+                        zespołu z nową sprawą. */}
+                    {showTemplateSection && (
+                    <div className="mt-2">
+                        <Form.Label className="mb-1">Zadania zakładane razem ze sprawą</Form.Label>
+                        {taskTemplates.length === 0 && (
+                            <div className="text-muted small mb-2">
+                                Brak - sprawa powstanie pusta.
+                            </div>
+                        )}
+                        {taskTemplates.map((task, index) => (
+                            <Row key={index} className="g-1 mb-1 align-items-start">
+                                <Col md={col(12, 4)}>
+                                    <Form.Control
+                                        size="sm"
+                                        placeholder="Nazwa zadania"
+                                        value={task.name}
+                                        onChange={(event) =>
+                                            setTaskTemplates((current) =>
+                                                current.map((item, i) =>
+                                                    i === index ? { ...item, name: event.target.value } : item,
+                                                ),
+                                            )
+                                        }
+                                    />
+                                </Col>
+                                <Col md={col(12, 4)}>
+                                    <Form.Control
+                                        size="sm"
+                                        placeholder="Opis"
+                                        value={task.description}
+                                        onChange={(event) =>
+                                            setTaskTemplates((current) =>
+                                                current.map((item, i) =>
+                                                    i === index
+                                                        ? { ...item, description: event.target.value }
+                                                        : item,
+                                                ),
+                                            )
+                                        }
+                                    />
+                                </Col>
+                                <Col md={col(9, 3)}>
+                                    <Form.Select
+                                        size="sm"
+                                        value={task.status}
+                                        onChange={(event) =>
+                                            setTaskTemplates((current) =>
+                                                current.map((item, i) =>
+                                                    i === index ? { ...item, status: event.target.value } : item,
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        {/* Pusty status backend zamienia przy tworzeniu
+                                            zadania na „Nie rozpoczęty”, więc osobna
+                                            pozycja o tej samej nazwie byłaby duplikatem. */}
+                                        <option value="">Nie rozpoczęty</option>
+                                        <option value="Backlog">Backlog</option>
+                                    </Form.Select>
+                                </Col>
+                                <Col md={col(3, 1)}>
+                                    <Button
+                                        size="sm"
+                                        variant="outline-secondary"
+                                        className="w-100"
+                                        title="Usuń zadanie"
+                                        onClick={() =>
+                                            setTaskTemplates((current) =>
+                                                current.filter((_, i) => i !== index),
+                                            )
+                                        }
+                                    >
+                                        &times;
+                                    </Button>
+                                </Col>
+                            </Row>
+                        ))}
+                        <Button
+                            size="sm"
+                            variant="outline-success"
+                            onClick={() =>
+                                setTaskTemplates((current) => [
+                                    ...current,
+                                    { name: "", description: "", status: "" },
+                                ])
+                            }
+                        >
+                            Dodaj zadanie
+                        </Button>
+                    </div>
+                    )}
+
+                    <Form.Check
+                        className="mt-3"
+                        type="switch"
+                        label="Wyłącznie jako podsprawa"
+                        checked={isSubCaseOnly}
+                        onChange={(event) => setIsSubCaseOnly(event.target.checked)}
+                    />
+                    <Form.Text muted>Taki typ nie pojawi się przy zakładaniu zwykłej sprawy.</Form.Text>
+
+                    {/* Lista rodziców jest widoczna ZAWSZE, także po odznaczeniu flagi.
+                        Powiązania żyją w bazie niezależnie od niej - gdyby lista znikała,
+                        nie dałoby się ich wyczyścić, a typ zostawał jednocześnie sprawą
+                        i podsprawą. */}
+                    <div className="mt-3">
+                        <Form.Label className="mb-1">
+                            Sprawy nadrzędne{!isSubCaseOnly && " (opcjonalnie)"}
+                        </Form.Label>
+                        {parentOptions.length === 0 ? (
+                            <Alert variant="warning" className="py-2 small mb-0">
+                                Ten kamień nie ma jeszcze zwykłych typów spraw, pod które można podpiąć
+                                podsprawę. Najpierw dodaj typ sprawy, potem wróć tutaj.
+                            </Alert>
+                        ) : (
+                                <div
+                                    className={`border rounded p-2 ${
+                                        wasSubmitted && parentsError ? "border-danger" : ""
+                                    }`}
+                                    style={{ maxHeight: 180, overflowY: "auto" }}
+                                >
+                                    {parentOptions.map((candidate) => (
+                                        <Form.Check
+                                            key={candidate.id}
+                                            type="checkbox"
+                                            id={`parentCaseType-${candidate.id}`}
+                                            label={`${candidate.folderNumber ?? ""} ${candidate.name}`.trim()}
+                                            checked={parentCaseTypeIds.includes(candidate.id)}
+                                            onChange={() => toggleParent(candidate.id)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        {wasSubmitted && parentsError && (
+                            <div className="text-danger small mt-1">{parentsError}</div>
+                        )}
+                        <Form.Text muted>
+                            Ten sam typ może być dopuszczony pod kilkoma sprawami - w drzewie rysujemy go
+                            wtedy jako jeden węzeł z kilkoma liniami.
+                            {!isSubCaseOnly && parentCaseTypeIds.length > 0 && (
+                                <>
+                                    {" "}
+                                    Ten typ można założyć zarówno jako zwykłą sprawę, jak i jako podsprawę.
+                                    Odznacz wszystkie sprawy nadrzędne, żeby został wyłącznie zwykłą sprawą.
+                                </>
+                            )}
+                        </Form.Text>
+                    </div>
+                </>
+            )}
+        </>
+    );
+
+    const buttons = (
+        <>
+            <Button variant="outline-secondary" onClick={onClose} disabled={isSaving}>
+                Anuluj
+            </Button>
+            <Button variant="success" onClick={handleSubmit} disabled={isSaving}>
+                {isSaving ? <Spinner animation="border" size="sm" /> : "Zapisz"}
+            </Button>
+        </>
+    );
+
+    // Edycja typu idzie PANELEM BOCZNYM (decyzja D2 planu): szczegóły widać obok
+    // drzewa, a nie zamiast drzewa. `backdrop={false}` i `scroll` zostawiają drzewo
+    // widoczne i klikalne, dzięki czemu klik w sąsiedni kafel PODMIENIA treść panelu
+    // zamiast go zamykać i otwierać od nowa.
+    //
+    // Dodawanie („Dodaj kamień milowy", „Dodaj typ sprawy") zostaje oknem modalnym -
+    // tam kontekst drzewa nic nie wnosi, a wymuszone domknięcie jest zaletą.
+    if (isEditing)
+        return (
+            <Offcanvas
+                show
+                onHide={onClose}
+                placement="end"
+                backdrop={false}
+                scroll
+                data-testid="types-tree-panel"
+                style={{ width: TYPES_PANEL_WIDTH }}
+            >
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title className="fs-5">{heading}</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    {body}
+                    <div className="d-flex justify-content-end gap-2 mt-3">{buttons}</div>
+                </Offcanvas.Body>
+            </Offcanvas>
+        );
+
     return (
         // Szerzej niż domyślnie: wiersz zadania startowego to nazwa, opis, status
         // i przycisk usuwania - w wąskim oknie zwijają się do nieczytelnych pól.
@@ -256,326 +623,10 @@ export function AddTypeModal({
         // u góry rośnie tylko w dół, a to, co nad zmianą, zostaje na miejscu.
         <Modal show onHide={onClose} size="lg">
             <Modal.Header closeButton>
-                <Modal.Title className="fs-5">{`${titleAction} ${titleSubject}`}</Modal.Title>
+                <Modal.Title className="fs-5">{heading}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                {error && (
-                    <Alert variant="danger" className="py-2 small">
-                        {error}
-                    </Alert>
-                )}
-
-                {isEditing && usageCount > 0 && (
-                    <Alert variant="warning" className="py-2 small">
-                        Ten typ jest użyty <strong>{usageCount}</strong> raz(y). Zmiana nazwy albo numeru folderu
-                        nie przemianuje folderów już istniejących na Dysku - dotyczy tylko tych, które dopiero
-                        powstaną.
-                    </Alert>
-                )}
-
-                {isNameLocked && (
-                    <Alert variant="secondary" className="py-2 small">
-                        Nazwa jest zablokowana, bo kod odwołuje się do tego typu wprost. Pozostałe pola można zmieniać.
-                    </Alert>
-                )}
-
-                {isMilestone ? (
-                    <Alert variant="light" className="py-2 small border">
-                        {isEditing ? "Numer folderu dotyczy powiązania z typem umowy " : "Nowy kamień zostanie powiązany z typem umowy "}
-                        <strong>{contractTypeName}</strong>.
-                    </Alert>
-                ) : isEditing ? (
-                    <Form.Group className="mb-3">
-                        <Form.Label>Kamień milowy</Form.Label>
-                        <Form.Control value={milestoneName ?? "bez kamienia"} disabled />
-                        <Form.Text muted>
-                            Kamienia nie da się zmienić - istniejące sprawy zostałyby przypięte do typu wiszącego
-                            pod innym kamieniem.
-                        </Form.Text>
-                    </Form.Group>
-                ) : (
-                    <Form.Group className="mb-3">
-                        <Form.Label>Kamień milowy</Form.Label>
-                        <Form.Select
-                            value={milestoneTypeId}
-                            isInvalid={wasSubmitted && !!milestoneError}
-                            onChange={(event) =>
-                                setMilestoneTypeId(event.target.value ? Number(event.target.value) : "")
-                            }
-                        >
-                            <option value="">Wybierz kamień</option>
-                            {milestoneOptions.map((type) => (
-                                <option key={type.id} value={type.id}>
-                                    {type.name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                        <Form.Control.Feedback type="invalid">{milestoneError}</Form.Control.Feedback>
-                    </Form.Group>
-                )}
-
-                <Row>
-                    <Form.Group as={Col} md={8} className="mb-3">
-                        <Form.Label>Nazwa</Form.Label>
-                        <Form.Control
-                            value={name}
-                            disabled={isNameLocked}
-                            isInvalid={wasSubmitted && !!nameError}
-                            onChange={(event) => setName(event.target.value)}
-                            autoFocus={!isNameLocked}
-                        />
-                        <Form.Control.Feedback type="invalid">{nameError}</Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md={4} className="mb-3">
-                        <Form.Label>Numer folderu</Form.Label>
-                        <Form.Control
-                            value={folderNumber}
-                            maxLength={maxFolderLength}
-                            placeholder={isMilestone ? "np. 09" : "np. 04.03"}
-                            isInvalid={wasSubmitted && !!folderError}
-                            onChange={(event) => setFolderNumber(event.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">{folderError}</Form.Control.Feedback>
-                        <Form.Text muted>Maks. {maxFolderLength} znaki.</Form.Text>
-                    </Form.Group>
-                </Row>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Opis</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={2}
-                        value={description}
-                        isInvalid={wasSubmitted && !!descriptionError}
-                        onChange={(event) => setDescription(event.target.value)}
-                    />
-                    <Form.Control.Feedback type="invalid">{descriptionError}</Form.Control.Feedback>
-                </Form.Group>
-
-                {/* Jeden przełącznik zamiast dwóch miejsc konfiguracji: zaznaczenie
-                    ustawia flagę „domyślny” ORAZ zakłada szablon, bez którego pozycja
-                    i tak by nie powstała. Odznaczenie szablonu nie kasuje - trzyma
-                    nazwę, a przy sprawach także zadania startowe. */}
-                <Form.Check
-                    type="switch"
-                    label="Powstaje automatycznie przy nowej umowie"
-                    checked={isDefault}
-                    onChange={(event) => setIsDefault(event.target.checked)}
-                />
-                {hadTemplateGap && (
-                    <Form.Text className="text-warning d-block">
-                        Dotąd nie powstawało, mimo zaznaczenia - brakowało szablonu. Zapis to naprawi.
-                    </Form.Text>
-                )}
-
-                {!showTemplateSection && (
-                    <Form.Text muted className="d-block">
-                        Zaznacz, żeby ustawić nazwę i {isMilestone ? "opis" : "zadania startowe"} pozycji tworzonej
-                        automatycznie.
-                    </Form.Text>
-                )}
-
-                {showTemplateSection && (
-                <div className="border rounded p-2 mt-2 mb-2">
-                    <Row>
-                        <Form.Group as={Col} md={6}>
-                            <Form.Label className="small mb-1">
-                                Nazwa {isMilestone ? "tworzonego kamienia" : "tworzonej sprawy"}
-                            </Form.Label>
-                            <Form.Control
-                                size="sm"
-                                value={templateName}
-                                placeholder="puste = nazwa typu"
-                                onChange={(event) => setTemplateName(event.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group as={Col} md={6}>
-                            <Form.Label className="small mb-1">Opis</Form.Label>
-                            <Form.Control
-                                size="sm"
-                                value={templateDescription}
-                                onChange={(event) => setTemplateDescription(event.target.value)}
-                            />
-                        </Form.Group>
-                    </Row>
-                    {isMilestone && (
-                        <Form.Text muted>
-                            Nazwa jest wspólna dla wszystkich typów umów używających tego kamienia - to, czy kamień
-                            powstaje, ustawia się osobno dla każdego typu umowy.
-                        </Form.Text>
-                    )}
-                </div>
-                )}
-                <Form.Check
-                    className="mt-2"
-                    type="switch"
-                    label={isMilestone ? "Unikalny w ramach umowy" : "Unikalny w ramach kamienia"}
-                    checked={isUnique}
-                    onChange={(event) => setIsUnique(event.target.checked)}
-                />
-                {!isMilestone && (
-                    <>
-                        {/* Zadania startowe. Do tej pory ta konfiguracja nie miała
-                            żadnego interfejsu, choć decyduje o pierwszym kontakcie
-                            zespołu z nową sprawą. */}
-                        {showTemplateSection && (
-                        <div className="mt-2">
-                            <Form.Label className="mb-1">Zadania zakładane razem ze sprawą</Form.Label>
-                            {taskTemplates.length === 0 && (
-                                <div className="text-muted small mb-2">
-                                    Brak - sprawa powstanie pusta.
-                                </div>
-                            )}
-                            {taskTemplates.map((task, index) => (
-                                <Row key={index} className="g-1 mb-1 align-items-start">
-                                    <Col md={4}>
-                                        <Form.Control
-                                            size="sm"
-                                            placeholder="Nazwa zadania"
-                                            value={task.name}
-                                            onChange={(event) =>
-                                                setTaskTemplates((current) =>
-                                                    current.map((item, i) =>
-                                                        i === index ? { ...item, name: event.target.value } : item,
-                                                    ),
-                                                )
-                                            }
-                                        />
-                                    </Col>
-                                    <Col md={4}>
-                                        <Form.Control
-                                            size="sm"
-                                            placeholder="Opis"
-                                            value={task.description}
-                                            onChange={(event) =>
-                                                setTaskTemplates((current) =>
-                                                    current.map((item, i) =>
-                                                        i === index
-                                                            ? { ...item, description: event.target.value }
-                                                            : item,
-                                                    ),
-                                                )
-                                            }
-                                        />
-                                    </Col>
-                                    <Col md={3}>
-                                        <Form.Select
-                                            size="sm"
-                                            value={task.status}
-                                            onChange={(event) =>
-                                                setTaskTemplates((current) =>
-                                                    current.map((item, i) =>
-                                                        i === index ? { ...item, status: event.target.value } : item,
-                                                    ),
-                                                )
-                                            }
-                                        >
-                                            {/* Pusty status backend zamienia przy tworzeniu
-                                                zadania na „Nie rozpoczęty”, więc osobna
-                                                pozycja o tej samej nazwie byłaby duplikatem. */}
-                                            <option value="">Nie rozpoczęty</option>
-                                            <option value="Backlog">Backlog</option>
-                                        </Form.Select>
-                                    </Col>
-                                    <Col md={1}>
-                                        <Button
-                                            size="sm"
-                                            variant="outline-secondary"
-                                            className="w-100"
-                                            title="Usuń zadanie"
-                                            onClick={() =>
-                                                setTaskTemplates((current) =>
-                                                    current.filter((_, i) => i !== index),
-                                                )
-                                            }
-                                        >
-                                            &times;
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            ))}
-                            <Button
-                                size="sm"
-                                variant="outline-success"
-                                onClick={() =>
-                                    setTaskTemplates((current) => [
-                                        ...current,
-                                        { name: "", description: "", status: "" },
-                                    ])
-                                }
-                            >
-                                Dodaj zadanie
-                            </Button>
-                        </div>
-                        )}
-
-                        <Form.Check
-                            className="mt-3"
-                            type="switch"
-                            label="Wyłącznie jako podsprawa"
-                            checked={isSubCaseOnly}
-                            onChange={(event) => setIsSubCaseOnly(event.target.checked)}
-                        />
-                        <Form.Text muted>Taki typ nie pojawi się przy zakładaniu zwykłej sprawy.</Form.Text>
-
-                        {/* Lista rodziców jest widoczna ZAWSZE, także po odznaczeniu flagi.
-                            Powiązania żyją w bazie niezależnie od niej - gdyby lista znikała,
-                            nie dałoby się ich wyczyścić, a typ zostawał jednocześnie sprawą
-                            i podsprawą. */}
-                        <div className="mt-3">
-                            <Form.Label className="mb-1">
-                                Sprawy nadrzędne{!isSubCaseOnly && " (opcjonalnie)"}
-                            </Form.Label>
-                            {parentOptions.length === 0 ? (
-                                <Alert variant="warning" className="py-2 small mb-0">
-                                    Ten kamień nie ma jeszcze zwykłych typów spraw, pod które można podpiąć
-                                    podsprawę. Najpierw dodaj typ sprawy, potem wróć tutaj.
-                                </Alert>
-                            ) : (
-                                    <div
-                                        className={`border rounded p-2 ${
-                                            wasSubmitted && parentsError ? "border-danger" : ""
-                                        }`}
-                                        style={{ maxHeight: 180, overflowY: "auto" }}
-                                    >
-                                        {parentOptions.map((candidate) => (
-                                            <Form.Check
-                                                key={candidate.id}
-                                                type="checkbox"
-                                                id={`parentCaseType-${candidate.id}`}
-                                                label={`${candidate.folderNumber ?? ""} ${candidate.name}`.trim()}
-                                                checked={parentCaseTypeIds.includes(candidate.id)}
-                                                onChange={() => toggleParent(candidate.id)}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            {wasSubmitted && parentsError && (
-                                <div className="text-danger small mt-1">{parentsError}</div>
-                            )}
-                            <Form.Text muted>
-                                Ten sam typ może być dopuszczony pod kilkoma sprawami - w drzewie rysujemy go
-                                wtedy jako jeden węzeł z kilkoma liniami.
-                                {!isSubCaseOnly && parentCaseTypeIds.length > 0 && (
-                                    <>
-                                        {" "}
-                                        Ten typ można założyć zarówno jako zwykłą sprawę, jak i jako podsprawę.
-                                        Odznacz wszystkie sprawy nadrzędne, żeby został wyłącznie zwykłą sprawą.
-                                    </>
-                                )}
-                            </Form.Text>
-                        </div>
-                    </>
-                )}
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="outline-secondary" onClick={onClose} disabled={isSaving}>
-                    Anuluj
-                </Button>
-                <Button variant="success" onClick={handleSubmit} disabled={isSaving}>
-                    {isSaving ? <Spinner animation="border" size="sm" /> : "Zapisz"}
-                </Button>
-            </Modal.Footer>
+            <Modal.Body>{body}</Modal.Body>
+            <Modal.Footer>{buttons}</Modal.Footer>
         </Modal>
     );
 }
