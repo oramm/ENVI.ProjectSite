@@ -201,7 +201,34 @@ export default function MainMenu() {
                                             to="/scrumboard"
                                             className={isActive("/scrumboard")}
                                         >
-                                            Scrumboard{" "}
+                                            Scrumboard
+                                        </NavDropdown.Item>
+                                    )}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/vacations"
+                                            className={isActive("/vacations")}
+                                        >
+                                            Urlopy
+                                        </NavDropdown.Item>
+                                    )}
+                                    {mileageAccess && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/mileage"
+                                            className={isActive("/mileage")}
+                                        >
+                                            Kilometrówka
+                                        </NavDropdown.Item>
+                                    )}
+                                    {isStaff && (
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="/pettyCash"
+                                            className={isActive("/pettyCash")}
+                                        >
+                                            Zaliczki{" "}
                                             <Badge bg="info" text="light">
                                                 nowe
                                             </Badge>
@@ -216,40 +243,7 @@ export default function MainMenu() {
                                             to="/admin/typesTree"
                                             className={isActive("/admin/typesTree")}
                                         >
-                                            Hierarchia typów
-                                        </NavDropdown.Item>
-                                    )}
-                                    {isStaff && (
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="/vacations"
-                                            className={isActive("/vacations")}
-                                        >
-                                            Urlopy{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
-                                        </NavDropdown.Item>
-                                    )}
-                                    {mileageAccess && (
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="/mileage"
-                                            className={isActive("/mileage")}
-                                        >
-                                            Kilometrówka{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
-                                        </NavDropdown.Item>
-                                    )}
-                                    {isStaff && (
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="/pettyCash"
-                                            className={isActive("/pettyCash")}
-                                        >
-                                            Zaliczki{" "}
+                                            Hierarchia typów{" "}
                                             <Badge bg="info" text="light">
                                                 nowe
                                             </Badge>
