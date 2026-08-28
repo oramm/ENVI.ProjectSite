@@ -75,6 +75,86 @@ const TASK_ROW_H = 20;
  */
 const CANVAS_HEIGHT = "calc(100vh - 210px)";
 
+/** Sufit powiększenia. Wyżej kafle są już tylko większe, nie czytelniejsze. */
+const MAX_ZOOM = 2;
+
+/**
+ * Najmniejsze powiększenie: takie, przy którym CAŁA WYSOKOŚĆ drzewa mieści się w płótnie.
+ *
+ * Dalsze oddalanie niczego już nie odsłania - drzewo widać w całości - a kafle robią się
+ * nieczytelne i łatwo zgubić się w pustym tle. Stała podłoga tego nie potrafiła: dla
+ * gałęzi na trzydzieści typów spraw była za wysoko, a dla ubogiej za nisko.
+ *
+ * Sufit 1: przy niskim drzewie „zmieszczenie całości" wypadałoby powyżej 100% i podłoga
+ * blokowałaby powrót do widoku 1:1.
+ */
+const minZoomFor = (layoutHeight: number, viewportHeight: number) =>
+    Math.min(1, viewportHeight / layoutHeight);
+
+const clampZoom = (value: number, floor: number) => Math.min(MAX_ZOOM, Math.max(floor, value));
+
+/**
+ * Wycinek płótna, który ma się zmieścić po kliknięciu lupy.
+ *
+ * To GAŁĄŹ wybranego typu umowy - kamienie, sprawy i podsprawy - powiększona o margines
+ * płótna. Kolumna typów umów do wycinka NIE wchodzi: wypisuje wszystkie typy naraz i nie
+ * ona ma dyktować powiększenie (ustalenie ownera 2026-08-28).
+ *
+ * Margines czytamy z układu, zamiast przepisywać stałą z `typesTreeLayout`: to odstęp
+ * między najniższym kaflem a dolną krawędzią płótna. Dzięki temu, gdy gałąź jest najwyższą
+ * rzeczą na płótnie, wycinek pokrywa się CO DO PIKSELA z całym płótnem - a więc kliknięcie
+ * lupy daje dokładnie to samo powiększenie, co dokręcenie kółka do oporu, i nie zostaje
+ * pasek przewijania. Wcześniej wycinek obejmował same kafle spraw, czyli był o dwa marginesy
+ * niższy od płótna - i te kilkadziesiąt pikseli wracało jako pasek.
+ */
+function fitBounds(layout: Layout): { top: number; height: number } | null {
+    const branch = layout.nodes.filter((node) => node.kind !== "contractType");
+    // Bez typów spraw nie ma czego mieścić - przycisk i tak się wtedy nie pokazuje.
+    if (!branch.some((node) => node.kind === "caseType")) return null;
+
+    const lowest = Math.max(...layout.nodes.map((node) => node.y + node.h));
+    const pad = Math.max(0, layout.height - lowest);
+    const top = Math.max(0, Math.min(...branch.map((node) => node.y)) - pad);
+    const bottom = Math.min(layout.height, Math.max(...branch.map((node) => node.y + node.h)) + pad);
+    return bottom > top ? { top, height: bottom - top } : null;
+}
+
+/**
+ * Czy któryś typ sprawy leży poza widocznym wycinkiem płótna.
+ *
+ * Liczone we WSPÓŁRZĘDNYCH UKŁADU, a nie z prostokątów DOM: przy powiększeniu wystarczy
+ * podzielić przez `zoom`, a getBoundingClientRect w testach zwraca same zera i mierzenie
+ * nim dawałoby wynik zależny od środowiska.
+ *
+ * Płótno centruje `margin: 0 auto`, więc gdy jest węższe od kontenera, dochodzi przesunięcie
+ * o połowę różnicy - bez niego kafle wychodziłyby na lewo od widoku, którego tam nie ma.
+ */
+function hasCaseTypeOutOfView(layout: Layout, zoom: number, scroll: HTMLDivElement): boolean {
+    const cases = layout.nodes.filter((node) => node.kind === "caseType");
+    if (!cases.length) return false;
+    const { clientWidth, clientHeight, scrollLeft, scrollTop } = scroll;
+    // Kontener bez wymiarów (pierwsze renderowanie, środowisko testowe) - nie ma czego mierzyć.
+    // Bez tego wyszłoby „wszystko poza widokiem" i przycisk świeciłby się zawsze.
+    if (!clientWidth || !clientHeight) return false;
+
+    const canvasOffsetLeft = Math.max(0, (clientWidth - layout.width * zoom) / 2);
+    const left = (scrollLeft - canvasOffsetLeft) / zoom;
+    const right = (scrollLeft - canvasOffsetLeft + clientWidth) / zoom;
+    const top = scrollTop / zoom;
+    const bottom = (scrollTop + clientHeight) / zoom;
+    // Pół piksela luzu. Przy ułamkowym powiększeniu zaokrąglenia potrafią wystawić kafel
+    // o setne części piksela i przycisk mrugałby bez powodu.
+    const slack = 0.5 / zoom;
+
+    return cases.some(
+        (node) =>
+            node.y < top - slack ||
+            node.y + node.h > bottom + slack ||
+            node.x < left - slack ||
+            node.x + node.w > right + slack,
+    );
+}
+
 /**
  * Wiersz zadania startowego wewnątrz kafla sprawy.
  *
@@ -384,6 +464,18 @@ export function TypesTreeGraph({
     const scrollRef = React.useRef<HTMLDivElement>(null);
     const panRef = React.useRef<{ x: number; y: number; left: number; top: number } | null>(null);
     const [zoom, setZoom] = React.useState(1);
+    /** Czy przycisk dopasowania ma się w ogóle pokazać - patrz `hasCaseTypeOutOfView`. */
+    const [isCaseTypeOutOfView, setIsCaseTypeOutOfView] = React.useState(false);
+    /**
+     * Zlecenie dopasowania: wycinek do pokazania plus numer kolejny.
+     *
+     * Przewinięcie musi pójść PO tym, jak przeglądarka zastosuje nowe powiększenie -
+     * wcześniej płótno ma jeszcze starą wysokość i obcina `scrollTop`. Numer jest potrzebny,
+     * bo drugie kliknięcie z rzędu wylicza to samo powiększenie i bez niego efekt by nie ruszył.
+     */
+    const [fitRequest, setFitRequest] = React.useState<{ top: number; height: number; id: number } | null>(
+        null,
+    );
 
     // Ctrl+kółko przybliża. Listener wieszany ręcznie, bo React podpina „wheel" jako
     // pasywny - preventDefault w propsie nic by nie dał i przybliżałaby się cała strona.
@@ -393,12 +485,69 @@ export function TypesTreeGraph({
         const onWheel = (event: WheelEvent) => {
             if (!event.ctrlKey) return;
             event.preventDefault();
-            setZoom((current) => Math.min(2, Math.max(0.4, current * (event.deltaY < 0 ? 1.1 : 1 / 1.1))));
+            // Podłoga liczona przy KAŻDYM ruchu kółka, nie raz przy montowaniu: zależy
+            // od wysokości drzewa i od okna, a jedno i drugie zmienia się w trakcie pracy.
+            const floor = minZoomFor(layout.height, scroll.clientHeight);
+            setZoom((current) => clampZoom(current * (event.deltaY < 0 ? 1.1 : 1 / 1.1), floor));
         };
         scroll.addEventListener("wheel", onWheel, { passive: false });
         return () => scroll.removeEventListener("wheel", onWheel);
         // layout w zależnościach, bo przy pustym drzewie kontenera jeszcze nie ma.
     }, [layout]);
+
+    /**
+     * Dopasowanie widoku do gałęzi wybranego typu umowy - patrz `fitBounds`.
+     *
+     * O powiększeniu decyduje PION: typy spraw mają stanąć od górnej do dolnej krawędzi.
+     * Poziom tylko pilnuje, żeby przy niskiej gałęzi nie wyjechały poza widok kolumny
+     * kamieni i podspraw - bez tego „całe drzewo widoczne" przestawałoby być prawdą
+     * dokładnie wtedy, gdy jest najmniej powodów, żeby cokolwiek chować.
+     */
+    const fitCaseTypes = () => {
+        const scroll = scrollRef.current;
+        const bounds = fitBounds(layout);
+        if (!scroll || !bounds || !scroll.clientHeight) return;
+        const next = clampZoom(
+            Math.min(scroll.clientHeight / bounds.height, scroll.clientWidth / Math.max(1, layout.width)),
+            minZoomFor(layout.height, scroll.clientHeight),
+        );
+        setZoom(next);
+        setFitRequest((previous) => ({ ...bounds, id: (previous?.id ?? 0) + 1 }));
+    };
+
+    React.useLayoutEffect(() => {
+        const scroll = scrollRef.current;
+        if (!fitRequest || !scroll) return;
+        const visibleHeight = fitRequest.height * zoom;
+        // Zapas pionowy zostaje tylko wtedy, gdy dopasowanie ograniczyła szerokość drzewa.
+        // Wtedy gałąź idzie na środek, a nie pod górną krawędź. Dolne odcięcie na zero, bo
+        // środkowanie wycinka zaczepionego u samej góry płótna wyszłoby poniżej niego -
+        // przeglądarka i tak by to ucięła, ale wtedy w kodzie stałaby liczba bez pokrycia.
+        scroll.scrollTop = Math.max(
+            0,
+            fitRequest.top * zoom - Math.max(0, (scroll.clientHeight - visibleHeight) / 2),
+        );
+        scroll.scrollLeft = Math.max(0, (layout.width * zoom - scroll.clientWidth) / 2);
+        // Celowo tylko `fitRequest`: efekt ma się odpalić po kliknięciu, a nie po każdym
+        // ruchu kółkiem. `zoom` jest tu już nowy, bo obie zmiany stanu idą jedną paczką.
+    }, [fitRequest]);
+
+    // Przycisk pojawia się wyłącznie wtedy, gdy jest co pokazywać, więc stan trzeba
+    // odświeżać po przewinięciu, po powiększeniu, po zmianie drzewa i po zmianie rozmiaru
+    // okna. ResizeObserver-a nie ma w środowisku testowym, a płótno i tak zmienia rozmiar
+    // razem z oknem: wysokość to `calc(100vh - ...)`, szerokość bierze się z szerokości karty.
+    React.useEffect(() => {
+        const scroll = scrollRef.current;
+        if (!scroll) return;
+        const measure = () => setIsCaseTypeOutOfView(hasCaseTypeOutOfView(layout, zoom, scroll));
+        measure();
+        scroll.addEventListener("scroll", measure, { passive: true });
+        window.addEventListener("resize", measure);
+        return () => {
+            scroll.removeEventListener("scroll", measure);
+            window.removeEventListener("resize", measure);
+        };
+    }, [layout, zoom, fitRequest]);
 
     // Przeciąganie TŁA przesuwa widok w OBU osiach - wewnątrz kontenera, nie stroną.
     // `preventDefault` na wciśnięciu: bez niego przeglądarka po kilku pikselach uznaje
@@ -434,103 +583,158 @@ export function TypesTreeGraph({
     const byId = new Map(layout.nodes.map((node) => [node.id, node]));
 
     return (
-        // Płótno o ograniczonej wysokości z własnym przewijaniem w OBU osiach.
-        // Wcześniej karta rosła na pełną wysokość drzewa i przewijała się cała strona;
-        // owner poprosił 2026-08-24, żeby ruszało się samo płótno, a strona stała.
-        // Wysokość liczona od okna, żeby nagłówek strony, pasek narzędzi i przycisk
-        // pod drzewem zostały widoczne.
-        //
-        // Wyśrodkowanie przez margin auto, NIE przez flexa: ten przy zawartości
-        // szerszej od kontenera wypycha ją poza obie krawędzie i lewej strony
-        // nie da się doscrollować.
-        <div
-            data-testid="types-tree-scroll"
-            ref={scrollRef}
-            onPointerDown={startPan}
-            onPointerMove={movePan}
-            onPointerUp={endPan}
-            onPointerCancel={endPan}
-            style={{
-                overflow: "auto",
-                maxWidth: "100%",
-                height: CANVAS_HEIGHT,
-                minHeight: 320,
-                cursor: "grab",
-                // Zaznaczanie tekstu psuło przeciąganie; w drzewie nie ma czego zaznaczać.
-                userSelect: "none",
-                // Dojechanie do krawędzi płótna nie przewija strony pod spodem.
-                overscrollBehavior: "contain",
-            }}
-        >
+        // Warstwa nad płótnem. Przycisk NIE MOŻE stać wewnątrz płótna: jechałby razem
+        // z drzewem przy przewijaniu i uciekał z widoku dokładnie wtedy, gdy jest
+        // potrzebny. Stąd pozycjonowany kontener, który płótno obejmuje.
+        <div style={{ position: "relative" }}>
+            {isCaseTypeOutOfView && (
+                <button
+                    type="button"
+                    data-testid="types-tree-fit"
+                    aria-label="Pokaż wszystkie typy spraw"
+                    title="Dopasuje widok tak, żeby zmieściły się wszystkie typy spraw."
+                    onClick={fitCaseTypes}
+                    // Wygląd i najechanie z Bootstrapa, bez własnego stanu. Wariant „light"
+                    // trzyma CZARNY znak w każdym stanie, więc nie da się powtórzyć usterki,
+                    // przez którą przycisk robił się pusty: tamta brała się z „outline-secondary"
+                    // (biały tekst na najechaniu) przy nadpisanym na biało tle. Tu nie nadpisujemy
+                    // ani koloru, ani tła - i nie ma czemu się rozjechać.
+                    className="btn btn-light border rounded-circle shadow-sm d-flex align-items-center justify-content-center p-0"
+                    style={{
+                        // Lewy dolny róg płótna (ustalenie ownera 2026-08-28). Przycisk leży
+                        // NAD paskami przewijania, więc nie da się go nimi zasłonić - odwrotnie
+                        // niż przy narzędziach wpisanych w róg karty (uwaga ownera 2026-08-24).
+                        position: "absolute",
+                        left: 12,
+                        bottom: 12,
+                        zIndex: 2,
+                        width: 42,
+                        height: 42,
+                    }}
+                >
+                    {/* Lupa z minusem: „pokaż więcej naraz". Rysowana tutaj, bo cały ten plik
+                        rysuje swoje znaki sam (patrz Chevron) i nie ma ani jednego importu ikon. */}
+                    <svg width="19" height="19" viewBox="0 0 16 16" aria-hidden="true">
+                        <circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                        <line
+                            x1="4.9"
+                            y1="7"
+                            x2="9.1"
+                            y2="7"
+                            stroke="currentColor"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                        />
+                        <line
+                            x1="10.4"
+                            y1="10.4"
+                            x2="14.2"
+                            y2="14.2"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                        />
+                    </svg>
+                </button>
+            )}
+            {/* Płótno o ograniczonej wysokości z własnym przewijaniem w OBU osiach.
+                Wcześniej karta rosła na pełną wysokość drzewa i przewijała się cała strona;
+                owner poprosił 2026-08-24, żeby ruszało się samo płótno, a strona stała.
+                Wysokość liczona od okna, żeby nagłówek strony, pasek narzędzi i przycisk
+                pod drzewem zostały widoczne.
+
+                Wyśrodkowanie przez margin auto, NIE przez flexa: ten przy zawartości
+                szerszej od kontenera wypycha ją poza obie krawędzie i lewej strony
+                nie da się doscrollować. */}
             <div
-                data-testid="types-tree-canvas"
-                role="group"
-                aria-label="Hierarchia typów"
+                data-testid="types-tree-scroll"
+                ref={scrollRef}
+                onPointerDown={startPan}
+                onPointerMove={movePan}
+                onPointerUp={endPan}
+                onPointerCancel={endPan}
                 style={{
-                    position: "relative",
-                    width: layout.width,
-                    height: layout.height,
-                    margin: "0 auto",
-                    // Powiększenie z Ctrl+kółka. Właściwość „zoom", nie „transform: scale":
-                    // zoom zmienia układ, więc pasek przewijania sam wie, ile miejsca zajmuje
-                    // drzewo - przy transformacji trzeba by przeliczać płótno ręcznie.
-                    zoom,
+                    overflow: "auto",
+                    maxWidth: "100%",
+                    height: CANVAS_HEIGHT,
+                    minHeight: 320,
+                    cursor: "grab",
+                    // Zaznaczanie tekstu psuło przeciąganie; w drzewie nie ma czego zaznaczać.
+                    userSelect: "none",
+                    // Dojechanie do krawędzi płótna nie przewija strony pod spodem.
+                    overscrollBehavior: "contain",
                 }}
             >
-                <svg
-                    width={layout.width}
-                    height={layout.height}
-                    viewBox={`0 0 ${layout.width} ${layout.height}`}
-                    aria-hidden="true"
-                    style={{ position: "absolute", left: 0, top: 0, display: "block" }}
+                <div
+                    data-testid="types-tree-canvas"
+                    role="group"
+                    aria-label="Hierarchia typów"
+                    style={{
+                        position: "relative",
+                        width: layout.width,
+                        height: layout.height,
+                        margin: "0 auto",
+                        // Powiększenie z Ctrl+kółka. Właściwość „zoom", nie „transform: scale":
+                        // zoom zmienia układ, więc pasek przewijania sam wie, ile miejsca zajmuje
+                        // drzewo - przy transformacji trzeba by przeliczać płótno ręcznie.
+                        zoom,
+                    }}
                 >
-                    {layout.edges.map((edge, index) => {
-                        const from = byId.get(edge.fromId);
-                        const to = byId.get(edge.toId);
-                        if (!from || !to) return null;
-                        const path = edgePath(from, to);
-                        const midX = (from.x + from.w + to.x) / 2;
-                        const midY = (from.y + from.h / 2 + to.y + to.h / 2) / 2;
-                        return (
-                            <g key={`${edge.fromId}->${edge.toId}-${index}`}>
-                                {/* Pomarańczowa przerywana = oznaczone jako domyślne, ale bez
-                                    szablonu, więc mimo flagi nie powstanie. */}
-                                <path
-                                    d={path}
-                                    fill="none"
-                                    stroke={edge.hasGap ? "#fd7e14" : edge.isDefault ? "#198754" : "#ced4da"}
-                                    strokeWidth={edge.isDefault || edge.hasGap ? 2.5 : 1.5}
-                                    strokeDasharray={edge.hasGap ? "6 4" : undefined}
-                                />
-                                {edge.label && (
-                                    <>
-                                        <rect x={midX - 13} y={midY - 9} width={26} height={18} rx={4} fill="#fff" />
-                                        <text
-                                            x={midX}
-                                            y={midY + 4}
-                                            textAnchor="middle"
-                                            fontSize={11}
-                                            fontFamily="monospace"
-                                            fill="#495057"
-                                        >
-                                            {edge.label}
-                                        </text>
-                                    </>
-                                )}
-                            </g>
-                        );
-                    })}
-                </svg>
+                    <svg
+                        width={layout.width}
+                        height={layout.height}
+                        viewBox={`0 0 ${layout.width} ${layout.height}`}
+                        aria-hidden="true"
+                        style={{ position: "absolute", left: 0, top: 0, display: "block" }}
+                    >
+                        {layout.edges.map((edge, index) => {
+                            const from = byId.get(edge.fromId);
+                            const to = byId.get(edge.toId);
+                            if (!from || !to) return null;
+                            const path = edgePath(from, to);
+                            const midX = (from.x + from.w + to.x) / 2;
+                            const midY = (from.y + from.h / 2 + to.y + to.h / 2) / 2;
+                            return (
+                                <g key={`${edge.fromId}->${edge.toId}-${index}`}>
+                                    {/* Pomarańczowa przerywana = oznaczone jako domyślne, ale bez
+                                        szablonu, więc mimo flagi nie powstanie. */}
+                                    <path
+                                        d={path}
+                                        fill="none"
+                                        stroke={edge.hasGap ? "#fd7e14" : edge.isDefault ? "#198754" : "#ced4da"}
+                                        strokeWidth={edge.isDefault || edge.hasGap ? 2.5 : 1.5}
+                                        strokeDasharray={edge.hasGap ? "6 4" : undefined}
+                                    />
+                                    {edge.label && (
+                                        <>
+                                            <rect x={midX - 13} y={midY - 9} width={26} height={18} rx={4} fill="#fff" />
+                                            <text
+                                                x={midX}
+                                                y={midY + 4}
+                                                textAnchor="middle"
+                                                fontSize={11}
+                                                fontFamily="monospace"
+                                                fill="#495057"
+                                            >
+                                                {edge.label}
+                                            </text>
+                                        </>
+                                    )}
+                                </g>
+                            );
+                        })}
+                    </svg>
 
-                {layout.nodes.map((node) => (
-                    <NodeTile
-                        key={node.id}
-                        node={node}
-                        isSelected={node.id === selectedNodeId}
-                        onNodeClick={onNodeClick}
-                        onToggleCollapse={onToggleCollapse}
-                    />
-                ))}
+                    {layout.nodes.map((node) => (
+                        <NodeTile
+                            key={node.id}
+                            node={node}
+                            isSelected={node.id === selectedNodeId}
+                            onNodeClick={onNodeClick}
+                            onToggleCollapse={onToggleCollapse}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

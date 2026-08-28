@@ -63,6 +63,18 @@ function tile(nodeId: string) {
     return found as HTMLElement;
 }
 
+/**
+ * Nadaje kontenerowi płótna wymiary.
+ *
+ * jsdom nie liczy układu, więc `clientWidth` i `clientHeight` są zerowe, a każdy pomiar
+ * „co widać" wychodziłby pusty. Komponent traktuje zero jako „nie ma czego mierzyć",
+ * więc bez tej podmiany przycisk dopasowania nigdy by się nie pokazał.
+ */
+function sizeScroll(scroll: HTMLElement, width: number, height: number) {
+    Object.defineProperty(scroll, "clientWidth", { configurable: true, value: width });
+    Object.defineProperty(scroll, "clientHeight", { configurable: true, value: height });
+}
+
 describe("TypesTreeGraph", () => {
     it("stawia kafel w miejscu i rozmiarze z układu", () => {
         render(<TypesTreeGraph layout={layoutOf([node()])} />);
@@ -273,6 +285,7 @@ describe("TypesTreeGraph", () => {
         render(<TypesTreeGraph layout={layoutOf([node()])} />);
         const scroll = screen.getByTestId("types-tree-scroll");
         const canvas = screen.getByTestId("types-tree-canvas");
+        sizeScroll(scroll, 1300, 600);
         // Bez Ctrl kółko ma dalej przewijać stronę, nie przybliżać.
         fireEvent.wheel(scroll, { deltaY: -100 });
         expect(canvas.style.zoom).toBe("1");
@@ -281,8 +294,21 @@ describe("TypesTreeGraph", () => {
         // Sufit i podłoga: bez nich jedno mocniejsze kręcenie gubi drzewo z ekranu.
         for (let i = 0; i < 40; i += 1) fireEvent.wheel(scroll, { deltaY: -100, ctrlKey: true });
         expect(Number(canvas.style.zoom)).toBe(2);
+        // Podłoga NIE jest stałą: to powiększenie, przy którym cała wysokość drzewa
+        // (1394 px) mieści się w płótnie (600 px). Dalej oddalanie niczego nie odsłania.
         for (let i = 0; i < 80; i += 1) fireEvent.wheel(scroll, { deltaY: 100, ctrlKey: true });
-        expect(Number(canvas.style.zoom)).toBe(0.4);
+        expect(Number(canvas.style.zoom)).toBeCloseTo(600 / 1394, 5);
+    });
+
+    it("przy niskim drzewie podłoga nie wypycha widoku powyżej 100%", () => {
+        // Drzewo niższe od płótna zmieściłoby się „w całości" dopiero powyżej 1:1.
+        // Gdyby podłoga to przyjęła, nie dałoby się wrócić do normalnego widoku.
+        render(<TypesTreeGraph layout={{ ...layoutOf([node()]), height: 300 }} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        const canvas = screen.getByTestId("types-tree-canvas");
+        sizeScroll(scroll, 1300, 600);
+        for (let i = 0; i < 40; i += 1) fireEvent.wheel(scroll, { deltaY: 100, ctrlKey: true });
+        expect(Number(canvas.style.zoom)).toBe(1);
     });
 
     it("ciągnięcie tła przesuwa płótno w obu osiach, ciągnięcie kafla nie rusza nic", () => {
@@ -317,6 +343,95 @@ describe("TypesTreeGraph", () => {
         render(<TypesTreeGraph layout={{ nodes: [], edges: [], width: 0, height: 0, summary: EMPTY_SUMMARY }} />);
         expect(screen.getByText(/Nie wybrano typu umowy/)).toBeInTheDocument();
         expect(screen.queryByTestId("types-tree-canvas")).toBeNull();
+    });
+
+    it("nie pokazuje przycisku dopasowania, gdy wszystkie typy spraw mieszczą się w widoku", () => {
+        // Przycisk, który stoi zawsze, przestaje być informacją. Ma się pojawiać
+        // wyłącznie wtedy, gdy jest po co go klikać.
+        const layout = layoutOf([node({ y: 20 }), node({ id: "caseType:46", entityId: 46, y: 80 })]);
+        render(<TypesTreeGraph layout={layout} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        sizeScroll(scroll, 1300, 600);
+        fireEvent.scroll(scroll);
+        expect(screen.queryByTestId("types-tree-fit")).toBeNull();
+    });
+
+    it("przy najwyższej kolumnie spraw lupa daje dokładnie to samo, co kółko do oporu", () => {
+        // Płótno 962 px = najniższy kafel (942) plus margines układu (20). Skoro gałąź jest
+        // najwyższą rzeczą na płótnie, dopasowanie musi zmieścić CAŁE płótno - inaczej te
+        // dwa marginesy wracają jako pasek przewijania (zgłoszenie ownera 2026-08-28).
+        const layout = { ...layoutOf([node({ y: 20 }), node({ id: "caseType:46", entityId: 46, y: 900 })]), height: 962 };
+        render(<TypesTreeGraph layout={layout} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        const canvas = screen.getByTestId("types-tree-canvas");
+        sizeScroll(scroll, 1300, 600);
+        fireEvent.scroll(scroll);
+
+        fireEvent.click(screen.getByTestId("types-tree-fit"));
+
+        const afterFit = Number(canvas.style.zoom);
+        expect(afterFit).toBeCloseTo(600 / 962, 5);
+        // Płótno mieści się w pionie co do piksela, więc nie ma czego przewijać.
+        expect(scroll.scrollTop).toBeCloseTo(0, 5);
+        // I to jest maksymalne oddalenie: dokręcanie kółkiem już niczego nie zmienia.
+        for (let i = 0; i < 40; i += 1) fireEvent.wheel(scroll, { deltaY: 100, ctrlKey: true });
+        expect(Number(canvas.style.zoom)).toBeCloseTo(afterFit, 10);
+        // Skoro widać już wszystko, przycisk nie ma czego obiecywać.
+        expect(screen.queryByTestId("types-tree-fit")).toBeNull();
+    });
+
+    it("kolumna typów umów nie dyktuje powiększenia", () => {
+        // Odwrotny przypadek: to lista typów umów jest najwyższa. Wtedy dopasowanie ma zmieścić
+        // samą gałąź i zostawić pasek przewijania - owner ustalił, że wszystkie typy umów naraz
+        // widoczne być NIE muszą.
+        const layout = {
+            ...layoutOf([
+                node({ id: "contractType:3", kind: "contractType", entityId: 3, x: 0, y: 1000, w: 230 }),
+                node({ y: 20 }),
+                node({ id: "caseType:46", entityId: 46, y: 700 }),
+            ]),
+            height: 1062,
+        };
+        render(<TypesTreeGraph layout={layout} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        const canvas = screen.getByTestId("types-tree-canvas");
+        sizeScroll(scroll, 1300, 600);
+        fireEvent.scroll(scroll);
+
+        fireEvent.click(screen.getByTestId("types-tree-fit"));
+
+        // Gdyby liczyła się cała wysokość płótna, wyszłoby 600/1062. Gałąź jest niższa,
+        // więc powiększenie musi być większe - i wszystkie typy spraw dalej widać.
+        expect(Number(canvas.style.zoom)).toBeGreaterThan(600 / 1062);
+        expect(screen.queryByTestId("types-tree-fit")).toBeNull();
+    });
+
+    it("przycisk dopasowania nie nadpisuje koloru ani tła", () => {
+        // Regres z pierwszej wersji: wariant „outline-secondary" ustawia na najechaniu BIAŁY
+        // znak, a tło było nadpisane inline na białe - przycisk robił się pusty. Wariant
+        // „light" trzyma czarny znak w każdym stanie, więc wystarczy mu nie przeszkadzać.
+        const layout = layoutOf([node({ y: 20 }), node({ id: "caseType:46", entityId: 46, y: 900 })]);
+        render(<TypesTreeGraph layout={layout} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        sizeScroll(scroll, 1300, 600);
+        fireEvent.scroll(scroll);
+
+        const fit = screen.getByTestId("types-tree-fit");
+        expect(fit.className).toContain("btn-light");
+        expect(fit.className).not.toContain("outline");
+        expect(fit.style.color).toBe("");
+        expect(fit.style.background).toBe("");
+    });
+
+    it("nie pokazuje przycisku dopasowania, gdy kolumna spraw jest zwinięta", () => {
+        // Przy głębokości „kamienie" typów spraw w układzie w ogóle nie ma - przycisk
+        // obiecywałby wtedy pokazanie czegoś, czego nie da się pokazać.
+        const layout = layoutOf([node({ id: "milestoneType:6", kind: "milestoneType", entityId: 6, y: 900 })]);
+        render(<TypesTreeGraph layout={layout} />);
+        const scroll = screen.getByTestId("types-tree-scroll");
+        sizeScroll(scroll, 1300, 600);
+        fireEvent.scroll(scroll);
+        expect(screen.queryByTestId("types-tree-fit")).toBeNull();
     });
 });
 
