@@ -12,7 +12,14 @@ import {
     ToggleButtonGroup,
 } from "react-bootstrap";
 import MainSetup from "../../React/MainSetupReact";
-import { addCaseType, addMilestoneType, editCaseType, editMilestoneType, fetchTypesTree } from "./typesTreeApi";
+import {
+    addCaseType,
+    addMilestoneType,
+    attachMilestoneType,
+    editCaseType,
+    editMilestoneType,
+    fetchTypesTree,
+} from "./typesTreeApi";
 import { AddTypeKind, AddTypeModal, EditTarget, TYPES_PANEL_WIDTH } from "./AddTypeModal";
 import {
     EMPTY_TREE,
@@ -119,6 +126,10 @@ export default function TypesTreeView({ title }: { title: string }) {
                     kind === "milestoneType"
                         ? await editMilestoneType(editedId, payload)
                         : await editCaseType(editedId, payload);
+            } else if (kind === "attachMilestoneType") {
+                // Podpięcie istniejącego typu nie tworzy typu, więc nie ma tu `editedId`
+                // ani ścieżki edycji - to własna operacja, nie odmiana dodawania.
+                tree = await attachMilestoneType(payload);
             } else {
                 tree = kind === "milestoneType" ? await addMilestoneType(payload) : await addCaseType(payload);
             }
@@ -377,6 +388,22 @@ export default function TypesTreeView({ title }: { title: string }) {
                                         }}
                                     >
                                         Dodaj kamień milowy
+                                    </Button>
+                                    {/* Osobny przycisk, nie odmiana dodawania: ten sam typ kamienia
+                                        bywa używany przez kilka typów umów, a dotąd dało się to zapisać
+                                        wyłącznie zakładając NOWY typ. Wariant „outline-secondary", bo to
+                                        czynność porządkowa, nie tworzenie nowego bytu. */}
+                                    <Button
+                                        size="sm"
+                                        variant="outline-secondary"
+                                        disabled={selectedContractTypeId === null}
+                                        onClick={() => {
+                                            setSaveError(null);
+                                            setEditTarget(null);
+                                            setAddKind("attachMilestoneType");
+                                        }}
+                                    >
+                                        Podepnij istniejący
                                     </Button>
                                     <Button
                                         size="sm"

@@ -84,6 +84,23 @@ export function addCaseType(payload: NewCaseTypePayload) {
     return sendToTree("POST", "admin/typesTree/caseType", payload);
 }
 
+/**
+ * Podpięcie ISTNIEJĄCEGO typu kamienia pod kolejny typ umowy.
+ *
+ * Bez nazwy i opisu - te należą do samego typu i są wspólne dla wszystkich typów umów.
+ * Do powiązania należy wyłącznie numer folderu i „powstaje automatycznie".
+ */
+export type AttachMilestoneTypePayload = {
+    milestoneTypeId: number;
+    contractTypeId: number;
+    folderNumber: string;
+    isDefault: boolean;
+};
+
+export function attachMilestoneType(payload: AttachMilestoneTypePayload) {
+    return sendToTree("POST", "admin/typesTree/contractTypeMilestoneType", payload);
+}
+
 export function editMilestoneType(id: number, payload: NewMilestoneTypePayload) {
     return sendToTree("PUT", `admin/typesTree/milestoneType/${id}`, payload);
 }

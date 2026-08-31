@@ -17,7 +17,12 @@ import {
  */
 export const TYPES_PANEL_WIDTH = 420;
 
-export type AddTypeKind = "milestoneType" | "caseType";
+/**
+ * `attachMilestoneType` to nie dodawanie typu, tylko podpięcie ISTNIEJĄCEGO pod kolejny
+ * typ umowy. Ten sam typ kamienia bywa używany przez kilka typów umów i tak ma być.
+ * Typów spraw nie podpina się osobno - wiszą pod kamieniem, więc jadą razem z nim.
+ */
+export type AddTypeKind = "milestoneType" | "caseType" | "attachMilestoneType";
 
 /** Węzeł wskazany do edycji; null oznacza dodawanie nowego. */
 export type EditTarget =
@@ -70,6 +75,8 @@ export function AddTypeModal({
     const [wasSubmitted, setWasSubmitted] = useState(false);
 
     const isEditing = !!editTarget;
+    /** Podpinanie istniejącego typu - własny, krótki formularz zamiast pól typu. */
+    const isAttach = !editTarget && kind === "attachMilestoneType";
     const isMilestone = (editTarget ? editTarget.kind : kind) === "milestoneType";
 
     /** Numer folderu kamienia leży na krawędzi z wybranym typem umowy. */
@@ -135,7 +142,8 @@ export function AddTypeModal({
 
     if (!kind && !editTarget) return null;
 
-    const maxFolderLength = isMilestone ? 2 : 8;
+    // Numer folderu kamienia to CHAR(2) - także wtedy, gdy podpinamy istniejący typ.
+    const maxFolderLength = isMilestone || isAttach ? 2 : 8;
     const isNameLocked = !!editTarget && editTarget.entity._isNameLocked;
     const usageCount = editTarget?.entity._usageCount ?? 0;
 
@@ -175,7 +183,11 @@ export function AddTypeModal({
         !isMilestone && isSubCaseOnly && parentCaseTypeIds.length === 0
             ? "Wskaż co najmniej jedną sprawę nadrzędną."
             : null;
-    const hasErrors = !!(nameError || folderError || milestoneError || descriptionError || parentsError);
+    const attachError = isAttach && milestoneTypeId === "" ? "Wybierz typ kamienia." : null;
+    // Przy podpinaniu nie ma pól typu, więc nie ma czego walidować poza wyborem i numerem.
+    const hasErrors = isAttach
+        ? !!(attachError || folderError)
+        : !!(nameError || folderError || milestoneError || descriptionError || parentsError);
 
     /** Możliwi rodzice: sprawy z tego samego kamienia, poza samym sobą i innymi podsprawami. */
     const effectiveMilestoneTypeId =
@@ -203,8 +215,48 @@ export function AddTypeModal({
             ? []
             : milestoneTypesForContractType(data, contractTypeId).map((entry) => entry.milestoneType);
 
+    /**
+     * Kandydaci do podpięcia: typy kamieni, których ten typ umowy jeszcze nie ma.
+     *
+     * Bez kamieni ofertowych - te należą do gałęzi ofert, a nie do umów, i kod
+     * odwołuje się do nich po numerze. Serwer odrzuca je niezależnie od tej listy.
+     */
+    const attachOptions: TypesTreeMilestoneType[] =
+        contractTypeId === null
+            ? []
+            : data.milestoneTypes
+                  .filter(
+                      (type) =>
+                          !data.contractTypeMilestoneTypes.some(
+                              (edge) =>
+                                  edge.contractTypeId === contractTypeId &&
+                                  edge.milestoneTypeId === type.id,
+                          ) &&
+                          !data.offerMilestoneTypes.some(
+                              (edge) => edge.milestoneTypeId === type.id,
+                          ),
+                  )
+                  .sort((first, second) => first.name.localeCompare(second.name, "pl"));
+
+    const selectedAttachType =
+        milestoneTypeId === ""
+            ? undefined
+            : data.milestoneTypes.find((type) => type.id === Number(milestoneTypeId));
+
     function handleSubmit() {
         setWasSubmitted(true);
+        if (isAttach) {
+            if (hasErrors || contractTypeId === null) return;
+            onSubmit("attachMilestoneType", {
+                milestoneTypeId: Number(milestoneTypeId),
+                contractTypeId,
+                // Numer folderu jedzie jako tekst - serwer parsuje wartości ciała
+                // żądania i samo "9" dotarłoby tam jako liczba.
+                folderNumber: String(folderNumber).trim(),
+                isDefault,
+            });
+            return;
+        }
         if (hasErrors || (isMilestone && contractTypeId === null)) return;
 
         if (isMilestone) {
@@ -256,7 +308,9 @@ export function AddTypeModal({
     const titleAction = isEditing ? "Edytuj" : "Dodaj";
     const titleSubject = isMilestone ? "typ kamienia milowego" : "typ sprawy";
 
-    const heading = `${titleAction} ${titleSubject}`;
+    const heading = isAttach
+        ? "Podepnij istniejący typ kamienia"
+        : `${titleAction} ${titleSubject}`;
 
     /**
      * W panelu bocznym (352 px) kolumny stojące obok siebie zwężają się do pól,
@@ -583,6 +637,72 @@ export function AddTypeModal({
         </>
     );
 
+    /**
+     * Formularz podpinania. Krótki celowo: nazwa, opis i pozostałe ustawienia należą
+     * do samego typu i są wspólne dla wszystkich typów umów, więc dawanie ich tutaj
+     * kusiłoby do zmiany, która uderzyłaby w pozostałe typy umów.
+     */
+    const attachBody = (
+        <>
+            {error && (
+                <Alert variant="danger" className="py-2 small">
+                    {error}
+                </Alert>
+            )}
+            <Alert variant="light" className="py-2 small border">
+                Typ zostanie podpięty do typu umowy <strong>{contractTypeName}</strong>. Ustawiasz tu
+                tylko to, co należy do powiązania - nazwa i opis zostają takie, jakie typ ma dziś.
+            </Alert>
+            <Form.Group className="mb-3">
+                <Form.Label>Typ kamienia</Form.Label>
+                <Form.Select
+                    value={milestoneTypeId}
+                    isInvalid={wasSubmitted && !!attachError}
+                    onChange={(event) =>
+                        setMilestoneTypeId(event.target.value === "" ? "" : Number(event.target.value))
+                    }
+                >
+                    <option value="">-- wybierz --</option>
+                    {attachOptions.map((type) => (
+                        <option key={type.id} value={type.id}>
+                            {type.name}
+                        </option>
+                    ))}
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">{attachError}</Form.Control.Feedback>
+                <Form.Text muted>
+                    Lista pomija typy, które ten typ umowy już ma. Typy spraw jadą razem z kamieniem -
+                    osobno się ich nie podpina.
+                </Form.Text>
+            </Form.Group>
+            <Form.Group className="mb-3">
+                <Form.Label>Numer folderu</Form.Label>
+                <Form.Control
+                    value={folderNumber}
+                    isInvalid={wasSubmitted && !!folderError}
+                    onChange={(event) => setFolderNumber(event.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">{folderError}</Form.Control.Feedback>
+                <Form.Text muted>
+                    Numer należy do tego typu umowy i nie musi być w nim niepowtarzalny - typ
+                    wycofywany może zachować swój, a nowy przejąć ten sam.
+                </Form.Text>
+            </Form.Group>
+            <Form.Check
+                type="switch"
+                label="Powstaje automatycznie przy nowej umowie"
+                checked={isDefault}
+                onChange={(event) => setIsDefault(event.target.checked)}
+            />
+            {isDefault && selectedAttachType?._templateId === null && (
+                <Alert variant="warning" className="py-2 small mt-2">
+                    Ten typ nie ma szablonu kamienia, więc mimo zaznaczenia nic nie powstanie. Szablon
+                    dodaje się przy edycji samego typu - i obowiązuje wtedy wszystkie typy umów.
+                </Alert>
+            )}
+        </>
+    );
+
     const buttons = (
         <>
             <Button variant="outline-secondary" onClick={onClose} disabled={isSaving}>
@@ -634,7 +754,7 @@ export function AddTypeModal({
             <Modal.Header closeButton>
                 <Modal.Title className="fs-5">{heading}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{body}</Modal.Body>
+            <Modal.Body>{isAttach ? attachBody : body}</Modal.Body>
             <Modal.Footer>{buttons}</Modal.Footer>
         </Modal>
     );
