@@ -1,5 +1,5 @@
 import React from "react";
-import { ContractSelector } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { ContractSelector, EntitySelector } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
@@ -26,9 +26,13 @@ export function InvoicesFilterBody() {
                 defaultFromValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM}
                 defaultToValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO}
             />
-            <Form.Group as={Col} sm={12} md={8}>
+            <Form.Group as={Col} sm={12} md={5}>
                 <Form.Label>Kontrakt</Form.Label>
                 <ContractSelector name="_contract" typesToInclude="our" showValidationInfo={false} />
+            </Form.Group>
+            <Form.Group as={Col} sm={12} md={3}>
+                <Form.Label>Podmiot</Form.Label>
+                <EntitySelector name="_entities" multiple={true} showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} sm={12} md={4}>
                 <InvoiceStatusSelector multiple={true} showValidationInfo={false} />

@@ -13,19 +13,7 @@ import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericC
 import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 import { entitiesRepository } from "../InvoicesController";
 import { computeJstInvoicePrefill } from "./invoiceJstPrefill";
-
-const THIRD_PARTY_ROLE_OPTIONS = [
-    { value: 1, label: "1 - Faktor" },
-    { value: 2, label: "2 - Odbiorca" },
-    { value: 3, label: "3 - Podmiot pierwotny" },
-    { value: 4, label: "4 - Dodatkowy nabywca" },
-    { value: 5, label: "5 - Wystawca faktury" },
-    { value: 6, label: "6 - Dokonujący płatności" },
-    { value: 7, label: "7 - JST wystawca" },
-    { value: 8, label: "8 - JST odbiorca" },
-    { value: 9, label: "9 - Członek GV wystawca" },
-    { value: 10, label: "10 - Członek GV odbiorca" },
-];
+import { THIRD_PARTY_ROLE_OPTIONS } from "../thirdPartyRoles";
 
 export function InvoiceModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Invoice>) {
     const {
@@ -47,15 +35,12 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
     const includeThirdParty = watch("includeThirdParty");
     const isJstSubordinate = watch("isJstSubordinate");
     const isGvMember = watch("isGvMember");
-    const addAnotherThirdParty = watch("addAnotherThirdParty");
     const thirdParties = (watch("_thirdParties") || []) as InvoiceThirdParty[];
     const buyer = watch("_entity") as { name?: string; taxNumber?: string; address?: string } | undefined;
     // F3: nowa FV z umowy, która ma Nabywcę FV (klasa JST gmina+zakład) → auto-fill Nabywca+Odbiorca i lock (D2/OD3).
     // Tylko dla NOWEJ faktury; edycja istniejącej FV nietknięta (D3). Kontrakt jest read-only dla nowej FV
     // (ContractSelector readOnly={!isEditing}), więc prefill liczony raz z contextData — brak zmiany kontraktu w formularzu.
     const isJstAutoFilled = Boolean(computeJstInvoicePrefill(contextData as OurContract | undefined, isEditing));
-    const prevIsJstSubordinateRef = useRef<boolean>(false);
-    const prevIsGvMemberRef = useRef<boolean>(false);
     const [showCreateEntity, setShowCreateEntity] = useState(false);
     const [showCreateThirdParty, setShowCreateThirdParty] = useState(false);
     const activeThirdPartyIndexRef = useRef<number>(0);
@@ -107,45 +92,39 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         : [],
             addAnotherThirdParty: false,
         };
+        // Znacznik podmiotu 3 wlaczony, a lista pusta (stara faktura, prefill JST): jeden pusty
+        // wiersz, zeby bylo w co wpisac podmiot. Liczy sie to TU, przy resecie, a nie w efekcie
+        // reagujacym na znacznik - efekt widzialby wartosci sprzed resetu i dokladal wiersze
+        // do faktur, ktore podmiot trzeci juz maja (zgloszenie wlasciciela 2026-08-31).
+        if (resetData.includeThirdParty && resetData._thirdParties.length === 0) {
+            resetData._thirdParties = [{ role: null, _entity: null }] as any;
+        }
         reset(resetData);
-        prevIsJstSubordinateRef.current = Boolean(resetData.isJstSubordinate);
-        prevIsGvMemberRef.current = Boolean(resetData.isGvMember);
         trigger();
     }, [initialData, reset]);
 
-    useEffect(() => {
-        if (!includeThirdParty) {
-            setValue("_thirdParties", [] as any, { shouldDirty: false, shouldValidate: true });
-            setValue("thirdPartyEntityId", null as any, { shouldDirty: false });
-            setValue("_thirdParty", null as any, { shouldDirty: false });
-            setValue("addAnotherThirdParty", false as any, { shouldDirty: false });
-        } else if (thirdParties.length === 0) {
-            appendThirdParty();
-        }
-    }, [includeThirdParty, thirdParties.length, setValue]);
+    /**
+     * Wiersze podmiotow trzecich dokladaja i kasuja WYLACZNIE reakcje na klikniecie uzytkownika.
+     * Wczesniej robily to efekty pilnujace znacznikow; przy otwarciu faktury do edycji efekt
+     * dostawal wartosci sprzed resetu formularza i dokladal puste wiersze fakturom, ktore podmiot
+     * trzeci mialy juz ustawiony (zgloszenie wlasciciela 2026-08-31).
+     */
+    function onThirdPartyFlagChecked(checked: boolean, role: number) {
+        if (!checked) return;
+        setValue("includeThirdParty", true as any, { shouldDirty: true, shouldValidate: true });
+        appendThirdParty(role);
+    }
 
-    useEffect(() => {
-        if (addAnotherThirdParty) {
-            appendThirdParty();
-            setValue("addAnotherThirdParty", false as any, { shouldDirty: false });
+    function onIncludeThirdPartyChanged(checked: boolean) {
+        if (checked) {
+            if (((watch("_thirdParties") || []) as InvoiceThirdParty[]).length === 0) appendThirdParty();
+            return;
         }
-    }, [addAnotherThirdParty, setValue]);
-
-    useEffect(() => {
-        if (isJstSubordinate && !prevIsJstSubordinateRef.current) {
-            setValue("includeThirdParty", true as any, { shouldDirty: true, shouldValidate: true });
-            appendThirdParty(8);
-        }
-        prevIsJstSubordinateRef.current = Boolean(isJstSubordinate);
-    }, [isJstSubordinate, setValue]);
-
-    useEffect(() => {
-        if (isGvMember && !prevIsGvMemberRef.current) {
-            setValue("includeThirdParty", true as any, { shouldDirty: true, shouldValidate: true });
-            appendThirdParty(10);
-        }
-        prevIsGvMemberRef.current = Boolean(isGvMember);
-    }, [isGvMember, setValue]);
+        setValue("_thirdParties", [] as any, { shouldDirty: true, shouldValidate: true });
+        setValue("thirdPartyEntityId", null as any, { shouldDirty: false });
+        setValue("_thirdParty", null as any, { shouldDirty: false });
+        setValue("addAnotherThirdParty", false as any, { shouldDirty: false });
+    }
 
     return (
         <>
@@ -214,7 +193,9 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         label={<span className="text-nowrap">Dotyczy jednostki podrzędnej JST</span>}
                         isInvalid={!!errors.isJstSubordinate}
                         disabled={isJstAutoFilled}
-                        {...register("isJstSubordinate")}
+                        {...register("isJstSubordinate", {
+                            onChange: (event) => onThirdPartyFlagChecked(event.target.checked, 8),
+                        })}
                     />
                     <ErrorMessage name="isJstSubordinate" errors={errors} />
                 </Form.Group>
@@ -224,7 +205,9 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         label={<span className="text-nowrap">Dotyczy członka grupy VAT</span>}
                         isInvalid={!!errors.isGvMember}
                         disabled={isJstAutoFilled}
-                        {...register("isGvMember")}
+                        {...register("isGvMember", {
+                            onChange: (event) => onThirdPartyFlagChecked(event.target.checked, 10),
+                        })}
                     />
                     <ErrorMessage name="isGvMember" errors={errors} />
                 </Form.Group>
@@ -234,7 +217,9 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         label={<span className="text-nowrap">Dodaj podmiot 3 do faktury</span>}
                         isInvalid={!!errors.includeThirdParty}
                         disabled={isJstAutoFilled}
-                        {...register("includeThirdParty")}
+                        {...register("includeThirdParty", {
+                            onChange: (event) => onIncludeThirdPartyChanged(event.target.checked),
+                        })}
                     />
                     <ErrorMessage name="includeThirdParty" errors={errors} />
                 </Form.Group>
@@ -309,7 +294,13 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
                         type="checkbox"
                         label="Czy dodać kolejny podmiot?"
                         isInvalid={!!errors.addAnotherThirdParty}
-                        {...register("addAnotherThirdParty")}
+                        {...register("addAnotherThirdParty", {
+                            onChange: (event) => {
+                                if (!event.target.checked) return;
+                                appendThirdParty();
+                                setValue("addAnotherThirdParty", false as any, { shouldDirty: false });
+                            },
+                        })}
                     />
                     <ErrorMessage name="addAnotherThirdParty" errors={errors} />
                 </Form.Group>
