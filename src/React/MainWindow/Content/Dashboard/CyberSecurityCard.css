@@ -1,0 +1,70 @@
+.cyber-security-tip {
+    animation-duration: 260ms;
+    animation-timing-function: ease-out;
+}
+
+.cyber-security-tip.from-right {
+    animation-name: cyberSecurityTipFromRight;
+}
+
+.cyber-security-tip.from-left {
+    animation-name: cyberSecurityTipFromLeft;
+}
+
+@keyframes cyberSecurityTipFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes cyberSecurityTipFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cyber-security-tip {
+        animation: none;
+    }
+}
+
+.cyber-security-nav {
+    background: none;
+    border: none;
+    padding: 2px 6px;
+    line-height: 1;
+    color: #adb5bd;
+    cursor: pointer;
+    transition: color 150ms ease-in-out;
+}
+
+.cyber-security-nav:hover,
+.cyber-security-nav:focus-visible {
+    color: #495057;
+}
+
+.cyber-security-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background-color: #ced4da;
+    transition: background-color 150ms ease-in-out;
+}
+
+.cyber-security-dot.active {
+    background-color: #6c757d;
+}

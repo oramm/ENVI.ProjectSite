@@ -7,6 +7,18 @@ import MainSetup from "../../../MainSetupReact";
 import InvoicesCard from "./InvoicesCard";
 import ApplicationCallsCard from "./ApplicationCallsCard";
 import MilestonesCard from "./MilestonesCard";
+import CyberSecurityCard from "./CyberSecurityCard";
+import { SystemRoleName } from "../../../../../Typings/bussinesTypes";
+
+/** Rady bezpieczeństwa dostają osoby pracujące na naszych danych. Poza wykazem
+ * zostają EXTERNAL_USER i CLIENT - decyzja właściciela. */
+const CYBER_SECURITY_ROLES: SystemRoleName[] = [
+    "ADMIN",
+    "ENVI_MANAGER",
+    "ENVI_EMPLOYEE",
+    "ENVI_COOPERATOR",
+    "CONTRACT_WORKER",
+];
 
 export default function Dashboard() {
     const currentUser = MainSetup.currentUserOrNull;
@@ -54,6 +66,9 @@ export default function Dashboard() {
             </Col>
             <Col md={3} className="mb-3">
                 <MyData className="mb-3 bg-white" />
+                {CYBER_SECURITY_ROLES.includes(currentUser.systemRoleName) && (
+                    <CyberSecurityCard className="mb-3 bg-white" />
+                )}
                 {/* <News className="mb-3 bg-white" /> */}
             </Col>
         </Row>
