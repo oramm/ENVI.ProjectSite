@@ -7,6 +7,7 @@ import {
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import ScrumboardApi from "../ScrumboardApi";
 import { useScrumboardEvents } from "../useScrumboardEvents";
+import { formatDays } from "../../Vacations/vacationViewUtils";
 
 type EditableField =
     | "workingDays"
@@ -145,8 +146,12 @@ export default function PlanningTab() {
                         <td className="fw-semibold">{available(entry)}</td>
                         <td className="text-nowrap">
                             {(() => {
+                                // liczniki bywają ułamkowe (nieobecność na część dnia),
+                                // więc idą przez ten sam formatter co salda w zakładce Urlopy
                                 const c = weekCounts.get(entry.personId);
-                                return `${c?.prev ?? 0} / ${c?.current ?? 0} / ${c?.next ?? 0}`;
+                                return `${formatDays(c?.prev ?? 0)} / ${formatDays(
+                                    c?.current ?? 0
+                                )} / ${formatDays(c?.next ?? 0)}`;
                             })()}
                         </td>
                     </tr>

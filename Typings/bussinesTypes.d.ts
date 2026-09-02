@@ -268,6 +268,8 @@ export interface ScrumboardAbsenceType {
     countsAgainstLimit: boolean;
     countsAsCare: boolean;
     countsAsHoliday: boolean;
+    /** Czy ten typ wolno wpisać na część dnia (godziny od-do), a nie tylko na całe dni. */
+    allowsPartialDay: boolean;
 }
 
 export interface ScrumboardAbsence {
@@ -276,6 +278,10 @@ export interface ScrumboardAbsence {
     typeId: number;
     dateFrom: string; // 'YYYY-MM-DD'
     dateTo: string; // 'YYYY-MM-DD'
+    /** 'HH:MM' albo null. Oba puste = cały dzień; wypełnione = część jednego dnia. */
+    startTime?: string | null;
+    endTime?: string | null;
+    /** Liczba dni roboczych; ułamek dla części dnia (8 h = 1 dzień). */
     workingDaysCount: number;
     note?: string | null;
     createdByPersonId?: number | null;
@@ -780,8 +786,12 @@ export interface AbsenceTypeData extends RepositoryDataItem {
     countsAgainstLimit: boolean;
     countsAsCare: boolean;
     countsAsHoliday: boolean;
+    /** Czy ten typ wolno wpisać na część dnia (godziny od-do), a nie tylko na całe dni. */
+    allowsPartialDay: boolean;
     /** Liczba nieobecności używających tego typu - tylko do odczytu. */
     _usageCount?: number;
+    /** Ile z nich jest wpisanych na godziny - tylko do odczytu. */
+    _partialUsageCount?: number;
 }
 
 /**

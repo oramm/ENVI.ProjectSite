@@ -99,3 +99,91 @@ export function monthTicks(year: number): { label: string; leftPct: number }[] {
         leftPct: ((dayOfYear(ymd(year, month0, 1)) - 1) / total) * 100,
     }));
 }
+
+/* --- Nieobecność na część dnia -------------------------------------------- */
+
+/** Ile minut pracy ma pełny dzień. Ta sama stała co na serwerze (8 h = 1 dzień). */
+export const MINUTES_PER_DAY = 480;
+
+/** Minuty od północy dla 'HH:MM'. */
+export function timeToMinutes(hhmm: string): number {
+    const [hours, minutes] = hhmm.split(":").map(Number);
+    return hours * 60 + minutes;
+}
+
+/** Długość części dnia w minutach; 0, gdy którejś godziny brakuje. */
+export function partialDayMinutes(
+    startTime: string | null | undefined,
+    endTime: string | null | undefined
+): number {
+    if (!startTime || !endTime) return 0;
+    return timeToMinutes(endTime) - timeToMinutes(startTime);
+}
+
+/** Minuty na dni, zaokrąglone tak jak na serwerze (4 h = 0,5 dnia). */
+export function minutesToDays(minutes: number): number {
+    return Math.round((minutes / MINUTES_PER_DAY) * 100) / 100;
+}
+
+/** Liczba po polsku: przecinek, do dwóch miejsc, bez końcowych zer ("1,5", "26"). */
+export function formatDays(days: number): string {
+    return String(Math.round(days * 100) / 100).replace(".", ",");
+}
+
+/** Długość części dnia po ludzku: "4 h", "1,5 h". */
+export function formatHours(minutes: number): string {
+    return `${formatDays(minutes / 60)} h`;
+}
+
+/** Czy nieobecność jest wpisana na część dnia. */
+export function isPartialDay(absence: {
+    startTime?: string | null;
+    endTime?: string | null;
+}): boolean {
+    return !!absence.startTime && !!absence.endTime;
+}
+
+/** Miesiące w dopełniaczu - do dat w zdaniu ("18 września"). */
+export const MONTHS_PL_GENITIVE = [
+    "stycznia", "lutego", "marca", "kwietnia", "maja", "czerwca",
+    "lipca", "sierpnia", "września", "października", "listopada", "grudnia",
+];
+
+/** Dzień po ludzku: 'YYYY-MM-DD' → "18 września". */
+export function formatDayPl(dateStr: string): string {
+    const [, m, d] = dateStr.split("-").map(Number);
+    return `${d} ${MONTHS_PL_GENITIVE[m - 1]}`;
+}
+
+/**
+ * Treść dymka nad nieobecnością.
+ *
+ * PO CO: wzór dnia częściowego jest DWUSTANOWY - 1 h i 7 h wyglądają identycznie,
+ * bo w kratce 26 px różnicy i tak nie widać. Liczbę godzin niesie więc dymek,
+ * w obu widokach tak samo. Dla całego dnia dymek zostaje w dotychczasowym kształcie.
+ */
+export function absenceTooltip(
+    absence: {
+        _typeName?: string;
+        dateFrom: string;
+        dateTo: string;
+        startTime?: string | null;
+        endTime?: string | null;
+        workingDaysCount: number;
+    },
+    withDayCount = false
+): string {
+    const name = absence._typeName ?? "Nieobecność";
+    if (isPartialDay(absence)) {
+        const minutes = partialDayMinutes(absence.startTime, absence.endTime);
+        return (
+            `${name}: ${formatDayPl(absence.dateFrom)}, ` +
+            `${absence.startTime}–${absence.endTime} ` +
+            `(${formatHours(minutes)} = ${formatDays(minutesToDays(minutes))} dnia)`
+        );
+    }
+    const range = `${absence.dateFrom} – ${absence.dateTo}`;
+    return withDayCount
+        ? `${name}: ${range} (${formatDays(absence.workingDaysCount)} dni rob.)`
+        : `${name}: ${range}`;
+}

@@ -146,6 +146,9 @@ export default class ScrumboardApi {
         typeId: number;
         dateFrom: string;
         dateTo: string;
+        /** 'HH:MM' albo null. Oba puste = cały dzień. */
+        startTime?: string | null;
+        endTime?: string | null;
         note?: string | null;
     }): Promise<ScrumboardAbsence> {
         return ToolsFetch.fetchWithRetry(
@@ -160,6 +163,8 @@ export default class ScrumboardApi {
             typeId: number;
             dateFrom: string;
             dateTo: string;
+            startTime?: string | null;
+            endTime?: string | null;
             note?: string | null;
         }
     ): Promise<ScrumboardAbsence> {

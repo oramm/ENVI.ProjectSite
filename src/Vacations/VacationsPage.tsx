@@ -10,8 +10,11 @@ import { useScrumboardEvents } from "../Scrumboard/useScrumboardEvents";
 import AbsenceModal, { AbsenceDraft } from "./AbsenceModal";
 import "./Vacations.css";
 import {
+    absenceTooltip,
     daysInMonth,
     findAbsenceOn,
+    formatDays,
+    isPartialDay,
     isWeekendYmd,
     MONTHS_PL_LONG,
     monthTicks,
@@ -34,7 +37,9 @@ export default function VacationsPage({ title }: { title?: string }) {
     const now = new Date();
     const [year, setYear] = useState(now.getFullYear());
     const [month0, setMonth0] = useState(now.getMonth());
-    const [viewMode, setViewMode] = useState<ViewMode>("year");
+    // Widok miesieczny na wejsciu - decyzja ownera 2026-09-02. Na co dzien patrzy sie
+    // na biezacy miesiac; rok jest do przegladu, nie do pracy.
+    const [viewMode, setViewMode] = useState<ViewMode>("month");
     // Salda (urlop / opieka / za święta) domyślnie zwinięte — na co dzień liczy się
     // kalendarz, a nie liczniki; rozwinięte zjadają szerokość timeline'u.
     const [showBalances, setShowBalances] = useState(false);
@@ -77,6 +82,9 @@ export default function VacationsPage({ title }: { title?: string }) {
                 typeId: absence.typeId,
                 dateFrom: absence.dateFrom,
                 dateTo: absence.dateTo,
+                // Godziny decydują, w którym trybie otworzy się okno.
+                startTime: absence.startTime,
+                endTime: absence.endTime,
                 note: absence.note,
             });
         else if (!isWeekendYmd(dateStr))
@@ -89,6 +97,8 @@ export default function VacationsPage({ title }: { title?: string }) {
         typeId: number;
         dateFrom: string;
         dateTo: string;
+        startTime: string | null;
+        endTime: string | null;
         note: string | null;
     }) {
         // Bez try/catch — ewentualny błąd (np. brak dni opieki) propaguje się do modala,
@@ -98,6 +108,8 @@ export default function VacationsPage({ title }: { title?: string }) {
                 typeId: payload.typeId,
                 dateFrom: payload.dateFrom,
                 dateTo: payload.dateTo,
+                startTime: payload.startTime,
+                endTime: payload.endTime,
                 note: payload.note,
             });
         else await ScrumboardApi.addAbsence(payload);
@@ -266,6 +278,7 @@ export default function VacationsPage({ title }: { title?: string }) {
                 draft={draft}
                 persons={persons}
                 types={data.types}
+                rows={data.rows}
                 onSave={handleSave}
                 onDelete={handleDelete}
                 onClose={() => setDraft(null)}
@@ -333,21 +346,24 @@ const POOLS = [
  * Widok rozwinięty i zwinięty czytają stąd, żeby opisy nie rozjechały się z liczbami.
  */
 function poolBalances(row: ScrumboardVacationRow) {
+    // Salda bywają ułamkowe od czasu nieobecności godzinowych, więc każda liczba
+    // idzie przez formatDays: przecinek zamiast kropki, bez końcowych zer.
     const vacation = row.limitDays + row.carryoverDays - row.usedDays;
     const care = row.careDays - row.careUsedDays;
     const holiday = row.holidayDays - row.holidayUsedDays;
+    const d = formatDays;
     return {
         vacation: {
             remaining: vacation,
-            title: `Urlop wykorzystany: ${row.usedDays}, pozostały: ${vacation} (Obecny ${row.limitDays} + Zaległy ${row.carryoverDays} − wykorzystany ${row.usedDays})`,
+            title: `Urlop wykorzystany: ${d(row.usedDays)}, pozostały: ${d(vacation)} (Obecny ${d(row.limitDays)} + Zaległy ${d(row.carryoverDays)} − wykorzystany ${d(row.usedDays)})`,
         },
         care: {
             remaining: care,
-            title: `Opieka wykorzystana: ${row.careUsedDays}, pozostała: ${care} (pula ${row.careDays} − wykorzystana ${row.careUsedDays})`,
+            title: `Opieka wykorzystana: ${d(row.careUsedDays)}, pozostała: ${d(care)} (pula ${d(row.careDays)} − wykorzystana ${d(row.careUsedDays)})`,
         },
         holiday: {
             remaining: holiday,
-            title: `Wolne za święta wykorzystane: ${row.holidayUsedDays}, pozostałe: ${holiday} (pula ${row.holidayDays} − wykorzystane ${row.holidayUsedDays})`,
+            title: `Wolne za święta wykorzystane: ${d(row.holidayUsedDays)}, pozostałe: ${d(holiday)} (pula ${d(row.holidayDays)} − wykorzystane ${d(row.holidayUsedDays)})`,
         },
     };
 }
@@ -367,7 +383,7 @@ function RemainingValue({
                 balance.remaining < 0 ? "text-danger fw-semibold" : "fw-semibold"
             }
         >
-            {children ?? balance.remaining}
+            {children ?? formatDays(balance.remaining)}
         </span>
     );
 }
@@ -451,7 +467,7 @@ function VacationBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) 
                 onBlur={save}
             />
             <RemainingValue balance={balance}>
-                {row.usedDays} / {balance.remaining}
+                {formatDays(row.usedDays)} / {formatDays(balance.remaining)}
             </RemainingValue>
         </div>
     );
@@ -471,7 +487,7 @@ function CareBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
                 onBlur={save}
             />
             <RemainingValue balance={balance}>
-                {row.careUsedDays} / {balance.remaining}
+                {formatDays(row.careUsedDays)} / {formatDays(balance.remaining)}
             </RemainingValue>
         </div>
     );
@@ -495,7 +511,7 @@ function HolidayBalanceCell({ row, onLimitChange, onLimitSave }: BalanceProps) {
                 onBlur={save}
             />
             <RemainingValue balance={balance}>
-                {row.holidayUsedDays} / {balance.remaining}
+                {formatDays(row.holidayUsedDays)} / {formatDays(balance.remaining)}
             </RemainingValue>
         </div>
     );
@@ -662,13 +678,19 @@ function YearView({
                                         return (
                                             <div
                                                 key={a.id}
-                                                className="vacation-bar"
+                                                className={
+                                                    "vacation-bar" +
+                                                    (isPartialDay(a) ? " vacation-partial" : "")
+                                                }
                                                 style={{
                                                     left: `${style.leftPct}%`,
                                                     width: `${style.widthPct}%`,
-                                                    background: a._typeColor,
+                                                    // celowo backgroundColor, nie background:
+                                                    // skrót skasowałby background-image z arkusza,
+                                                    // czyli prążki dnia częściowego
+                                                    backgroundColor: a._typeColor,
                                                 }}
-                                                title={`${a._typeName}: ${a.dateFrom} – ${a.dateTo} (${a.workingDaysCount} dni rob.)`}
+                                                title={absenceTooltip(a, true)}
                                                 onClick={() => onOpenEdit(row, a.dateFrom)}
                                             />
                                         );
@@ -743,17 +765,19 @@ function MonthView({
                                         className={
                                             "vacation-day-cell" +
                                             (weekend ? " vacation-weekend" : "") +
+                                            (showColor && isPartialDay(absence!)
+                                                ? " vacation-partial"
+                                                : "") +
                                             (dateStr === today ? " vacation-today" : "")
                                         }
                                         style={
                                             showColor
-                                                ? { background: absence!._typeColor }
+                                                ? // backgroundColor, nie background - patrz wyżej
+                                                  { backgroundColor: absence!._typeColor }
                                                 : undefined
                                         }
                                         title={
-                                            absence
-                                                ? `${absence._typeName}: ${absence.dateFrom} – ${absence.dateTo}`
-                                                : undefined
+                                            absence ? absenceTooltip(absence) : undefined
                                         }
                                         onClick={() => onOpenEdit(row, dateStr)}
                                     />

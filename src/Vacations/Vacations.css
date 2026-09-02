@@ -276,3 +276,39 @@
         inset -1px 0 0 rgba(220, 53, 69, 0.55),
         inset 0 1px 0 rgba(220, 53, 69, 0.55);
 }
+
+/* Nieobecność na CZĘŚĆ DNIA — poziome prążki zamiast litego wypełnienia.
+   TA SAMA klasa dla kratki miesiąca i dla paska rocznego: paski biegną w poprzek
+   wąskiego wymiaru, więc na pasku szerokim na 3 px nadal daje się je policzyć,
+   a pionowe zmieściłyby się tam najwyżej raz.
+
+   Znacznik jest DWUSTANOWY, nie miarą: 1 h i 7 h wyglądają identycznie. Różnica
+   między 6 h a 7 h jest w kratce 26 px nieczytelna, a udawanie, że jest czytelna,
+   wprowadzałoby w błąd. Liczbę godzin niesie dymek i okno edycji.
+
+   Kolizji z weekendem nie ma: weekend rysuje się na ukos (45°), część dnia poziomo.
+
+   WZÓR LICZONY W UŁAMKACH WYSOKOŚCI, NIE W PIKSELACH — i to jest sedno tej reguły.
+   Dwie wcześniejsze wersje szły w pikselach (prążek 1 px co 3 px, potem 2 px co 6 px)
+   i obie wyglądały krzywo: 16 px paska rocznego nie dzieli się przez 6, więc ostatni
+   pas był ucięty w połowie, górny pas wychodził szerszy niż dolny. Owner zobaczył
+   to na żywo 2026-09-02 i zgłosił jako brak symetrii.
+
+   Teraz wysokość dzieli się na PIĘĆ RÓWNYCH PASÓW: kolor, prążek, kolor, prążek, kolor.
+   Każdy po 20% wysokości, więc wzór jest symetryczny względem środka, a na górze
+   i na dole zostaje tyle samo koloru — niezależnie od tego, czy element ma 16 px
+   (pasek roczny), czy 35 px (kratka miesiąca). Prążki są przy okazji grubsze
+   niż w obu poprzednich podejściach: 3,2 px na pasku rocznym zamiast 1 px i 2 px. */
+.vacation-partial {
+    background-image: linear-gradient(
+        to bottom,
+        transparent 20%,
+        rgba(255, 255, 255, 0.85) 20%,
+        rgba(255, 255, 255, 0.85) 40%,
+        transparent 40%,
+        transparent 60%,
+        rgba(255, 255, 255, 0.85) 60%,
+        rgba(255, 255, 255, 0.85) 80%,
+        transparent 80%
+    );
+}
