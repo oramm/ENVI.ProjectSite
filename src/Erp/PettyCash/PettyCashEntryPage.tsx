@@ -9,6 +9,7 @@ import { normalizeTrackingNumber } from "./trackingNumber";
 import { makePettyCashValidationSchema } from "./PettyCashValidationSchema";
 import type { CashField, ItemField } from "./previewRows";
 import { lastUsed, recall, remember, RECENT_KEYS } from "./recentValues";
+import { derivedVat, netFromVat, vatError } from "./vatAmount";
 import SheetPreview from "./SheetPreview";
 import MainSetup from "../../React/MainSetupReact";
 import {
@@ -143,6 +144,12 @@ export default function PettyCashEntryPage() {
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [result, setResult] = useState<CommitResult | null>(null);
     const [links, setLinks] = useState<SheetLinks | null>(null);
+    /**
+     * Pole VAT jest pomocnicze i nie należy do formularza: nie idzie do arkusza ani do backendu.
+     * `null` = pokazujemy VAT wynikający z netto i brutto (do sprawdzenia z paragonem);
+     * napis = wpisany ręcznie, a wtedy to netto wynika z brutto i VAT.
+     */
+    const [vatInput, setVatInput] = useState<string | null>(null);
 
     useEffect(() => {
         fetchSheetLinks()
@@ -156,6 +163,8 @@ export default function PettyCashEntryPage() {
     const isAdvance = kind === "ADVANCE";
     const hasDocumentAmounts = isPostal || kind === "INVOICE" || kind === "RECEIPT";
     const recentPayers = recall(RECENT_KEYS.payer);
+    const vatShown = vatInput ?? derivedVat(values.netAmount, values.grossAmount);
+    const vatMessage = vatInput === null ? null : vatError(vatInput, values.grossAmount);
 
     const changeKind = (next: EntryKind) => {
         setValue("entryKind", next, { shouldValidate: true });
@@ -170,6 +179,7 @@ export default function PettyCashEntryPage() {
         if (next !== "POSTAL" && description === POSTAL_DESCRIPTION)
             setValue("description", "", { shouldValidate: true });
         if (next !== "POSTAL") replace([]);
+        setVatInput(null);
         setResult(null);
         setServerErrors([]);
     };
@@ -191,11 +201,37 @@ export default function PettyCashEntryPage() {
         patch.forEach(([fieldName, value]) => {
             if (value !== null) setValue(fieldName, value, { shouldValidate: true, shouldDirty: true });
         });
+        // Odczytane netto i brutto mają pokazać VAT do sprawdzenia z dokumentem.
+        setVatInput(null);
+    };
+
+    const setNet = (net: string) =>
+        setValue("netAmount", net, { shouldValidate: true, shouldDirty: true });
+
+    /**
+     * Netto i VAT to para: ostatnio wpisane jest źródłem, drugie wynika z brutto.
+     * Wpisanie netto oddaje polu VAT rolę podglądu; zmiana brutto przy wpisanym VAT
+     * przelicza netto na nowo.
+     */
+    const afterAmountChange = (field: CashField, value: string) => {
+        if (field === "netAmount") setVatInput(null);
+        if (field === "grossAmount" && vatInput !== null) {
+            const net = netFromVat(value, vatInput);
+            if (net !== null) setNet(net);
+        }
+    };
+
+    const changeVat = (vat: string) => {
+        setVatInput(vat);
+        const net = netFromVat(values.grossAmount, vat);
+        if (net !== null) setNet(net);
     };
 
     /** Tabela edytuje ten sam stan co pola wyżej — jedno źródło prawdy, dwie powierzchnie. */
-    const setCashField = (field: CashField, value: string) =>
+    const setCashField = (field: CashField, value: string) => {
         setValue(field, value, { shouldValidate: true, shouldDirty: true });
+        afterAmountChange(field, value);
+    };
 
     const setItemField = (index: number, field: ItemField, value: string) => {
         setValue(
@@ -267,6 +303,7 @@ export default function PettyCashEntryPage() {
                 note: "",
                 items: [],
             });
+            setVatInput(null);
         } catch (error) {
             const apiError = error as PettyCashApiError;
             setServerErrors(apiError.errors?.length ? apiError.errors : [apiError.message]);
@@ -279,6 +316,18 @@ export default function PettyCashEntryPage() {
         ...register(name),
         isInvalid: Boolean(errors[name]),
     });
+    /** Jak `field`, ale zmiana kwoty przelicza też parę netto/VAT. */
+    const amountField = (name: "netAmount" | "grossAmount") => {
+        const registered = register(name);
+        return {
+            ...registered,
+            isInvalid: Boolean(errors[name]),
+            onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                registered.onChange(event);
+                afterAmountChange(name, event.target.value);
+            },
+        };
+    };
     const feedback = (name: keyof FormValues) => (
         <Form.Control.Feedback type="invalid">
             {(errors[name] as any)?.message}
@@ -335,21 +384,37 @@ export default function PettyCashEntryPage() {
                                 <Form.Control {...field("documentNumber")} />
                                 {feedback("documentNumber")}
                             </Form.Group>
+                            {/* Kolejność jak na paragonie: suma, potem podatek; netto wynika z nich. */}
                             <div className="d-flex gap-2 mb-2">
-                                {!isPostal && (
-                                    <Form.Group className="flex-fill">
-                                        <Form.Label className="mb-1 small text-muted">Netto</Form.Label>
-                                        <Form.Control inputMode="decimal" {...field("netAmount")} />
-                                        {feedback("netAmount")}
-                                    </Form.Group>
-                                )}
                                 <Form.Group className="flex-fill">
                                     <Form.Label className="mb-1 small text-muted">
                                         {isPostal ? "Kwota faktury" : "Brutto"}
                                     </Form.Label>
-                                    <Form.Control inputMode="decimal" {...field("grossAmount")} />
+                                    <Form.Control inputMode="decimal" {...amountField("grossAmount")} />
                                     {feedback("grossAmount")}
                                 </Form.Group>
+                                {!isPostal && (
+                                    <>
+                                        <Form.Group className="flex-fill">
+                                            <Form.Label className="mb-1 small text-muted">VAT</Form.Label>
+                                            <Form.Control
+                                                inputMode="decimal"
+                                                value={vatShown}
+                                                onChange={(event) => changeVat(event.target.value)}
+                                                isInvalid={vatMessage !== null}
+                                                title="Pole pomocnicze — nie trafia do arkusza"
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {vatMessage}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                        <Form.Group className="flex-fill">
+                                            <Form.Label className="mb-1 small text-muted">Netto</Form.Label>
+                                            <Form.Control inputMode="decimal" {...amountField("netAmount")} />
+                                            {feedback("netAmount")}
+                                        </Form.Group>
+                                    </>
+                                )}
                             </div>
                         </>
                     )}
