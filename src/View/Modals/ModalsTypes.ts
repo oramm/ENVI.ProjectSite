@@ -25,9 +25,16 @@ export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryD
  * Może być asynchroniczny — `GeneralModal` na niego CZEKA. Dzięki temu błąd domknięcia
  * zapisu (np. PUT konta systemowego v2) trafia do paska błędu modala zamiast zniknąć
  * jako odrzucona obietnica, której nikt nie odbiera.
+ *
+ * `submitted` to obiekt wysłany na serwer: wiersz z repozytorium scalony z formularzem.
+ * Handler, który po zapisie domyka dane osobnymi żądaniami, bierze wartości formularza
+ * STĄD, nie z `object` — `object` to odpowiedź serwera i nie musi ich odbijać (panel
+ * uprawnień dostaje świeży odczyt wiersza bez roli, e-maila i flagi FIDmana z formularza).
+ * Przekazywane tylko przy edycji bez plików.
  */
 export type ModalSaveCallback<DataItemType extends RepositoryDataItem = RepositoryDataItem> = (
-    object: DataItemType
+    object: DataItemType,
+    submitted?: DataItemType
 ) => void | Promise<void>;
 
 type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {

@@ -320,13 +320,10 @@ export default function MainMenu() {
                                 >
                                     Wyloguj się
                                 </NavDropdown.Item>
-                                {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
-                                    <>
-                                        <NavDropdown.Item as={Link} to="/admin/systemUsers">
-                                            Dodaj użytkownika
-                                        </NavDropdown.Item>
-                                    </>
-                                )}
+                                {/* „Dodaj użytkownika" zniknęło stąd w PER-3: konta zakłada się
+                                    w oknie „Personel i uprawnienia" (panel administracyjny niżej),
+                                    a nie z menu użytkownika. Osobę bez konta dalej dodaje się
+                                    w oknie „Osoby". */}
                                 {/* Instalator Second Brain - sprawa osobista pracownika, a nie moduł
                                     domenowy, więc siedzi w menu użytkownika, nie w nawigacji. Trasa
                                     serwera wymaga tylko sesji; tutaj zawężamy do pracowników ENVI,

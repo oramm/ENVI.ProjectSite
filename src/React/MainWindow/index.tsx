@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { StrictMode, useEffect, useState } from "react";
 import { Alert, Container } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
@@ -25,7 +25,6 @@ import StaffMembersSearch from "../../Admin/StaffMembers/StaffMembersSearch";
 import TypesTreeView from "../../Admin/TypesTree/TypesTreeView";
 import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
-import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
 import BankSyncSearch from "../../Erp/BankSyncList/BankSyncSearch";
 import CostInvoicesSearch from "../../Erp/CostInvoicesList/CostInvoicesSearch";
 import CostInvoiceDetails from "../../Erp/CostInvoicesList/CostInvoiceDetails";
@@ -186,6 +185,10 @@ function AppRoutes() {
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
+                    {/* „Dodawanie użytkowników" zniknęło w PER-3 - konta i uprawnienia mieszkają
+                        w jednym oknie. Stary adres przekierowuje, bo ludzie mają go w zakładkach;
+                        o dostępie rozstrzyga bramka roli przy oknie docelowym, nie ta linia. */}
+                    <Route path="/admin/systemUsers" element={<Navigate to="/admin/staffMembers" replace />} />
                     <Route path="/public/experience-update/:token" element={<PublicProfileSubmissionPage />} />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
                     {/* Widoki kontraktowe - także dla ról zakresowych (pracownik kontraktowy, klient).
@@ -270,10 +273,6 @@ function AppRoutes() {
                             element={<ApplicationCallsSearch title="Nabory" />}
                         />
                         <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
-                        <Route
-                            path="/admin/systemUsers"
-                            element={<SystemUsersSearch title="Dodawanie użytkowników" />}
-                        />
                     </Route>
                     {/* Faktury kosztowe - flaga StaffMembers.HasCostInvoiceAccess (ADMIN zawsze). */}
                     {costInvoicesAccess && (

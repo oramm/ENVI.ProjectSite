@@ -17,7 +17,10 @@ export function PersonsFilterBody() {
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
             </Form.Group>
-            <Form.Group as={Col} md={4}>
+            {/* 3 + 3 + 3 + 3 = 12: przy czterech kolumnach „Doświadczenie" mieści się w tej
+                samej linii. Z podmiotem na 4 suma wynosiła 13 i ostatnie pole spadało do drugiej
+                linii, a filtr zjadał wysokość okna (uwaga ownera 2026-09-04). */}
+            <Form.Group as={Col} md={3}>
                 <Form.Label>Podmiot</Form.Label>
                 <EntitySelector
                     name="_entities"

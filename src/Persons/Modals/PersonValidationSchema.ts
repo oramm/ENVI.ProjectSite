@@ -1,6 +1,12 @@
 import * as Yup from "yup";
 
-const commonFields = {
+/**
+ * Reguły pól OSOBY (książka adresowa). Wyeksportowane, bo od PER-3 używa ich też modal
+ * dodawania użytkownika w oknie „Personel i uprawnienia" - tam do pól osoby dochodzą
+ * reguły konta z `accountFieldsValidation`. Jedno miejsce, żeby komunikat przy tym samym
+ * polu brzmiał w obu oknach tak samo.
+ */
+export const personFields = {
     _entity: Yup.object().required("Wybierz podmiot"),
     name: Yup.string().required("Podaj imię").max(50, "Imię może mieć maksymalnie 50 znaków"),
 
@@ -22,6 +28,6 @@ const commonFields = {
 
 export function makePersonValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
-        ...commonFields,
+        ...personFields,
     });
 }

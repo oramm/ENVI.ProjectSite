@@ -112,7 +112,13 @@ describe("GeneralModal — błąd domknięcia zapisu trafia do paska błędu", (
         await submitForm();
 
         await waitFor(() => expect(onClose).toHaveBeenCalled());
-        expect(onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: 7 }));
+        // Dwa argumenty, nie jeden: odpowiedź serwera i obiekt wysłany na serwer.
+        // Handlery, które domykają zapis osobnymi żądaniami, biorą wartości formularza
+        // z drugiego - odpowiedź serwera nie musi ich odbijać (patrz ModalSaveCallback).
+        expect(onEdit).toHaveBeenCalledWith(
+            expect.objectContaining({ id: 7 }),
+            expect.objectContaining({ id: 7 })
+        );
     });
 
     /**

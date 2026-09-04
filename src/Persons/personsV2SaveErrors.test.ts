@@ -44,7 +44,7 @@ describe("savePersonV2AccountAndProfile", () => {
             PERSON_ID,
             { systemEmail: "anna@envi.com.pl", fidmanEnabled: false },
             {},
-            "SystemUsers"
+            "StaffMembers"
         );
 
         expect(result.errors).toEqual([`Konto systemowe: ${CONFLICT_MESSAGE}`]);
@@ -61,7 +61,7 @@ describe("savePersonV2AccountAndProfile", () => {
             PERSON_ID,
             { fidmanEnabled: true },
             { headline: "ok" },
-            "SystemUsers"
+            "StaffMembers"
         );
 
         expect(result.errors).toHaveLength(1);
@@ -69,7 +69,7 @@ describe("savePersonV2AccountAndProfile", () => {
     });
 
     it("udany zapis nie zwraca żadnych błędów", async () => {
-        const result = await savePersonV2AccountAndProfile(PERSON_ID, { fidmanEnabled: true }, {}, "SystemUsers");
+        const result = await savePersonV2AccountAndProfile(PERSON_ID, { fidmanEnabled: true }, {}, "StaffMembers");
 
         expect(result.errors).toEqual([]);
     });
@@ -101,7 +101,7 @@ describe("savePersonV2AccountAndProfile", () => {
 
     it("payload z samym `fidmanEnabled: false` to nadal dane do zapisania", async () => {
         // Odznaczenie checkboxa jest zmianą - nie wolno go potraktować jak pustego payloadu.
-        await savePersonV2AccountAndProfile(PERSON_ID, { fidmanEnabled: false }, {}, "SystemUsers");
+        await savePersonV2AccountAndProfile(PERSON_ID, { fidmanEnabled: false }, {}, "StaffMembers");
 
         expect(calledUrls().some((url) => url.endsWith("/account"))).toBe(true);
     });

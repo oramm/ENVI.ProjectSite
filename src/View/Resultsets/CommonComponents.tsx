@@ -20,6 +20,7 @@ import {
     faListCheck,
     faLocationDot,
     faFilePdf,
+    faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 
 export function ProgressBar() {
@@ -180,6 +181,11 @@ export function PdfIconButton({ layout, onClick }: SpecificIconButtonProps) {
 /** Generowanie spisu spraw kontraktu (arkusz Google) */
 export function CaseListIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faListCheck} layout={layout} onClick={onClick} className="text-success" />;
+}
+
+/** Przejście z osoby do jej konta i uprawnień (okno „Personel i uprawnienia”) */
+export function PermissionsIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faUserShield} layout={layout} onClick={onClick} className="text-success" />;
 }
 
 export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {

@@ -242,7 +242,7 @@ function hasAnyFieldToWrite(payload: Record<string, unknown>): boolean {
  * @param personId - identyfikator osoby
  * @param accountPayload - payload account (pusty {} => PUT jest pomijany)
  * @param profilePayload - payload profile (pusty {} => PUT jest pomijany)
- * @param callerContext - kontekst wywolania do logow (np. "SystemUsers", "Persons")
+ * @param callerContext - kontekst wywolania do logow (np. "StaffMembers", "Persons")
  */
 export async function savePersonV2AccountAndProfile(
     personId: number,
@@ -297,9 +297,9 @@ export async function savePersonV2AccountAndProfile(
  * Wołać PO callbacku odświeżającym listę: dane legacy są już w bazie, więc lista
  * ma pokazać ich nową wersję niezależnie od tego, że domknięcie się nie udało.
  */
-export function throwOnSaveErrors(errors: string[]): void {
+export function throwOnSaveErrors(errors: string[], savedWhat = "Dane osoby"): void {
     if (errors.length === 0) return;
-    throw new Error(`Dane osoby zapisano, ale część danych NIE została zapisana:\n${errors.join("\n")}`);
+    throw new Error(`${savedWhat} zapisano, ale część danych NIE została zapisana:\n${errors.join("\n")}`);
 }
 
 /** Projekt przypisany pracownikowi kontraktowemu (kształt zgodny z ProjectSelector). */
@@ -336,4 +336,74 @@ export async function savePersonProjectAssignments(
         body: JSON.stringify({ projectOurIds }),
     });
     return result?.assignments ?? [];
+}
+
+/**
+ * Pola konta z formularza - wspólny kształt dla ekranu użytkowników i panelu uprawnień.
+ * Rola przychodzi z Typeahead jako liczba albo "" (nic nie wybrano), z legacy jako string.
+ */
+export type AccountFormValues = {
+    systemRoleId?: number | string | null;
+    systemEmail?: string | null;
+    fidmanEnabled?: boolean | null;
+};
+
+/**
+ * Pola konta systemowego (PersonAccounts) wysyłane trasą v2. Dodanie i edycja wysyłają
+ * dokładnie to samo - jedna funkcja zamiast dwóch kopii, które potrafią się rozjechać.
+ *
+ * PAYLOAD MUSI ZOSTAĆ PEŁNY - nie okrawać go "bo legacy i tak zapisze":
+ * przy DODAWANIU legacy niczego nie zapisuje. `PersonsController.addFromDto` robi
+ * `delete person.systemRoleId; delete person.systemEmail;` przed zapisem, więc
+ * `POST /person` tworzy samą osobę, a konto zakłada WYŁĄCZNIE to wywołanie v2.
+ * Bez roli i e-maila powstałoby konto, którym nie da się zalogować.
+ *
+ * Przy EDYCJI rolę i e-mail zapisuje dziś także legacy `PUT /person/:id`
+ * (`DEFAULT_EDIT_FIELDS`) - to znany, przejściowy duplikat. Kierunek docelowy zgodny
+ * z `@deprecated` w backendzie: legacy przestaje pisać konto (zawężenie `fieldsToUpdate`
+ * w modalu edycji), a v2 przejmuje całość. NIE odwrotnie.
+ *
+ * `fidmanEnabled` zawsze jawnie, także przy false: brak pola serwer czyta jako
+ * "nie ruszaj flagi", więc odznaczenie bez tej linii nigdy by nie doszło. Tę flagę
+ * backend przyjmuje wyłącznie tą trasą (`ACCOUNT_FIELDS_WRITABLE_ONLY_VIA_ACCOUNT_ROUTE`),
+ * bo tylko tu kolejkuje się push `user.upsert` do FIDmana.
+ */
+export function buildAccountPayload(values: AccountFormValues): Partial<PersonAccountV2Payload> {
+    return {
+        systemRoleId: values.systemRoleId ? Number(values.systemRoleId) : undefined,
+        systemEmail: values.systemEmail || undefined,
+        fidmanEnabled: Boolean(values.fidmanEnabled),
+    };
+}
+
+/** Osoba z formularza, dla której domykamy przypisania projektów; `id` to PersonId. */
+export type ProjectAssignmentsFormValues = {
+    id?: number;
+    systemRoleId?: number | string | null;
+    _projectAssignments?: unknown;
+};
+
+/**
+ * Zapisuje przypisania projektów po zapisaniu konta. Dla ról spoza zakresowych
+ * (pracownik kontraktowy, klient) wysyła pustą listę - dzięki temu zmiana roli na inną
+ * odbiera dostęp do projektów, zamiast zostawiać go po cichu w bazie.
+ */
+export async function saveProjectAssignments(person: ProjectAssignmentsFormValues): Promise<void> {
+    if (!person?.id) return;
+
+    if (!MainSetup.isProjectScopedRoleId(person.systemRoleId ?? undefined)) {
+        await savePersonProjectAssignments(person.id, []);
+        return;
+    }
+
+    const selected = person._projectAssignments;
+    // Brak pola to NIE to samo co pusty wybór. Gdyby formularz go nie dowiózł,
+    // pusta lista skasowałaby istniejące przypisania - a zapis, który po cichu
+    // kasuje dane, jest gorszy niż zapis, który ich nie ruszy.
+    if (!Array.isArray(selected)) return;
+
+    await savePersonProjectAssignments(
+        person.id,
+        selected.map((project: { ourId: string }) => project.ourId),
+    );
 }

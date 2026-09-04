@@ -334,8 +334,10 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
             fieldsToUpdate,
             handleProgress
         );
-        // patrz komentarz w handleEditWithFiles — czekamy, żeby błąd handlera dotarł do modala
-        if (onEdit) await onEdit(editedObject);
+        // patrz komentarz w handleEditWithFiles — czekamy, żeby błąd handlera dotarł do modala.
+        // `objectToEdit` jedzie drugim argumentem: odpowiedź serwera nie musi odbijać pól
+        // formularza, a handler może ich potrzebować do własnych żądań (patrz ModalSaveCallback).
+        if (onEdit) await onEdit(editedObject, objectToEdit);
     }
 
     async function handleAdd(data: FormData | FieldValues) {

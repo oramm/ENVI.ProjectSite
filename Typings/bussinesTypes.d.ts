@@ -531,6 +531,11 @@ export interface PersonAccountV2Payload {
     isActive?: boolean;
     /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
     fidmanEnabled?: boolean;
+    /**
+     * Tylko w odpowiedzi PUT konta (D-PER-10): zapis dotyczył WŁASNEJ roli wołającego, serwer
+     * skasował jego sesję - kolejne żądania dostaną 401, klient ma przejść do logowania.
+     */
+    _selfSessionRevoked?: boolean;
 }
 
 export interface PersonProfileV2Payload {
@@ -801,6 +806,21 @@ export interface AbsenceTypeData extends RepositoryDataItem {
  * jest osoba - wiersz uprawnień może jeszcze nie istnieć. Klient składa adres zapisu
  * jako `${trasa}/${id}`, więc backend celowo zwraca tu PersonId.
  */
+/**
+ * Stan ostatniej wysyłki konta osoby do FIDmana - ostatni wiersz `user.upsert` tej osoby
+ * w kolejce po stronie serwera (D-PER-8). Typ za backendem (`src/types/types.d.ts`).
+ * `requestedEnabled`: czy ta wysyłka włączała (true), czy wyłączała (false) konto.
+ */
+export interface FidmanUserSyncStatus {
+    status: "PENDING" | "SENT" | "FAILED" | "SKIPPED";
+    requestedEnabled: boolean | null;
+    skipReason: string | null;
+    skipReasonLabel: string | null;
+    lastError: string | null;
+    attempts: number;
+    updatedAt: string | null;
+}
+
 export interface StaffMemberData extends RepositoryDataItem {
     personId: number;
     isDriver: boolean;
@@ -812,8 +832,18 @@ export interface StaffMemberData extends RepositoryDataItem {
     _personName?: string;
     _personSurname?: string;
     _personEmail?: string;
+    /** Nazwa podmiotu osoby (JOIN Entities po stronie serwera) - tylko do odczytu. */
+    _entityName?: string | null;
     _systemRoleId?: number | null;
+    /**
+     * Konto osoby - tylko do odczytu w tym oknie. Rolę, e-mail systemowy i flagę FIDmana
+     * zapisuje wyłącznie PUT /v2/persons/:id/account (patrz `buildAccountPayload`).
+     */
+    _systemEmail?: string | null;
+    _fidmanEnabled?: boolean;
     _hasStaffRow?: boolean;
+    /** Ostatnia wysyłka konta do FIDmana; null = nigdy nie wysyłano. Tylko do odczytu. */
+    _fidmanSync?: FidmanUserSyncStatus | null;
 }
 
 interface Offer extends RepositoryDataItem {

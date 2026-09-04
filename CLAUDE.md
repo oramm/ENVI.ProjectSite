@@ -56,7 +56,7 @@ src/
 ├── TasksGlobal/     - Cross-domain task management
 ├── financialAidProgrammes/ - Financial aid, focus areas, needs
 ├── Erp/             - ERP integration (invoices)
-├── Admin/           - Admin modules (Cities, ContractRanges, SystemUsers)
+├── Admin/           - Admin modules (Cities, ContractRanges, StaffMembers = accounts & permissions, Cars, AbsenceTypes, TypesTree, SkillsDictionary)
 ├── Offers/          - Offers and offer letters
 └── Letters/         - Letter management
 

@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { PersonData } from "../../Typings/bussinesTypes";
 import { PersonsFilterBody } from "./PersonFilterBody";
 import { PersonAddNewModalButton, PersonEditModalButton } from "./Modals/PersonModalButtons";
 import { personsRepository } from "./PersonsController";
 import PersonProfilePanel from "./PersonProfilePanel";
+import { PersonPermissionsButton } from "./PersonPermissionsButton";
+
+// Stała tablica: nowa przy każdym renderze przerysowywałaby akcje wiersza bez powodu.
+const personRowActionMenuComponents = [PersonPermissionsButton];
 
 export default function PersonsSearch({ title }: { title: string }) {
     const [selectedPerson, setSelectedPerson] = useState<PersonData | null>(null);
@@ -68,8 +72,14 @@ export default function PersonsSearch({ title }: { title: string }) {
     }, []);
 
     return (
-        <Row>
-            <Col md={selectedPerson ? 8 : 12}>
+        // Kontener jest tu konieczny, nie ozdobny (uwaga ownera 2026-09-04): wiersz siatki
+        // Bootstrapa ma ujemne marginesy po obu stronach, które równoważy dopiero wypełnienie
+        // kontenera. Bez niego wiersz wystawał 12 px poza prawą krawędź okna (pomiar: prawa
+        // krawędź 1932 przy oknie 1920) i okno dostawało poziomy pasek przewijania -
+        // jedyne okno z listą, bo tylko ono opakowuje tabelę w wiersz siatki (panel profilu obok).
+        <Container fluid>
+            <Row>
+                <Col md={selectedPerson ? 8 : 12}>
                 <FilterableTable<PersonData>
                     id="persons"
                     title={title}
@@ -79,6 +89,7 @@ export default function PersonsSearch({ title }: { title: string }) {
                     ]}
                     AddNewButtonComponents={[PersonAddNewModalButton]}
                     EditButtonComponent={PersonEditModalButton}
+                    RowActionMenuComponents={personRowActionMenuComponents}
                     isDeletable={true}
                     repository={personsRepository}
                     selectedObjectRoute={"/person/"}
@@ -90,6 +101,7 @@ export default function PersonsSearch({ title }: { title: string }) {
                     <PersonProfilePanel person={selectedPerson} onClose={handleClosePanel} />
                 </Col>
             )}
-        </Row>
+            </Row>
+        </Container>
     );
 }

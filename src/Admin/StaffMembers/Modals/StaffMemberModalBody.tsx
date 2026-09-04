@@ -1,3 +1,4 @@
+import { FidmanUserSyncLine } from "../FidmanUserSyncBadge";
 import React, { useEffect } from "react";
 import { Alert, Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
@@ -9,9 +10,17 @@ import {
     ProjectSelector,
     SystemRoleSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<StaffMemberData>) {
-    const { register, reset, trigger, getValues, watch } = useFormContext();
+    const {
+        register,
+        reset,
+        trigger,
+        getValues,
+        watch,
+        formState: { errors },
+    } = useFormContext();
 
     // Ta sama reguła co na ekranie użytkowników: role ograniczone do przypisanych
     // projektów muszą te projekty dostać, inaczej osoba zostaje bez dostępu.
@@ -23,6 +32,10 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             // walidator wymaga kompletu pól.
             personId: initialData?.personId,
             systemRoleId: initialData?._systemRoleId ?? "",
+            // Konto przychodzi razem z wierszem listy (odczyt panelu), więc bez osobnego
+            // żądania jak na ekranie użytkowników. Zapis idzie osobno trasą konta v2.
+            systemEmail: initialData?._systemEmail ?? "",
+            fidmanEnabled: !!initialData?._fidmanEnabled,
             isDriver: !!initialData?.isDriver,
             isInScrum: !!initialData?.isInScrum,
             hasCostInvoiceAccess: !!initialData?.hasCostInvoiceAccess,
@@ -58,10 +71,32 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
     return (
         <>
             <div className="mb-3">
-                <div className="fw-semibold">
-                    {initialData?._personName} {initialData?._personSurname}
+                {/* Imię i nazwisko SĄ linkiem do danych osoby (uwaga ownera 2026-09-04, PER-7),
+                    zamiast osobnego odnośnika „Dane osoby". To okno odpowiada na pytanie „co
+                    osoba może w systemie" i danych osoby nie edytuje (D-PER-2 (a)) - literówkę
+                    w nazwisku poprawia się w oknie „Osoby", a link oszczędza szukania jej drugi
+                    raz. Układ jak karta auta w kilometrówce: nazwa pogrubiona, szczegóły
+                    drobnym szarym pod spodem. */}
+                <div className="fw-semibold fs-5">
+                    {initialData?.personId ? (
+                        <a
+                            href={`#/person/${initialData.personId}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-reset"
+                            title="Dane osoby - otwiera okno Osoby"
+                            data-testid="person-link"
+                        >
+                            {initialData._personName} {initialData._personSurname}
+                        </a>
+                    ) : (
+                        <>
+                            {initialData?._personName} {initialData?._personSurname}
+                        </>
+                    )}
                 </div>
                 <div className="text-muted small">{initialData?._personEmail}</div>
+                {initialData?._entityName && <div className="text-muted small">{initialData._entityName}</div>}
             </div>
 
             {initialData && initialData._hasStaffRow === false && (
@@ -71,6 +106,33 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             )}
 
             <SystemRoleSelector name="systemRoleId" />
+
+            <Form.Group controlId="systemEmail" className="mt-3">
+                <Form.Label>Email systemowy</Form.Label>
+                <Form.Control
+                    type="email"
+                    placeholder="Podaj gmail do logowania potrzebny do utworzenia konta na witrynie"
+                    isInvalid={!!errors?.systemEmail}
+                    {...register("systemEmail")}
+                />
+                <ErrorMessage name="systemEmail" errors={errors} />
+            </Form.Group>
+
+            <Form.Group controlId="fidmanEnabled" className="mt-2">
+                <Form.Check
+                    type="checkbox"
+                    label="Użytkownik FIDmana (loguje się tym samym kontem Google)"
+                    isInvalid={!!errors?.fidmanEnabled}
+                    {...register("fidmanEnabled")}
+                />
+                <Form.Text className="text-muted">
+                    Konto w FIDmanie zakłada się z e-maila systemowego. Odznaczenie wyłącza je, nie kasuje.
+                </Form.Text>
+                {/* Stan z kolejki wysyłek, nie z checkboxa (D-PER-8) - to samo, co plakietka
+                    w wierszu listy, pełnym zdaniem. */}
+                <FidmanUserSyncLine enabled={!!initialData?._fidmanEnabled} sync={initialData?._fidmanSync} />
+                <ErrorMessage name="fidmanEnabled" errors={errors} />
+            </Form.Group>
 
             {isProjectScopedRole && (
                 <div className="mt-3">

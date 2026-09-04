@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Form, Spinner } from "react-bootstrap";
-import { PersonProfileV2Payload, SystemUserData } from "../../../../Typings/bussinesTypes";
-import {
-    fetchPersonAccountV2,
-    fetchPersonProfileV2,
-    fetchPersonProjectAssignments,
-} from "../../../Persons/personsV2Helpers";
+import React, { useEffect } from "react";
+import { Form } from "react-bootstrap";
+import { SystemUserData } from "../../../../Typings/bussinesTypes";
 import MainSetup from "../../../React/MainSetupReact";
 import {
     EntitySelector,
@@ -16,104 +11,59 @@ import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericC
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 
-export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<SystemUserData>) {
+/**
+ * Zakładanie użytkownika z okna „Personel i uprawnienia" (PER-3).
+ *
+ * Dwie sekcje, bo powstają dwie różne rzeczy: osoba w książce adresowej i jej konto
+ * w systemie. Kolejność pól i etykiety jak na skasowanym ekranie „Dodawanie użytkowników" -
+ * to ten sam przepływ, tylko w innym oknie.
+ *
+ * TYLKO dodawanie. Uprawnienia i konto istniejącej osoby edytuje `StaffMemberModalBody`,
+ * a jej dane kontaktowe - okno „Osoby". Dlatego nie ma tu doczytywania danych z tras v2:
+ * przy zakładaniu nie ma czego doczytać.
+ */
+export function UserModalBody({ initialData }: ModalBodyProps<SystemUserData>) {
     const {
         register,
         reset,
-        watch,
-        getValues,
-        formState: { dirtyFields, errors, isValid },
         trigger,
+        watch,
+        formState: { errors },
     } = useFormContext();
 
-    const [v2Loading, setV2Loading] = useState(false);
-    const [profileV2, setProfileV2] = useState<PersonProfileV2Payload | null>(null);
-
-    // Role zakresowe (pracownik kontraktowy, klient) widzą tylko przypisane projekty,
-    // więc przy nich trzeba je wskazać. Dla pozostałych ról pole nie ma sensu i się nie pokazuje.
+    // Role ograniczone do przypisanych projektów muszą te projekty dostać przy zakładaniu,
+    // inaczej konto powstaje bez dostępu do czegokolwiek.
     const isProjectScopedRole = MainSetup.isProjectScopedRoleId(watch("systemRoleId"));
 
     useEffect(() => {
-        const resetData: any = {
+        reset({
             _entity: initialData?._entity || null,
-            name: initialData?.name || "",
-            surname: initialData?.surname || "",
-            position: initialData?.position || "",
-            email: initialData?.email || "",
-            cellphone: initialData?.cellphone || "",
-            phone: initialData?.phone || "",
-            comment: initialData?.comment || "",
-            systemRoleId: initialData?.systemRoleId || "",
-            systemEmail: initialData?.systemEmail || "",
-            fidmanEnabled: initialData?.fidmanEnabled ?? false,
-            // Celowo BEZ _projectAssignments: przypisania dojeżdżają osobnym żądaniem.
-            // Pusta tablica znaczyłaby "użytkownik wyczyścił listę", więc zapis wykonany
-            // zanim dane dotrą skasowałby przypisania. Brak pola blokuje zapis (patrz
-            // saveProjectAssignments), pusta lista już nie.
-            //googleId: initialData?.googleId,
-            //googleRefreshToken: initialData?.googleRefreshToken,
-        };
-        reset(resetData);
+            name: "",
+            surname: "",
+            position: "",
+            email: "",
+            cellphone: "",
+            phone: "",
+            comment: "",
+            systemRoleId: "",
+            systemEmail: "",
+            fidmanEnabled: false,
+            // Celowo BEZ _projectAssignments - patrz `saveProjectAssignments`: brak pola
+            // znaczy „nie ruszaj", pusta tablica znaczy „wyczyść". Przy zakładaniu nie ma
+            // czego czyścić, a selektor doda pole, gdy rola go pokaże.
+        });
         trigger();
-
-        // Przy edycji pobierz dane z endpointow v2 (account + profile + przypisania projektów)
-        if (isEditing && initialData?.id) {
-            let cancelled = false;
-            setV2Loading(true);
-
-            Promise.all([
-                fetchPersonAccountV2(initialData.id),
-                fetchPersonProfileV2(initialData.id),
-                fetchPersonProjectAssignments(initialData.id).catch(() => []),
-            ])
-                .then(([accountData, profileData, assignments]) => {
-                    if (cancelled) return;
-
-                    // Zapisz profile do lokalnego stanu (na potrzeby przyszlego write path)
-                    setProfileV2(profileData);
-
-                    // Nadpisz pola account w formularzu danymi z v2
-                    if (accountData) {
-                        // getValues(), nie resetData: dane dojeżdżają po otwarciu modala,
-                        // a resetData to zdjęcie sprzed żądania - nadpisanie nim skasowałoby
-                        // to, co użytkownik zdążył wpisać w międzyczasie.
-                        reset({
-                            ...getValues(),
-                            systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
-                            systemEmail: accountData.systemEmail ?? resetData.systemEmail,
-                            fidmanEnabled: accountData.fidmanEnabled ?? resetData.fidmanEnabled,
-                            _projectAssignments: assignments,
-                        });
-                        trigger();
-                    }
-                })
-                .catch((error) => {
-                    if (!cancelled) {
-                        console.error("SystemUserModalBody: blad ladowania danych v2:", error);
-                    }
-                })
-                .finally(() => {
-                    if (!cancelled) setV2Loading(false);
-                });
-
-            return () => {
-                cancelled = true;
-            };
-        }
     }, [initialData, reset]);
 
     return (
         <>
-            {v2Loading && (
-                <div className="text-muted small mb-2 d-flex align-items-center">
-                    <Spinner animation="border" size="sm" className="me-2" />
-                    Ladowanie danych konta...
-                </div>
-            )}
+            <div className="fw-semibold mb-2">Dane osoby</div>
+
             <Form.Group>
                 <Form.Label>Podmiot</Form.Label>
                 <EntitySelector name="_entity" multiple={false} />
             </Form.Group>
+
             <Form.Group controlId="name">
                 <Form.Label>Imię</Form.Label>
                 <Form.Control
@@ -140,7 +90,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                     type="email"
-                    placeholder="Podaj email"
+                    placeholder="Podaj email kontaktowy"
                     isInvalid={!!errors?.email}
                     isValid={!errors?.email}
                     {...register("email")}
@@ -164,7 +114,6 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                 <Form.Control
                     placeholder="Podaj numer komórki"
                     isInvalid={!!errors?.cellphone}
-                    isValid={!errors?.cellphone}
                     {...register("cellphone")}
                 />
                 <ErrorMessage name="cellphone" errors={errors} />
@@ -175,11 +124,14 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                 <Form.Control
                     placeholder="Podaj numer telefonu"
                     isInvalid={!!errors?.phone}
-                    isValid={!errors?.phone}
                     {...register("phone")}
                 />
                 <ErrorMessage name="phone" errors={errors} />
             </Form.Group>
+
+            <hr />
+
+            <div className="fw-semibold mb-2">Konto w systemie</div>
 
             <Form.Group controlId="systemEmail">
                 <Form.Label>Email systemowy</Form.Label>
@@ -187,7 +139,6 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                     type="email"
                     placeholder="Podaj gmail do logowania potrzebny do utworzenia konta na witrynie"
                     isInvalid={!!errors?.systemEmail}
-                    isValid={!errors?.systemEmail}
                     {...register("systemEmail")}
                 />
                 <ErrorMessage name="systemEmail" errors={errors} />
@@ -211,9 +162,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
             {isProjectScopedRole && (
                 <Form.Group className="mt-2">
                     <ProjectSelector name="_projectAssignments" multiple label="Przypisane projekty" />
-                    <Form.Text className="text-muted">
-                        Ta rola widzi wyłącznie dane wskazanych tu projektów.
-                    </Form.Text>
+                    <Form.Text className="text-muted">Ta rola widzi wyłącznie dane wskazanych tu projektów.</Form.Text>
                 </Form.Group>
             )}
         </>
