@@ -1,4 +1,5 @@
-import { EntryKind, SettlementMethod } from "./pettyCashApi";
+import { EntryKind, KINDS_WITH_DOCUMENT, SettlementMethod } from "./pettyCashApi";
+import { fuelNote } from "./fuelNote";
 import { formatTrackingNumber } from "./trackingNumber";
 
 /**
@@ -49,6 +50,8 @@ export type PreviewInput = {
     payerLabel: string;
     settlementMethod: SettlementMethod;
     note: string;
+    /** Stan licznika przy tankowaniu; w arkuszu wchodzi do kolumny uwagi przed uwagą. */
+    odometerReading: string;
 };
 
 export type PreviewItem = {
@@ -115,19 +118,17 @@ const editable = (
     multiline = false
 ): PreviewCell => ({ value, field, numeric, multiline });
 
-const derived = (value: string, hint: string, numeric = false): PreviewCell => ({
-    value,
-    hint,
-    numeric,
-});
+const derived = (
+    value: string,
+    hint: string,
+    numeric = false,
+    multiline = false
+): PreviewCell => ({ value, hint, numeric, multiline });
 
 /** Wiersz arkusza zaliczek, kolumny A..J, w kolejności arkusza. */
 export function previewCashRow(input: PreviewInput): PreviewCell[] {
     const inflow = previewInflow(input);
-    const hasDocumentAmounts =
-        input.entryKind === "POSTAL" ||
-        input.entryKind === "INVOICE" ||
-        input.entryKind === "RECEIPT";
+    const hasDocumentAmounts = KINDS_WITH_DOCUMENT.includes(input.entryKind);
     const isPostal = input.entryKind === "POSTAL";
     const isAdvance = input.entryKind === "ADVANCE";
     const isNoDocument = input.entryKind === "NO_DOCUMENT";
@@ -171,7 +172,14 @@ export function previewCashRow(input: PreviewInput): PreviewCell[] {
             previewPayer(input),
             "Składa się z pól „czym zapłacono” i „kto zapłacił”."
         ),
-        editable(input.note, "note", false, true),
+        input.entryKind === "FUEL" && input.odometerReading.trim()
+            ? derived(
+                  fuelNote(input.odometerReading, input.note),
+                  "Składa się z pól „stan licznika” i „uwaga”.",
+                  false,
+                  true
+              )
+            : editable(input.note, "note", false, true),
     ];
 }
 

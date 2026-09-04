@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Container, Form, Spinner } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFieldArray, useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -12,9 +13,13 @@ import { lastUsed, recall, remember, RECENT_KEYS } from "./recentValues";
 import { derivedVat, netFromVat, vatError } from "./vatAmount";
 import SheetPreview from "./SheetPreview";
 import MainSetup from "../../React/MainSetupReact";
+import { FuelHandoff } from "../../Mileage/fuelHandoff";
+import { fetchVehicles, Vehicle, vehicleLabel } from "../../Mileage/vehiclesApi";
+import { fuelNote } from "./fuelNote";
 import {
     CommitResult,
     EntryKind,
+    KINDS_WITH_DOCUMENT,
     fetchSheetLinks,
     PettyCashApiError,
     PettyCashEntryPayload,
@@ -30,12 +35,21 @@ const KIND_LABELS: Record<EntryKind, string> = {
     POSTAL: "poczta — listy",
     INVOICE: "zakup z fakturą",
     RECEIPT: "paragon",
+    FUEL: "paliwo (tankowanie)",
     NO_DOCUMENT: "wydatek bez dokumentu",
     ADVANCE: "wypłata zaliczki",
 };
 
 /** Opis, który wysyłki pocztowe mają w arkuszu od zawsze — podpowiadamy go zamiast kazać pisać. */
 const POSTAL_DESCRIPTION = "poczta - listy";
+
+/**
+ * Opis wpisu za paliwo bierze się z wybranego auta — "Paliwo Ford Focus OP 8105L".
+ * Numer rejestracyjny zostaje w opisie, bo po nim rozlicza się koszt paliwa na pojazd.
+ */
+const FUEL_DESCRIPTION_PREFIX = "Paliwo ";
+const fuelDescription = (vehicle: Vehicle) =>
+    `${FUEL_DESCRIPTION_PREFIX}${vehicleLabel(vehicle)}`;
 
 const FORM_WIDTH = 640;
 
@@ -68,6 +82,9 @@ type FormValues = {
     settlementMethod: SettlementMethod;
     payerLabel: string;
     note: string;
+    /** Tylko dla paliwa: auto z listy kilometrówki i stan licznika przy tankowaniu. */
+    vehicleId: string;
+    odometerReading: string;
     documentNumber: string;
     netAmount: string;
     grossAmount: string;
@@ -112,6 +129,14 @@ function defaultPayer(): string {
  */
 export default function PettyCashEntryPage() {
     const schema = useMemo(() => makePettyCashValidationSchema(), []);
+    const navigate = useNavigate();
+    // Wejście z kilometrówki: tankowanie już zapisane, tutaj zostaje sam paragon.
+    // Data, opis i stan licznika są znane, więc formularz otwiera się wypełniony.
+    // Podpowiedź dotyczy jednego wpisu i zużywa się po jego zapisaniu - inaczej kolejne
+    // wpisy na tym samym ekranie dalej uchodziłyby za przyszłe z kilometrówki.
+    const [fromMileage, setFromMileage] = useState(
+        (useLocation().state as { fuelFromMileage?: FuelHandoff } | null)?.fuelFromMileage
+    );
     const {
         register,
         handleSubmit,
@@ -124,12 +149,15 @@ export default function PettyCashEntryPage() {
         mode: "onChange",
         resolver: yupResolver(schema) as any,
         defaultValues: {
-            entryKind: "POSTAL",
-            entryDate: today(),
-            description: POSTAL_DESCRIPTION,
-            settlementMethod: "CASH",
+            entryKind: fromMileage ? "FUEL" : "POSTAL",
+            entryDate: fromMileage?.entryDate || today(),
+            // Opis wpisze się sam, gdy dojedzie lista aut - stąd pusty przy wejściu z kilometrówki.
+            description: fromMileage ? "" : POSTAL_DESCRIPTION,
+            settlementMethod: fromMileage ? "CARD" : "CASH",
             payerLabel: defaultPayer(),
             note: "",
+            vehicleId: fromMileage?.vehicleId ?? "",
+            odometerReading: fromMileage?.odometerReading ?? "",
             documentNumber: "",
             netAmount: "",
             grossAmount: "",
@@ -150,6 +178,13 @@ export default function PettyCashEntryPage() {
      * napis = wpisany ręcznie, a wtedy to netto wynika z brutto i VAT.
      */
     const [vatInput, setVatInput] = useState<string | null>(null);
+    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    /**
+     * Dane tankowania, które właśnie trafiło do zaliczek. Trzymamy je osobno od formularza,
+     * bo formularz po zapisie czyści się pod następny wpis, a propozycja ma dotyczyć tego,
+     * co poszło do arkusza.
+     */
+    const [savedFuel, setSavedFuel] = useState<FuelHandoff | null>(null);
 
     useEffect(() => {
         fetchSheetLinks()
@@ -161,16 +196,40 @@ export default function PettyCashEntryPage() {
     const kind = values.entryKind;
     const isPostal = kind === "POSTAL";
     const isAdvance = kind === "ADVANCE";
-    const hasDocumentAmounts = isPostal || kind === "INVOICE" || kind === "RECEIPT";
+    const isFuel = kind === "FUEL";
+    const hasDocumentAmounts = KINDS_WITH_DOCUMENT.includes(kind);
     const recentPayers = recall(RECENT_KEYS.payer);
     const vatShown = vatInput ?? derivedVat(values.netAmount, values.grossAmount);
     const vatMessage = vatInput === null ? null : vatError(vatInput, values.grossAmount);
 
+    /**
+     * Lista aut przyjeżdża dopiero przy paliwie - poza tym rodzajem nikt jej nie potrzebuje,
+     * a trasa czyta stany liczników z arkuszy, więc odpowiada kilka sekund.
+     */
+    useEffect(() => {
+        if (!isFuel || vehicles.length) return;
+        fetchVehicles()
+            .then(setVehicles)
+            .catch(() => setVehicles([]));
+    }, [isFuel, vehicles.length]);
+
+    /** Opis chodzi za autem, dopóki jest nasz - tego, co ktoś wpisał sam, nie nadpisujemy. */
+    useEffect(() => {
+        if (!isFuel) return;
+        const vehicle = vehicles.find((item) => item.id === values.vehicleId);
+        const current = values.description.trim();
+        if (!vehicle) return;
+        if (current && !current.startsWith(FUEL_DESCRIPTION_PREFIX)) return;
+        const next = fuelDescription(vehicle);
+        if (current !== next) setValue("description", next, { shouldValidate: true });
+    }, [isFuel, vehicles, values.vehicleId]);
+
     const changeKind = (next: EntryKind) => {
         setValue("entryKind", next, { shouldValidate: true });
-        setValue("settlementMethod", next === "ADVANCE" ? "ADVANCE" : "CASH", {
-            shouldValidate: true,
-        });
+        // Paliwo płaci się zwykle kartą firmową - podpowiadamy, pole zostaje do zmiany.
+        const method: SettlementMethod =
+            next === "ADVANCE" ? "ADVANCE" : next === "FUEL" ? "CARD" : "CASH";
+        setValue("settlementMethod", method, { shouldValidate: true });
         // Podpowiedziany opis chodzi za rodzajem w obie strony. Zabieramy go tylko wtedy, gdy
         // to nadal nasz tekst — tego, co ktoś wpisał sam, zmiana rodzaju nie kasuje.
         const description = values.description.trim();
@@ -179,9 +238,14 @@ export default function PettyCashEntryPage() {
         if (next !== "POSTAL" && description === POSTAL_DESCRIPTION)
             setValue("description", "", { shouldValidate: true });
         if (next !== "POSTAL") replace([]);
+        if (next !== "FUEL") {
+            setValue("vehicleId", "", { shouldValidate: true });
+            setValue("odometerReading", "", { shouldValidate: true });
+        }
         setVatInput(null);
         setResult(null);
         setServerErrors([]);
+        setSavedFuel(null);
     };
 
     /**
@@ -265,7 +329,11 @@ export default function PettyCashEntryPage() {
             documentNumber: form.documentNumber.trim() || null,
             payerLabel: form.payerLabel.trim(),
             settlementMethod: form.settlementMethod,
-            note: form.note.trim() || null,
+            // Arkusz ma jedną kolumnę uwagi: przy tankowaniu najpierw licznik, potem uwaga.
+            note:
+                (form.entryKind === "FUEL"
+                    ? fuelNote(form.odometerReading, form.note)
+                    : form.note.trim()) || null,
             dispatch: isPostal
                 ? {
                       invoiceNumber: form.documentNumber.trim(),
@@ -284,9 +352,18 @@ export default function PettyCashEntryPage() {
         setBusy(true);
         setServerErrors([]);
         setResult(null);
+        setSavedFuel(null);
         try {
             const commit = await submitEntry(buildPayload(form));
             setResult(commit);
+            // Z kilometrówki przyszliśmy z gotowym wpisem, więc tam nie odsyłamy.
+            if (form.entryKind === "FUEL" && wroteAnything(commit) && !fromMileage)
+                setSavedFuel({
+                    entryDate: form.entryDate,
+                    vehicleId: form.vehicleId,
+                    odometerReading: form.odometerReading,
+                });
+            setFromMileage(undefined);
             remember(RECENT_KEYS.payer, form.payerLabel);
             form.items.forEach((item) => {
                 remember(RECENT_KEYS.addressee, item.addressee);
@@ -301,6 +378,8 @@ export default function PettyCashEntryPage() {
                 noDocumentAmount: "",
                 inflowAmount: "",
                 note: "",
+                vehicleId: "",
+                odometerReading: "",
                 items: [],
             });
             setVatInput(null);
@@ -367,6 +446,39 @@ export default function PettyCashEntryPage() {
                         <Form.Control type="date" {...field("entryDate")} />
                         {feedback("entryDate")}
                     </Form.Group>
+
+                    {isFuel && (
+                        <>
+                            <Form.Group className="mb-2">
+                                <Form.Label className="mb-1 small text-muted">Samochód</Form.Label>
+                                {/* Wartość podana wprost, bo auto bywa znane (wejście
+                                    z kilometrówki), zanim dojedzie lista opcji. */}
+                                <Form.Select
+                                    {...field("vehicleId")}
+                                    value={values.vehicleId}
+                                >
+                                    <option value="">
+                                        {vehicles.length === 0
+                                            ? "Wczytywanie listy aut..."
+                                            : "Wybierz auto"}
+                                    </option>
+                                    {vehicles.map((vehicle) => (
+                                        <option key={vehicle.id} value={vehicle.id}>
+                                            {vehicleLabel(vehicle)}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                                {feedback("vehicleId")}
+                            </Form.Group>
+                            <Form.Group className="mb-2">
+                                <Form.Label className="mb-1 small text-muted">
+                                    Stan licznika
+                                </Form.Label>
+                                <Form.Control inputMode="numeric" {...field("odometerReading")} />
+                                {feedback("odometerReading")}
+                            </Form.Group>
+                        </>
+                    )}
 
                     <Form.Group className="mb-2">
                         <Form.Label className="mb-1 small text-muted">Opis</Form.Label>
@@ -495,6 +607,7 @@ export default function PettyCashEntryPage() {
                     payerLabel: values.payerLabel,
                     settlementMethod: values.settlementMethod,
                     note: values.note,
+                    odometerReading: values.odometerReading,
                 }}
                 items={values.items}
                 onCashChange={setCashField}
@@ -528,6 +641,27 @@ export default function PettyCashEntryPage() {
                                 : result.cash.reason}
                         </div>
                     </Alert>
+                )}
+
+                {/* Druga połowa tankowania: pieniądze są już w zaliczkach, licznik notuje
+                    kilometrówka. */}
+                {savedFuel && (
+                    <div className="d-grid mb-4">
+                        <Button
+                            variant="outline-primary"
+                            size="lg"
+                            onClick={() =>
+                                navigate(`/mileage/${savedFuel.vehicleId}`, {
+                                    state: { fuelFromPettyCash: savedFuel },
+                                })
+                            }
+                        >
+                            Dodaj wpis do kilometrówki
+                        </Button>
+                        <div className="small text-muted mt-1 text-center">
+                            Otworzy kilometrówkę z danymi tego tankowania.
+                        </div>
+                    </div>
                 )}
 
                 <div className="d-grid mb-4">

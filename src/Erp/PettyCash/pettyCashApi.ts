@@ -1,8 +1,20 @@
 import MainSetup from "../../React/MainSetupReact";
 import { AiUsageInfo } from "../../../Typings/bussinesTypes";
 
-export type EntryKind = "POSTAL" | "INVOICE" | "RECEIPT" | "NO_DOCUMENT" | "ADVANCE";
+export type EntryKind = "POSTAL" | "INVOICE" | "RECEIPT" | "FUEL" | "NO_DOCUMENT" | "ADVANCE";
 export type SettlementMethod = "CASH" | "CARD" | "ADVANCE";
+
+/**
+ * Rodzaje z kwotą netto, brutto i numerem dokumentu. Formularz, walidacja i podgląd
+ * wiersza pytają o to samo, więc lista stoi w jednym miejscu. Backend ma tę regułę
+ * u siebie, na modelu domenowym - to jest jej odbicie po stronie ekranu.
+ */
+export const KINDS_WITH_DOCUMENT: readonly EntryKind[] = [
+    "POSTAL",
+    "INVOICE",
+    "RECEIPT",
+    "FUEL",
+];
 
 export type PostalItemPayload = {
     trackingNumber: string;

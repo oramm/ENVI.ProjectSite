@@ -20,9 +20,27 @@ const base: PreviewInput = {
     payerLabel: "Krzysiek",
     settlementMethod: "CARD",
     note: "",
+    odometerReading: "",
 };
 
 const values = (input: PreviewInput) => previewCashRow(input).map((cell) => cell.value);
+const last = <T>(list: T[]) => list[list.length - 1];
+
+describe("previewRows — uwaga przy tankowaniu", () => {
+    const fuel = { ...base, entryKind: "FUEL" as const, odometerReading: "150480" };
+
+    it("licznik wchodzi do kolumny uwagi przed treścią uwagi", () => {
+        expect(last(values(fuel))).toBe("licznik 150 480 km");
+        expect(last(values({ ...fuel, note: "do pełna" }))).toBe(
+            "licznik 150 480 km, do pełna"
+        );
+    });
+
+    it("komórka uwagi przestaje być edytowalna, gdy składa się z dwóch pól", () => {
+        expect(last(previewCashRow(fuel)).field).toBeUndefined();
+        expect(last(previewCashRow({ ...base, note: "cokolwiek" })).field).toBe("note");
+    });
+});
 
 describe("previewRows — kolumna wpływu i wydatku", () => {
     it("karta: wpływ lustrzany do wydatku, więc saldo portfela się nie zmienia", () => {

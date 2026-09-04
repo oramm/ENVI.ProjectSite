@@ -1,5 +1,6 @@
 import * as Yup from "yup";
 import { isValidTrackingNumber } from "./trackingNumber";
+import { EntryKind, KINDS_WITH_DOCUMENT } from "./pettyCashApi";
 import { toAmount } from "./previewRows";
 
 /**
@@ -27,8 +28,6 @@ const optionalAmount = Yup.string()
     .default("")
     .test("liczba", "To musi być liczba", (value) => !value?.trim() || hasAmount(value));
 
-const KINDS_WITH_DOCUMENT = ["POSTAL", "INVOICE", "RECEIPT"];
-
 export const itemSchema = Yup.object({
     trackingNumber: Yup.string()
         .default("")
@@ -53,10 +52,28 @@ export function makePettyCashValidationSchema() {
             .max(100, "Za długa nazwa"),
         note: Yup.string().default(""),
 
+        // Paliwo zawsze dotyczy konkretnego auta: z niego bierze się opis wpisu, z nim
+        // wiąże się wpis w kilometrówce.
+        vehicleId: Yup.string()
+            .default("")
+            .when("entryKind", {
+                is: (kind: string) => kind === "FUEL",
+                then: (schema) => schema.required("Wybierz samochód"),
+                otherwise: (schema) => schema.notRequired(),
+            }),
+        // Licznik bywa przepisywany z zegara ze spacjami, więc dopuszczamy separatory.
+        odometerReading: Yup.string()
+            .default("")
+            .test(
+                "licznik-liczba",
+                "Stan licznika to sama liczba",
+                (value) => !value?.trim() || /^[\d\s]+$/.test(value)
+            ),
+
         documentNumber: Yup.string()
             .default("")
             .when("entryKind", {
-                is: (kind: string) => KINDS_WITH_DOCUMENT.includes(kind),
+                is: (kind: EntryKind) => KINDS_WITH_DOCUMENT.includes(kind),
                 then: (schema) => schema.required("Podaj numer dokumentu"),
                 otherwise: (schema) => schema.notRequired(),
             }),
@@ -65,7 +82,8 @@ export function makePettyCashValidationSchema() {
         netAmount: Yup.string()
             .default("")
             .when("entryKind", {
-                is: (kind: string) => kind === "INVOICE" || kind === "RECEIPT",
+                is: (kind: string) =>
+                    kind === "INVOICE" || kind === "RECEIPT" || kind === "FUEL",
                 then: () =>
                     requiredAmount("kwotę netto").test(
                         "nie-wieksze-od-brutto",
@@ -82,7 +100,7 @@ export function makePettyCashValidationSchema() {
         grossAmount: Yup.string()
             .default("")
             .when("entryKind", {
-                is: (kind: string) => KINDS_WITH_DOCUMENT.includes(kind),
+                is: (kind: EntryKind) => KINDS_WITH_DOCUMENT.includes(kind),
                 then: (schema) =>
                     requiredAmount("kwotę brutto").test(
                         "suma-listow",

@@ -13,16 +13,9 @@ import {
     RegisteringEditorSelector,
 } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import MainSetup from "../React/MainSetupReact";
+import { FuelHandoff } from "./fuelHandoff";
+import { fetchVehicles, Vehicle } from "./vehiclesApi";
 import { OurContract, PersonData } from "../../Typings/bussinesTypes";
-
-type Vehicle = {
-    id: string;
-    brand: string;
-    model: string;
-    plate: string;
-    currentReading: number | null;
-    sheetUrl?: string;
-};
 
 const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy", "zakupy"];
 const GENERAL_CODE = "OGÓLNE";
@@ -79,10 +72,17 @@ export default function MileagePage() {
     // w renderze, więc jest już w DOM listy w chwili snapshotu View Transition -
     // wjeżdża razem z listą, zamiast "wyskakiwać" po animacji.
     const savedState = location.state as
-        | { savedMsg?: string; sheetUrl?: string; driveCar?: boolean }
+        | {
+              savedMsg?: string;
+              sheetUrl?: string;
+              driveCar?: boolean;
+              fuelOffer?: FuelHandoff;
+          }
         | null;
     const savedMsg = savedState?.savedMsg ?? "";
     const savedSheetUrl = savedState?.sheetUrl;
+    // Zapisane tankowanie niesie dane, z których powstaje wpis do zaliczek.
+    const fuelOffer = savedState?.fuelOffer;
     // Auto renderujemy wprost w renderze (jak komunikat), by trafiło do snapshotu
     // View Transition. Odpoczywa poza ekranem, więc po animacji jest niewidoczne.
     const driveCar = !!savedState?.driveCar;
@@ -94,8 +94,7 @@ export default function MileagePage() {
 
     function loadVehicles() {
         setLoadingVehicles(true);
-        fetch(`${MainSetup.serverUrl}mileage/vehicles`, { credentials: "include" })
-            .then((r) => r.json())
+        fetchVehicles()
             .then(setVehicles)
             .catch(() => setListError("Nie udało się pobrać listy pojazdów."))
             .finally(() => setLoadingVehicles(false));
@@ -204,6 +203,23 @@ export default function MileagePage() {
                     )}
                 </Alert>
             )}
+            {fuelOffer && (
+                <div className="d-grid mb-4">
+                    <Button
+                        variant="outline-primary"
+                        onClick={() =>
+                            navigate("/pettyCash", {
+                                state: { fuelFromMileage: fuelOffer },
+                            })
+                        }
+                    >
+                        Dodaj zaliczkę za to tankowanie
+                    </Button>
+                    <div className="small text-muted mt-1 text-center">
+                        Otworzy formularz zaliczek z danymi tego tankowania.
+                    </div>
+                </div>
+            )}
             {listError && <Alert variant="danger">{listError}</Alert>}
             {loadingVehicles && vehicles.length === 0 ? (
                 <div className="text-center py-5">
@@ -248,15 +264,25 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const formMethods = useForm({ mode: "onChange" });
     const { watch, setValue } = formMethods;
 
-    const [date, setDate] = useState(today());
-    const [purposes, setPurposes] = useState<string[]>([]);
+    // Wejście z zaliczek: paragon za paliwo już wpisany, a razem z nim data, auto
+    // i stan licznika - formularz otwiera się gotowy do zapisania.
+    const fuelFromPettyCash = (
+        useLocation().state as { fuelFromPettyCash?: FuelHandoff } | null
+    )?.fuelFromPettyCash;
+
+    const [date, setDate] = useState(fuelFromPettyCash?.entryDate || today());
+    const [purposes, setPurposes] = useState<string[]>(
+        fuelFromPettyCash ? ["tankowanie"] : []
+    );
     const [routeFrom, setRouteFrom] = useState("Brzeg");
     const [routeMid, setRouteMid] = useState("");
     const [routeTo, setRouteTo] = useState("Brzeg");
     const [startReading, setStartReading] = useState<string>(
         vehicle.currentReading != null ? String(vehicle.currentReading) : ""
     );
-    const [endReading, setEndReading] = useState<string>("");
+    const [endReading, setEndReading] = useState<string>(
+        fuelFromPettyCash?.odometerReading ?? ""
+    );
     const [fuelingDate, setFuelingDate] = useState("");
     const [fuelingReading, setFuelingReading] = useState("");
     // Pola tankowania śledzą wartości domyślne (końcowy/data), dopóki użytkownik
@@ -276,6 +302,9 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const driver = driverPerson ? `${driverPerson.name} ${driverPerson.surname}` : "";
     const isFueling = purposes.includes("tankowanie");
     const navigate = useNavigate();
+    // Zaliczki są modułem firmowym: kierowca spoza ENVI dostałby z nich odmowę,
+    // więc propozycja paragonu ma się dla niego w ogóle nie pokazać.
+    const canUsePettyCash = MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES);
 
     // Telefon/tablet lub zainstalowana aplikacja.
     const isTouchOrApp = useMemo(
@@ -446,13 +475,27 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             const savedMsg = `Zapisano wpis Lp. ${trip.lp} (${trip.km} km)${
                 via ? ` przez ${via}` : ""
             }.`;
+            // Po tankowaniu proponujemy zaliczkę, chyba że właśnie z niej przyszliśmy.
+            const fuelOffer: FuelHandoff | undefined =
+                isFueling && canUsePettyCash && !fuelFromPettyCash
+                    ? {
+                          entryDate: fuelingDate || date,
+                          vehicleId: vehicle.id,
+                          odometerReading: fuelingReading || endReading,
+                      }
+                    : undefined;
             // Zapis potwierdzony. Przejście na listę robimy przez View Transitions API:
             // przeglądarka sama animuje wjazd listy i wyjazd formularza (bez białych ekranów),
             // a auto (osobny view-transition-name) przejeżdża po wierzchu.
             const startVT = (document as any).startViewTransition?.bind(document);
             const goToList = () =>
                 navigate("/mileage", {
-                    state: { savedMsg, sheetUrl: vehicle.sheetUrl, driveCar: !!startVT },
+                    state: {
+                        savedMsg,
+                        sheetUrl: vehicle.sheetUrl,
+                        driveCar: !!startVT,
+                        fuelOffer,
+                    },
                 });
             if (startVT) {
                 startVT(() => flushSync(goToList));
