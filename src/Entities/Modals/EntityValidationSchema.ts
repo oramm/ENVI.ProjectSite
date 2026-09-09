@@ -14,6 +14,10 @@ const commonFields = {
         .test("len", "Numer podatkowy musi mieć dokładnie 10 lub 13 znaków", (val) =>
             val ? val.length === 10 || val.length === 13 : true
         ),
+    // GUS-1: długości pilnują szerokości kolumn Entities.Regon char(14) i Entities.Krs
+    // char(10) — dłuższa wartość zostałaby ucięta po cichu przy zapisie.
+    regon: Yup.string().nullable().max(14, "REGON może mieć maksymalnie 14 znaków"),
+    krs: Yup.string().nullable().max(10, "KRS może mieć maksymalnie 10 znaków"),
     www: Yup.string().max(150, "WWW może mieć maksymalnie 150 znaków"),
     email: Yup.string()
         .nullable()

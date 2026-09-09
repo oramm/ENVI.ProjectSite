@@ -22,6 +22,11 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
     // NIP-G1 — "Pobierz z GUS": autofill name+address from taxNumber, user can
     // still edit both before saving. BLOCKED until gate G-N1 in prod (503 with
     // a readable message until the owner sets GUS_BIR_KEY).
+    //
+    // GUS-1: REGON i KRS też wchodzą do formularza. Serwis zwracał je od lipca, tylko
+    // nie było gdzie ich zapisać — teraz Entities ma kolumny Regon i Krs. Gdy GUS ich
+    // nie podał (osoba fizyczna nie ma KRS-u), pole jest czyszczone, a nie zostawiane
+    // z wartością poprzedniego podmiotu.
     const handleFetchFromGus = async () => {
         const nip = getValues("taxNumber");
         setGusError(null);
@@ -30,6 +35,8 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
             const result = await lookupNip(nip);
             setValue("name", result.name, { shouldDirty: true, shouldValidate: true });
             setValue("address", result.address, { shouldDirty: true, shouldValidate: true });
+            setValue("regon", result.regon ?? "", { shouldDirty: true, shouldValidate: true });
+            setValue("krs", result.krs ?? "", { shouldDirty: true, shouldValidate: true });
         } catch (err) {
             setGusError(err instanceof Error ? err.message : "Błąd wyszukiwania GUS");
         } finally {
@@ -43,6 +50,8 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
             shortName: initialData?.shortName,
             address: initialData?.address,
             taxNumber: initialData?.taxNumber,
+            regon: initialData?.regon,
+            krs: initialData?.krs,
             www: initialData?.www,
             email: initialData?.email,
             phone: initialData?.phone,
@@ -121,6 +130,32 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                         {gusError}
                     </Alert>
                 )}
+            </Form.Group>
+
+            {/* GUS-1: oba pola wypelnia przycisk "Pobierz z GUS", ale wolno je tez wpisac recznie -
+                REGON bywa jedynym kluczem dla podmiotu, któremu brakuje NIP-u. */}
+            <Form.Group controlId="regon">
+                <Form.Label>REGON</Form.Label>
+                <Form.Control
+                    placeholder="Podaj REGON (wypełnia się przy pobraniu z GUS)"
+                    maxLength={14}
+                    isInvalid={!!errors?.regon}
+                    isValid={!errors?.regon}
+                    {...register("regon")}
+                />
+                <ErrorMessage name="regon" errors={errors} />
+            </Form.Group>
+
+            <Form.Group controlId="krs">
+                <Form.Label>KRS</Form.Label>
+                <Form.Control
+                    placeholder="Podaj numer KRS (wypełnia się przy pobraniu z GUS)"
+                    maxLength={10}
+                    isInvalid={!!errors?.krs}
+                    isValid={!errors?.krs}
+                    {...register("krs")}
+                />
+                <ErrorMessage name="krs" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="www">
