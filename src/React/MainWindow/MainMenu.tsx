@@ -351,6 +351,11 @@ export default function MainMenu() {
                                         <NavDropdown.Item as={Link} to="/admin/typesTree">
                                             Hierarchia typów
                                         </NavDropdown.Item>
+                                        {/* GUS-4b: nazwa zatwierdzona przez właściciela 2026-09-09 -
+                                            „Podmioty w GUS", nie „Podmioty a GUS" z brzmienia planu. */}
+                                        <NavDropdown.Item as={Link} to="/admin/gusEntities">
+                                            Podmioty w GUS
+                                        </NavDropdown.Item>
                                     </>
                                 )}
                             </NavDropdown>

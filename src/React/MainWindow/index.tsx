@@ -25,6 +25,7 @@ import StaffMembersSearch from "../../Admin/StaffMembers/StaffMembersSearch";
 import TypesTreeView from "../../Admin/TypesTree/TypesTreeView";
 import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
+import GusEntitiesPage from "../../Admin/GusEntities/GusEntitiesPage";
 import BankSyncSearch from "../../Erp/BankSyncList/BankSyncSearch";
 import CostInvoicesSearch from "../../Erp/CostInvoicesList/CostInvoicesSearch";
 import CostInvoiceDetails from "../../Erp/CostInvoicesList/CostInvoiceDetails";
@@ -228,6 +229,10 @@ function AppRoutes() {
                             path="/admin/staffMembers"
                             element={<StaffMembersSearch title="Personel i uprawnienia" />}
                         />
+                        {/* GUS-4b: przebieg porównania słownika podmiotów z rejestrem GUS i pięć list
+                            do sprzątania. Bramka roli musi odpowiadać adminPanelGuard w backendzie -
+                            trasy /entities/gus/sweep i /entities/gus/report stoją za nią. */}
+                        <Route path="/admin/gusEntities" element={<GusEntitiesPage title="Podmioty w GUS" />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.STAFF_ROLES} />}>
                         {/* Hierarchia typów: PODGLĄD dla każdego pracownika ENVI, edycja

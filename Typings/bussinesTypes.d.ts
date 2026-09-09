@@ -488,6 +488,22 @@ export interface EntityData extends RepositoryDataItem {
     regon?: string;
     /** GUS-1: numer KRS, 10 cyfr z wiodącymi zerami, dlatego tekst a nie liczba. */
     krs?: string;
+    /**
+     * GUS-2/GUS-4a — wynik ostatniego porównania z rejestrem GUS, data sprawdzenia
+     * i migawka odpowiedzi rejestru. Pola TYLKO DO ODCZYTU po stronie frontu: serwer
+     * ich z formularza nie przyjmuje (Entity.ts w PS-nodeJS), a jedyną drogą wejścia
+     * danych z rejestru do podmiotu jest trasa /entities/:id/gus/accept (D-GUS-1).
+     */
+    gusStatus?: "NOT_CHECKED" | "OK" | "DIFF" | "DIFF_MINOR" | "NOT_FOUND" | "CLOSED" | "ERROR";
+    gusCheckedAt?: string | null;
+    gusSnapshot?: {
+        name?: string;
+        address?: string;
+        regon?: string;
+        krs?: string;
+        /** Data zakończenia działalności z rejestru; obecna = podmiot już nie działa. */
+        closedAt?: string;
+    } | null;
     www?: string;
     email?: string;
     phone?: string;
