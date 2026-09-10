@@ -298,6 +298,32 @@ export function IncomingLetterStatusSelector({
     });
 }
 
+/**
+ * GPO-3 — stan porównania podmiotu z rejestrem GUS, wielokrotny wybór.
+ *
+ * Jedyny selektor stanów w tym pliku, którego wartością jest KLUCZ (`DIFF_MINOR`), a nie
+ * napis po polsku: taki jest zapis w kolumnie `Entities.GusStatus`. Napis, który widzi
+ * człowiek, bierze się ze słownika `MainSetup.GusStatus` — tego samego, z którego bierze
+ * go plakietka na liście podmiotów.
+ */
+export function GusStatusSelector({
+    showValidationInfo = false,
+    name = "gusStatuses",
+    label = "Status GUS",
+    as,
+}: SpecificTextOptionProps) {
+    return (
+        <TypeaheadStringSelector
+            options={Object.keys(MainSetup.GusStatus)}
+            optionLabel={(code) => (MainSetup.GusStatus as Record<string, string>)[code] ?? code}
+            showValidationInfo={showValidationInfo}
+            name={name}
+            label={label}
+            as={as}
+        />
+    );
+}
+
 function statusSelector({
     statuses,
     showValidationInfo = true,

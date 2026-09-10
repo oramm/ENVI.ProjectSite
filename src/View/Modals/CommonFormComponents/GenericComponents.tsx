@@ -282,9 +282,16 @@ export interface TypeaheadStringSelectorProps {
     name?: string;
     label?: string;
     as?: React.ElementType;
+    /** GPO-3: napis pokazywany zamiast wartości; domyślnie napis = wartość. */
+    optionLabel?: (option: string) => string;
 }
 /**
  * Komponent do wyboru opcji z listy stringów służy jako multiselect
+ *
+ * GPO-3: `optionLabel` pozwala pokazać człowiekowi inny napis niż przechowywana wartość.
+ * Potrzebne tam, gdzie baza trzyma klucz (`DIFF_MINOR`), a na ekranie ma stać nazwa po
+ * polsku („inny zapis”). Domyślnie napis = wartość, czyli wszystkie dotychczasowe
+ * miejsca użycia zachowują się dokładnie jak dotąd.
  */
 export function TypeaheadStringSelector({
     options,
@@ -292,6 +299,7 @@ export function TypeaheadStringSelector({
     name = "status",
     label = name,
     as,
+    optionLabel = (option: string) => option,
 }: TypeaheadStringSelectorProps & { options: string[] }) {
     const {
         control,
@@ -334,7 +342,7 @@ export function TypeaheadStringSelector({
                     render={({ field }) => (
                         <Typeahead
                             id={`${name}-controlled`}
-                            labelKey={(option) => option as string}
+                            labelKey={(option) => optionLabel(option as string)}
                             multiple={multiple}
                             options={options}
                             onChange={(items) => handleOnChange(items, field)}
@@ -342,7 +350,7 @@ export function TypeaheadStringSelector({
                             placeholder="-- Wybierz status --"
                             isValid={showValidationInfo ? !errors?.[name] : undefined}
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
-                            renderMenuItemChildren={(option) => <>{option as string}</>}
+                            renderMenuItemChildren={(option) => <>{optionLabel(option as string)}</>}
                         />
                     )}
                 />

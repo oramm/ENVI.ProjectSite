@@ -229,6 +229,24 @@ export default class MainSetup {
         NO_RESPONSE_REQUIRED: "Nie wymaga odpowiedzi", // bardziej jednoznaczne
     };
 
+    /**
+     * GPO-3 — stany porównania podmiotu z rejestrem GUS.
+     *
+     * Inaczej niż pozostałe słowniki stanów w tym pliku: baza trzyma tu KLUCZ
+     * (`DIFF_MINOR`), a nie napis po polsku. Napisy są nazwami zatwierdzonymi przez
+     * właściciela 2026-09-09 przy makiecie — plakietka na liście podmiotów i filtr
+     * biorą je stąd, żeby nie rozjechały się na dwa brzmienia.
+     */
+    static GusStatus = {
+        DIFF: "różni się",
+        DIFF_MINOR: "inny zapis",
+        OK: "zgodny",
+        CLOSED: "wykreślony z rejestru",
+        NOT_FOUND: "nieznany w rejestrze",
+        ERROR: "błąd",
+        NOT_CHECKED: "nie sprawdzano",
+    };
+
     static LetterEventType = {
         CREATED: "Utworzony",
         TO_CORRECT: "Do poprawy",
