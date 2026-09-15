@@ -82,6 +82,24 @@ export interface PublicProfileSubmissionInfoDto {
     createdAt?: string;
     updatedAt?: string;
     items: PublicProfileSubmissionItemDto[];
+    /** ROD-7: klauzula informacyjna; brak = starszy backend (strona wtedy nic nie pokazuje). */
+    privacyNotice?: PublicProfileSubmissionPrivacyNoticeDto;
+}
+
+// ---------------------------------------------------------------------------
+// Klauzula informacyjna (ROD-7) - kształt ZA backendem: src/types/types.d.ts PublicProfilePrivacyNoticeDto
+// ---------------------------------------------------------------------------
+
+export interface PublicProfileSubmissionPrivacyNoticeSectionDto {
+    heading: string;
+    text: string;
+}
+
+/** `isPlaceholder: true` = tekst zastępczy do zastąpienia przez administratora danych; strona pokazuje wtedy plakietkę. */
+export interface PublicProfileSubmissionPrivacyNoticeDto {
+    isPlaceholder: boolean;
+    title: string;
+    sections: PublicProfileSubmissionPrivacyNoticeSectionDto[];
 }
 
 // ---------------------------------------------------------------------------

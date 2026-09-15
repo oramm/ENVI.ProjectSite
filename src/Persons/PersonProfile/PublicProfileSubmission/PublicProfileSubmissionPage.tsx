@@ -1,3 +1,5 @@
+import PrivacyAcknowledgement from "../../../Privacy/PrivacyAcknowledgement";
+import { PRIVACY_REQUIRED } from "../../../Privacy/privacyApi";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Badge, Button, Card, Col, Container, Form, ListGroup, Row, Spinner, Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
@@ -9,6 +11,7 @@ import {
     PublicProfileSubmissionApiError,
 } from "./publicProfileSubmissionApi";
 import { createPublicProfileSubmissionImportApi } from "./publicProfileSubmissionImportApi";
+import { PublicProfilePrivacyNotice } from "./PublicProfilePrivacyNotice";
 import {
     PublicProfileSubmissionDraftEducationItem,
     PublicProfileSubmissionDraftExperienceItem,
@@ -21,7 +24,7 @@ import {
 // Step state machine
 // ---------------------------------------------------------------------------
 
-type Step = "landing" | "verify" | "draft" | "submitted";
+type Step = "landing" | "verify" | "privacy" | "draft" | "submitted";
 
 // ---------------------------------------------------------------------------
 // Human-readable error messages for domain error codes
@@ -101,6 +104,14 @@ export default function PublicProfileSubmissionPage() {
     // -- API instance (stable across steps) --
     const api = useMemo(() => (token ? createPublicProfileSubmissionApi(token) : null), [token]);
 
+    useEffect(() => {
+        const requirePrivacy = (event: Event) => {
+            if ((event as CustomEvent).detail === token) { setShowImportModal(false); setStep("privacy"); }
+        };
+        window.addEventListener(PRIVACY_REQUIRED, requirePrivacy);
+        return () => window.removeEventListener(PRIVACY_REQUIRED, requirePrivacy);
+    }, [token]);
+
     // Import adapter — created from api object (requires session token to be set before use)
     const importApi = useMemo(() => (api ? createPublicProfileSubmissionImportApi(api) : undefined), [api]);
 
@@ -163,8 +174,8 @@ export default function PublicProfileSubmissionPage() {
             const resp = await api.confirmVerifyCode(email.trim(), otpCode.trim());
             api.setSessionToken(resp.publicSessionToken);
             setSuccessMessage(null);
-            // Proceed to draft step
-            setStep("draft");
+            // Email identity must be verified before privacy status or profile data.
+            setStep("privacy");
         } catch (error) {
             setErrorMessage(formatError(error));
         } finally {
@@ -307,6 +318,9 @@ export default function PublicProfileSubmissionPage() {
             {/* ============================================================ */}
             {/* W3: Landing */}
             {/* ============================================================ */}
+            {step === "privacy" && api && <PrivacyAcknowledgement load={api.getPrivacyStatus} acknowledge={api.acknowledgePrivacy}
+                onContinue={() => { setErrorMessage(null); setStep("draft"); }}
+                logoutLabel="Wróć do weryfikacji" onLogout={async () => { api.setSessionToken(""); setOtpCode(""); setCodeSent(false); setStep("verify"); }} />}
             {step === "landing" && (
                 <>
                     {isLoadingInfo ? (
@@ -352,6 +366,9 @@ export default function PublicProfileSubmissionPage() {
                                 )}
 
                                 <hr />
+
+                                {/* ROD-7: klauzula informacyjna widoczna, zanim osoba cokolwiek wpisze */}
+                                <PublicProfilePrivacyNotice notice={submissionInfo.privacyNotice} />
 
                                 {isTerminal ? (
                                     <Alert variant="info" className="mb-0">
@@ -518,6 +535,9 @@ export default function PublicProfileSubmissionPage() {
                                     )}
 
                                 <hr />
+
+                                {/* ROD-7: przypomnienie o klauzuli tuż przed „Wyślij do recenzji" */}
+                                <PublicProfilePrivacyNotice notice={submissionInfo?.privacyNotice} compact />
 
                                 <div className="d-flex gap-2 flex-wrap">
                                     <Button

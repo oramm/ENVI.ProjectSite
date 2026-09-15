@@ -15,11 +15,15 @@ import { StaffMemberModalBody } from "./StaffMemberModalBody";
 
 const hoisted = vi.hoisted(() => ({
     fetchPersonProjectAssignments: vi.fn(),
+    // ROD-3: sekcja „Ostatnie zmiany konta" pobiera historię osobnym żądaniem; tu pusta.
+    fetchPersonAccountEvents: vi.fn(async () => []),
 }));
 
 vi.mock("../../../Persons/personsV2Helpers", () => ({
     fetchPersonProjectAssignments: hoisted.fetchPersonProjectAssignments,
+    fetchPersonAccountEvents: hoisted.fetchPersonAccountEvents,
 }));
+vi.mock("../StaffPrivacyStatus", () => ({ default: () => null }));
 vi.mock("../../../React/MainSetupReact", () => ({
     default: { isProjectScopedRoleId: () => false },
 }));

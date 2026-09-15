@@ -101,7 +101,7 @@ export default class ToolsFetch {
      * Celowo BEZ 404 (wyścig przy odpytywaniu /sessionTaskStatus) i BEZ 429 (rate limiter
      * jest oknem czasowym) — tam ponowienie ma sens.
      */
-    private static readonly NON_RETRYABLE_STATUSES = [400, 401, 403, 409, 422];
+    private static readonly NON_RETRYABLE_STATUSES = [400, 401, 403, 409, 422, 428];
 
     private static isNonRetryable(error: unknown): boolean {
         const status = (error as HttpError)?.status;

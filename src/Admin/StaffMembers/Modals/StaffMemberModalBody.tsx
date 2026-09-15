@@ -11,6 +11,8 @@ import {
     SystemRoleSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import StaffPrivacyStatus from "../StaffPrivacyStatus";
+import { AccountEventsList } from "../AccountEventsList";
 
 export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<StaffMemberData>) {
     const {
@@ -118,6 +120,8 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
                 <ErrorMessage name="systemEmail" errors={errors} />
             </Form.Group>
 
+            {isEditing && initialData?.personId && <StaffPrivacyStatus key={initialData.personId} personId={initialData.personId} />}
+
             <Form.Group controlId="fidmanEnabled" className="mt-2">
                 <Form.Check
                     type="checkbox"
@@ -177,6 +181,9 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
                     Odejście z firmy to wyłączenie tej opcji - historia zadań, urlopów i przejazdów zostaje.
                 </Form.Text>
             </Form.Group>
+
+            {/* ROD-3: historia zmian konta - tylko przy edycji, nowa osoba nie ma jeszcze historii. */}
+            {isEditing && <AccountEventsList personId={initialData?.personId} />}
         </>
     );
 }

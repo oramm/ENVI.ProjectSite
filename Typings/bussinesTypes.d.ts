@@ -558,6 +558,27 @@ export interface PersonAccountV2Payload {
     _selfSessionRevoked?: boolean;
 }
 
+/**
+ * ROD-3 (za typami backendu: src/types/types.d.ts): jedno zdarzenie konta osoby = jedna
+ * zmieniona wartość (rola, e-mail logowania, aktywność konta, FIDman, zakres projektów,
+ * flaga panelu). Tylko odczyt - zapisu przez HTTP nie ma.
+ */
+export type PersonAccountEventType = "ACCOUNT" | "PROJECT_ASSIGNMENTS" | "STAFF_FLAGS";
+
+export interface PersonAccountEventData {
+    id?: number;
+    personId: number;
+    editorId?: number | null;
+    eventType: PersonAccountEventType;
+    field: string;
+    /** Wartość przed / po zmianie jako JSON (string); null = brak wartości. */
+    valueBefore?: string | null;
+    valueAfter?: string | null;
+    _createdAt?: string;
+    _editorName?: string | null;
+    _editorSurname?: string | null;
+}
+
 export interface PersonProfileV2Payload {
     personId: number;
     headline?: string;

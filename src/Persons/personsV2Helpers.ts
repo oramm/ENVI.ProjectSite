@@ -1,6 +1,7 @@
 import {
     EducationSearchParams,
     ExperienceSearchParams,
+    PersonAccountEventData,
     PersonAccountV2Payload,
     PersonProfileEducationV2Record,
     PersonProfileExperienceV2Record,
@@ -317,6 +318,21 @@ export async function fetchPersonProjectAssignments(personId: number): Promise<P
         credentials: "include",
     });
     return result?.assignments ?? [];
+}
+
+/**
+ * ROD-3: ostatnie zmiany konta osoby (kto, kiedy, co) - sekcja „Ostatnie zmiany konta"
+ * w modalu uprawnień. Trasa za bramką administratora/menedżera; nie-tablica (np. błąd 403)
+ * daje pustą listę, żeby modal nie padł - sekcja pokaże komunikat.
+ */
+export async function fetchPersonAccountEvents(personId: number, limit = 20): Promise<PersonAccountEventData[]> {
+    const validId = validatePersonId(personId, "GET account-events");
+    const url = `${MainSetup.serverUrl}v2/persons/${validId}/account-events?limit=${limit}`;
+    const result = await ToolsFetch.fetchJsonWithSafeError(url, {
+        method: "GET",
+        credentials: "include",
+    });
+    return Array.isArray(result) ? result : [];
 }
 
 /**

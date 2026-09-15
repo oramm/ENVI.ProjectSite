@@ -15,6 +15,8 @@ import GoogleButton from "../GoogleLoginButton";
 import MainController from "../MainControllerReact";
 import MainSetup from "../MainSetupReact";
 import Footer from "./Footer";
+import PrivacyAcknowledgement from "../../Privacy/PrivacyAcknowledgement";
+import { observePrivacyRequired, systemPrivacy } from "../../Privacy/privacyApi";
 import MainMenu, { useModuleAccess } from "./MainMenu";
 import { installClientErrorReporter } from "./clientErrorReporter";
 
@@ -89,7 +91,6 @@ function App() {
                     return;
                 }
 
-                await MainController.main();
                 setIsLoggedIn(true);
             } catch (error) {
                 setIsLoggedIn(false);
@@ -111,7 +112,6 @@ function App() {
             MainSetup.currentUser = response.userData;
             try {
                 setIsReady(false);
-                await MainController.main();
                 setIsLoggedIn(true);
             } catch (err) {
                 console.error(err);
@@ -163,11 +163,34 @@ function App() {
 
     // zalogowany użytkownik
     return (
-        <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white">
-            <AppRoutes />
-            <Footer />
-        </Container>
+        <SystemPrivacyGate />
     );
+}
+
+function SystemPrivacyGate() {
+    const [allowed, setAllowed] = useState(false);
+    const [generation, setGeneration] = useState(0);
+    useEffect(() => observePrivacyRequired(() => {
+        setAllowed(false);
+        setGeneration(value => value + 1);
+    }), []);
+    if (!allowed) return <PrivacyAcknowledgement key={generation} load={systemPrivacy} acknowledge={systemPrivacy}
+        onContinue={() => setAllowed(true)} onLogout={async () => {
+            await MainController.logout(); sessionStorage.clear(); window.location.reload();
+        }} />;
+    return <InitializedApp />;
+}
+function InitializedApp() {
+    const [ready, setReady] = useState(false);
+    const [error, setError] = useState("");
+    async function initialize() {
+        setError("");
+        try { await MainController.main(); setReady(true); }
+        catch { setError("Nie udało się uruchomić systemu. Spróbuj ponownie."); }
+    }
+    useEffect(() => { void initialize(); }, []);
+    if (!ready) return <Container className="py-4">{error ? <Alert variant="danger">{error} <button onClick={initialize}>Spróbuj ponownie</button></Alert> : <SpinnerBootstrap />}</Container>;
+    return <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white"><AppRoutes /><Footer /></Container>;
 }
 
 function AppRoutes() {
@@ -186,6 +209,7 @@ function AppRoutes() {
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
+                    <Route path="/privacy" element={<PrivacyAcknowledgement load={systemPrivacy} acknowledge={systemPrivacy} />} />
                     {/* „Dodawanie użytkowników" zniknęło w PER-3 - konta i uprawnienia mieszkają
                         w jednym oknie. Stary adres przekierowuje, bo ludzie mają go w zakładkach;
                         o dostępie rozstrzyga bramka roli przy oknie docelowym, nie ta linia. */}

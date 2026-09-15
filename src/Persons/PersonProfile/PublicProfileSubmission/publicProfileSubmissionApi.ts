@@ -1,3 +1,4 @@
+import { PrivacyNotice, PrivacyStatus, PRIVACY_REQUIRED } from "../../../Privacy/privacyApi";
 import MainSetup from "../../../React/MainSetupReact";
 import {
     ConfirmVerifyCodeResponse,
@@ -111,6 +112,7 @@ export function createPublicProfileSubmissionApi(linkToken: string) {
         }
 
         if (!response.ok) {
+            if (response.status === 428) window.dispatchEvent(new CustomEvent(PRIVACY_REQUIRED, { detail: token }));
             const apiError = await mapApiError(response);
             throw apiError;
         }
@@ -164,6 +166,11 @@ export function createPublicProfileSubmissionApi(linkToken: string) {
 
         // Phase 2: Bearer session-token required ---
 
+        getPrivacyStatus() { return fetchJson<PrivacyStatus>("/privacy", { method: "GET" }, true); },
+        acknowledgePrivacy(notice: PrivacyNotice) {
+            return fetchJson<PrivacyStatus>("/privacy/acknowledgements", { method: "POST",
+                body: JSON.stringify({ version: notice.version, revision: notice.revision, acknowledged: true }) }, true);
+        },
         /** GET /:token/draft */
         getDraft() {
             return fetchJson<PublicProfileSubmissionDraftResponseDto>("/draft", { method: "GET" }, true);
