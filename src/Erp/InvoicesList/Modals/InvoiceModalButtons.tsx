@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { InvoiceSeriesButton } from "./InvoiceSeriesModal";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { InvoiceModalBody } from "./InvoiceModalBody";
@@ -113,6 +114,7 @@ export function CopyButton({
     }
 
     return (
+        <>
         <Button key="Kopiuj" variant="outline-secondary" size="sm" onClick={handleClick}>
             <span className="d-inline-flex align-items-center">
                 Kopiuj
@@ -120,7 +122,9 @@ export function CopyButton({
                     <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="ms-2" />
                 )}
             </span>
-        </Button>
+        </Button>{" "}
+        <InvoiceSeriesButton invoice={invoice} />
+        </>
     );
 }
 
