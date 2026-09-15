@@ -64,6 +64,18 @@ function formatError(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
 }
 
+const submissionStatusLabel: Record<string, string> = {
+    DRAFT: "Wersja robocza",
+    SUBMITTED: "Wysłane",
+    CLOSED: "Zamknięte",
+};
+
+const itemStatusLabel: Record<string, string> = {
+    PENDING: "Oczekuje",
+    ACCEPTED: "Zaakceptowane",
+    REJECTED: "Odrzucone",
+};
+
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
@@ -226,7 +238,7 @@ export default function PublicProfileSubmissionPage() {
                 skills: draftData.skills.map(stripDraftItemMeta),
             });
             setDraftData(updated);
-            setSuccessMessage("Draft zapisany.");
+            setSuccessMessage("Wersja robocza została zapisana.");
         } catch (error) {
             if (isPublicProfileSubmissionApiError(error) && error.domainCode === "EMAIL_VERIFY_REQUIRED") {
                 setStep("verify");
@@ -336,7 +348,7 @@ export default function PublicProfileSubmissionPage() {
                                     <Col sm={4} className="text-muted">Status:</Col>
                                     <Col sm={8}>
                                         <Badge bg={statusBadgeVariant[submissionInfo.status] || "secondary"}>
-                                            {submissionInfo.status}
+                                            {submissionStatusLabel[submissionInfo.status] || submissionInfo.status}
                                         </Badge>
                                     </Col>
                                 </Row>
@@ -505,15 +517,15 @@ export default function PublicProfileSubmissionPage() {
                     {isLoadingDraft ? (
                         <div className="py-4 text-center">
                             <Spinner animation="border" />
-                            <div className="mt-2 text-muted">Ladowanie draftu...</div>
+                            <div className="mt-2 text-muted">Ładowanie wersji roboczej...</div>
                         </div>
                     ) : draftData ? (
                         <Card>
                             <Card.Body>
                                 <div className="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 className="mb-0">Edycja draftu</h5>
+                                    <h5 className="mb-0">Edycja wersji roboczej</h5>
                                     <Badge bg={statusBadgeVariant[draftData.status] || "secondary"}>
-                                        {draftData.status}
+                                        {submissionStatusLabel[draftData.status] || draftData.status}
                                     </Badge>
                                 </div>
 
@@ -530,7 +542,7 @@ export default function PublicProfileSubmissionPage() {
                                     draftData.educations.length === 0 &&
                                     draftData.skills.length === 0 && (
                                         <Alert variant="info">
-                                            Draft jest pusty. Uzyj przycisku "Importuj z CV" aby dodac dane.
+                                            Wersja robocza jest pusta. Użyj przycisku „Importuj z CV”, aby dodać dane.
                                         </Alert>
                                     )}
 
@@ -596,7 +608,7 @@ export default function PublicProfileSubmissionPage() {
                         <p className="text-muted">
                             Twoj profil zostal wyslany do recenzji. Otrzymasz powiadomienie emailem o wynikach.
                         </p>
-                        <Badge bg="info" className="fs-6">SUBMITTED</Badge>
+                        <Badge bg="info" className="fs-6">Wysłane</Badge>
                     </Card.Body>
                 </Card>
             )}
@@ -645,7 +657,7 @@ function DraftExperiencesSection({ items }: { items: PublicProfileSubmissionDraf
                                 </td>
                                 <td>
                                     <Badge bg={itemStatusBadge(item.status)} className="text-uppercase">
-                                        {item.status}
+                                        {itemStatusLabel[item.status] || item.status}
                                     </Badge>
                                 </td>
                             </tr>
@@ -685,7 +697,7 @@ function DraftEducationsSection({ items }: { items: PublicProfileSubmissionDraft
                                 </td>
                                 <td>
                                     <Badge bg={itemStatusBadge(item.status)} className="text-uppercase">
-                                        {item.status}
+                                        {itemStatusLabel[item.status] || item.status}
                                     </Badge>
                                 </td>
                             </tr>
@@ -719,7 +731,7 @@ function DraftSkillsSection({ items }: { items: PublicProfileSubmissionDraftSkil
                                 <td>{item.levelCode || "-"}</td>
                                 <td>
                                     <Badge bg={itemStatusBadge(item.status)} className="text-uppercase">
-                                        {item.status}
+                                        {itemStatusLabel[item.status] || item.status}
                                     </Badge>
                                 </td>
                             </tr>

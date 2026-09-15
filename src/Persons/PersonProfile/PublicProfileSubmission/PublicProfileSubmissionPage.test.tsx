@@ -94,6 +94,8 @@ describe("PublicProfileSubmissionPage - klauzula informacyjna (ROD-7)", () => {
         render(<PublicProfileSubmissionPage />);
 
         const title = await screen.findByText(NOTICE_TITLE);
+        expect(screen.getByText("Wersja robocza")).toBeTruthy();
+        expect(screen.queryByText("DRAFT")).toBeNull();
         expect(screen.getByText(/Administratorem jest Firma Testowa/)).toBeTruthy();
         expect(screen.getByText(/Aktualizacja profilu zawodowego/)).toBeTruthy();
         expect(screen.getByText(/Przez czas prowadzenia profilu/)).toBeTruthy();
