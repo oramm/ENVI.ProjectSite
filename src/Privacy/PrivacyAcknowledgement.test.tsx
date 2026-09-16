@@ -9,6 +9,15 @@ const status: PrivacyStatus = { acknowledged: false, acknowledgedAt: null, notic
     isPlaceholder: false,
 }};
 describe("privacy acknowledgement", () => {
+    it("shows only the application spinner while checking a stored acknowledgement", async () => {
+        let resolveStatus!: (value: PrivacyStatus) => void;
+        const load = vi.fn().mockReturnValue(new Promise<PrivacyStatus>(resolve => { resolveStatus = resolve; }));
+        render(<PrivacyAcknowledgement load={load} acknowledge={vi.fn()} onContinue={vi.fn()} />);
+        expect(screen.getByRole("status")).toBeInTheDocument();
+        expect(screen.queryByText("Prywatność i dane osobowe")).not.toBeInTheDocument();
+        resolveStatus(status);
+        expect(await screen.findByRole("checkbox")).toBeInTheDocument();
+    });
     it("waits for an explicit checked acknowledgement and successful server save", async () => {
         const ack = vi.fn().mockRejectedValueOnce(new Error()).mockResolvedValue({ ...status, acknowledged: true });
         const proceed = vi.fn();

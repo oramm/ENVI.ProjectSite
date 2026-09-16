@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Container, Form } from "react-bootstrap";
 import { PrivacyNotice, PrivacyStatus } from "./privacyApi";
 import PrivacyNoticeSections from "./PrivacyNoticeSections";
+import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
 
 export default function PrivacyAcknowledgement({ load, acknowledge, onContinue, onLogout, logoutLabel = "Wyloguj się" }: {
     load: () => Promise<PrivacyStatus>;
@@ -39,6 +40,7 @@ export default function PrivacyAcknowledgement({ load, acknowledge, onContinue, 
             } else setError("Nie udało się zapisać potwierdzenia. Spróbuj ponownie.");
         } finally { setBusy(false); }
     }
+    if (busy && !status) return <Container role="status" aria-label="Trwa ładowanie" className="d-flex justify-content-center align-items-center min-vh-100"><SpinnerBootstrap /></Container>;
     return <Container className="py-4" style={{ maxWidth: 850 }}>
         <h1 className="h4 mb-3">{status?.notice.title || "Prywatność i dane osobowe"}</h1>
         {busy && <p role="status">Trwa ładowanie...</p>}

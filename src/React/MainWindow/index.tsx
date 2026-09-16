@@ -190,7 +190,9 @@ function InitializedApp() {
         catch { setError("Nie udało się uruchomić systemu. Spróbuj ponownie."); }
     }
     useEffect(() => { void initialize(); }, []);
-    if (!ready) return <Container className="py-4">{error ? <Alert variant="danger">{error} <button onClick={initialize}>Spróbuj ponownie</button></Alert> : <SpinnerBootstrap />}</Container>;
+    if (!ready) return error
+        ? <Container className="py-4"><Alert variant="danger">{error} <button onClick={initialize}>Spróbuj ponownie</button></Alert></Container>
+        : <Container className="d-flex justify-content-center align-items-center min-vh-100"><SpinnerBootstrap /></Container>;
     return <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white"><AppRoutes /><Footer /></Container>;
 }
 
