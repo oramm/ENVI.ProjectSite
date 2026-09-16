@@ -22,6 +22,7 @@ import { installClientErrorReporter } from "./clientErrorReporter";
 
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
 import CarsSearch from "../../Admin/Cars/CarsSearch";
+import SoftwareLicensesSearch from "../../Admin/SoftwareLicenses/SoftwareLicensesSearch";
 import AbsenceTypesSearch from "../../Admin/AbsenceTypes/AbsenceTypesSearch";
 import StaffMembersSearch from "../../Admin/StaffMembers/StaffMembersSearch";
 import TypesTreeView from "../../Admin/TypesTree/TypesTreeView";
@@ -245,6 +246,7 @@ function AppRoutes() {
                         też ENVI_EMPLOYEE. Musi odpowiadać bramce /admin w backendzie. */}
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.ADMIN_PANEL_ROLES} />}>
                         <Route path="/admin/cars" element={<CarsSearch title="Samochody" />} />
+                        <Route path="/admin/softwareLicenses" element={<SoftwareLicensesSearch title="Licencje" />} />
                         <Route
                             path="/admin/absenceTypes"
                             element={<AbsenceTypesSearch title="Typy nieobecności" />}

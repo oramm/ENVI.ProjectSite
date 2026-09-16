@@ -342,6 +342,7 @@ export default function MainMenu() {
                                         <NavDropdown.Item as={Link} to="/admin/staffMembers">
                                             Personel i uprawnienia
                                         </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/admin/softwareLicenses">Licencje</NavDropdown.Item>
                                         <NavDropdown.Item as={Link} to="/admin/cars">
                                             Samochody
                                         </NavDropdown.Item>
