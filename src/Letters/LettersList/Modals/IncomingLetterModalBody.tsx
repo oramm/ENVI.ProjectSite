@@ -1,17 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Spinner, Alert } from "react-bootstrap";
+import { Form, Spinner, Alert, Button } from "react-bootstrap";
 import { LetterModalBody } from "./LetterModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { AiUsageInfo, IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import {
+    AiUsageInfo,
+    Contract,
+    EntityData,
+    IncomingLetterContract,
+    IncomingLetterNumberCheck,
+    OurLetterContract,
+} from "../../../../Typings/bussinesTypes";
 import { AiMetaInfo } from "../../../View/CommonComponents/AiMetaInfo";
 import { entitiesRepository } from "../LettersController";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { IncomingLetterStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import MainSetup from "../../../React/MainSetupReact";
-import { EntityData } from "../../../../Typings/bussinesTypes";
 import { EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
+import ToolsFetch from "../../../React/Tools/ToolsFetch";
+import { GDDocFileIconLink } from "../../../View/Resultsets/CommonComponents";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract | IncomingLetterContract>) {
@@ -35,17 +43,103 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
         _usage?: AiUsageInfo;
     } | null>(null);
     const [showCreateSender, setShowCreateSender] = useState(false);
+    const [numberCheck, setNumberCheck] = useState<IncomingLetterNumberCheck | null>(null);
+    const [isCheckingNumber, setIsCheckingNumber] = useState(false);
+    const [numberCheckError, setNumberCheckError] = useState<string | null>(null);
+    const [generatedNumberError, setGeneratedNumberError] = useState<string | null>(null);
+    const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
 
     const currentStatus = watch("status");
+    const hasNoNumber = Number(watch("hasNoNumber")) === 1;
+    const contract = watch("_contract") as Contract | undefined;
+    const contractId = contract?.id;
+    const numberRegistration = register("number");
 
     useEffect(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
+        setValue("hasNoNumber", 0, { shouldDirty: false, shouldValidate: true });
+        setValue("numberConflictDetected", 0, { shouldDirty: false, shouldValidate: true });
+        setValue("duplicateNumberConfirmedFor", "", { shouldDirty: false, shouldValidate: true });
         setValue("status", initialData?.status || MainSetup.IncomingLetterStatus.RESPONSE_REQUIRED, {
             shouldDirty: false,
             shouldValidate: true,
         });
     }, [initialData, setValue]);
+
+    useEffect(() => {
+        let ignore = false;
+        setGeneratedNumberError(null);
+        setIsGeneratingNumber(false);
+        if (props.isEditing || !hasNoNumber) return;
+
+        setValue("number", "", { shouldValidate: true });
+        if (!contractId) return;
+
+        setIsGeneratingNumber(true);
+        void ToolsFetch.fetchWithRetry(MainSetup.serverUrl + "letters/incoming-number-check", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contractId }),
+        })
+            .then((result: IncomingLetterNumberCheck) => {
+                if (!ignore) setValue("number", result.suggestedNumber, { shouldValidate: true });
+            })
+            .catch((error) => {
+                if (!ignore) {
+                    setGeneratedNumberError(
+                        error instanceof Error ? error.message : "Nie udało się wyznaczyć numeru pisma."
+                    );
+                }
+            })
+            .finally(() => {
+                if (!ignore) setIsGeneratingNumber(false);
+            });
+
+        return () => {
+            ignore = true;
+        };
+    }, [contractId, hasNoNumber, props.isEditing, setValue]);
+
+    async function checkNumber(value: string) {
+        const number = value.trim();
+        setNumberCheck(null);
+        setNumberCheckError(null);
+        setValue("numberConflictDetected", 0, { shouldValidate: true });
+        setValue("duplicateNumberConfirmedFor", "", { shouldValidate: true });
+        if (props.isEditing || hasNoNumber || !number) return;
+
+        setIsCheckingNumber(true);
+        try {
+            const result = (await ToolsFetch.fetchWithRetry(
+                MainSetup.serverUrl + "letters/incoming-number-check",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ number }),
+                }
+            )) as IncomingLetterNumberCheck;
+            if (result.hasConflicts) {
+                setNumberCheck(result);
+                setValue("numberConflictDetected", 1, { shouldValidate: true });
+            }
+        } catch (error) {
+            setNumberCheckError(error instanceof Error ? error.message : "Nie udało się sprawdzić numeru pisma.");
+        } finally {
+            setIsCheckingNumber(false);
+        }
+    }
+
+    function setNoNumber(checked: boolean) {
+        setValue("hasNoNumber", checked ? 1 : 0, { shouldDirty: true, shouldValidate: true });
+        setValue("number", "", { shouldDirty: true, shouldValidate: true });
+        setValue("numberConflictDetected", 0, { shouldValidate: true });
+        setValue("duplicateNumberConfirmedFor", "", { shouldValidate: true });
+        setNumberCheck(null);
+        setNumberCheckError(null);
+    }
 
     const getConfidenceClass = (fieldName: string) => {
         // If the form has validation errors for this field, let validation classes take precedence.
@@ -188,15 +282,102 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
             <hr />
             <Form.Group controlId="number">
                 <Form.Label>Numer pisma</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Podaj numer"
-                    isInvalid={!!errors?.number}
-                    isValid={!errors?.number}
-                    {...register("number")}
-                    className={getConfidenceClass("number")}
-                />
-                <ErrorMessage errors={errors} name={"number"} />
+                <div className="d-flex align-items-start gap-2">
+                    <div className="flex-grow-1">
+                        <Form.Control
+                            type="text"
+                            placeholder={
+                                hasNoNumber
+                                    ? generatedNumberError ||
+                                      (isGeneratingNumber
+                                          ? "Wyznaczam numer pisma..."
+                                          : contractId
+                                            ? "Numer zostanie wygenerowany automatycznie"
+                                            : "Wybierz kontrakt")
+                                    : "Podaj numer"
+                            }
+                            disabled={hasNoNumber}
+                            isInvalid={!!errors?.number}
+                            isValid={!hasNoNumber && !errors?.number}
+                            {...numberRegistration}
+                            onBlur={(event) => {
+                                numberRegistration.onBlur(event);
+                                void checkNumber(event.currentTarget.value);
+                            }}
+                            className={getConfidenceClass("number")}
+                        />
+                        <ErrorMessage errors={errors} name={"number"} />
+                    </div>
+                    {!props.isEditing && (
+                        <Button
+                            type="button"
+                            variant={hasNoNumber ? "success" : "outline-success"}
+                            className="text-nowrap"
+                            aria-pressed={hasNoNumber}
+                            onClick={() => setNoNumber(!hasNoNumber)}
+                        >
+                            Brak numeru
+                        </Button>
+                    )}
+                </div>
+                <input type="hidden" {...register("hasNoNumber")} />
+                <input type="hidden" {...register("numberConflictDetected")} />
+                <input type="hidden" {...register("duplicateNumberConfirmedFor")} />
+                {isCheckingNumber && <Form.Text className="d-block">Sprawdzam, czy numer już istnieje…</Form.Text>}
+                {numberCheckError && <Alert variant="danger" className="mt-2">{numberCheckError}</Alert>}
+                {numberCheck && (
+                    <Alert variant="warning" className="mt-2">
+                        <Alert.Heading as="h6">
+                            {numberCheck.conflicts.length === 1
+                                ? "Pismo o tym numerze jest już w rejestrze"
+                                : numberCheck.conflicts.length > 1
+                                  ? "Pisma o tym numerze lub z jego sufiksem są już w rejestrze"
+                                  : "Taki numer występuje już w rejestrze"}
+                        </Alert.Heading>
+                        {numberCheck.conflicts.length > 0 && (
+                            <p>
+                                {numberCheck.conflicts.length === 1
+                                    ? "Sprawdź istniejące pismo przed utworzeniem kolejnego wpisu."
+                                    : "Sprawdź poniższe pisma przed utworzeniem kolejnego wpisu."}
+                            </p>
+                        )}
+                        {numberCheck.conflicts.length ? (
+                            <div className="mb-2">
+                                {numberCheck.conflicts.map((conflict) => (
+                                    <div key={conflict.id} className={numberCheck.conflicts.length > 1 ? "mb-2" : undefined}>
+                                        <div className="d-flex align-items-start gap-2">
+                                            <div className="flex-grow-1 text-break" style={{ minWidth: 0 }}>
+                                                <strong>{conflict.number}</strong>, {conflict.senderNames || "podmiot nieustalony"}, kontrakt {conflict.contractNumber}, data pisma {String(conflict.creationDate).slice(0, 10)}
+                                                {conflict.description ? `, ${conflict.description}` : ""}
+                                            </div>
+                                            {conflict.documentUrl && (
+                                                <span className="flex-shrink-0" title="Otwórz dokument na Dysku Google">
+                                                    <GDDocFileIconLink layout="horizontal" folderUrl={conflict.documentUrl} />
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="mb-2">
+                                Pismo o tym numerze lub z jego sufiksem znajduje się poza Twoim zakresem dostępu.
+                            </p>
+                        )}
+                        <Form.Check
+                            type="checkbox"
+                            label={`Sprawdziłem: to nie jest duplikat. Dodaj jako ${numberCheck.suggestedNumber}`}
+                            onChange={(event) =>
+                                setValue(
+                                    "duplicateNumberConfirmedFor",
+                                    event.currentTarget.checked ? String(watch("number") || "").trim() : "",
+                                    { shouldDirty: true, shouldValidate: true }
+                                )
+                            }
+                        />
+                        <ErrorMessage errors={errors} name={"duplicateNumberConfirmedFor"} />
+                    </Alert>
+                )}
             </Form.Group>
             <LetterModalBody {...props} fileInputRef={fileInputRef} getConfidenceClass={getConfidenceClass} />
             <IncomingLetterStatusSelector />
