@@ -35,7 +35,7 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
             <div>
                 {showTableHeader && (
                     <div className="d-none d-md-block">
-                        <Row className="fw-bold text-secondary">
+                        <Row className="fw-bold text-secondary p-3 mx-0">
                             {tableStructure.map((column, index) => (
                                 <Col key={column.header || index} {...getColSize(column)} className="text-center">
                                     {renderHeaderBody(column)}

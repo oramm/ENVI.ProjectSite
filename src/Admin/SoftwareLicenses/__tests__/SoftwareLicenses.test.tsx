@@ -6,10 +6,11 @@ import { LicenseForm } from "../Modals/SoftwareLicenseModalButtons";
 import { makeSoftwareLicenseValidationSchema } from "../Modals/SoftwareLicenseValidationSchema";
 import { softwareLicensesRepository as repo } from "../SoftwareLicensesController";
 import { SoftwareLicenseData } from "../SoftwareLicenseTypes";
+import { SoftwareLicenseGoogleDriveAction } from "../SoftwareLicensesSearch";
 import MainSetup from "../../../React/MainSetupReact";
 
 vi.mock("../../../React/Tools/ToolsFetch", () => ({ default: { notifySessionExpired: vi.fn() } }));
-const item = { id: 13, manufacturer: "Test", product: "Program", seatsPurchased: 2, seatsUsed: 1, seatsFree: 1, hasLicenseKey: true } as SoftwareLicenseData;
+const item = { id: 13, manufacturer: "Test", product: "Program", googleDriveUrl: null, seatsPurchased: 2, seatsUsed: 1, seatsFree: 1, hasLicenseKey: true } as SoftwareLicenseData;
 const fetchMock = vi.fn();
 const response = (body: unknown, ok = true) => ({ ok, status: ok ? 200 : 500, json: async () => body });
 beforeEach(() => {
@@ -20,28 +21,35 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe("license secret boundaries", () => {
+    it("shows a Google Drive action only when the link is present", () => {
+        const { rerender } = render(<SoftwareLicenseGoogleDriveAction dataObject={item} layout="vertical" />);
+        expect(screen.queryByRole("link", { name: "Dysk Google" })).toBeNull();
+        rerender(<SoftwareLicenseGoogleDriveAction dataObject={{ ...item, googleDriveUrl: "https://drive.google.com/drive/folders/abc" }} layout="vertical" />);
+        expect(screen.getByRole("link", { name: "Dysk Google" })).toHaveAttribute("href", "https://drive.google.com/drive/folders/abc");
+        expect(screen.getByRole("link", { name: "Dysk Google" })).toHaveAttribute("target", "_blank");
+    });
     it("one click produces one request under StrictMode", async () => {
         fetchMock.mockResolvedValue(response({ licenseKey: "temporary" }));
         render(<React.StrictMode><SoftwareLicenseKey license={item} /></React.StrictMode>);
-        fireEvent.click(screen.getByRole("button", { name: "Pokaż" }));
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" }));
         await screen.findByRole("textbox", { name: "Klucz licencyjny" });
         expect(fetchMock).toHaveBeenCalledTimes(1);
         fireEvent.click(screen.getByRole("button", { name: "Ukryj" }));
-        fireEvent.click(screen.getByRole("button", { name: "Pokaż" }));
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" }));
         await screen.findByRole("textbox", { name: "Klucz licencyjny" });
         expect(fetchMock).toHaveBeenCalledTimes(2);
     });
     it("does not fetch a key before explicit action and never offers reveal to manager", () => {
         sessionStorage.setItem("Current User", JSON.stringify({ systemRoleName: "ENVI_MANAGER", userName: "Test" }));
         render(<SoftwareLicenseKey license={item} />);
-        expect(screen.queryByRole("button", { name: "Pokaż" })).toBeNull();
+        expect(screen.queryByRole("button", { name: "Pokaż klucz" })).toBeNull();
         expect(fetchMock).not.toHaveBeenCalled();
     });
     it.each(["123", "null", "  dokładny\nklucz 😀  "])("reveals exact string then discards on close (%#)", async key => {
         fetchMock.mockResolvedValue(response({ licenseKey: key }));
         render(<SoftwareLicenseKey license={item} />);
         expect(fetchMock).not.toHaveBeenCalled();
-        fireEvent.click(screen.getByRole("button", { name: "Pokaż" }));
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" }));
         expect(await screen.findByRole("textbox", { name: "Klucz licencyjny" })).toHaveValue(key);
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock.mock.calls[0][1]).toMatchObject({ method: "POST", cache: "no-store", credentials: "include" });
@@ -53,7 +61,7 @@ describe("license secret boundaries", () => {
         let resolve!: (value: unknown) => void;
         fetchMock.mockReturnValue(new Promise(r => { resolve = r; }));
         render(<SoftwareLicenseKey license={item} />);
-        fireEvent.click(screen.getByRole("button", { name: "Pokaż" }));
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" }));
         fireEvent.click(screen.getByRole("button", { name: "Ukryj" }));
         await act(async () => resolve(response({ licenseKey: "late-secret" })));
         expect(screen.queryByRole("textbox", { name: "Klucz licencyjny" })).toBeNull();
@@ -62,7 +70,7 @@ describe("license secret boundaries", () => {
     it.each(["blur", "pagehide"])("hides on %s", async event => {
         fetchMock.mockResolvedValue(response({ licenseKey: "temporary" }));
         render(<SoftwareLicenseKey license={item} />);
-        fireEvent.click(screen.getByRole("button", { name: "Pokaż" }));
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" }));
         await screen.findByRole("textbox", { name: "Klucz licencyjny" });
         fireEvent(window, new Event(event));
         expect(screen.queryByRole("textbox", { name: "Klucz licencyjny" })).toBeNull();
@@ -70,7 +78,7 @@ describe("license secret boundaries", () => {
     it("expires after 30 seconds", async () => {
         vi.useFakeTimers(); fetchMock.mockResolvedValue(response({ licenseKey: "temporary" }));
         render(<SoftwareLicenseKey license={item} />);
-        await act(async () => fireEvent.click(screen.getByRole("button", { name: "Pokaż" })));
+        await act(async () => fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" })));
         expect(screen.getByRole("textbox", { name: "Klucz licencyjny" })).toHaveValue("temporary");
         act(() => vi.advanceTimersByTime(30000));
         expect(screen.queryByRole("textbox", { name: "Klucz licencyjny" })).toBeNull();
@@ -78,7 +86,7 @@ describe("license secret boundaries", () => {
     it("does not echo server/transport diagnostics or retry reveal", async () => {
         fetchMock.mockRejectedValue(new Error("secret-from-transport"));
         render(<SoftwareLicenseKey license={item} />);
-        fireEvent.click(screen.getByRole("button", { name: "Pokaż" }));
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż klucz" }));
         expect(await screen.findByRole("alert")).not.toHaveTextContent("secret-from-transport");
         expect(fetchMock).toHaveBeenCalledTimes(1);
     });
@@ -123,11 +131,16 @@ describe("license validation", () => {
         { cost: "1.123" }, { cost: "-1" }, { cost: "10000000000" }, { expirationDate: "2026-02-30" },
         { purchaseDate: "0999-01-01" }, { manufacturer: " " }, { version: "x".repeat(101) },
         { comment: "ą".repeat(32768) }, { keyAction: "replace", licenseKey: "" },
+        { googleDriveUrl: "http://drive.google.com/drive/folders/abc" }, { googleDriveUrl: "https://example.com/file" },
     ])("rejects invalid payload %j", async invalid => {
         await expect(makeSoftwareLicenseValidationSchema().validate({ ...base, ...invalid })).rejects.toThrow();
     });
     it("keeps key bytes and accepts Polish decimal input", async () => {
         const result = await makeSoftwareLicenseValidationSchema().validate({ ...base, keyAction: "replace", licenseKey: "  null\n😀 ", cost: "12,30" });
         expect(result.licenseKey).toBe("  null\n😀 "); expect(result.cost).toBe("12.30");
+    });
+    it("accepts Google Drive and Docs links", async () => {
+        for (const googleDriveUrl of ["https://drive.google.com/drive/folders/abc", "https://docs.google.com/document/d/abc/edit"])
+            expect((await makeSoftwareLicenseValidationSchema().validate({ ...base, googleDriveUrl })).googleDriveUrl).toBe(googleDriveUrl);
     });
 });

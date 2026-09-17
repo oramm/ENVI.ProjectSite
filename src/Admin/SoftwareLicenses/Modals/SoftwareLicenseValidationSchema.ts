@@ -3,7 +3,8 @@ import * as Yup from "yup";
 export const licenseTextFields = [
     ["manufacturer", "Producent", 255], ["product", "Produkt", 255],
     ["version", "Wersja", 100], ["registrationAccount", "Konto rejestracji", 320],
-    ["vendorPanelUrl", "Panel producenta", 65535], ["assignment", "Przypisanie", 65535],
+    ["vendorPanelUrl", "Panel producenta", 65535], ["googleDriveUrl", "Link Google Drive", 2048],
+    ["assignment", "Przypisanie", 65535],
     ["billingCycle", "Cykl rozliczeniowy", 100], ["status", "Status", 100],
     ["comment", "Uwagi", 65535],
 ] as const;
@@ -29,6 +30,14 @@ export function makeSoftwareLicenseValidationSchema() {
     }));
     return Yup.object({
         ...textFields,
+        googleDriveUrl: textFields.googleDriveUrl.test("google-drive-url", "Podaj prawidłowy link do Dysku Google", value => {
+            if (!value) return true;
+            try {
+                const url = new URL(value);
+                return url.protocol === "https:" && !url.username && !url.password &&
+                    ["drive.google.com", "docs.google.com"].includes(url.hostname.toLowerCase());
+            } catch { return false; }
+        }),
         licenseType: Yup.string().oneOf(["", "OEM", "Retail", "Volume", "Subscription"], "Wybierz typ licencji"),
         seatsPurchased: seats(),
         seatsUsed: seats().test("capacity", "Zajęte stanowiska nie mogą przekraczać kupionych", function(value) {

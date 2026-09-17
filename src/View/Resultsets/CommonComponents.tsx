@@ -97,7 +97,7 @@ export type IconProps = {
 export function GDFolderIconLink({ folderUrl, layout = "vertical" }: IconProps) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (
-        <a href={folderUrl} target="_blank">
+        <a href={folderUrl} target="_blank" rel="noopener noreferrer">
             <img src={GDFolderIcon} alt="Dysk Google" className={className} />
         </a>
     );

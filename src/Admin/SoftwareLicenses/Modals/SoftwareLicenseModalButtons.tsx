@@ -69,7 +69,7 @@ export function LicenseForm({ initialData, onSave, onClose }: {
                 </Row>
                 <h6>Stanowiska</h6><Row>{input("seatsPurchased", "Kupione", "number")}{input("seatsUsed", "Zajęte", "number")}</Row>
                 <p>Wolne stanowiska: {Number.isInteger(free) && free >= 0 ? free : "—"}</p>
-                <Row>{licenseTextFields.slice(3, 6).map(([name, label, limit]) => input(name, label, "text", limit))}</Row>
+                <Row>{licenseTextFields.slice(3, 7).map(([name, label, limit]) => input(name, label, "text", limit))}</Row>
                 <h6>Zakup i rozliczenie</h6>
                 <Row>{input("purchaseDate", "Data zakupu", "date")}{input("expirationDate", "Data wygaśnięcia", "date")}
                     {input("cost", "Koszt brutto [zł]")}{input("billingCycle", "Cykl rozliczeniowy", "text", 100)}{input("status", "Status", "text", 100)}</Row>

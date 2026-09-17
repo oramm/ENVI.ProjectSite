@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Form, Modal, Spinner } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import MainSetup from "../../React/MainSetupReact";
 import { licenseRequest } from "./SoftwareLicensesController";
 import { SoftwareLicenseData } from "./SoftwareLicenseTypes";
@@ -50,7 +52,9 @@ export function SoftwareLicenseKey({ license }: { license: SoftwareLicenseData }
     return <div onClick={event => event.stopPropagation()}>
         {license.hasLicenseKey ? <>
             <span aria-label="Klucz zasłonięty">••••••••</span>
-            {admin && <Button size="sm" variant="outline-secondary" className="ms-2" onClick={reveal}>Pokaż</Button>}
+            {admin && <Button variant="link" className="p-0 ms-2 text-secondary" aria-label="Pokaż klucz" title="Pokaż klucz" onClick={reveal}>
+                <FontAwesomeIcon icon={faEye} size="lg" />
+            </Button>}
         </> : <span className="text-muted">Brak klucza</span>}
         {open && admin && <Modal show onHide={hide}>
             <Modal.Header closeButton><Modal.Title>Klucz licencyjny</Modal.Title></Modal.Header>

@@ -7,6 +7,7 @@ export interface SoftwareLicenseData extends RepositoryDataItem {
     licenseType: string | null;
     registrationAccount: string | null;
     vendorPanelUrl: string | null;
+    googleDriveUrl: string | null;
     seatsPurchased: number;
     seatsUsed: number;
     seatsFree: number;
@@ -28,6 +29,7 @@ export function publicLicense(item: SoftwareLicenseData): SoftwareLicenseData {
         id: item.id, manufacturer: item.manufacturer, product: item.product,
         version: item.version, licenseType: item.licenseType,
         registrationAccount: item.registrationAccount, vendorPanelUrl: item.vendorPanelUrl,
+        googleDriveUrl: item.googleDriveUrl,
         seatsPurchased: item.seatsPurchased, seatsUsed: item.seatsUsed, seatsFree: item.seatsFree,
         assignment: item.assignment, purchaseDate: item.purchaseDate, expirationDate: item.expirationDate,
         cost: item.cost, billingCycle: item.billingCycle, status: item.status, comment: item.comment,
