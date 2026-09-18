@@ -71,19 +71,16 @@ const tips: Tip[] = [
     // Kilometrówka - moduł na fladze IsDriver, nie na roli
     {
         text: "Kilometrówkę uzupełniaj na bieżąco, najlepiej zaraz po powrocie. Formularz znajdziesz w menu Kontrakty, działa też na telefonie.",
-        isNew: true,
         category: "mileage",
         moduleAccess: "mileage/access",
     },
     {
         text: "W kilometrówce nie musisz wpisywać cyfr z klawiatury. Kliknij ikonę mikrofonu przy stanie licznika i podyktuj go. Tak samo podyktujesz miasto docelowe. Za pierwszym razem przeglądarka poprosi o zgodę na mikrofon.",
-        isNew: true,
         category: "mileage",
         moduleAccess: "mileage/access",
     },
     {
         text: 'Jeden przejazd rozliczysz na kilka kontraktów naraz, w polu "Kontrakty ENVI" zaznacz wszystkie, których dotyczył. Miasta wybranych kontraktów same wpadną do opisu trasy jako punkty pośrednie. W "Celu wyjazdu" też zaznaczysz kilka pozycji albo wpiszesz własną.',
-        isNew: true,
         category: "mileage",
         moduleAccess: "mileage/access",
     },
@@ -91,37 +88,31 @@ const tips: Tip[] = [
     // Pisma
     {
         text: 'W menu akcji pisma jest "Odpowiedz". Otwiera rejestrację pisma w kierunku przeciwnym: na przychodzące zakładasz naszą odpowiedź, na wychodzące - odpowiedź kontrahenta. Sam uzupełnia projekt, sprawy, kontrakt, podmiot zamieniony stronami, opis "Odpowiedź na: ..." oraz numer pisma źródłowego.',
-        isNew: true,
         category: "letters",
     },
     {
         text: 'Jeżeli umowa ma włączoną "Dokumentację zatwierdzoną", przy piśmie ze sprawy kamienia projektowanie - nadzór zaznaczysz "Dodaj to pismo do Dokumentacji zatwierdzonej". Takie pisma mają w rejestrze zieloną ikonę, a filtrem "Dokumentacja zatwierdzona" wyświetlisz same zatwierdzone albo same pozostałe.',
-        isNew: true,
         category: "letters",
     },
 
     // Kontrakty
     {
         text: 'Umowa ma teraz trzy osobne terminy zamiast jednego pola gwarancji: Gwarancja, Rękojmia oraz "Zgłaszanie wad do", czyli Okres Zgłaszania Wad wg FIDIC - to pole pojawia się tylko przy umowach Żółty i Czerwony. Puste pole znaczy "termin nieustalony", a nie "termin nie występuje". Wszystkie terminy widać w bocznej kolumnie na liście umów.',
-        isNew: true,
         category: "contracts",
         roles: MainSetup.CONTRACT_SCOPED_ROLES,
     },
     {
         text: 'Z menu akcji umowy wygenerujesz "Spis spraw" - arkusz Google z drzewem kamienie, sprawy, podsprawy i zadania. Wybierasz statusy (bez zakończonych i archiwalnych albo wszystkie) oraz zakres zadań (wszystkie, tylko moje, wskazanych osób). Arkusz trafia do podfolderu "Spisy spraw" w folderze umowy - ta sama konfiguracja nadpisuje swój arkusz, inna tworzy nowy obok. Spis dla całego projektu zrobisz w oknie zadań.',
-        isNew: true,
         category: "contracts",
         roles: MainSetup.CONTRACT_SCOPED_ROLES,
     },
     {
         text: "Rejestrując nową umowę zobaczysz drzewo struktury: kamienie milowe, sprawy i foldery na Dysku. Startowo zaznaczone jest dokładnie to, co powstałoby automatycznie - odznacz, czego nie potrzebujesz, albo dołóż pozycje, które nie tworzą się same. Drzewo pokazuje cały słownik dostępny dla wybranego typu umowy, więc najpierw ustaw typ.",
-        isNew: true,
         category: "contracts",
         roles: MainSetup.STAFF_ROLES,
     },
     {
         text: '"Dokumentacja zatwierdzona" to rejestr przy kamieniu projektowanie - nadzór. Włączasz go haczykiem na umowie - opcja jest widoczna tylko dla typów Żółty i Usługa. Po włączeniu w kamieniu powstaje folder "04 Dokumentacja zatwierdzona" wraz z arkuszem-rejestrem.',
-        isNew: true,
         category: "contracts",
         roles: MainSetup.STAFF_ROLES,
     },
@@ -148,6 +139,12 @@ const tips: Tip[] = [
         category: "costInvoices",
         roles: MainSetup.STAFF_ROLES,
         moduleAccess: "cost-invoices/access",
+    },
+    {
+        text: 'Jeżeli faktura wystawiana jest cyklincznie, możesz zdefiniować serię faktur z datą sprzedaży co wybraną ilość miesięcy. Zrobisz to w szczegółach faktury obok przycisku Kopiuj.',
+        isNew: true,
+        category: "invoices",
+        roles: MainSetup.STAFF_ROLES,
     },
 ];
 
