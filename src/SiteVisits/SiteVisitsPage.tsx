@@ -161,6 +161,10 @@ export default function SiteVisitsPage() {
     const location = useLocation();
     useVisitsManifest();
 
+    useEffect(() => {
+        document.title = "Wizyty na budowie";
+    }, []);
+
     if (location.pathname.endsWith("/admin")) return <VisitsAdmin />;
     if (location.pathname.endsWith("/list")) return <VisitsList />;
     if (contractId) return <CaptureScreen contractId={Number(contractId)} />;

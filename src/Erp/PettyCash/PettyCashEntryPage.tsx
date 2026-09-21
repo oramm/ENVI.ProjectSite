@@ -187,6 +187,10 @@ export default function PettyCashEntryPage() {
     const [savedFuel, setSavedFuel] = useState<FuelHandoff | null>(null);
 
     useEffect(() => {
+        document.title = "Zaliczki";
+    }, []);
+    
+    useEffect(() => {
         fetchSheetLinks()
             .then(setLinks)
             .catch(() => setLinks(null));

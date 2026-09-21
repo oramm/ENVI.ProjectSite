@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert, Button, Card, Modal, Tab, Tabs } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import MainSetup from "../React/MainSetupReact";
@@ -33,6 +33,10 @@ export default function ScrumboardMainView() {
     const [reportUrl, setReportUrl] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const canManage = MainSetup.isRoleAllowed(["ADMIN", "ENVI_MANAGER"]);
+
+    useEffect(() => {
+        document.title = "Scrumboard";
+    }, []);
 
     function askResetDiscussed() {
         setConfirm({

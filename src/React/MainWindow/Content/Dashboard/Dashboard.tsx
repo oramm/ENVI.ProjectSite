@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import MyData from "./MyData";
 //import News from "../News";
@@ -22,6 +22,10 @@ const CYBER_SECURITY_ROLES: SystemRoleName[] = [
 
 export default function Dashboard() {
     const currentUser = MainSetup.currentUserOrNull;
+
+    useEffect(() => {
+        document.title = "Witryna projektów";
+    }, []);
 
     if (!currentUser) {
         return (
