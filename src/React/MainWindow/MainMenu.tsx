@@ -228,10 +228,7 @@ export default function MainMenu() {
                                             to="/pettyCash"
                                             className={isActive("/pettyCash")}
                                         >
-                                            Zaliczki{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
+                                            Zaliczki
                                         </NavDropdown.Item>
                                     )}
                                     {/* Hierarchia typów - podgląd dla każdego pracownika ENVI.
@@ -243,10 +240,7 @@ export default function MainMenu() {
                                             to="/admin/typesTree"
                                             className={isActive("/admin/typesTree")}
                                         >
-                                            Hierarchia typów{" "}
-                                            <Badge bg="info" text="light">
-                                                nowe
-                                            </Badge>
+                                            Hierarchia typów
                                         </NavDropdown.Item>
                                     )}
                                 </NavDropdown>
