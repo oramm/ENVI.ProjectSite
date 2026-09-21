@@ -87,6 +87,10 @@ export default function MileagePage() {
     // View Transition. Odpoczywa poza ekranem, więc po animacji jest niewidoczne.
     const driveCar = !!savedState?.driveCar;
 
+    useEffect(() => {
+        document.title = "Kilometrówka";
+    }, []);
+
     // Wyczyść stan historii, by odświeżenie strony (F5) nie pokazało komunikatu ponownie.
     useEffect(() => {
         if (savedMsg) window.history.replaceState({}, "");

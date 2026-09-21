@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Button, Card, Container, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,10 @@ import MainSetup from "../React/MainSetupReact";
 const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
 
 export default function SbInstallerPage() {
+    useEffect(() => {
+        document.title = "SB.ENVI - instalator";
+    }, []);
+    
     return (
         <Container className="py-4" style={{ maxWidth: 760 }}>
             <h4>Second Brain ENVI - instalator</h4>

@@ -63,6 +63,10 @@ export default function TasksGlobal() {
     const filterVersionRef = useRef(0);
 
     useEffect(() => {
+        document.title = "Projekty i Zadania";
+    }, []);
+
+    useEffect(() => {
         if (!selectedProject) return;
         async function fetchData() {
             setDataLoaded(false);
