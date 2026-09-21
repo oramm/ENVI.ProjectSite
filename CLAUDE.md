@@ -125,9 +125,7 @@ Code is the source of truth for how the app works. `instructions/` holds rules a
 - `selectors.md` - selector rules: own repository per selector, validation, pick-or-create
 - `crud-module-guide.md` - recipe for a new CRUD module (skill: `/new-crud-module`)
 - `DEVELOPMENT.md` - .env config, dev login, Puppeteer testing
-- `ui-browser-loop.md` - UI verification loop with screenshots
 
-Use the `ui-browser-loop` skill for iterative browser-based UI verification with automated screenshots, mock login, and viewport controls.
 Treat `tmp/ui-browser-loop/` as temporary workspace output and clean it after verification.
 
 API contract (types, endpoints, DTO) is owned by the backend repo: read

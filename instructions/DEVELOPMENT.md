@@ -128,14 +128,13 @@ yarn screenshot = wrapper do scripts/screenshot.js z domyślną trasą/outputem 
 yarn screenshot:* = tymczasowa weryfikacja UI; artefakty zostają w tmp/ui-browser-loop i powinny być usunięte po sprawdzeniu
 ```
 
-### Ustalony kontekst dla UI Browser Loop
+### Lokalna weryfikacja UI
 
 - aplikacja działa lokalnie pod `http://localhost:9000/docs/#/...`
 - frontend komunikuje się z backendem na `http://localhost:3000`
 - przed restartem procesów sprawdzaj, czy porty `9000` i `3000` nie są już zajęte przez działające serwery
 - `scripts/screenshot.js` wspiera `--mock-login`, `--timeout`, `--viewport`, `--selector`, `--text` do stabilnej weryfikacji
 - zrzuty ekranu są tymczasowe i nie mogą być commitowane
-- jeśli agent startuje z repo `PS-nodeJS`, używaj tamtejszego cienkiego adaptera, ale canonical docs pozostają tutaj
 
 ---
 

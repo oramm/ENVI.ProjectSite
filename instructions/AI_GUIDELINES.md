@@ -11,34 +11,6 @@
 5. [Business Object Selectors](./selectors.md) ⭐ **Szczegółowa dokumentacja**
 6. [Typowe błędy i rozwiązania](#typowe-błędy-i-rozwiązania)
 7. [Checklist dla deweloperów](#checklist-dla-deweloperów)
-8. [UI Browser Loop (dopracowanie UI)](#ui-browser-loop-dopracowanie-ui)
-
-## UI Browser Loop (dopracowanie UI)
-
-Jeśli chcesz dopracować UI w schemacie: **ustalamy → zmieniamy → sprawdzamy w przeglądarce → oceniamy → poprawiamy**, używaj trybu:
-
-**Tryb: UI Browser Loop**
-
-Pełny opis i szablon polecenia: [ui-browser-loop.md](./ui-browser-loop.md)
-
-Minimalny zestaw informacji, żeby agent mógł działać bez dopytywania:
-
-- Route/ekran (`#/...`), np. `#/persons`
-- Co jest nie tak teraz + co ma być docelowo (kryteria akceptacji)
-- Czy zmiany mają dotyczyć tylko CSS/układu czy też komponentów
-- Czy ekran wymaga logowania (DEV Mock Login) i jaka rola jest potrzebna
-
-Weryfikacja efektu: agent używa Puppeteer (skrypt `scripts/screenshot.js`) i zapisuje screenshoty do `tmp/ui-browser-loop/`.
-
-Ustalony kontekst środowiska dla tego trybu:
-
-- aplikacja frontendowa działa pod `http://localhost:9000/docs/#/...`
-- na localhost frontend komunikuje się z backendem pod `http://localhost:3000`
-- dla automatycznego logowania używaj `ENABLE_DEV_LOGIN=true` i backendowego `dev_mode: true`
-- `scripts/screenshot.js` wspiera `--mock-login`, `--timeout`, `--viewport`, `--selector`, `--text`
-- zrzuty trafiają do `tmp/ui-browser-loop/`, są tymczasowe i po weryfikacji należy je usunąć przez `yarn screenshot:cleanup`
-- jeśli port `9000` lub `3000` jest zajęty, najpierw sprawdź, czy odpowiedni serwer już działa
-- jeśli agent startuje z `PS-nodeJS`, używaj tamtejszego cienkiego adaptera jako entrypointu, ale źródłem prawdy pozostają ten plik i `instructions/ui-browser-loop.md`
 
 ## Architektura projektu
 

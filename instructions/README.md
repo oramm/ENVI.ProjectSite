@@ -20,7 +20,6 @@ Node.js, nie kombinuj w Reakcie.
 | [selectors.md](./selectors.md) | selektory: wlasne repo per selektor, kolizje sessionStorage, walidacja, pick-or-create |
 | [crud-module-guide.md](./crud-module-guide.md) | receptura nowego modulu CRUD (albo skill `/new-crud-module`) |
 | [DEVELOPMENT.md](./DEVELOPMENT.md) | setup, `.env`, dev login, skrypty, Puppeteer |
-| [ui-browser-loop.md](./ui-browser-loop.md) | iteracyjne dopracowanie UI ze zrzutami ekranu |
 
 ## Kontrakt API
 
