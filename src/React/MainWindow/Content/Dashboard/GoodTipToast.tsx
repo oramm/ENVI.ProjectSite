@@ -9,7 +9,7 @@ import "./GoodTipToast.css";
 interface Tip {
     text: string;
     isNew?: boolean;
-    category?: "general" | "lettersAi" | "invoices" | "costInvoices" | "mileage" | "letters" | "contracts";
+    category?: "general" | "lettersAi" | "invoices" | "costInvoices" | "mileage" | "letters" | "contracts" | "entities";
     /** Rady o module, do którego nie każdy ma wejście - bez tego rada trafia do osób,
      * które nie mają nawet pozycji w menu. Brak pola = rada dla wszystkich. */
     roles?: SystemRoleName[];
@@ -25,6 +25,7 @@ const tipCategoryLabels: Record<NonNullable<Tip["category"]>, string> = {
     mileage: "Kilometrówka",
     letters: "Pisma",
     contracts: "Kontrakty",
+    entities: "Podmioty",
 };
 
 const tips: Tip[] = [
@@ -95,6 +96,14 @@ const tips: Tip[] = [
         category: "letters",
     },
 
+    // Podmioty
+    {
+        text: 'Dodając podmiot z polskim NIP-em, użyj "Pobierz z GUS". Nazwa, adres, REGON i KRS wypełnią się z rejestru.',
+        isNew: true,
+        category: "entities",
+        roles: MainSetup.CONTRACT_SCOPED_ROLES,
+    },
+
     // Kontrakty
     {
         text: 'Umowa ma teraz trzy osobne terminy zamiast jednego pola gwarancji: Gwarancja, Rękojmia oraz "Zgłaszanie wad do", czyli Okres Zgłaszania Wad wg FIDIC - to pole pojawia się tylko przy umowach Żółty i Czerwony. Puste pole znaczy "termin nieustalony", a nie "termin nie występuje". Wszystkie terminy widać w bocznej kolumnie na liście umów.',
@@ -115,6 +124,13 @@ const tips: Tip[] = [
         text: '"Dokumentacja zatwierdzona" to rejestr przy kamieniu projektowanie - nadzór. Włączasz go haczykiem na umowie - opcja jest widoczna tylko dla typów Żółty i Usługa. Po włączeniu w kamieniu powstaje folder "04 Dokumentacja zatwierdzona" wraz z arkuszem-rejestrem.',
         category: "contracts",
         roles: MainSetup.STAFF_ROLES,
+    },
+
+    {
+        text: 'Przy czerwonej plakietce "Uzupełnij umowę na dysku" kliknij ją, aby otworzyć folder, w którym brakuje pliku umowy.',
+        isNew: true,
+        category: "contracts",
+        roles: MainSetup.CONTRACT_SCOPED_ROLES,
     },
 
     // Faktury i KSeF
@@ -198,7 +214,8 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
             });
 
             // ponytail: bez zapasu na pustą listę - rady ogólne nie mają ograniczeń, więc widzi je każdy.
-            const randomTip = availableTips[Math.floor(Math.random() * availableTips.length)];
+            const weightedTips = availableTips.flatMap((currentTip) => currentTip.isNew ? [currentTip, currentTip] : [currentTip]);
+            const randomTip = weightedTips[Math.floor(Math.random() * weightedTips.length)];
             remainingTimeRef.current = randomTip.isNew ? delay * 2 : delay;
             setTip(randomTip);
             setTimeout(() => setIsVisible(true), 100);
