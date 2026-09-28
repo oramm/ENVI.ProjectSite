@@ -165,7 +165,7 @@ export default function VacationsPage({ title }: { title?: string }) {
         );
     }
 
-    if (loading) return <SpinnerBootstrap />;
+    if (loading) return <div className="d-flex justify-content-center align-items-center min-vh-100"><SpinnerBootstrap /></div>;
     if (error)
         return (
             <Alert variant="danger" dismissible onClose={() => setError(null)}>
