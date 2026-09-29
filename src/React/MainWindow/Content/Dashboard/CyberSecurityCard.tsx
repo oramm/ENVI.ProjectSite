@@ -17,6 +17,10 @@ const tips: { title: string; text: React.ReactNode }[] = [
         text: "Im większa presja czasu, tym staranniej weryfikuj. Oszust liczy na to, że nie zdążysz sprawdzić.",
     },
     {
+        title: "Uważaj na fałszywe powiadomienia o skrzynce",
+        text: "Nasz serwer pocztowy nie wysyła wiadomości o zapełnieniu skrzynki. Informacje dotyczące serwera pocztowego możesz otrzymać wyłącznie od pracownika ENVI, który nim zarządza.",
+    },
+    {
         title: "Na podejrzaną wiadomość nie odpowiadaj",
         text: "Przycisk Odpowiedz wysyła list z powrotem do oszusta, bo to on ustawia adres zwrotny. Napisz nową wiadomość na adres, który masz w kontaktach, albo po prostu zadzwoń.",
     },
