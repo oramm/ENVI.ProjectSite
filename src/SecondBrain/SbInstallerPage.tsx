@@ -34,11 +34,11 @@ export default function SbInstallerPage() {
             <Card className="mb-4">
                 <Card.Body className="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>
-                        <Card.Title className="mb-1">Paczka instalacyjna</Card.Title>
+                        <Card.Title className="mb-1">Instalator</Card.Title>
                         <Card.Text className="text-muted mb-0">
-                            Rozpakuj ją w dowolnym miejscu (na przykład na Pulpicie) i uruchom dwuklikiem
-                            plik <code>bootstrap.cmd</code>. W środku jest też pełna instrukcja krok po kroku
-                            (<code>README-onboarding.md</code>).
+                            Pobierzesz plik ZIP. Nie musisz go rozpakowywać: otwórz go (Eksplorator pokaże
+                            go jak folder) i kliknij dwukrotnie jedyny plik w środku,{" "}
+                            <code>ENVI-SB-instalator.cmd</code>.
                         </Card.Text>
                     </div>
                     <Button href={PACKAGE_URL} variant="primary" size="lg">
@@ -72,6 +72,12 @@ export default function SbInstallerPage() {
                 wyżej zrobisz później, po prostu odpal go jeszcze raz. Nic nie nadpisze i nic nie zepsuje.
                 Gdyby coś wyglądało na zawieszone, zwykle brakuje jednego z dwóch kroków powyżej:
                 zaproszenia na GitHubie albo zalogowania do Dysku Google.
+            </Alert>
+
+            <Alert variant="light" className="border">
+                Jeśli poprosimy Cię o zapis przebiegu instalacji: to plik <code>bootstrap.log</code> w
+                folderze <code>%USERPROFILE%\.envi\instalator</code> (wklej tę ścieżkę w pasek adresu
+                Eksploratora). Instalator podaje pełną ścieżkę na końcu każdego przebiegu.
             </Alert>
         </Container>
     );
