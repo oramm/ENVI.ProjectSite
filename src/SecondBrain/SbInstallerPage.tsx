@@ -27,6 +27,9 @@ function Link({ href, children }: { href: string; children: React.ReactNode }) {
 }
 
 export default function SbInstallerPage() {
+    const systemEmail = MainSetup.currentUserOrNull?.systemEmail?.trim();
+    const loginAddress = systemEmail ? <strong>{systemEmail}</strong> : "adres, którym logujesz się do PS";
+
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
     }, []);
@@ -60,23 +63,24 @@ export default function SbInstallerPage() {
             <h5>Zanim uruchomisz instalator</h5>
             <ListGroup numbered className="mb-4">
                 <ListGroup.Item>
-                    <strong>Konto GitHub.</strong> Jeśli go nie masz -{" "}
-                    <Link href="https://github.com/signup">załóż zwykłe, prywatne konto</Link>. Następnie wyślij
-                    swoją nazwę użytkownika (widać ją na{" "}
-                    <Link href="https://github.com/settings/profile">stronie profilu</Link>) do biura ENVI i{" "}
+                    <strong>Konto GitHub.</strong> Nie zakładasz konta i nie musisz nic wysyłać do biura.
+                    Zaproszenie do organizacji <code>envi-konsulting</code> przyjdzie mailem na {loginAddress}.
+                    W mailu kliknij "Join", a potem "Continue with Google" - tym samym kontem Google,
+                    którym logujesz się do PS. Jeśli maila nie widzisz, możesz zaproszenie przyjąć też tu:{" "}
                     <Link href="https://github.com/orgs/envi-konsulting/invitation">
-                        przyjmij zaproszenie do zespołu <code>envi-konsulting</code>
+                        przyjmij zaproszenie
                     </Link>{" "}
-                    - link zadziała, gdy biuro już je wyśle. Bez tego instalator nie pobierze wiedzy firmowej.
+                    (link zadziała, gdy zaproszenie już jest wysłane). Bez tego instalator nie pobierze wiedzy firmowej.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Dysk Google.</strong> Zaloguj się na komputerze firmowym kontem ENVI. Instalator
-                    bierze stamtąd narzędzia dla agenta. Sprawdzisz to,{" "}
+                    <strong>Dysk Google.</strong> Zaloguj się tym samym kontem{systemEmail ? <>: {loginAddress}</> : ", którym logujesz się do PS"} (zwykle już jesteś).
+                    Sprawdzisz to,{" "}
                     <Link href="https://drive.google.com/drive/shared-drives">otwierając Dysk Google</Link>: po
-                    kliknięciu w swoje zdjęcie w prawym górnym rogu powinien być firmowy adres ENVI.
+                    kliknięciu w swoje zdjęcie w prawym górnym rogu powinien być ten adres. Instalator bierze
+                    stamtąd narzędzia dla agenta.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Trenowanie AI na koncie GitHub.</strong> Otwórz{" "}
+                    <strong>Trenowanie AI na koncie GitHub.</strong> Po przyjęciu zaproszenia otwórz{" "}
                     <Link href="https://github.com/settings/copilot/features">ustawienia Copilot</Link>, na samym
                     dole w sekcji <em>Privacy</em> przy <em>Allow GitHub to use my data for AI model training</em>{" "}
                     wybierz <em>Disabled</em> (zapisuje się samo). Treści firmowe nie mają trafiać do
@@ -87,8 +91,9 @@ export default function SbInstallerPage() {
             <Alert variant="light" className="border">
                 Instalator można uruchamiać wielokrotnie - jeśli przerwiesz go w połowie albo któryś krok
                 wyżej zrobisz później, po prostu odpal go jeszcze raz. Nic nie nadpisze i nic nie zepsuje.
-                Gdyby coś wyglądało na zawieszone, zwykle brakuje jednego z dwóch kroków powyżej:
-                zaproszenia na GitHubie albo zalogowania do Dysku Google.
+                Gdyby coś wyglądało na zawieszone, zwykle brakuje przyjętego zaproszenia na GitHubie
+                (sprawdź pocztę na adres logowania do PS) albo jesteś zalogowany do Dysku Google innym
+                kontem niż to z PS.
             </Alert>
 
             <Alert variant="light" className="border">
