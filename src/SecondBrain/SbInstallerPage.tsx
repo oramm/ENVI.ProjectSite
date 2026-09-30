@@ -17,6 +17,15 @@ import MainSetup from "../React/MainSetupReact";
  */
 const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
 
+/** Link zewnętrzny w nowej karcie - osoba ma wrócić na tę stronę, a nie jej szukać. */
+function Link({ href, children }: { href: string; children: React.ReactNode }) {
+    return (
+        <a href={href} target="_blank" rel="noopener noreferrer">
+            {children}
+        </a>
+    );
+}
+
 export default function SbInstallerPage() {
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
@@ -51,19 +60,27 @@ export default function SbInstallerPage() {
             <h5>Zanim uruchomisz instalator</h5>
             <ListGroup numbered className="mb-4">
                 <ListGroup.Item>
-                    <strong>Konto GitHub.</strong> Jeśli go nie masz - załóż zwykłe, prywatne konto.
-                    Następnie wyślij swoją nazwę użytkownika do biura ENVI i przyjmij zaproszenie do
-                    zespołu <code>envi-konsulting</code>, które przyjdzie do Ciebie mailem od GitHuba.
-                    Bez tego instalator nie pobierze wiedzy firmowej.
+                    <strong>Konto GitHub.</strong> Jeśli go nie masz -{" "}
+                    <Link href="https://github.com/signup">załóż zwykłe, prywatne konto</Link>. Następnie wyślij
+                    swoją nazwę użytkownika (widać ją na{" "}
+                    <Link href="https://github.com/settings/profile">stronie profilu</Link>) do biura ENVI i{" "}
+                    <Link href="https://github.com/orgs/envi-konsulting/invitation">
+                        przyjmij zaproszenie do zespołu <code>envi-konsulting</code>
+                    </Link>{" "}
+                    - link zadziała, gdy biuro już je wyśle. Bez tego instalator nie pobierze wiedzy firmowej.
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Dysk Google.</strong> Zaloguj się na komputerze firmowym kontem ENVI. Instalator
-                    bierze stamtąd narzędzia dla agenta.
+                    bierze stamtąd narzędzia dla agenta. Sprawdzisz to,{" "}
+                    <Link href="https://drive.google.com/drive/shared-drives">otwierając Dysk Google</Link>: po
+                    kliknięciu w swoje zdjęcie w prawym górnym rogu powinien być firmowy adres ENVI.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Trenowanie AI na koncie GitHub.</strong> W ustawieniach swojego konta (Copilot)
-                    wyłącz zgodę na wykorzystywanie Twojej aktywności do trenowania modeli. Treści firmowe
-                    nie mają trafiać do zewnętrznych dostawców.
+                    <strong>Trenowanie AI na koncie GitHub.</strong> Otwórz{" "}
+                    <Link href="https://github.com/settings/copilot/features">ustawienia Copilot</Link>, na samym
+                    dole w sekcji <em>Privacy</em> przy <em>Allow GitHub to use my data for AI model training</em>{" "}
+                    wybierz <em>Disabled</em> (zapisuje się samo). Treści firmowe nie mają trafiać do
+                    zewnętrznych dostawców.
                 </ListGroup.Item>
             </ListGroup>
 
