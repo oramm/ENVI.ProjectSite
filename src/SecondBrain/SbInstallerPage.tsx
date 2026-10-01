@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
-import { Alert, Button, Card, Container, ListGroup } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Alert, Badge, Button, Card, Container, ListGroup, Spinner } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import MainSetup from "../React/MainSetupReact";
+import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import { linkOwnGithubAccount, useSbAccess } from "./sbAccessApi";
+import { describeLinkFailure, linkPanelMode, parseGithubLoginParam } from "./sbAccessView";
 
 /**
  * Punkt wydawania instalatora firmowego Second Brain (decyzja D-7 packa SB).
@@ -13,7 +17,7 @@ import MainSetup from "../React/MainSetupReact";
  *
  * Pobranie to **zwykły odnośnik**, a nie fetch z obsługą błędu: trasa serwera odpowiada
  * `Content-Disposition: attachment`, więc przeglądarka zapisuje plik sama, a osoba bez sesji
- * dostaje z serwera odmowę zamiast pliku. Własnej autoryzacji tu nie ma i nie ma jej mieć.
+ * dostaje z serwera odmowę zamiast pliku. O dostępie decyduje rejestr SB w PS.
  */
 const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
 
@@ -27,13 +31,47 @@ function Link({ href, children }: { href: string; children: React.ReactNode }) {
 }
 
 export default function SbInstallerPage() {
+    const sb = useSbAccess();
+    const [searchParams] = useSearchParams();
+    const login = parseGithubLoginParam(searchParams.get("githubLogin"));
+    const [linking, setLinking] = useState(false);
+    const [linkResult, setLinkResult] = useState<{
+        login: string; success: boolean; message: string; note: string;
+    } | null>(null);
     const systemEmail = MainSetup.currentUserOrNull?.systemEmail?.trim();
     const loginAddress = systemEmail ? <strong>{systemEmail}</strong> : "adres, którym logujesz się do PS";
 
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
     }, []);
-    
+
+    async function linkAccount() {
+        if (!login || linking) return;
+        setLinking(true);
+        setLinkResult(null);
+        const result = await linkOwnGithubAccount(login);
+        setLinking(false);
+        if (result.ok) {
+            setLinkResult({ login, success: true, message: `Gotowe - konto GitHub ${login} jest powiązane z Twoim dostępem.`, note: result.result === "PARTIAL" ? result.note : "" });
+            sb.reload();
+        } else {
+            setLinkResult({ login, success: false, message: describeLinkFailure(result.status, result.message), note: "" });
+        }
+    }
+
+    if (sb.state === "loading") return <SpinnerBootstrap />;
+    if (sb.state === "error") return <Container className="py-4"><Alert variant="danger">Nie udało się sprawdzić dostępu do Second Brain. Odśwież stronę.</Alert></Container>;
+    if (sb.state === "denied" || !sb.access?.sb) return (
+        <Container className="py-4" style={{ maxWidth: 760 }}>
+            <h4>Second Brain ENVI</h4>
+            <Alert variant="info">Nie masz jeszcze dostępu do Second Brain - poproś przełożonego o zaproszenie do SB w PS.</Alert>
+        </Container>
+    );
+
+    const access = sb.access.sb;
+    const panelMode = linkPanelMode(access, login);
+    const result = linkResult?.login === login ? linkResult : null;
+
     return (
         <Container className="py-4" style={{ maxWidth: 760 }}>
             <h4>Second Brain ENVI - instalator</h4>
@@ -42,6 +80,50 @@ export default function SbInstallerPage() {
                 z notatkami, który sam odświeża się w tle. Instalacja to około 15 minut i jeden plik -
                 nie musisz znać się na niczym technicznym.
             </p>
+
+            <Card className="mb-4">
+                <Card.Body><Card.Title>Twój dostęp</Card.Title></Card.Body>
+                <ListGroup variant="flush">
+                    <ListGroup.Item>
+                        <strong className="me-2">GitHub</strong>
+                        {access.isGrantedManually ? <Badge bg="success">Aktywny (nadany ręcznie)</Badge> : (
+                            access.githubState === "PENDING" ? <>
+                                <Badge bg="warning" text="dark">Zaproszenie czeka na przyjęcie</Badge>
+                                <div className="text-muted mt-1">Sprawdź pocztę (adres logowania do PS) i kliknij Join, potem Continue with Google.</div>
+                            </> : access.githubState === "LINKED" ? <>
+                                <Badge bg="success">Aktywny</Badge>
+                                <div className="text-muted mt-1">Konto: {access.githubLogin}</div>
+                            </> : <>
+                                <Badge bg="secondary">Aktywny, konto niepowiązane</Badge>
+                                <div className="text-muted mt-1">Konto GitHub powiąże się po pierwszym uruchomieniu instalatora.</div>
+                            </>
+                        )}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                        <strong className="me-2">Dysk Google</strong>
+                        {access.driveState === "READY" ? <Badge bg="success">Gotowy</Badge> : <>
+                            <Badge bg="danger">Brak dostępu do Dysku</Badge>
+                            <div className="text-muted mt-1">Poproś przełożonego o sprawdzenie dostępu do SB w PS.</div>
+                        </>}
+                    </ListGroup.Item>
+                </ListGroup>
+            </Card>
+
+            {result && <Alert variant={result.success ? "success" : "danger"}>{result.message}</Alert>}
+            {result?.note && <Alert variant="warning">{result.note}</Alert>}
+            {panelMode === "ask" && !result?.success && <Alert variant="light" className="border">
+                <p>Instalator wykrył na tym komputerze konto GitHub: <strong>{login}</strong>. Czy to Twoje konto?</p>
+                <Button variant="primary" disabled={linking} onClick={linkAccount}>
+                    {linking && <Spinner animation="border" size="sm" className="me-2" aria-label="Trwa powiązanie konta" />}
+                    To moje konto
+                </Button>
+            </Alert>}
+            {panelMode === "already" && !result?.success && <Alert variant="success">
+                Konto GitHub {login} jest już powiązane z Twoim dostępem.
+            </Alert>}
+            {panelMode === "other" && <Alert variant="warning">
+                Masz już powiązane konto GitHub {access.githubLogin}, a instalator wykrył {login}. Zmianę konta zleć przełożonemu.
+            </Alert>}
 
             <Card className="mb-4">
                 <Card.Body className="d-flex flex-wrap align-items-center justify-content-between gap-3">

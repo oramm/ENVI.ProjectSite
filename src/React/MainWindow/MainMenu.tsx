@@ -5,6 +5,7 @@ import { Badge, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import MainController from "../MainControllerReact";
 import MainSetup from "../MainSetupReact";
+import { useSbAccess } from "../../SecondBrain/sbAccessApi";
 
 /**
  * O dostępie do modułów flagowych decyduje backend (flagi w StaffMembers), nie rola -
@@ -53,6 +54,7 @@ export default function MainMenu() {
     const isStaff = !!currentUser && MainSetup.STAFF_ROLES.includes(currentUser.systemRoleName);
     const costInvoicesAccess = useModuleAccess("cost-invoices/access", isStaff);
     const bankAccess = useModuleAccess("bank-transfers/access", isStaff);
+    const sbAccess = useSbAccess(isStaff);
 
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
@@ -318,11 +320,9 @@ export default function MainMenu() {
                                     w oknie „Personel i uprawnienia" (panel administracyjny niżej),
                                     a nie z menu użytkownika. Osobę bez konta dalej dodaje się
                                     w oknie „Osoby". */}
-                                {/* Instalator Second Brain - sprawa osobista pracownika, a nie moduł
-                                    domenowy, więc siedzi w menu użytkownika, nie w nawigacji. Trasa
-                                    serwera wymaga tylko sesji; tutaj zawężamy do pracowników ENVI,
-                                    bo to im wydajemy firmową bazę wiedzy. */}
-                                {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
+                                {/* Rejestr SB w PS decyduje o dostępie. Serwer odmówi też pobrania
+                                    paczki osobom bez dostępu; pozycja menu to tylko wygoda. */}
+                                {sbAccess.state === "granted" && (
                                     <NavDropdown.Item as={Link} to="/sbInstaller">
                                         Second Brain - instalator
                                     </NavDropdown.Item>
