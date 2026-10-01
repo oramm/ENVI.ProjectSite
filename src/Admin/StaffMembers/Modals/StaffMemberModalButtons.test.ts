@@ -56,6 +56,7 @@ const serverRow = {
     hasCostInvoiceAccess: false,
     hasBankAccess: false,
     canLogSiteVisits: false,
+    canManageSbAccess: false,
     isActive: true,
     _personName: "test",
     _personSurname: "rola 7",

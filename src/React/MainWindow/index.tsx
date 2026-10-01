@@ -54,6 +54,7 @@ import MileagePage from "../../Mileage/MileagePage";
 import SiteVisitsPage from "../../SiteVisits/SiteVisitsPage";
 import PettyCashEntryPage from "../../Erp/PettyCash/PettyCashEntryPage";
 import Dashboard from "./Content/Dashboard/Dashboard";
+import SbAccessManagePage from "../../SecondBrain/SbAccessManagePage";
 import SbInstallerPage from "../../SecondBrain/SbInstallerPage";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
@@ -247,6 +248,7 @@ function AppRoutes() {
                     {/* Panel administracyjny - węższy niż STAFF_ROLES, bo ten obejmuje
                         też ENVI_EMPLOYEE. Musi odpowiadać bramce /admin w backendzie. */}
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.ADMIN_PANEL_ROLES} />}>
+                        <Route path="/admin/sbAccess" element={<SbAccessManagePage title="Dostęp do Second Brain" />} />
                         <Route path="/admin/cars" element={<CarsSearch title="Samochody" />} />
                         <Route path="/admin/softwareLicenses" element={<SoftwareLicensesSearch title="Licencje" />} />
                         <Route

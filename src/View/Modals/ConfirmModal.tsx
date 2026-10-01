@@ -7,11 +7,13 @@ type ConfirmModalProps = {
     onClose: () => void;
     title: string;
     subtitle?: string;
-    prompt: string;
+    prompt: React.ReactNode;
+    confirmLabel?: string;
+    confirmVariant?: React.ComponentProps<typeof Button>["variant"];
     onConfirm: () => Promise<void>;
 };
 
-export default function ConfirmModal({ show, onClose, title, subtitle, prompt, onConfirm }: ConfirmModalProps) {
+export default function ConfirmModal({ show, onClose, title, subtitle, prompt, onConfirm, confirmLabel = "Ok", confirmVariant = "primary" }: ConfirmModalProps) {
     const [isWaiting, setIsWaiting] = useState(false);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -43,8 +45,8 @@ export default function ConfirmModal({ show, onClose, title, subtitle, prompt, o
                 <Button variant="secondary" onClick={onClose}>
                     Anuluj
                 </Button>
-                <Button variant="primary" onClick={handleConfirmAndClose}>
-                    Ok
+                <Button variant={confirmVariant} disabled={isWaiting} onClick={handleConfirmAndClose}>
+                    {confirmLabel}
                     {isWaiting && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
                 </Button>
                 {isError && <AlertComponent message={errorMessage} type="danger" />}

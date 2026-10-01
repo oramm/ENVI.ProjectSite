@@ -47,6 +47,7 @@ const ROW_FROM_SERVER = {
     hasCostInvoiceAccess: false,
     hasBankAccess: false,
     canLogSiteVisits: false,
+    canManageSbAccess: false,
     isActive: true,
     _personName: "Anna",
     _personSurname: "Nowak",

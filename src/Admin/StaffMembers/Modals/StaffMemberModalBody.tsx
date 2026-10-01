@@ -43,6 +43,7 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             hasCostInvoiceAccess: !!initialData?.hasCostInvoiceAccess,
             hasBankAccess: !!initialData?.hasBankAccess,
             canLogSiteVisits: !!initialData?.canLogSiteVisits,
+            canManageSbAccess: !!initialData?.canManageSbAccess,
             isActive: initialData?.isActive ?? true,
         };
         reset(resetData);
@@ -171,6 +172,11 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             <Form.Group controlId="canLogSiteVisits" className="mt-3">
                 <Form.Check type="switch" label="Wizyty na budowie" {...register("canLogSiteVisits")} />
                 <Form.Text muted>Rejestrowanie wizyt w aplikacji mobilnej.</Form.Text>
+            </Form.Group>
+
+            <Form.Group controlId="canManageSbAccess" className="mt-3">
+                <Form.Check type="switch" label="Zarządza dostępem do Second Brain" {...register("canManageSbAccess")} />
+                <Form.Text muted>Zaprasza do SB, blokuje, odblokowuje i odbiera dostęp (Panel administracyjny, Dostęp do Second Brain). Działa tylko dla roli kierownik albo administrator.</Form.Text>
             </Form.Group>
 
             <hr />

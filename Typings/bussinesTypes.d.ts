@@ -887,6 +887,7 @@ export interface StaffMemberData extends RepositoryDataItem {
     hasCostInvoiceAccess: boolean;
     hasBankAccess: boolean;
     canLogSiteVisits: boolean;
+    canManageSbAccess: boolean;
     isActive: boolean;
     _personName?: string;
     _personSurname?: string;

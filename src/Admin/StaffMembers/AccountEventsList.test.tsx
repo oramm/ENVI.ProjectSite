@@ -40,6 +40,12 @@ const event = (over: Partial<PersonAccountEventData>): PersonAccountEventData =>
 });
 
 describe("describeAccountEvent - reguła „co pokazać”", () => {
+    it("opisuje znacznik zarządzania SB", () => {
+        const view = describeAccountEvent(event({ eventType: "STAFF_FLAGS", field: "canManageSbAccess", valueBefore: "false", valueAfter: "true" }));
+        expect(view.what).toBe("Zarządza dostępem do SB");
+        expect(view.before).toBe("nie");
+        expect(view.after).toBe("tak");
+    });
     it("rola: numer zamieniony na nazwę ze słownika, autor imieniem i nazwiskiem", () => {
         const view = describeAccountEvent(event({}));
         expect(view.what).toBe("Rola");

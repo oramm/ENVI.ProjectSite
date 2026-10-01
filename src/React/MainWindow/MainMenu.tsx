@@ -336,6 +336,8 @@ export default function MainMenu() {
                                         <NavDropdown.Item as={Link} to="/admin/staffMembers">
                                             Personel i uprawnienia
                                         </NavDropdown.Item>
+                                        {/* Serwer i tak odmówi bez uprawnienia; pozycja menu to tylko wygoda. */}
+                                        {sbAccess.access?.canManage === true && <NavDropdown.Item as={Link} to="/admin/sbAccess">Dostęp do Second Brain</NavDropdown.Item>}
                                         <NavDropdown.Item as={Link} to="/admin/softwareLicenses">Licencje</NavDropdown.Item>
                                         <NavDropdown.Item as={Link} to="/admin/cars">
                                             Samochody

@@ -20,6 +20,7 @@ const base = {
     hasCostInvoiceAccess: false,
     hasBankAccess: false,
     canLogSiteVisits: false,
+    canManageSbAccess: false,
     isActive: true,
 };
 
@@ -33,6 +34,11 @@ async function errorsFor(data: Record<string, unknown>): Promise<{ path: string;
 }
 
 describe("StaffMemberValidationSchema - reguły konta w modalu uprawnień", () => {
+    it("znacznik zarządzania SB jest wymagany i zachowuje wartość przy walidacji zapisu", async () => {
+        const data = { ...base, systemEmail: "anna@envi.com.pl", fidmanEnabled: false, canManageSbAccess: true };
+        expect((await makeStaffMemberValidationSchema(true).validate(data)).canManageSbAccess).toBe(true);
+        expect(await errorsFor({ ...data, canManageSbAccess: undefined })).toEqual(expect.arrayContaining([expect.objectContaining({ path: "canManageSbAccess" })]));
+    });
     it("FIDman bez e-maila systemowego zatrzymuje zapis przy OBU polach", async () => {
         const errors = await errorsFor({ ...base, systemEmail: "", fidmanEnabled: true });
         const paths = errors.filter((e) => e.message === FIDMAN_EMAIL_MESSAGE).map((e) => e.path);

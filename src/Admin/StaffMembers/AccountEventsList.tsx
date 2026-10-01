@@ -21,6 +21,7 @@ const FIELD_LABELS: Record<string, string> = {
     "STAFF_FLAGS.hasCostInvoiceAccess": "Faktury kosztowe",
     "STAFF_FLAGS.hasBankAccess": "Wyciągi bankowe",
     "STAFF_FLAGS.canLogSiteVisits": "Wizyty na budowie",
+    "STAFF_FLAGS.canManageSbAccess": "Zarządza dostępem do SB",
     "STAFF_FLAGS.isActive": "Aktywny (panel)",
 };
 
