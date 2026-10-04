@@ -77,6 +77,8 @@ export interface Contract extends RepositoryDataItem {
     defectsNotificationEndDate?: string | null;
     _project: ProjectData;
     projectOurId?: string;
+    /** Pokój Google Chat kontraktu ENVI (`ChatSpaces.Id`). Brak/null = kontrakt bez pokoju. */
+    chatSpaceId?: number | null;
     status: string;
     gdFolderId?: string;
     meetingProtocolsGdFolderId?: string;

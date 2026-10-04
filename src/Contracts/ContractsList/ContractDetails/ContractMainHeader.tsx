@@ -25,6 +25,7 @@ import {
 } from "../Modals/ContractValidationSchema";
 import { ContractDocumentBadge } from "../ContractRowContent";
 import { useContractDetails } from "./ContractDetailsContext";
+import { ContractChatSpaceSection } from "./ContractChatSpaceSection";
 
 export function ContractMainHeader() {
     const { contract, setContract, contractsRepository } = useContractDetails();
@@ -107,7 +108,8 @@ export function ContractMainHeader() {
                 <Col sm={12} md={6} className="d-flex align-items-center">
                     <MoveContractButton />
                 </Col>
-                <Col sm={12} md={6} className="d-flex align-items-center gap-2">
+                <Col sm={12} md={6} className="d-flex flex-wrap align-items-center gap-2">
+                    <ContractChatSpaceSection />
                     <FidmanSyncSection />
                     <ContractDocumentSection />
                 </Col>

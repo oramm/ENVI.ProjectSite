@@ -16,6 +16,7 @@ import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/Gene
 import { CityInlineCreateDrawer, EntityInlineCreateDrawer } from "../../../View/Modals/InlineCreateDrawers";
 import { fetchAqmMatch, AqmMatchResponse } from "./aqmMatchService";
 import { ContractStructureTree } from "./ContractStructureTree";
+import { ChatSpaceSelection } from "./ChatSpaceSelection";
 import { normalizeNip } from "./nipValidator";
 
 /** Text labels for the 3 AQM dedup match states (L11). */
@@ -345,6 +346,8 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 Tylko przy rejestracji — przy edycji kamienie i sprawy już istnieją
                 i zmienia się je w widoku umowy. */}
             {!isEditing && <ContractStructureTree />}
+            {/* Pokój Google Chat: też tylko przy rejestracji; przy edycji pokojem zarządza się w widoku umowy. */}
+            {!isEditing && <ChatSpaceSelection />}
         </>
     );
 }
