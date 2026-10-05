@@ -60,13 +60,13 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("status", initialData?.status || "", { shouldValidate: true });
         setValue("lettersShortcutsInSubfolder", initialData?.lettersShortcutsInSubfolder ?? false, { shouldValidate: true });
         setValue("approvedDocumentation", initialData?.approvedDocumentation ?? false, { shouldValidate: true });
-        // „Objęta synchronizacją" (WYK): stan wczytujemy z umowy, żeby po ponownym otwarciu
-        // formularza kratka pokazywała to, co jest w bazie, a nie stan domyślny. `?? false`
-        // dotyczy tylko NOWEJ umowy i umowy odczytanej zapytaniem bez tej kolumny — w obu
-        // wypadkach „wykluczona" jest poprawną odpowiedzią, bo bramka wysyłki i tak jest
-        // fail-closed. Pole jedzie w zapisie zawsze, także jako false — brak pola w żądaniu
-        // serwer czyta jako „nie ruszaj wartości w bazie" (Contract.parseOptionalBoolean).
-        setValue("fidmanSyncEnabled", initialData?.fidmanSyncEnabled ?? false, { shouldValidate: true });
+        // „Objęta synchronizacją" (WYK): przy edycji stan wczytujemy z umowy, żeby kratka pokazywała
+        // to, co jest w bazie; `?? false` (umowa odczytana bez tej kolumny) zostaje, bo włączenie
+        // przy edycji przywróciłoby wydmuszki wykluczone w sierpniu. NOWA umowa rodzi się
+        // zaznaczona (właściciel 2026-10-05, uchyla Q-WYK-1); serwer i tak zeruje znacznik dla
+        // typów spoza allowlisty. Pole jedzie w zapisie zawsze, także jako false — brak pola
+        // w żądaniu serwer czyta jako „nie ruszaj wartości w bazie" (Contract.parseOptionalBoolean).
+        setValue("fidmanSyncEnabled", isEditing ? initialData?.fidmanSyncEnabled ?? false : true, { shouldValidate: true });
         // Metoda rozliczenia (RZL pack): pole nieobowiązkowe, dokładnie dwie opcje domenowe.
         // "" = jeszcze nie wpisano (789 kontraktów historycznych) — to stan pusty pola,
         // NIE trzecia opcja do wyboru. Backend normalizuje "" do null (Contract.ts).

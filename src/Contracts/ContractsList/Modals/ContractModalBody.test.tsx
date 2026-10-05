@@ -46,11 +46,11 @@ const NOT_SYNCED_TYPE = { id: 1, name: "IK" };
 
 let form: UseFormReturn<FieldValues>;
 
-function Harness({ initialData }: { initialData: any }) {
+function Harness({ initialData, isEditing = true }: { initialData: any; isEditing?: boolean }) {
     form = useForm({ defaultValues: {} });
     return (
         <FormProvider value={form}>
-            <ContractModalBody initialData={initialData} isEditing={true} {...({} as any)} />
+            <ContractModalBody initialData={initialData} isEditing={isEditing} {...({} as any)} />
         </FormProvider>
     );
 }
@@ -64,8 +64,8 @@ const contract = (over: any = {}) => ({
     ...over,
 });
 
-function renderForm(initialData: any) {
-    const utils = render(<Harness initialData={initialData} />);
+function renderForm(initialData: any, isEditing = true) {
+    const utils = render(<Harness initialData={initialData} isEditing={isEditing} />);
     const checkbox = utils.container.querySelector<HTMLInputElement>("#fidmanSyncEnabled");
     return { ...utils, checkbox };
 }
@@ -95,6 +95,15 @@ describe("ContractModalBody — pole „Objęta synchronizacją”", () => {
 
         await waitFor(() => expect(form.getValues("fidmanSyncEnabled")).toBe(false));
         expect(checkbox!.checked).toBe(false);
+    });
+
+    // Właściciel 2026-10-05 (uchyla Q-WYK-1): nowa umowa rodzi się objęta synchronizacją; edycja nigdy
+    // nie włącza kratki sama (test niżej), bo przywróciłaby wydmuszki wykluczone w sierpniu.
+    it("NOWA umowa otwiera formularz z kratką zaznaczoną", async () => {
+        const { checkbox } = renderForm(undefined, false);
+
+        await waitFor(() => expect(form.getValues("fidmanSyncEnabled")).toBe(true));
+        expect(checkbox!.checked).toBe(true);
     });
 
     it("umowa bez znacznika w danych (serwer nie podał pola) otwiera formularz z kratką odznaczoną", async () => {
