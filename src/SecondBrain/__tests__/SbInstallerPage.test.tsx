@@ -112,3 +112,16 @@ describe("API i hook dostępu", () => {
         await act(async () => resolve(response(invited)));
     });
 });
+
+describe("Treść instalatora", () => {
+    it("każe wyodrębnić ZIP i zawiera sekcję Po instalacji z kotwicą", async () => {
+        fetchMock.mockResolvedValue(response(invited));
+        const { container } = renderPage("/sbInstaller?sekcja=po-instalacji");
+        await screen.findByRole("button", { name: "Pobierz instalator" });
+        expect(screen.queryByText(/Nie musisz go rozpakowywać/)).toBeNull();
+        expect(screen.getByText(/Wyodrębnij wszystkie/)).toBeVisible();
+        expect(screen.getByText("W trakcie instalacji")).toBeVisible();
+        expect(container.querySelector("#po-instalacji")).not.toBeNull();
+        expect(screen.getByText("Po instalacji - co dalej")).toBeVisible();
+    });
+});

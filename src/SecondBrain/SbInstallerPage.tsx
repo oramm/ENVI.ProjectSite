@@ -21,6 +21,12 @@ import { describeLinkFailure, linkPanelMode, parseGithubLoginParam } from "./sbA
  */
 const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
 
+/**
+ * Kotwica sekcji "Po instalacji". Router jest hashowy (`#/sbInstaller`), więc drugi `#` w adresie
+ * nie zadziała - instalator otwiera `/#/sbInstaller?sekcja=po-instalacji`, a strona sama przewija.
+ */
+const POST_INSTALL_ID = "po-instalacji";
+
 /** Link zewnętrzny w nowej karcie - osoba ma wrócić na tę stronę, a nie jej szukać. */
 function Link({ href, children }: { href: string; children: React.ReactNode }) {
     return (
@@ -41,9 +47,17 @@ export default function SbInstallerPage() {
     const systemEmail = MainSetup.currentUserOrNull?.systemEmail?.trim();
     const loginAddress = systemEmail ? <strong>{systemEmail}</strong> : "adres, którym logujesz się do PS";
 
+    const scrollToSection = searchParams.get("sekcja");
+
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
     }, []);
+
+    // Sekcja pojawia się dopiero po sprawdzeniu dostępu, dlatego przewijamy po zmianie stanu.
+    useEffect(() => {
+        if (sb.state !== "granted" || scrollToSection !== POST_INSTALL_ID) return;
+        document.getElementById(POST_INSTALL_ID)?.scrollIntoView?.();
+    }, [sb.state, scrollToSection]);
 
     async function linkAccount() {
         if (!login || linking) return;
@@ -130,9 +144,9 @@ export default function SbInstallerPage() {
                     <div>
                         <Card.Title className="mb-1">Instalator</Card.Title>
                         <Card.Text className="text-muted mb-0">
-                            Pobierzesz plik ZIP. Nie musisz go rozpakowywać: otwórz go (Eksplorator pokaże
-                            go jak folder) i kliknij dwukrotnie jedyny plik w środku,{" "}
-                            <code>ENVI-SB-instalator.cmd</code>.
+                            Pobierzesz plik ZIP. Kliknij go prawym przyciskiem myszy, wybierz{" "}
+                            <em>Wyodrębnij wszystkie</em>, a potem w wypakowanym folderze kliknij dwukrotnie{" "}
+                            <code>ENVI-SB-instalator.cmd</code>. Nie uruchamiaj go z wnętrza ZIP-a.
                         </Card.Text>
                     </div>
                     <Button href={PACKAGE_URL} variant="primary" size="lg">
@@ -170,6 +184,46 @@ export default function SbInstallerPage() {
                 </ListGroup.Item>
             </ListGroup>
 
+            <h5>W trakcie instalacji</h5>
+            <p className="text-muted">
+                W trakcie instalacji pojawią się okna, o których warto wiedzieć wcześniej. Żadne z nich
+                nie oznacza błędu.
+            </p>
+            <ListGroup numbered className="mb-4">
+                <ListGroup.Item>
+                    <strong>Okna Windows "Czy zezwolić tej aplikacji na wprowadzanie zmian?"</strong> pojawią się
+                    przy instalacji GitHuba, Dysku Google, Node.js, Claude i Codexa (ChatGPT). Za każdym razem
+                    wybierz <em>Tak</em>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Logowanie do Dysku Google.</strong> Google może ostrzec o Google Play. Wybierz{" "}
+                    <em>Zaloguj się</em>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Jednorazowy ekran Google "Google nie zweryfikował tej aplikacji".</strong> To nasza
+                    aplikacja. Kliknij <em>Zaawansowane</em>, a potem <em>Przejdź do ENVI Second Brain</em>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Logowanie do GitHuba.</strong> Instalator pokaże kod. Kod jest ważny 15 minut, więc
+                    nie przerywaj w tym czasie. Jeśli kod zniknął ze schowka, przepisz go z okna instalatora.
+                    GitHub może poprosić o potwierdzenie kodem z maila (<em>Confirm access</em> albo{" "}
+                    <em>Verify via email</em>) - sprawdź pocztę na adres logowania do PS.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Okno antywirusa przy zakładaniu zadania w harmonogramie</strong> (na przykład "Wykryto
+                    podejrzany proces"). To instalator Second Brain, który ustawia pobieranie wiedzy co godzinę.
+                    Wybierz <em>Wznów</em> albo <em>Zezwól</em>.
+                </ListGroup.Item>
+            </ListGroup>
+
+            <Alert variant="light" className="border">
+                Konto GitHub zakładasz przez <em>Continue with Google</em>. Jeśli na stronie logowania nie ma
+                przycisku Google, wejdź przez{" "}
+                <Link href="https://github.com/signup">github.com/signup</Link> i tam wybierz{" "}
+                <em>Continue with Google</em>. Komunikat <em>Too many requests</em> mija sam po kilku minutach -
+                poczekaj i spróbuj ponownie.
+            </Alert>
+
             <Alert variant="light" className="border">
                 Instalator można uruchamiać wielokrotnie - jeśli przerwiesz go w połowie albo któryś krok
                 wyżej zrobisz później, po prostu odpal go jeszcze raz. Nic nie nadpisze i nic nie zepsuje.
@@ -183,6 +237,38 @@ export default function SbInstallerPage() {
                 folderze <code>%USERPROFILE%\.envi\instalator</code> (wklej tę ścieżkę w pasek adresu
                 Eksploratora). Instalator podaje pełną ścieżkę na końcu każdego przebiegu.
             </Alert>
+
+            <h5 id={POST_INSTALL_ID} className="mt-4">Po instalacji - co dalej</h5>
+            <ListGroup numbered className="mb-4">
+                <ListGroup.Item>
+                    <strong>Claude.</strong> Uruchom aplikację Claude z menu Start. Możesz też otworzyć
+                    terminal w folderze <code>ENVI-Kanon</code> i wpisać <code>claude</code>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Codex.</strong> Uruchom aplikację ChatGPT (Codex) z menu Start albo wpisz{" "}
+                    <code>codex</code> w terminalu otwartym w folderze <code>ENVI-Kanon</code>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Pierwsze logowanie.</strong> Obie aplikacje poproszą o zalogowanie. Claude i Codex
+                    wymagają płatnego planu (Claude Pro albo Team, ChatGPT Plus albo Team) - zaloguj się
+                    na konto, które wskaże przełożony.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Umiejętności (skille).</strong> Są już na miejscu, nic nie instalujesz.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Dysk i Dokumenty Google.</strong> Działają po jednorazowym logowaniu do Google,
+                    które instalator prowadzi w trakcie przebiegu.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Aktualizacje.</strong> Uruchom instalator ponownie, kiedy chcesz zaktualizować
+                    narzędzia. Nic nie nadpisze i nic nie zepsuje.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Gdy coś się nie udało.</strong> Wyślij plik <code>bootstrap.log</code> z folderu{" "}
+                    <code>%USERPROFILE%\.envi\instalator</code> (wklej tę ścieżkę w pasek adresu Eksploratora).
+                </ListGroup.Item>
+            </ListGroup>
         </Container>
     );
 }
