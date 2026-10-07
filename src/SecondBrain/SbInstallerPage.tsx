@@ -192,8 +192,9 @@ export default function SbInstallerPage() {
             <ListGroup numbered className="mb-4">
                 <ListGroup.Item>
                     <strong>Okna Windows "Czy zezwolić tej aplikacji na wprowadzanie zmian?"</strong> pojawią się
-                    przy instalacji GitHuba, Dysku Google, Node.js, Claude i Codexa (ChatGPT). Za każdym razem
-                    wybierz <em>Tak</em>.
+                    przy instalacji GitHuba, Dysku Google i Node.js. Za każdym razem wybierz <em>Tak</em>.
+                    Podobne okno może się pojawić przy innych programach instalowanych przez instalator SB
+                    - to on, kliknij <em>Tak</em>.
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Logowanie do Dysku Google.</strong> Google może ostrzec o Google Play. Wybierz{" "}
@@ -211,7 +212,7 @@ export default function SbInstallerPage() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Okno antywirusa przy zakładaniu zadania w harmonogramie</strong> (na przykład "Wykryto
-                    podejrzany proces"). To instalator Second Brain, który ustawia pobieranie wiedzy co godzinę.
+                    podejrzany proces"). To instalator Second Brain, który ustawia regularne pobieranie wiedzy.
                     Wybierz <em>Wznów</em> albo <em>Zezwól</em>.
                 </ListGroup.Item>
             </ListGroup>
@@ -250,8 +251,7 @@ export default function SbInstallerPage() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Pierwsze logowanie.</strong> Obie aplikacje poproszą o zalogowanie. Claude i Codex
-                    wymagają płatnego planu (Claude Pro albo Team, ChatGPT Plus albo Team) - zaloguj się
-                    na konto, które wskaże przełożony.
+                    wymagają płatnego konta; z którego konta korzystać, wskaże przełożony.
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Umiejętności (skille).</strong> Są już na miejscu, nic nie instalujesz.
