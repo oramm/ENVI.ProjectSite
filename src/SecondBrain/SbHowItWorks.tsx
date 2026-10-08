@@ -292,7 +292,7 @@ const siteIcon = <Sketch w={56} h={60} box="0 0 24 24">
 
 /** Zapowiedź: zapis w Witrynie włączany pracownikom po kolei (decyzja właściciela 2026-10-08). */
 const letterPanels: Panel[] = [
-    { title: "Prosisz", role: "you", icon: "desk", bubbles: [{ who: "you", text: "„Zarejestruj pismo do [adresat] w sprawie [kontrakt].”" }] },
+    { title: "Prosisz", role: "you", icon: "desk", tag: "jeszcze nie działa", bubbles: [{ who: "you", text: "„Zarejestruj pismo do [adresat] w sprawie [kontrakt].”" }] },
     { title: "Agent dopytuje", role: "agent", icon: agentIcon, bubbles: [{ who: "agent", text: "„Czy to odpowiedź na wcześniejsze pismo? Jakie dołączyć załączniki?”" }] },
     {
         title: "Dobiera sprawę", role: "agent", icon: agentIcon,
@@ -305,9 +305,10 @@ const letterPanels: Panel[] = [
     },
     {
         title: "Zapis w Witrynie", role: "site", icon: siteIcon, caption: "numer nadaje Witryna",
-        bubbles: [], note: "Jedna próba. Agent nie ponawia zapisu, tylko sprawdza, czy pismo powstało.",
+        bubbles: [{ who: "agent", text: "„Zapisuję pismo w rejestrze.”" }],
+        note: "Agent zapisuje pismo tylko raz. Jeśli coś pójdzie nie tak, nie ponawia, tylko sprawdza, czy pismo powstało.",
     },
-    { title: "Sprawdzone", role: "agent", icon: agentIcon, bubbles: [{ who: "agent", text: "„Gotowe. Pismo jest w rejestrze, dokument na Dysku. Oto numer, link i sprawa.”" }] },
+    { title: "Sprawdzone", role: "agent", icon: agentIcon, tag: "jeszcze nie działa", bubbles: [{ who: "agent", text: "„Gotowe. Pismo jest w rejestrze, dokument na Dysku. Oto numer, link i sprawa.”" }] },
 ];
 
 /** Polecenia do skopiowania: tylko czytające albo zgłaszające, bez zapisów w Witrynie. */
@@ -404,8 +405,8 @@ export default function SbHowItWorks({ onShowPostInstall }: { onShowPostInstall:
             </h5>
             <p>
                 Agent będzie też zapisywał w Witrynie Projektów: zarejestruje pismo albo uzupełni dane kontraktu z umowy.
-                Włączamy to po kolei, osoba po osobie. <strong>Na razie działa tylko u administratora</strong> - da Ci znać,
-                kiedy zadziała u Ciebie.
+                Włączamy to po kolei, osoba po osobie. <strong>Na razie działa tylko u administratora.</strong> Nie proś jeszcze agenta o taki
+                zapis - u Ciebie nie zadziała. Administrator da Ci znać, kiedy go włączymy.
             </p>
             <p className="text-muted">
                 Tak to będzie wyglądać przy piśmie. Pisma w rejestrze nie da się cofnąć, dlatego przed zapisem zawsze jest
@@ -415,8 +416,8 @@ export default function SbHowItWorks({ onShowPostInstall }: { onShowPostInstall:
                 {letterPanels.map((p, i) => <ComicPanel key={p.title} panel={p} index={i} />)}
             </ol>
             <p className="mb-5">
-                Tak samo z umową: <i>„Uzupełnij dane kontraktu z tej umowy”</i> - agent przeczyta umowę z Dysku i po Twoim
-                „tak” wpisze do Witryny numer, daty i wartość.
+                Tak samo będzie z umową (<i>„Uzupełnij dane kontraktu z tej umowy”</i>): agent przeczyta umowę z Dysku i po Twoim
+                „tak” wpisze do Witryny numer, daty i wartość. Na razie nie próbuj - jeszcze nie działa.
             </p>
 
             <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700 }}>Dostęp do Google w skrócie</h5>
