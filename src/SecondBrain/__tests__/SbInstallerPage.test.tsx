@@ -32,7 +32,7 @@ describe("Instalator Second Brain", () => {
         expect(await screen.findByText("Nie masz jeszcze dostępu do Second Brain - poproś przełożonego o zaproszenie do SB w PS.")).toBeVisible();
         expect(screen.queryByRole("link")).toBeNull();
         expect(screen.queryByRole("button")).toBeNull();
-        expect(screen.queryByText("Zanim uruchomisz instalator")).toBeNull();
+        expect(screen.queryByText("Instalacja krok po kroku")).toBeNull();
     });
     it("wysyła login po kliknięciu i pozwala ponowić po 409", async () => {
         fetchMock.mockResolvedValueOnce(response(invited))
@@ -120,7 +120,8 @@ describe("Treść instalatora", () => {
         await screen.findByRole("button", { name: "Pobierz instalator" });
         expect(screen.queryByText(/Nie musisz go rozpakowywać/)).toBeNull();
         expect(screen.getByText(/Wyodrębnij wszystkie/)).toBeVisible();
-        expect(screen.getByText("W trakcie instalacji")).toBeVisible();
+        expect(screen.getByText("Instalacja krok po kroku")).toBeVisible();
+        expect(screen.getByRole("region", { name: "Instalacja krok po kroku" }).querySelectorAll("li")).toHaveLength(12);
         expect(container.querySelector("#po-instalacji")).not.toBeNull();
         expect(screen.getByText("Po instalacji - co dalej")).toBeVisible();
         expect(screen.getAllByText(/Aktualizuj Second Brain/)).toHaveLength(2);

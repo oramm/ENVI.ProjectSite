@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import MainSetup from "../React/MainSetupReact";
 import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import SbInstallerComic from "./SbInstallerComic";
 import { linkOwnGithubAccount, useSbAccess } from "./sbAccessApi";
 import { describeLinkFailure, linkPanelMode, parseGithubLoginParam } from "./sbAccessView";
 
@@ -144,9 +145,7 @@ export default function SbInstallerPage() {
                     <div>
                         <Card.Title className="mb-1">Instalator</Card.Title>
                         <Card.Text className="text-muted mb-0">
-                            Pobierzesz plik ZIP. Kliknij go prawym przyciskiem myszy, wybierz{" "}
-                            <em>Wyodrębnij wszystkie</em>, a potem w wypakowanym folderze kliknij dwukrotnie{" "}
-                            <code>ENVI-SB-instalator.cmd</code>. Nie uruchamiaj go z wnętrza ZIP-a.
+                            Pobierzesz plik ZIP. Co z nim zrobić, pokazują rysunki niżej.
                         </Card.Text>
                     </div>
                     <Button href={PACKAGE_URL} variant="primary" size="lg">
@@ -156,66 +155,8 @@ export default function SbInstallerPage() {
                 </Card.Body>
             </Card>
 
-            <h5>Zanim uruchomisz instalator</h5>
-            <ListGroup numbered className="mb-4">
-                <ListGroup.Item>
-                    <strong>Konto GitHub.</strong> Nie zakładasz konta i nie musisz nic wysyłać do biura.
-                    Zaproszenie do organizacji <code>envi-konsulting</code> przyjdzie mailem na {loginAddress}.
-                    W mailu kliknij "Join", a potem "Continue with Google" - tym samym kontem Google,
-                    którym logujesz się do PS. Jeśli maila nie widzisz, możesz zaproszenie przyjąć też tu:{" "}
-                    <Link href="https://github.com/orgs/envi-konsulting/invitation">
-                        przyjmij zaproszenie
-                    </Link>{" "}
-                    (link zadziała, gdy zaproszenie już jest wysłane). Bez tego instalator nie pobierze wiedzy firmowej.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Dysk Google.</strong> Zaloguj się tym samym kontem{systemEmail ? <>: {loginAddress}</> : ", którym logujesz się do PS"} (zwykle już jesteś).
-                    Sprawdzisz to,{" "}
-                    <Link href="https://drive.google.com/drive/shared-drives">otwierając Dysk Google</Link>: po
-                    kliknięciu w swoje zdjęcie w prawym górnym rogu powinien być ten adres. Instalator bierze
-                    stamtąd narzędzia dla agenta.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Trenowanie AI na koncie GitHub.</strong> Po przyjęciu zaproszenia otwórz{" "}
-                    <Link href="https://github.com/settings/copilot/features">ustawienia Copilot</Link>, na samym
-                    dole w sekcji <em>Privacy</em> przy <em>Allow GitHub to use my data for AI model training</em>{" "}
-                    wybierz <em>Disabled</em> (zapisuje się samo). Treści firmowe nie mają trafiać do
-                    zewnętrznych dostawców.
-                </ListGroup.Item>
-            </ListGroup>
-
-            <h5>W trakcie instalacji</h5>
-            <p className="text-muted">
-                W trakcie instalacji pojawią się okna, o których warto wiedzieć wcześniej. Żadne z nich
-                nie oznacza błędu.
-            </p>
-            <ListGroup numbered className="mb-4">
-                <ListGroup.Item>
-                    <strong>Okna Windows "Czy zezwolić tej aplikacji na wprowadzanie zmian?"</strong> pojawią się
-                    przy instalacji GitHuba, Dysku Google i Node.js. Za każdym razem wybierz <em>Tak</em>.
-                    Podobne okno może się pojawić przy innych programach instalowanych przez instalator SB
-                    - to on, kliknij <em>Tak</em>.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Logowanie do Dysku Google.</strong> Google może ostrzec o Google Play. Wybierz{" "}
-                    <em>Zaloguj się</em>.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Jednorazowy ekran Google "Google nie zweryfikował tej aplikacji".</strong> To nasza
-                    aplikacja. Kliknij <em>Zaawansowane</em>, a potem <em>Przejdź do ENVI Second Brain</em>.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Logowanie do GitHuba.</strong> Instalator pokaże kod. Kod jest ważny 15 minut, więc
-                    nie przerywaj w tym czasie. Jeśli kod zniknął ze schowka, przepisz go z okna instalatora.
-                    GitHub może poprosić o potwierdzenie kodem z maila (<em>Confirm access</em> albo{" "}
-                    <em>Verify via email</em>) - sprawdź pocztę na adres logowania do PS.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Okno antywirusa przy zakładaniu zadania w harmonogramie</strong> (na przykład "Wykryto
-                    podejrzany proces"). To instalator Second Brain, który ustawia regularne pobieranie wiedzy.
-                    Wybierz <em>Wznów</em> albo <em>Zezwól</em>.
-                </ListGroup.Item>
-            </ListGroup>
+            <h5>Instalacja krok po kroku</h5>
+            <SbInstallerComic loginAddress={loginAddress} />
 
             <Alert variant="light" className="border">
                 Konto GitHub zakładasz przez <em>Continue with Google</em>. Jeśli na stronie logowania nie ma
