@@ -242,13 +242,13 @@ export default function SbInstallerPage() {
             <h5 id={POST_INSTALL_ID} className="mt-4">Po instalacji - co dalej</h5>
             <ListGroup numbered className="mb-4">
                 <ListGroup.Item>
-                    <strong>Ikony na pulpicie.</strong> Instalator kładzie na pulpicie ikony <em>Claude</em>,{" "}
+                    <strong>Ikony na pulpicie.</strong> Instalator umieszcza na pulpicie ikony <em>Claude</em>,{" "}
                     <em>Codex (ChatGPT)</em> i <em>Aktualizuj Second Brain</em>. Chcesz je mieć na pasku zadań?
-                    Kliknij ikonę prawym przyciskiem i wybierz <em>Przypnij do paska zadań</em> (czasem pod{" "}
-                    <em>Pokaż więcej opcji</em>) - Windows 11 nie pozwala programom robić tego samodzielnie.
+                    Kliknij ikonę prawym przyciskiem i wybierz <em>Przypnij do paska zadań</em> (jeśli jej nie
+                    widać, najpierw <em>Pokaż więcej opcji</em>) - Windows 11 nie pozwala programom robić tego samodzielnie.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Claude.</strong> Instalator stawia aplikację Claude sam. Uruchom ją z menu Start,
+                    <strong>Claude.</strong> Instalator stawia aplikację Claude sam. Uruchom ją ikoną na pulpicie albo z menu Start,
                     przejdź do zakładki <em>Code</em> i wskaż folder <code>ENVI-Kanon</code> (w Twoim folderze
                     użytkownika). Kto woli terminal: w tym folderze wpisz <code>claude</code>.
                 </ListGroup.Item>
@@ -270,7 +270,7 @@ export default function SbInstallerPage() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Aktualizacje.</strong> Gdy przy zegarze pojawi się dymek „Second Brain: jest nowa
-                    wersja", kliknij go albo wybierz w menu Start <em>Aktualizuj Second Brain</em>. ZIP-a nie
+                    wersja", kliknij go albo ikonę <em>Aktualizuj Second Brain</em> na pulpicie (jest też w menu Start). ZIP-a nie
                     pobierasz drugi raz. Aktualizacja odświeża też Pythona, Node.js, Git oraz Claude i Codex w
                     terminalu, a aplikacje Claude i Codex aktualizują się same. Nic nie nadpisze i nic nie zepsuje.
                 </ListGroup.Item>
