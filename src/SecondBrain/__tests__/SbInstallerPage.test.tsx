@@ -123,7 +123,9 @@ describe("Treść instalatora", () => {
         expect(screen.getByText("W trakcie instalacji")).toBeVisible();
         expect(container.querySelector("#po-instalacji")).not.toBeNull();
         expect(screen.getByText("Po instalacji - co dalej")).toBeVisible();
-        expect(screen.getByText(/Aktualizuj Second Brain/)).toBeVisible();
+        expect(screen.getAllByText(/Aktualizuj Second Brain/)).toHaveLength(2);
+        expect(screen.getByText("Ikony na pulpicie.")).toBeVisible();
+        expect(screen.getByText(/Przypnij do paska zadań/)).toBeVisible();
         expect(screen.queryByText(/Uruchom instalator ponownie/)).toBeNull();
     });
 });
