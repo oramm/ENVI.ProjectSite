@@ -283,6 +283,33 @@ const documentPanels: Panel[] = [
     },
 ];
 
+const agentIcon = <Sketch w={80} h={62} box="0 0 52 40"><rect x="8" y="4" width="36" height="24" rx="2" fill={ROLE.agent} />
+    <path d="M3 35h46l-4-7H7z" fill="#fff" /><path d="M15 11h22M15 17h14" /></Sketch>;
+
+const siteIcon = <Sketch w={56} h={60} box="0 0 24 24">
+    <path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6" fill={ROLE.site} /><ellipse cx="12" cy="6" rx="7" ry="2.5" fill={ROLE.site} />
+    <path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" /></Sketch>;
+
+/** Zapowiedź: zapis w Witrynie włączany pracownikom po kolei (decyzja właściciela 2026-10-08). */
+const letterPanels: Panel[] = [
+    { title: "Prosisz", role: "you", icon: "desk", bubbles: [{ who: "you", text: "„Zarejestruj pismo do [adresat] w sprawie [kontrakt].”" }] },
+    { title: "Agent dopytuje", role: "agent", icon: agentIcon, bubbles: [{ who: "agent", text: "„Czy to odpowiedź na wcześniejsze pismo? Jakie dołączyć załączniki?”" }] },
+    {
+        title: "Dobiera sprawę", role: "agent", icon: agentIcon,
+        bubbles: [{ who: "agent", text: "„Pasuje sprawa [nazwa], bo dotyczy tego kontraktu i adresata.”" }],
+        note: "Gdy nic nie pasuje, agent nie zgaduje, tylko pyta Ciebie.",
+    },
+    {
+        title: "Zgoda człowieka", role: "you", icon: "desk", tag: "Twoja decyzja",
+        bubbles: [{ who: "agent", text: "„Oto podsumowanie. Zapisać? Pisma nie da się cofnąć.”" }, { who: "you", text: "„Tak.”" }],
+    },
+    {
+        title: "Zapis w Witrynie", role: "site", icon: siteIcon, caption: "numer nadaje Witryna",
+        bubbles: [], note: "Jedna próba. Agent nie ponawia zapisu, tylko sprawdza, czy pismo powstało.",
+    },
+    { title: "Sprawdzone", role: "agent", icon: agentIcon, bubbles: [{ who: "agent", text: "„Gotowe. Pismo jest w rejestrze, dokument na Dysku. Oto numer, link i sprawa.”" }] },
+];
+
 /** Polecenia do skopiowania: tylko czytające albo zgłaszające, bez zapisów w Witrynie. */
 const PROMPTS: [string, string][] = [
     ["Opowiedz mi, jak działa nasz Second Brain i od czego mam zacząć w mojej pracy.", "Dobre pierwsze zdanie."],
@@ -367,6 +394,30 @@ export default function SbHowItWorks({ onShowPostInstall }: { onShowPostInstall:
             <ol className="list-unstyled mb-5" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 22 }}>
                 {documentPanels.map((p, i) => <ComicPanel key={p.title} panel={p} index={i} />)}
             </ol>
+
+            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700, lineHeight: 1.1 }}>
+                Wkrótce: zapis w Witrynie Projektów{" "}
+                <span style={{
+                    display: "inline-block", fontSize: 20, padding: "0 10px", background: "#fff3c4",
+                    border: `2px solid ${INK}`, borderRadius: "10px 14px 9px 13px", verticalAlign: "middle",
+                }}>zapowiedź</span>
+            </h5>
+            <p>
+                Agent będzie też zapisywał w Witrynie Projektów: zarejestruje pismo albo uzupełni dane kontraktu z umowy.
+                Włączamy to po kolei, osoba po osobie. <strong>Na razie działa tylko u administratora</strong> - da Ci znać,
+                kiedy zadziała u Ciebie.
+            </p>
+            <p className="text-muted">
+                Tak to będzie wyglądać przy piśmie. Pisma w rejestrze nie da się cofnąć, dlatego przed zapisem zawsze jest
+                podsumowanie i zgoda człowieka.
+            </p>
+            <ol className="list-unstyled mb-3" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 22 }}>
+                {letterPanels.map((p, i) => <ComicPanel key={p.title} panel={p} index={i} />)}
+            </ol>
+            <p className="mb-5">
+                Tak samo z umową: <i>„Uzupełnij dane kontraktu z tej umowy”</i> - agent przeczyta umowę z Dysku i po Twoim
+                „tak” wpisze do Witryny numer, daty i wartość.
+            </p>
 
             <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700 }}>Dostęp do Google w skrócie</h5>
             <div className="mb-5" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>

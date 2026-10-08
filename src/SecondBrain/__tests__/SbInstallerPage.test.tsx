@@ -137,6 +137,8 @@ describe("Treść instalatora", () => {
         fireEvent.click(screen.getByRole("button", { name: "Kopia u Ciebie" }));
         expect(screen.getByRole("button", { name: "Kopia u Ciebie" })).toHaveAttribute("aria-pressed", "true");
         expect(screen.getByText(/Odświeża się sama co 4 godziny/)).toBeVisible();
+        expect(screen.getByText(/Na razie działa tylko u administratora/)).toBeVisible();
+        expect(screen.getByText("Zgoda człowieka")).toBeVisible();
         fireEvent.click(screen.getByRole("button", { name: "„Po instalacji - co dalej”" }));
         expect(await screen.findByText("Po instalacji - co dalej")).toBeVisible();
     });
