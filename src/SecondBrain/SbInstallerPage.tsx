@@ -265,8 +265,8 @@ export default function SbInstallerPage() {
                 <ListGroup.Item>
                     <strong>Aktualizacje.</strong> Gdy przy zegarze pojawi się dymek „Second Brain: jest nowa
                     wersja", kliknij go albo wybierz w menu Start <em>Aktualizuj Second Brain</em>. ZIP-a nie
-                    pobierasz drugi raz. Aktualizacja odświeża też Pythona, Node.js, Git, Claude i Codex; nic nie
-                    nadpisze i nic nie zepsuje.
+                    pobierasz drugi raz. Aktualizacja odświeża też Pythona, Node.js, Git oraz Claude i Codex w
+                    terminalu, a aplikacje Claude i Codex aktualizują się same. Nic nie nadpisze i nic nie zepsuje.
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Gdy coś się nie udało.</strong> Wyślij plik <code>bootstrap.log</code> z folderu{" "}
