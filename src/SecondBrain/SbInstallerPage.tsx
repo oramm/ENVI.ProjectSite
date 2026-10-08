@@ -247,7 +247,7 @@ export default function SbInstallerPage() {
                     użytkownika). Kto woli terminal: w tym folderze wpisz <code>claude</code>.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Codex.</strong> Instalator stawia też aplikację Codex (w menu Start może się nazywać
+                    <strong>Codex.</strong> Instalator stawia też aplikację Codex (w menu Start nazywa się
                     ChatGPT). Uruchom ją i wskaż ten sam folder <code>ENVI-Kanon</code>. W terminalu:{" "}
                     <code>codex</code>.
                 </ListGroup.Item>
