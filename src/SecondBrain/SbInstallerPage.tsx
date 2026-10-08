@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Badge, Button, Card, Container, ListGroup, Spinner } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Container, ListGroup, Spinner, Tab, Tabs } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import MainSetup from "../React/MainSetupReact";
 import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import SbHowItWorks from "./SbHowItWorks";
 import SbInstallerComic from "./SbInstallerComic";
 import { linkOwnGithubAccount, useSbAccess } from "./sbAccessApi";
 import { describeLinkFailure, linkPanelMode, parseGithubLoginParam } from "./sbAccessView";
@@ -27,6 +28,8 @@ const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
  * nie zadziała - instalator otwiera `/#/sbInstaller?sekcja=po-instalacji`, a strona sama przewija.
  */
 const POST_INSTALL_ID = "po-instalacji";
+/** `?widok=jak-to-dziala` otwiera od razu drugą zakładkę (np. link wysłany pracownikowi). */
+const HOW_IT_WORKS = "jak-to-dziala";
 
 /** Link zewnętrzny w nowej karcie - osoba ma wrócić na tę stronę, a nie jej szukać. */
 function Link({ href, children }: { href: string; children: React.ReactNode }) {
@@ -48,17 +51,25 @@ export default function SbInstallerPage() {
     const systemEmail = MainSetup.currentUserOrNull?.systemEmail?.trim();
     const loginAddress = systemEmail ? <strong>{systemEmail}</strong> : "adres, którym logujesz się do PS";
 
-    const scrollToSection = searchParams.get("sekcja");
+    const [tab, setTab] = useState(searchParams.get("widok") === HOW_IT_WORKS ? HOW_IT_WORKS : "instalator");
+    const [scrollTarget, setScrollTarget] = useState(searchParams.get("sekcja"));
 
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
     }, []);
 
     // Sekcja pojawia się dopiero po sprawdzeniu dostępu, dlatego przewijamy po zmianie stanu.
+    // Zakładka montuje treść dopiero po wybraniu, więc przewijamy także po przełączeniu zakładki.
     useEffect(() => {
-        if (sb.state !== "granted" || scrollToSection !== POST_INSTALL_ID) return;
+        if (sb.state !== "granted" || tab !== "instalator" || scrollTarget !== POST_INSTALL_ID) return;
         document.getElementById(POST_INSTALL_ID)?.scrollIntoView?.();
-    }, [sb.state, scrollToSection]);
+        setScrollTarget(null);
+    }, [sb.state, tab, scrollTarget]);
+
+    function showPostInstall() {
+        setTab("instalator");
+        setScrollTarget(POST_INSTALL_ID);
+    }
 
     async function linkAccount() {
         if (!login || linking) return;
@@ -89,7 +100,7 @@ export default function SbInstallerPage() {
 
     return (
         <Container className="py-4" style={{ maxWidth: 760 }}>
-            <h4>Second Brain ENVI - instalator</h4>
+            <h4>Second Brain ENVI</h4>
             <p className="text-muted">
                 Second Brain to wspólna baza wiedzy firmy. Na Twoim komputerze widać ją jako zwykły folder
                 z notatkami, który sam odświeża się w tle. Instalacja to około 15 minut i jeden plik -
@@ -140,6 +151,8 @@ export default function SbInstallerPage() {
                 Masz już powiązane konto GitHub {access.githubLogin}, a instalator wykrył {login}. Zmianę konta zleć przełożonemu.
             </Alert>}
 
+            <Tabs activeKey={tab} onSelect={key => setTab(key ?? "instalator")} mountOnEnter unmountOnExit className="mb-4">
+            <Tab eventKey="instalator" title="Instalator">
             <Card className="mb-4">
                 <Card.Body className="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>
@@ -181,6 +194,10 @@ export default function SbInstallerPage() {
             </Alert>
 
             <h5 id={POST_INSTALL_ID} className="mt-4">Po instalacji - co dalej</h5>
+            <p>
+                Jak płynie wiedza i z czego korzysta agent, pokazuje zakładka{" "}
+                <Button variant="link" className="p-0 align-baseline" onClick={() => setTab(HOW_IT_WORKS)}>Jak to działa</Button>.
+            </p>
             <ListGroup numbered className="mb-4">
                 <ListGroup.Item>
                     <strong>Ikony na pulpicie.</strong> Instalator umieszcza na pulpicie ikony <em>Claude</em>,{" "}
@@ -220,6 +237,11 @@ export default function SbInstallerPage() {
                     <code>%USERPROFILE%\.envi\instalator</code> (wklej tę ścieżkę w pasek adresu Eksploratora).
                 </ListGroup.Item>
             </ListGroup>
+            </Tab>
+            <Tab eventKey={HOW_IT_WORKS} title="Jak to działa">
+                <SbHowItWorks onShowPostInstall={showPostInstall} />
+            </Tab>
+            </Tabs>
         </Container>
     );
 }

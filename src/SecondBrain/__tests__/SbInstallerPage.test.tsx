@@ -129,4 +129,15 @@ describe("Treść instalatora", () => {
         expect(screen.getByText(/Przypnij do paska zadań/)).toBeVisible();
         expect(screen.queryByText(/Uruchom instalator ponownie/)).toBeNull();
     });
+    it("zakładka Jak to działa prowadzi krokami po schemacie i wraca do Po instalacji", async () => {
+        fetchMock.mockResolvedValue(response(invited));
+        renderPage("/sbInstaller?widok=jak-to-dziala");
+        expect(await screen.findByRole("img", { name: "Jedna wiedza, wiele komputerów" })).toBeVisible();
+        expect(screen.queryByRole("button", { name: "Pobierz instalator" })).toBeNull();
+        fireEvent.click(screen.getByRole("button", { name: "Kopia u Ciebie" }));
+        expect(screen.getByRole("button", { name: "Kopia u Ciebie" })).toHaveAttribute("aria-pressed", "true");
+        expect(screen.getByText(/Odświeża się sama co 4 godziny/)).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: "„Po instalacji - co dalej”" }));
+        expect(await screen.findByText("Po instalacji - co dalej")).toBeVisible();
+    });
 });

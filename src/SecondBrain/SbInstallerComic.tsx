@@ -8,10 +8,10 @@ import React from "react";
  * GitHub, zadanie w harmonogramie, zgoda Google). Nowe okno w instalatorze = nowy kadr tutaj.
  */
 
-const INK = "#2f3437";
-const HAND = "'Caveat', cursive";
+export const INK = "#2f3437";
+export const HAND = "'Caveat', cursive";
 /** Kolor każdej strony procesu; ten sam w kółku z numerem, dymku i rysunku. */
-const ROLE = {
+export const ROLE = {
     you: "#f9dfc6",
     site: "#e6e0f4",
     installer: "#d9e8f5",
@@ -20,7 +20,7 @@ const ROLE = {
     system: "#ecebe6",
     agent: "#d7efe3", // tylko ikony Claude i Codex na pulpicie, bez pozycji w legendzie
 };
-type Role = keyof typeof ROLE;
+export type Role = keyof typeof ROLE;
 
 const RADII = [
     "14px 20px 12px 18px / 18px 12px 20px 14px",
@@ -30,7 +30,7 @@ const RADII = [
 ];
 
 /** Szkicowy rysunek: kreska drga przez filtr `#sb-szkic` zdefiniowany raz w komiksie. */
-function Sketch({ w, h, box, children }: { w: number; h: number; box: string; children: React.ReactNode }) {
+export function Sketch({ w, h, box, children }: { w: number; h: number; box: string; children: React.ReactNode }) {
     return (
         <svg width={w} height={h} viewBox={box} fill="none" stroke={INK} strokeWidth={1.5} strokeLinecap="round"
             strokeLinejoin="round" aria-hidden="true" style={{ filter: "url(#sb-szkic)" }}>
@@ -82,10 +82,10 @@ const ICONS = {
     </Sketch>,
 };
 
-type Bubble = { who: "you" | Role; text: string };
-type Panel = {
+export type Bubble = { who: "you" | Role; text: string };
+export type Panel = {
     title: string; role: Role; bubbles: Bubble[]; note?: React.ReactNode;
-    icon: keyof typeof ICONS; caption?: string; tag?: string;
+    icon: keyof typeof ICONS | React.ReactElement; caption?: string; tag?: string;
 };
 
 function bubbleStyle(b: Bubble): React.CSSProperties {
@@ -98,7 +98,7 @@ function bubbleStyle(b: Bubble): React.CSSProperties {
     };
 }
 
-function ComicPanel({ panel, index }: { panel: Panel; index: number }) {
+export function ComicPanel({ panel, index }: { panel: Panel; index: number }) {
     const later = panel.tag === "później";
     return (
         <li style={{
@@ -123,10 +123,21 @@ function ComicPanel({ panel, index }: { panel: Panel; index: number }) {
                 marginTop: "auto", display: "flex", alignItems: "flex-end", gap: 8, fontFamily: HAND, fontSize: 19,
                 justifyContent: panel.caption ? "flex-start" : "center",
             }}>
-                {ICONS[panel.icon]}{panel.caption}
+                {typeof panel.icon === "string" ? ICONS[panel.icon] : panel.icon}{panel.caption}
             </div>
         </li>
     );
+}
+
+/** Font odręczny i filtr `#sb-szkic`; każda sekcja z rysunkami renderuje go u siebie (zakładki montują się osobno). */
+export function SketchDefs() {
+    return <>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" />
+        <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+            <defs><filter id="sb-szkic"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves={2} seed={7} />
+                <feDisplacementMap in="SourceGraphic" scale={2.5} /></filter></defs>
+        </svg>
+    </>;
 }
 
 const legend: [Role, string][] = [
@@ -238,11 +249,7 @@ export default function SbInstallerComic({ loginAddress }: { loginAddress: React
 
     return (
         <section aria-label="Instalacja krok po kroku" className="mb-4" style={{ color: INK }}>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" />
-            <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
-                <defs><filter id="sb-szkic"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves={2} seed={7} />
-                    <feDisplacementMap in="SourceGraphic" scale={2.5} /></filter></defs>
-            </svg>
+            <SketchDefs />
             <p className="text-muted mb-2">
                 Kadry 1-11 robisz raz. Kadr 12 wraca przy każdej nowej wersji. Okna z kadrów 6-10 nie są błędem
                 i nie u każdego pojawią się wszystkie.
