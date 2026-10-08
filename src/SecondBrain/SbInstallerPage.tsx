@@ -242,12 +242,14 @@ export default function SbInstallerPage() {
             <h5 id={POST_INSTALL_ID} className="mt-4">Po instalacji - co dalej</h5>
             <ListGroup numbered className="mb-4">
                 <ListGroup.Item>
-                    <strong>Claude.</strong> Uruchom aplikację Claude z menu Start. Możesz też otworzyć
-                    terminal w folderze <code>ENVI-Kanon</code> i wpisać <code>claude</code>.
+                    <strong>Claude.</strong> Instalator stawia aplikację Claude sam. Uruchom ją z menu Start,
+                    przejdź do zakładki <em>Code</em> i wskaż folder <code>ENVI-Kanon</code> (w Twoim folderze
+                    użytkownika). Kto woli terminal: w tym folderze wpisz <code>claude</code>.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Codex.</strong> Uruchom aplikację ChatGPT (Codex) z menu Start albo wpisz{" "}
-                    <code>codex</code> w terminalu otwartym w folderze <code>ENVI-Kanon</code>.
+                    <strong>Codex.</strong> Instalator stawia też aplikację Codex (w menu Start może się nazywać
+                    ChatGPT). Uruchom ją i wskaż ten sam folder <code>ENVI-Kanon</code>. W terminalu:{" "}
+                    <code>codex</code>.
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Pierwsze logowanie.</strong> Obie aplikacje poproszą o zalogowanie. Claude i Codex
@@ -261,8 +263,10 @@ export default function SbInstallerPage() {
                     które instalator prowadzi w trakcie przebiegu.
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <strong>Aktualizacje.</strong> Uruchom instalator ponownie, kiedy chcesz zaktualizować
-                    narzędzia. Nic nie nadpisze i nic nie zepsuje.
+                    <strong>Aktualizacje.</strong> Gdy przy zegarze pojawi się dymek „Second Brain: jest nowa
+                    wersja", kliknij go albo wybierz w menu Start <em>Aktualizuj Second Brain</em>. ZIP-a nie
+                    pobierasz drugi raz. Aktualizacja odświeża też Pythona, Node.js, Git, Claude i Codex; nic nie
+                    nadpisze i nic nie zepsuje.
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Gdy coś się nie udało.</strong> Wyślij plik <code>bootstrap.log</code> z folderu{" "}
