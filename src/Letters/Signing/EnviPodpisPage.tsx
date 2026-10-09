@@ -51,7 +51,7 @@ export default function EnviPodpisPage() {
             <p className="text-muted">
                 ENVI Podpis to program na Twój komputer. Podpisuje pisma z PS podpisem kwalifikowanym z karty,
                 więc potrzebny jest czytnik kart i Twoja karta kwalifikowana. PS otwiera program sam po kliknięciu
-                przycisku <em>PDF z podpisem kwalifikowanym</em> przy piśmie - nie uruchamiasz go ręcznie.
+                ikony <em>PDF z podpisem kwalifikowanym</em> przy piśmie (nazwa pokazuje się po najechaniu myszą) - nie uruchamiasz go ręcznie.
             </p>
 
             <Card className="mb-4">

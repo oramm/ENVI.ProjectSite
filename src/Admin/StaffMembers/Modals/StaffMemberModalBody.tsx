@@ -176,7 +176,7 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
 
             <Form.Group controlId="canManageSbAccess" className="mt-3">
                 <Form.Check type="switch" label="Zarządza dostępem do Second Brain" {...register("canManageSbAccess")} />
-                <Form.Text muted>Zaprasza do SB, blokuje, odblokowuje i odbiera dostęp (Panel administracyjny, Dostęp do Second Brain). Działa tylko dla roli kierownik albo administrator.</Form.Text>
+                <Form.Text muted>Zaprasza do SB, blokuje, odblokowuje i odbiera dostęp (Biuro → Administracja → Dostęp do Second Brain). Działa tylko dla roli kierownik albo administrator.</Form.Text>
             </Form.Group>
 
             <hr />

@@ -388,7 +388,7 @@ export default function MainMenu() {
                                         Second Brain
                                     </NavDropdown.Item>
                                 )}
-                                <NavDropdown.Divider />
+                                {(showEnviPodpis || sbGranted) && <NavDropdown.Divider />}
                                 <NavDropdown.Item
                                     onClick={async () => {
                                         await MainController.logout();
