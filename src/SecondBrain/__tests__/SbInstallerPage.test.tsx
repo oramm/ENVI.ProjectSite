@@ -21,6 +21,9 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); MainSetup.serverUrl = originalServerUrl; });
 
+/** Wywołania dostępu (bez wersji paczki) - wersja to osobne, dodatkowe pytanie strony po przyznaniu dostępu. */
+const accessCalls = () => fetchMock.mock.calls.filter(([url]) => !String(url).endsWith("sbInstaller/info")).length;
+
 function renderPage(address = "/sbInstaller?githubLogin=osoba-gh") {
     return render(<MemoryRouter initialEntries={[address]}><SbInstallerPage /></MemoryRouter>);
 }
@@ -33,13 +36,14 @@ describe("Instalator Second Brain", () => {
         expect(screen.queryByRole("link")).toBeNull();
         expect(screen.queryByRole("button")).toBeNull();
         expect(screen.queryByText("Instalacja krok po kroku")).toBeNull();
+        expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("sbInstaller/info"))).toBe(false);
     });
     it("wysyła login po kliknięciu i pozwala ponowić po 409", async () => {
         fetchMock.mockResolvedValueOnce(response(invited))
             .mockResolvedValue(response({ errorMessage: "Zaproszenie jeszcze czeka - przyjmij je i spróbuj ponownie." }, 409));
         renderPage();
         expect(await screen.findByRole("button", { name: "Pobierz instalator" })).toBeVisible();
-        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(accessCalls()).toBe(1);
         fireEvent.click(screen.getByRole("button", { name: "To moje konto" }));
         expect(await screen.findByText("Zaproszenie jeszcze czeka - przyjmij je i spróbuj ponownie. Gdy to zrobisz, kliknij przycisk jeszcze raz.")).toBeVisible();
         expect(fetchMock).toHaveBeenLastCalledWith("http://localhost:3000/sbAccess/me/githubAccount", {
@@ -52,7 +56,7 @@ describe("Instalator Second Brain", () => {
         renderPage(address);
         await screen.findByRole("button", { name: "Pobierz instalator" });
         expect(screen.queryByRole("button", { name: "To moje konto" })).toBeNull();
-        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(accessCalls()).toBe(1);
     });
     it.each([401, 403])("odmowa %s ukrywa instalator", async status => {
         fetchMock.mockResolvedValue(response({}, status));
@@ -69,15 +73,23 @@ describe("Instalator Second Brain", () => {
     });
     it.each(["OK", "PARTIAL"])("odświeża dostęp po %s i pokazuje wynik", async result => {
         let resolve!: (value: unknown) => void;
-        fetchMock.mockResolvedValueOnce(response(invited))
-            .mockImplementationOnce(() => new Promise(r => { resolve = r; }))
-            .mockResolvedValue(response({ ...invited, sb: { ...invited.sb, status: "ACTIVE", githubState: "LINKED", githubLogin: "osoba-gh" } }));
+        const active = { ...invited, sb: { ...invited.sb, status: "ACTIVE", githubState: "LINKED", githubLogin: "osoba-gh" } };
+        let accessAnswers = 0;
+        // Odpowiedź zależy od adresu, bo wersja paczki może przyjść w dowolnej kolejności.
+        fetchMock.mockImplementation((url: string) => {
+            if (String(url).endsWith("sbInstaller/info")) return Promise.resolve(response({ version: null }));
+            if (String(url).endsWith("/githubAccount")) return new Promise(r => { resolve = r; });
+            accessAnswers += 1;
+            return Promise.resolve(response(accessAnswers === 1 ? invited : active));
+        });
         renderPage();
         fireEvent.click(await screen.findByRole("button", { name: "To moje konto" }));
         expect(screen.getByRole("button", { name: /To moje konto/ })).toBeDisabled();
         await act(async () => resolve(response({ result, note: "Dysk wymaga sprawdzenia." })));
         expect(await screen.findByText("Gotowe - konto GitHub osoba-gh jest powiązane z Twoim dostępem.")).toBeVisible();
-        expect(fetchMock).toHaveBeenCalledTimes(3);
+        // dostęp, wersja paczki, zapis konta, ponowne sprawdzenie dostępu i ponowna wersja
+        // (po odświeżeniu dostęp wraca przez stan "loading", a wersja pyta od nowa)
+        expect(fetchMock).toHaveBeenCalledTimes(5);
         expect(!!screen.queryByText("Dysk wymaga sprawdzenia.")).toBe(result === "PARTIAL");
     });
 });
@@ -142,5 +154,23 @@ describe("Treść instalatora", () => {
         expect(screen.getByText("Zgoda człowieka")).toBeVisible();
         fireEvent.click(screen.getByRole("button", { name: "„Po instalacji - co dalej”" }));
         expect(await screen.findByText("Po instalacji - co dalej")).toBeVisible();
+    });
+});
+
+describe("Wersja paczki", () => {
+    it("pokazuje wersję z PS obok przycisku pobrania", async () => {
+        fetchMock.mockImplementation((url: string) => Promise.resolve(String(url).endsWith("sbInstaller/info") ? response({ version: "1.4.2" }) : response(invited)));
+        renderPage();
+        expect(await screen.findByText("Wersja dostępna w PS: 1.4.2")).toBeVisible();
+        expect(screen.getByRole("button", { name: "Pobierz instalator" })).toBeVisible();
+    });
+    it.each([
+        ["brak wersji", () => Promise.resolve(response({ version: null }))],
+        ["błąd sieci", () => Promise.reject(new Error("Brak sieci"))],
+    ])("nic nie pokazuje przy: %s", async (_name, info) => {
+        fetchMock.mockImplementation((url: string) => (String(url).endsWith("sbInstaller/info") ? info() : Promise.resolve(response(invited))));
+        renderPage();
+        await screen.findByRole("button", { name: "Pobierz instalator" });
+        expect(screen.queryByText(/Wersja dostępna w PS/)).toBeNull();
     });
 });

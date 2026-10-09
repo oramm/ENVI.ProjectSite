@@ -117,6 +117,9 @@ function url(path: string): string {
     return MainSetup.serverUrl + path;
 }
 
+/** Odpowiedź `signing/program/info`: `available=false` - program nie jest teraz do pobrania. */
+export type SigningProgramInfo = { available: boolean; version: string | null };
+
 export const SigningApi = {
     listSignableFiles(letterId: number): Promise<SignableFilesResult> {
         return ToolsFetch.fetchJsonWithSafeError(url(`letter/${letterId}/signableFiles`), {
@@ -157,6 +160,13 @@ export const SigningApi = {
     /** Adres instalatora programu ENVI Podpis (serwer oddaje plik jako załącznik). */
     programDownloadUrl(): string {
         return url("signing/program/download");
+    },
+
+    /** Czy instalator programu można pobrać i jaka to wersja (strona ENVI Podpis). */
+    programInfo(): Promise<SigningProgramInfo> {
+        return ToolsFetch.fetchJsonWithSafeError(url("signing/program/info"), {
+            credentials: "include",
+        });
     },
 
     listLetterSignatures(letterId: number): Promise<{ letterId: number; signatures: LetterSignature[] }> {

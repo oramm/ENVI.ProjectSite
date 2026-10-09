@@ -23,6 +23,18 @@ import { describeLinkFailure, linkPanelMode, parseGithubLoginParam } from "./sbA
  */
 const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
 
+/** Wersja paczki zapisana w PS. Brak wartości albo błąd sieci = nic nie pokazujemy, bez komunikatu. */
+async function fetchPackageVersion(): Promise<string | null> {
+    try {
+        const response = await fetch(`${MainSetup.serverUrl}sbInstaller/info`, { credentials: "include" });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return typeof data?.version === "string" ? data.version : null;
+    } catch {
+        return null;
+    }
+}
+
 /**
  * Kotwica sekcji "Po instalacji". Router jest hashowy (`#/sbInstaller`), więc drugi `#` w adresie
  * nie zadziała - instalator otwiera `/#/sbInstaller?sekcja=po-instalacji`, a strona sama przewija.
@@ -53,10 +65,19 @@ export default function SbInstallerPage() {
 
     const [tab, setTab] = useState(searchParams.get("widok") === HOW_IT_WORKS ? HOW_IT_WORKS : "instalator");
     const [scrollTarget, setScrollTarget] = useState(searchParams.get("sekcja"));
+    const [packageVersion, setPackageVersion] = useState<string | null>(null);
 
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
     }, []);
+
+    // Wersję pytamy tylko osób z dostępem - bez dostępu strona pokazuje samą odmowę.
+    useEffect(() => {
+        if (sb.state !== "granted") return;
+        let active = true;
+        fetchPackageVersion().then(version => { if (active) setPackageVersion(version); });
+        return () => { active = false; };
+    }, [sb.state]);
 
     // Sekcja pojawia się dopiero po sprawdzeniu dostępu, dlatego przewijamy po zmianie stanu.
     // Zakładka montuje treść dopiero po wybraniu, więc przewijamy także po przełączeniu zakładki.
@@ -160,6 +181,7 @@ export default function SbInstallerPage() {
                         <Card.Text className="text-muted mb-0">
                             Pobierzesz plik ZIP. Co z nim zrobić, pokazują rysunki niżej.
                         </Card.Text>
+                        {packageVersion && <div className="small text-muted mt-1">Wersja dostępna w PS: {packageVersion}</div>}
                     </div>
                     <Button href={PACKAGE_URL} variant="primary" size="lg">
                         <FontAwesomeIcon icon={faDownload} className="me-2" />

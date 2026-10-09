@@ -10,6 +10,7 @@ import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails
 import InvoicePdfPreview from "../../Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
+import EnviPodpisPage from "../../Letters/Signing/EnviPodpisPage";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import GoogleButton from "../GoogleLoginButton";
 import MainController from "../MainControllerReact";
@@ -282,6 +283,7 @@ function AppRoutes() {
                         <Route path="/vacations" element={<VacationsPage title="Urlopy" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/sbInstaller" element={<SbInstallerPage />} />
+                        <Route path="/enviPodpis" element={<EnviPodpisPage />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
                         <Route
