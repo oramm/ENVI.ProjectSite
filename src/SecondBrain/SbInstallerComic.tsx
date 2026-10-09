@@ -154,7 +154,7 @@ export default function SbInstallerComic({ loginAddress }: { loginAddress: React
     const panels: Panel[] = [
         {
             title: "Wchodzisz do Witryny", role: "site", icon: "desk",
-            bubbles: [{ who: "you", text: "„Menu pod moim nazwiskiem → Second Brain - instalator.”" }],
+            bubbles: [{ who: "you", text: "„Menu pod moim nazwiskiem → Second Brain.”" }],
             note: "Nazwisko jest w prawym górnym rogu Witryny Projektów. Pozycji nie ma, dopóki przełożony nie da Ci dostępu.",
         },
         {
