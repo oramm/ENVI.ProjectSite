@@ -35,6 +35,7 @@ import {
 import MainSetup from "../../React/MainSetupReact";
 import Tools from "../../React/Tools/Tools";
 import ToolsDate from "../../React/Tools/ToolsDate";
+import { LetterSignedBadge } from "../Signing/LetterSignedBadge";
 
 export type LetterRowLetter = OurLetterContract | IncomingLetterContract | OurLetterOffer | IncomingLetterOffer;
 
@@ -353,6 +354,7 @@ export function LetterRowContent({ letter, context, renderStatus }: LetterRowCon
                     <span style={S.number}>{letter.number}</span>
                 )}
                 {renderStatus?.(letter)}
+                {letter.isOur && <LetterSignedBadge letterId={letter.id} />}
             </div>
             <div style={{ ...S.subject, whiteSpace: "pre-line" }}>
                 <span style={S.label}>Dotyczy:</span> {letter.description}

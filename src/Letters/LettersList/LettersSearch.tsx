@@ -15,6 +15,7 @@ import {
     OurLetterAddNewModalButton,
     RespondToLetterButton,
 } from "./Modals/LetterModalButtons";
+import { SignOurLetterPdfButton, UploadSignedLetterButton } from "../Signing/SigningRowActions";
 
 export default function LettersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -98,7 +99,12 @@ export default function LettersSearch({ title }: { title: string }) {
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}
-            RowActionMenuComponents={[RespondToLetterButton, ExportOurLetterContractToPDFButton]}
+            RowActionMenuComponents={[
+                RespondToLetterButton,
+                ExportOurLetterContractToPDFButton,
+                SignOurLetterPdfButton,
+                UploadSignedLetterButton,
+            ]}
             isDeletable={true}
             repository={lettersRepository}
             selectedObjectRoute={"/letter/"}

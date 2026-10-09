@@ -6,7 +6,9 @@ import {
     LetterEditModalButton,
     IncomingLetterAddNewModalButton,
     OurLetterAddNewModalButton,
+    ExportOurLetterOfferToPDFButton,
 } from "./Modals/LetterModalButtons";
+import { SignOurLetterPdfButton, UploadSignedLetterButton } from "../../Letters/Signing/SigningRowActions";
 import { EntityData, IncomingLetterOffer, OurLetterOffer } from "../../../Typings/bussinesTypes";
 import { LetterRowContent, LetterRowMarkers } from "../../Letters/LettersList/LetterRowContent";
 import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
@@ -72,6 +74,7 @@ export default function OffersLettersSearch({ title }: { title: string }) {
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}
+            RowActionMenuComponents={[ExportOurLetterOfferToPDFButton, SignOurLetterPdfButton, UploadSignedLetterButton]}
             isDeletable={true}
             repository={lettersRepository}
             selectedObjectRoute={"/letter/"}

@@ -6,7 +6,7 @@ import { ProjectSelectorModalBody } from "./LetterModalBody";
 import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from "./LetterValidationSchema";
 import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
 import { OurLetterModalBody } from "./OurLetterModalBody";
-import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import { IncomingLetterContract, Letter, OurLetterContract } from "../../../../Typings/bussinesTypes";
 import { lettersRepository } from "../LettersController";
 import { Spinner } from "react-bootstrap";
 import { PdfIconButton, ReplyIconButton, SuccessToast } from "../../../View/Resultsets/CommonComponents";
@@ -179,6 +179,22 @@ export function ExportOurLetterContractToPDFButton({
     dataObject,
     layout,
 }: RowActionMenuItemProps<OurLetterContract | IncomingLetterContract>) {
+    return <ExportOurLetterToPDFAction dataObject={dataObject} layout={layout} repository={lettersRepository} />;
+}
+
+/**
+ * Wspólna akcja „PDF” dla rejestru pism kontraktowych i ofertowych: ta sama trasa serwera
+ * (`exportOurLetterToPDF`), różni się tylko repozytorium, przez które idzie żądanie.
+ */
+export function ExportOurLetterToPDFAction({
+    dataObject,
+    layout,
+    repository,
+}: {
+    dataObject: Letter & { isOur: boolean };
+    layout: "vertical" | "horizontal";
+    repository: { fetch: (actionRoute: string, item?: any) => Promise<unknown> };
+}) {
     const [requestPending, setRequestPending] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -188,7 +204,7 @@ export function ExportOurLetterContractToPDFButton({
     async function handleClick() {
         try {
             setRequestPending(true);
-            await lettersRepository.fetch("exportOurLetterToPDF", dataObject);
+            await repository.fetch("exportOurLetterToPDF", dataObject);
             setRequestPending(false);
             setShowSuccessToast(true);
         } catch (error) {

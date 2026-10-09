@@ -20,6 +20,8 @@ import {
     faListCheck,
     faLocationDot,
     faFilePdf,
+    faFileSignature,
+    faFileArrowUp,
     faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -134,6 +136,8 @@ export function GDDocFileIconLink({ folderUrl, layout = "vertical" }: IconProps)
 type GeneralIconButtonProps = SpecificIconButtonProps & {
     icon: IconDefinition;
     className: string;
+    /** Podpowiedź po najechaniu i nazwa dla czytnika ekranu; ikona sama nic nie mówi. */
+    title?: string;
 };
 
 export type SpecificIconButtonProps = {
@@ -141,7 +145,7 @@ export type SpecificIconButtonProps = {
     onClick: () => void;
 };
 
-function IconButton({ icon, layout, onClick, className }: GeneralIconButtonProps) {
+function IconButton({ icon, layout, onClick, className, title }: GeneralIconButtonProps) {
     className += layout === "vertical" ? " icon icon-vertical" : " icon icon-horizontal";
 
     return (
@@ -152,6 +156,8 @@ function IconButton({ icon, layout, onClick, className }: GeneralIconButtonProps
             }}
             className={`${className}`}
             style={{ cursor: "pointer" }}
+            title={title}
+            aria-label={title}
         >
             <FontAwesomeIcon icon={icon} size="lg" />
         </span>
@@ -176,6 +182,32 @@ export function ReplyIconButton({ layout, onClick }: SpecificIconButtonProps) {
 
 export function PdfIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faFilePdf} layout={layout} onClick={onClick} className="text-danger" />;
+}
+
+/** PDF pisma z podpisem kwalifikowanym (okno podpisu) */
+export function SignedPdfIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return (
+        <IconButton
+            icon={faFileSignature}
+            layout={layout}
+            onClick={onClick}
+            className="text-success"
+            title="PDF z podpisem kwalifikowanym"
+        />
+    );
+}
+
+/** Wgranie PDF-a podpisanego poza PS (okno „Wgraj podpisany”) */
+export function UploadSignedPdfIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return (
+        <IconButton
+            icon={faFileArrowUp}
+            layout={layout}
+            onClick={onClick}
+            className="text-primary"
+            title="Wgraj podpisany PDF"
+        />
+    );
 }
 
 /** Generowanie spisu spraw kontraktu (arkusz Google) */

@@ -6,6 +6,16 @@ import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
 import { OurLetterModalBody } from "./OurLetterModalBody";
 import { IncomingLetterOffer, OurLetterOffer } from "../../../../Typings/bussinesTypes";
 import { lettersRepository } from "../LettersController";
+import { RowActionMenuItemProps } from "../../../View/Resultsets/FilterableTable/FilterableTableTypes";
+import { ExportOurLetterToPDFAction } from "../../../Letters/LettersList/Modals/LetterModalButtons";
+
+/** Eksport pisma ofertowego do PDF — akcja wiersza; tylko dla pism naszych (ta sama trasa co w pismach kontraktowych). */
+export function ExportOurLetterOfferToPDFButton({
+    dataObject,
+    layout,
+}: RowActionMenuItemProps<OurLetterOffer | IncomingLetterOffer>) {
+    return <ExportOurLetterToPDFAction dataObject={dataObject} layout={layout} repository={lettersRepository} />;
+}
 
 /** przycisk i modal edycji Letter */
 export function LetterEditModalButton({
