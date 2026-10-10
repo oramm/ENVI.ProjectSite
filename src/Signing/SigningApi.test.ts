@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import MainSetup from "../React/MainSetupReact";
 import ToolsFetch from "../React/Tools/ToolsFetch";
 import { SigningApi } from "./SigningApi";
 
@@ -30,5 +31,71 @@ describe("SigningApi.offerFilePageImage", () => {
         await expect(SigningApi.offerFilePageImage(7, "FILE_ID_0000001", 1)).resolves.toBe(blob);
         expect(expired).not.toHaveBeenCalled();
         expect(String(fetchMock.mock.calls[1][0])).toContain("offer/7/signableFile/FILE_ID_0000001/page/1");
+    });
+});
+
+describe("SigningApi.contractFilePageImage", () => {
+    it("wygasła sesja (401) jest zgłaszana jak w pozostałych wywołaniach, a błąd niesie komunikat serwera", async () => {
+        const expired = vi.spyOn(ToolsFetch, "notifySessionExpired").mockImplementation(() => {});
+        vi.stubGlobal(
+            "fetch",
+            vi.fn().mockResolvedValue({ ok: false, status: 401, json: async () => ({ errorMessage: "Użytkownik niezalogowany" }) })
+        );
+        await expect(SigningApi.contractFilePageImage(9, "FILE_ID_0000001", 2)).rejects.toThrow("Użytkownik niezalogowany");
+        expect(expired).toHaveBeenCalledTimes(1);
+    });
+
+    it("inny błąd nie wylogowuje; udana odpowiedź oddaje obraz", async () => {
+        const expired = vi.spyOn(ToolsFetch, "notifySessionExpired").mockImplementation(() => {});
+        const blob = new Blob(["png"], { type: "image/png" });
+        const fetchMock = vi
+            .fn()
+            .mockResolvedValueOnce({ ok: false, status: 404, json: async () => ({ errorMessage: "Plik nie ma strony 9." }) })
+            .mockResolvedValueOnce({ ok: true, status: 200, blob: async () => blob });
+        vi.stubGlobal("fetch", fetchMock);
+        await expect(SigningApi.contractFilePageImage(9, "FILE_ID_0000001", 9)).rejects.toThrow("Plik nie ma strony 9.");
+        await expect(SigningApi.contractFilePageImage(9, "FILE_ID_0000001", 1)).resolves.toBe(blob);
+        expect(expired).not.toHaveBeenCalled();
+        expect(String(fetchMock.mock.calls[1][0])).toContain("contract/9/signableFile/FILE_ID_0000001/page/1");
+    });
+});
+
+describe("SigningApi — umowa (adresy i treść zapytań)", () => {
+    it("lista plików, podpisy i grafika wskazują na ścieżki umowy", async () => {
+        const getSpy = vi.spyOn(ToolsFetch, "fetchJsonWithSafeError").mockResolvedValue({});
+        await SigningApi.listContractSignableFiles(9);
+        await SigningApi.listContractSignatures(9);
+        await SigningApi.locateContractGraphicPlace(9, "FILE_ID_0000001");
+        expect(getSpy.mock.calls[0][0]).toBe(MainSetup.serverUrl + "contract/9/signableFiles");
+        expect(getSpy.mock.calls[1][0]).toBe(MainSetup.serverUrl + "contract/9/signatures");
+        expect(getSpy.mock.calls[2][0]).toBe(MainSetup.serverUrl + "contract/9/signableFile/FILE_ID_0000001/graphicPlace");
+    });
+
+    it("zlecenie idzie na signingJob z contractId i listą plików (nie offerId)", async () => {
+        const postSpy = vi.spyOn(ToolsFetch, "fetchJsonWithSafeError").mockResolvedValue({});
+        const files = [{ kind: "DRIVE_FILE" as const, gdFileId: "FILE_ID_0000001", withGraphic: false }];
+        await SigningApi.createContractJob(9, files);
+        expect(postSpy.mock.calls[0][0]).toBe(MainSetup.serverUrl + "signingJob");
+        expect(postSpy.mock.calls[0][1]).toMatchObject({ method: "POST", body: JSON.stringify({ contractId: 9, files }) });
+    });
+
+    it("wgranie podpisanego pliku idzie na contract/:id/signedPdf jako multipart z polem „file”", async () => {
+        const postSpy = vi.spyOn(ToolsFetch, "fetchJsonWithSafeError").mockResolvedValue({});
+        const file = new File(["%PDF-1.4"], "podpisany.pdf", { type: "application/pdf" });
+        await SigningApi.uploadSignedToContract(9, file);
+        expect(postSpy.mock.calls[0][0]).toBe(MainSetup.serverUrl + "contract/9/signedPdf");
+        const body = postSpy.mock.calls[0][1]?.body as FormData;
+        expect(body).toBeInstanceOf(FormData);
+        expect(body.get("file")).toBeInstanceOf(File);
+    });
+});
+
+describe("SigningApi — obraz strony przy braku połączenia", () => {
+    it.each([
+        ["oferta", () => SigningApi.offerFilePageImage(7, "FILE_ID_0000001", 1)],
+        ["umowa", () => SigningApi.contractFilePageImage(9, "FILE_ID_0000001", 1)],
+    ])("%s: błąd sieci jest nazwany po polsku, bez „Failed to fetch”", async (_name, call) => {
+        vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+        await expect(call()).rejects.toThrow("Brak połączenia z serwerem. Spróbuj ponownie za chwilę.");
     });
 });

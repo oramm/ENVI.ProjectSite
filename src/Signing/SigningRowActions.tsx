@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { SignedPdfIconButton, SuccessToast, UploadSignedPdfIconButton } from "../View/Resultsets/CommonComponents";
+import MainSetup from "../React/MainSetupReact";
 import { RowActionMenuItemProps } from "../View/Resultsets/FilterableTable/FilterableTableTypes";
 import { SignDocumentsModal } from "./SignDocumentsModal";
 import { SigningSource } from "./SigningSource";
@@ -9,6 +10,9 @@ import { UploadSignedPanel } from "./UploadSignedPanel";
 
 type RowLayout = RowActionMenuItemProps["layout"];
 
+/** Podpisują tylko pracownicy ENVI; pozostałym rolom serwer odmawia, więc przycisku nie pokazujemy. */
+const canSign = () => MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES);
+
 /**
  * Akcja wiersza „PDF z podpisem” — niezależna od tego, co podpisujemy: o pliku mówi tylko `source`.
  * Pismo i oferta dostają tu ten sam przycisk i to samo okno; różnią się wyłącznie teksty źródła.
@@ -16,6 +20,8 @@ type RowLayout = RowActionMenuItemProps["layout"];
 export function SignPdfRowAction({ source, layout }: { source: SigningSource; layout: RowLayout }) {
     const [show, setShow] = useState(false);
     const [toast, setToast] = useState<{ header: string; message: string } | null>(null);
+
+    if (!canSign()) return null;
 
     return (
         <>
@@ -51,6 +57,8 @@ export function SignPdfRowAction({ source, layout }: { source: SigningSource; la
 export function UploadSignedRowAction({ source, layout }: { source: SigningSource; layout: RowLayout }) {
     const [show, setShow] = useState(false);
     const [toast, setToast] = useState<string | null>(null);
+
+    if (!canSign()) return null;
 
     return (
         <>

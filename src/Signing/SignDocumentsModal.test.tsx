@@ -349,6 +349,20 @@ describe("SignDocumentsModal — źródło z wyborem miejsca grafiki", () => {
         fireEvent.click(img, { clientX: x, clientY: y });
     }
 
+    it("źródło z preselectFiles: false (umowa) otwiera listę bez zaznaczonych plików i z zablokowanym „Podpisz”", async () => {
+        const listFiles = vi.fn().mockResolvedValue({ files: [file], notSignable: [] });
+        const source: SigningSource = {
+            key: "contract-test", listFiles, createJob: vi.fn(), listSignatures: vi.fn().mockResolvedValue([]),
+            uploadSigned: vi.fn(), onChanged: vi.fn(), preselectFiles: false,
+            texts: { subject: "umowa", inFolder: "w folderze „Umowa i zmiany”", thisHasAlready: "Ten kontrakt ma już" },
+        };
+        render(<SignDocumentsModal show source={source} onHide={vi.fn()} />);
+
+        await screen.findByText(file.name);
+        expect(sign().checked).toBe(false);
+        expect(screen.getByRole("button", { name: /^Podpisz/ })).toBeDisabled();
+    });
+
     it("pusty folder: okno mówi, że nie ma czego podpisać, i pozwala odświeżyć listę", async () => {
         const { listFiles } = renderSource(search, []);
         expect(await screen.findByText(/Nie ma plików, które można podpisać w folderze oferty/)).toBeInTheDocument();

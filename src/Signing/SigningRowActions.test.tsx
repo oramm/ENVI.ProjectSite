@@ -26,6 +26,7 @@ vi.mock("./SigningApi", async (importOriginal) => ({
     SigningApi: api,
 }));
 
+import MainSetup from "../React/MainSetupReact";
 import { SignOurLetterPdfButton, UploadSignedLetterButton } from "../Letters/Signing/SigningRowActions";
 import { SignOfferFilesButton, UploadSignedOfferFileButton } from "../Offers/Signing/OfferSigningRowActions";
 
@@ -38,8 +39,12 @@ const offer = (isOur: boolean) => ({ id: 42, alias: "OŚ", employerName: "Gmina 
 const SIGN_TITLE = "PDF z podpisem kwalifikowanym";
 const UPLOAD_TITLE = "Wgraj podpisany PDF";
 
+const loginAs = (systemRoleName: string) =>
+    vi.spyOn(MainSetup, "currentUserOrNull", "get").mockReturnValue({ systemRoleName } as unknown as typeof MainSetup.currentUser);
+
 beforeEach(() => {
     vi.clearAllMocks();
+    loginAs("ENVI_EMPLOYEE");
     api.listSignableFiles.mockResolvedValue({ letterId: 6168, letterNumber: "6168", files: [], notSignable: [] });
     api.listLetterSignatures.mockResolvedValue({ letterId: 6168, signatures: [] });
     api.listOfferSignableFiles.mockResolvedValue({ offerId: 42, offerAlias: "OŚ", files: [], notSignable: [] });
@@ -116,5 +121,21 @@ describe("akcje wiersza — oferta (podpisujemy zewnętrzne)", () => {
 
         await waitFor(() => expect(api.listOfferSignableFiles).toHaveBeenCalledWith(42));
         expect(await screen.findByText(/PDF z podpisem — oferta OŚ, Gmina Brzeg/)).toBeInTheDocument();
+    });
+});
+
+describe("akcje wiersza — tylko pracownicy ENVI (serwer i tak odmawia pozostałym)", () => {
+    it.each(["CLIENT", "CONTRACT_WORKER", "ENVI_COOPERATOR", "EXTERNAL_USER"])("rola %s nie widzi przycisków podpisu ani wgrania", (role) => {
+        loginAs(role);
+        const { container } = render(
+            <>
+                <SignOurLetterPdfButton dataObject={letter(true)} layout="vertical" />
+                <UploadSignedLetterButton dataObject={letter(true)} layout="vertical" />
+                <SignOfferFilesButton dataObject={offer(false)} layout="vertical" />
+                <UploadSignedOfferFileButton dataObject={offer(false)} layout="vertical" />
+            </>
+        );
+
+        expect(container).toBeEmptyDOMElement();
     });
 });

@@ -74,6 +74,14 @@ export type OfferSignableFilesResult = {
     notSignable: NotSignableFile[];
 };
 
+/** Dokumenty umowy ENVI z folderu sprawy „Umowa i zmiany”; serwer zwraca je wprost, bez podfolderu. */
+export type ContractSignableFilesResult = {
+    contractId: number;
+    contractLabel: string;
+    files: SignableFile[];
+    notSignable: NotSignableFile[];
+};
+
 export type RequestedSigningFile = {
     kind: SignableFileKind;
     gdFileId?: string;
@@ -103,6 +111,8 @@ export type SigningJobFileStatus = {
 
 export type SigningJobState = {
     jobId: number;
+    /** Id kontraktu ENVI, gdy zlecenie dotyczy dokumentów umowy; inaczej null. Pole opcjonalne: starsze odpowiedzi i fixture'y go nie niosą. */
+    contractId?: number | null;
     status: SigningJobStatus;
     expiresAt: string;
     failureMessage: string | null;
@@ -250,27 +260,72 @@ export const SigningApi = {
     },
 
     /** Obraz strony pliku oferty (PNG). Pobierany z sesją jak reszta API, dlatego jako Blob, a nie adres dla <img>. */
-    async offerFilePageImage(offerId: number, gdFileId: string, page: number): Promise<Blob> {
-        const response = await fetch(
-            url(`offer/${offerId}/signableFile/${encodeURIComponent(gdFileId)}/page/${page}`),
+    offerFilePageImage(offerId: number, gdFileId: string, page: number): Promise<Blob> {
+        return pageImage(`offer/${offerId}/signableFile/${encodeURIComponent(gdFileId)}/page/${page}`);
+    },
+
+    // ------------------------------------------------------------------ umowa ENVI (pliki z folderu „Umowa i zmiany”)
+
+    listContractSignableFiles(contractId: number): Promise<ContractSignableFilesResult> {
+        return ToolsFetch.fetchJsonWithSafeError(url(`contract/${contractId}/signableFiles`), {
+            credentials: "include",
+        });
+    },
+
+    createContractJob(contractId: number, files: RequestedSigningFile[]): Promise<CreatedSigningJob> {
+        return ToolsFetch.fetchJsonWithSafeError(url("signingJob"), {
+            method: "POST",
+            credentials: "include",
+            headers: JSON_HEADERS,
+            body: JSON.stringify({ contractId, files }),
+        });
+    },
+
+    listContractSignatures(contractId: number): Promise<{ contractId: number; signatures: LetterSignature[] }> {
+        return ToolsFetch.fetchJsonWithSafeError(url(`contract/${contractId}/signatures`), {
+            credentials: "include",
+        });
+    },
+
+    uploadSignedToContract(contractId: number, file: File): Promise<ManualUploadResult> {
+        return uploadSignedTo(`contract/${contractId}/signedPdf`, file);
+    },
+
+    locateContractGraphicPlace(contractId: number, gdFileId: string): Promise<GraphicPlaceSearch> {
+        return ToolsFetch.fetchJsonWithSafeError(
+            url(`contract/${contractId}/signableFile/${encodeURIComponent(gdFileId)}/graphicPlace`),
             { credentials: "include", cache: "no-store" }
         );
-        if (!response.ok) {
-            // Ta ścieżka omija fetchJsonWithSafeError, więc wygaśnięcie sesji zgłaszamy sami.
-            if (response.status === 401) ToolsFetch.notifySessionExpired();
-            let message = "Nie udało się pobrać obrazu strony.";
-            try {
-                const body = await response.json();
-                if (typeof body?.errorMessage === "string") message = body.errorMessage;
-                else if (typeof body?.message === "string") message = body.message;
-            } catch {
-                // odpowiedź bez JSON - zostaje komunikat ogólny
-            }
-            throw new Error(message);
-        }
-        return response.blob();
+    },
+
+    /** Obraz strony pliku umowy (PNG). Jak przy ofercie: Blob z sesją, a nie adres dla <img>. */
+    contractFilePageImage(contractId: number, gdFileId: string, page: number): Promise<Blob> {
+        return pageImage(`contract/${contractId}/signableFile/${encodeURIComponent(gdFileId)}/page/${page}`);
     },
 };
+
+/** Obraz strony (PNG) jako Blob z sesją. Omija fetchJsonWithSafeError, więc sesję i brak sieci obsługujemy tutaj. */
+async function pageImage(path: string): Promise<Blob> {
+    let response: Response;
+    try {
+        response = await fetch(url(path), { credentials: "include", cache: "no-store" });
+    } catch {
+        throw new Error("Brak połączenia z serwerem. Spróbuj ponownie za chwilę.");
+    }
+    if (!response.ok) {
+        if (response.status === 401) ToolsFetch.notifySessionExpired();
+        let message = "Nie udało się pobrać obrazu strony.";
+        try {
+            const body = await response.json();
+            if (typeof body?.errorMessage === "string") message = body.errorMessage;
+            else if (typeof body?.message === "string") message = body.message;
+        } catch {
+            // odpowiedź bez JSON - zostaje komunikat ogólny
+        }
+        throw new Error(message);
+    }
+    return response.blob();
+}
 
 function uploadSignedTo(path: string, file: File): Promise<ManualUploadResult> {
     const form = new FormData();

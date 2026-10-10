@@ -181,7 +181,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
             if (!mounted.current) return;
             setSignable(result);
             const initial: Selection = {};
-            for (const file of result.files) initial[fileKey(file)] = { sign: true, graphic: source.graphicPlace ? false : file.withGraphic };
+            for (const file of result.files) initial[fileKey(file)] = { sign: source.preselectFiles !== false, graphic: source.graphicPlace ? false : file.withGraphic };
             setSelection(initial);
             setPhase("select");
         } catch (error) {

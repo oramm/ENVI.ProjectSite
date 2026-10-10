@@ -9,6 +9,7 @@ import {
     OtherContractAddNewModalButton,
     OurContractAddNewModalButton,
 } from "./Modals/ContractModalButtons";
+import { SignContractDocumentsButton, UploadSignedContractDocumentButton } from "../Signing/ContractSigningRowActions";
 
 export default function ContractsSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -39,6 +40,7 @@ export default function ContractsSearch({ title }: { title: string }) {
             ]}
             AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             EditButtonComponent={ContractEditModalButton}
+            RowActionMenuComponents={[SignContractDocumentsButton, UploadSignedContractDocumentButton]}
             isDeletable={true}
             repository={contractsRepository}
             selectedObjectRoute={"/contract/"}

@@ -23,6 +23,8 @@ export type SigningSource = {
     uploadSigned(file: File): Promise<ManualUploadResult>;
     /** Po podpisie albo wgraniu pliku: odświeżenie plakietek i podobnych. */
     onChanged(): void;
+    /** false = lista otwiera się bez zaznaczonych plików (umowa: w folderze leży wiele dokumentów). Domyślnie wszystkie zaznaczone. */
+    preselectFiles?: boolean;
     /**
      * Wybór miejsca grafiki w zwykłych plikach (oferta, D-SIG-10). Gdy źródło to ma, okno po włączeniu
      * grafiki pyta serwer o miejsce na podpis w dokumencie; znalezione jedno bierze samo, a w innym
