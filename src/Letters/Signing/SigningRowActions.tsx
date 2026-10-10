@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Letter } from "../../../Typings/bussinesTypes";
 import { SignedPdfIconButton, SuccessToast, UploadSignedPdfIconButton } from "../../View/Resultsets/CommonComponents";
 import { RowActionMenuItemProps } from "../../View/Resultsets/FilterableTable/FilterableTableTypes";
-import { SignLetterModal } from "./SignLetterModal";
-import { pluralFiles } from "./signingTexts";
-import { UploadSignedPanel } from "./UploadSignedPanel";
+import { SignDocumentsModal } from "../../Signing/SignDocumentsModal";
+import { letterSigningSource } from "./letterSigningSource";
+import { pluralFiles } from "../../Signing/signingTexts";
+import { UploadSignedPanel } from "../../Signing/UploadSignedPanel";
 
 type RowLetter = Letter & { isOur: boolean };
 
@@ -16,16 +17,16 @@ type RowLetter = Letter & { isOur: boolean };
 export function SignOurLetterPdfButton({ dataObject, layout }: RowActionMenuItemProps<RowLetter>) {
     const [show, setShow] = useState(false);
     const [toast, setToast] = useState<{ header: string; message: string } | null>(null);
+    const source = useMemo(() => letterSigningSource(dataObject.id, dataObject.number), [dataObject.id, dataObject.number]);
 
     if (!dataObject.isOur) return null;
 
     return (
         <>
             <SignedPdfIconButton layout={layout} onClick={() => setShow(true)} />
-            <SignLetterModal
+            <SignDocumentsModal
                 show={show}
-                letterId={dataObject.id}
-                letterNumber={dataObject.number}
+                source={source}
                 onHide={() => setShow(false)}
                 onSigned={(count) =>
                     setToast({
@@ -54,6 +55,7 @@ export function SignOurLetterPdfButton({ dataObject, layout }: RowActionMenuItem
 export function UploadSignedLetterButton({ dataObject, layout }: RowActionMenuItemProps<RowLetter>) {
     const [show, setShow] = useState(false);
     const [toast, setToast] = useState<string | null>(null);
+    const source = useMemo(() => letterSigningSource(dataObject.id, dataObject.number), [dataObject.id, dataObject.number]);
 
     if (!dataObject.isOur) return null;
 
@@ -67,7 +69,7 @@ export function UploadSignedLetterButton({ dataObject, layout }: RowActionMenuIt
                     </Modal.Header>
                     <Modal.Body>
                         <UploadSignedPanel
-                            letterId={dataObject.id}
+                            source={source}
                             onUploaded={(result) =>
                                 setToast(`Przyjęto plik podpisany przez ${result.signerName}. Zapisano: ${result.signedName}.`)
                             }

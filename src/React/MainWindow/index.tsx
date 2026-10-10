@@ -10,7 +10,7 @@ import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails
 import InvoicePdfPreview from "../../Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
-import EnviPodpisPage from "../../Letters/Signing/EnviPodpisPage";
+import EnviPodpisPage from "../../Signing/EnviPodpisPage";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import GoogleButton from "../GoogleLoginButton";
 import MainController from "../MainControllerReact";

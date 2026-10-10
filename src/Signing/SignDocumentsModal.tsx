@@ -9,17 +9,16 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
-import { invalidateLetterSignatures } from "./letterSignaturesStore";
 import {
     CreatedSigningJob,
     FINISHED_JOB_STATUSES,
     LetterSignature,
     ManualUploadResult,
     SignableFile,
-    SignableFilesResult,
     SigningApi,
     SigningJobState,
 } from "./SigningApi";
+import { SigningSource } from "./SigningSource";
 import { CANCEL_REASON_FROM_PS, explainCancelReason, formatCheckCode, pluralFiles, pluralPages } from "./signingTexts";
 import { UploadSignedPanel } from "./UploadSignedPanel";
 
@@ -109,8 +108,8 @@ function Waiting({ title, children }: { title: string; children?: React.ReactNod
 }
 
 type ContentProps = {
-    letterId: number;
-    letterNumber?: string | number | null;
+    /** Co podpisujemy (pismo, oferta…): skąd pliki, dokąd podpisane kopie, jakimi słowami o tym mówić. */
+    source: SigningSource;
     onHide: () => void;
     /** Wywoływane raz, gdy zlecenie zakończyło się podpisem (odświeżenie listy, komunikat). */
     onSigned?: (signedFiles: number) => void;
@@ -124,9 +123,9 @@ type ContentProps = {
  * Okno „PDF z podpisem”: wybór plików → program ENVI Podpis → kontrola i PIN → zapis na Dysku.
  * W każdym stanie okno mówi, co się właśnie dzieje i co użytkownik ma teraz zrobić.
  */
-function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUploaded, startInUpload }: ContentProps) {
+function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, startInUpload }: ContentProps) {
     const [phase, setPhase] = useState<Phase>(startInUpload ? "upload" : "loading");
-    const [signable, setSignable] = useState<SignableFilesResult | null>(null);
+    const [signable, setSignable] = useState<Awaited<ReturnType<SigningSource["listFiles"]>> | null>(null);
     const [selection, setSelection] = useState<Selection>({});
     const [loadError, setLoadError] = useState<string | null>(null);
     const [startError, setStartError] = useState<string | null>(null);
@@ -155,7 +154,7 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
         setPhase("loading");
         setLoadError(null);
         try {
-            const result = await SigningApi.listSignableFiles(letterId);
+            const result = await source.listFiles();
             if (!mounted.current) return;
             setSignable(result);
             const initial: Selection = {};
@@ -169,12 +168,12 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
         }
         // Ostrzeżenie o już istniejących podpisach jest dodatkiem: jego błąd nie blokuje podpisywania.
         try {
-            const result = await SigningApi.listLetterSignatures(letterId);
-            if (mounted.current) setExisting(result.signatures);
+            const signatures = await source.listSignatures();
+            if (mounted.current) setExisting(signatures);
         } catch {
             if (mounted.current) setExisting([]);
         }
-    }, [letterId]);
+    }, [source]);
 
     useEffect(() => {
         if (!startInUpload) loadFiles();
@@ -193,8 +192,7 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
         // Poprzednie zlecenie (jeszcze aktywne) zamykamy, żeby nie wisiał ważny token.
         await cancelSilently();
         try {
-            const created = await SigningApi.createJob(
-                letterId,
+            const created = await source.createJob(
                 selectedFiles.map((file) => ({
                     kind: file.kind,
                     gdFileId: file.kind === "DRIVE_FILE" ? file.gdFileId : undefined,
@@ -271,10 +269,10 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
     useEffect(() => {
         if (state?.status === "done" && !reportedDone.current) {
             reportedDone.current = true;
-            invalidateLetterSignatures(letterId);
+            source.onChanged();
             onSigned?.(state.files.length);
         }
-    }, [state, letterId, onSigned]);
+    }, [state, source, onSigned]);
 
     async function cancelFromPs() {
         if (!job) return;
@@ -285,7 +283,6 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
             if (!mounted.current) return;
             setState({
                 jobId: job.jobId,
-                letterId,
                 status: "cancelled",
                 expiresAt: job.expiresAt,
                 failureMessage: null,
@@ -339,7 +336,8 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
                 ? 2
                 : 3;
 
-    const title = `PDF z podpisem — pismo ${letterNumber ?? signable?.letterNumber ?? ""}`.trim();
+    const texts = source.texts;
+    const title = `PDF z podpisem — ${texts.subject}`;
 
     function renderSelect() {
         if (!signable) return null;
@@ -360,14 +358,14 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
                     <strong>Zaznacz pliki, które mają zostać podpisane kartą kwalifikowaną.</strong>
                 </p>
                 <p className="text-muted small">
-                    Podpisane kopie zapiszę w folderze pisma na Dysku Google jako „nazwa_pdp.pdf”. Oryginały
+                    Podpisane kopie zapiszę {texts.inFolder} na Dysku Google jako „nazwa_pdp.pdf”. Oryginały
                     zostają bez zmian. Po kliknięciu „Podpisz” otworzy się program ENVI Podpis na Twoim komputerze:
                     tam wybierzesz certyfikat i wpiszesz PIN.
                 </p>
 
                 {existing.length > 0 && (
                     <Alert variant="warning" className="py-2 small">
-                        To pismo ma już {pluralFiles(existing.length)} podpisanych (ostatni: „{existing[0].signedName}”,{" "}
+                        {texts.thisHasAlready} {pluralFiles(existing.length)} podpisanych (ostatni: „{existing[0].signedName}”,{" "}
                         {existing[0].signerName}). Kolejny podpis doda nowy plik z datą w nazwie — niczego nie nadpisze.
                     </Alert>
                 )}
@@ -406,9 +404,9 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
                                             className={isLetter ? "text-success me-2" : "text-danger me-2"}
                                         />
                                         <strong>{file.name}</strong>
-                                        {isLetter && (
+                                        {isLetter && texts.mainDocBadge && (
                                             <Badge bg="success" className="ms-2">
-                                                pismo
+                                                {texts.mainDocBadge}
                                             </Badge>
                                         )}
                                         <div className="small text-muted">{describeFormat(file)}</div>
@@ -432,10 +430,7 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
                                     </div>
                                 </div>
                                 {file.graphicLocked ? (
-                                    <div className="small text-muted mt-1">
-                                        Pismo zawsze dostaje widoczny podpis z grafiką ENVI (pod „Z poważaniem”), więc
-                                        tego pola nie da się wyłączyć.
-                                    </div>
+                                    <div className="small text-muted mt-1">{texts.lockedGraphicNote}</div>
                                 ) : (
                                     choice.sign &&
                                     choice.graphic && (
@@ -447,8 +442,8 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
                             </div>
                         );
                     })}
-                    {!letterFile && (
-                        <div className="small text-muted">Pismo nie ma dokumentu na Dysku — nie ma czego podpisać.</div>
+                    {!letterFile && texts.noMainDocNote && (
+                        <div className="small text-muted">{texts.noMainDocNote}</div>
                     )}
                 </div>
 
@@ -649,8 +644,8 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
                 <>
                     <Alert variant="success">
                         <FontAwesomeIcon icon={faCircleCheck} className="me-2" />
-                        <strong>Gotowe. Podpisane pliki są już w folderze pisma na Dysku Google.</strong>
-                        <div className="mt-1">Na liście pism pismo ma teraz plakietkę „podpisane”.</div>
+                        <strong>Gotowe. Podpisane pliki są już {texts.inFolder} na Dysku Google.</strong>
+                        {texts.doneNote && <div className="mt-1">{texts.doneNote}</div>}
                     </Alert>
                     {state?.files.map((file) => (
                         <div key={file.index} className="mb-2" style={{ wordBreak: "break-word" }}>
@@ -712,10 +707,10 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
         if (phase === "loading" || phase === "starting") {
             return (
                 <Waiting
-                    title={phase === "loading" ? "Wczytuję pliki z folderu pisma…" : "Zakładam zlecenie podpisu…"}
+                    title={phase === "loading" ? "Wczytuję pliki do podpisu…" : "Zakładam zlecenie podpisu…"}
                 >
                     {phase === "loading"
-                        ? "Sprawdzam, co leży w folderze tego pisma na Dysku Google. To trwa kilka sekund."
+                        ? `Sprawdzam, co leży ${texts.inFolder} na Dysku Google. To trwa kilka sekund.`
                         : "Za chwilę otworzy się program ENVI Podpis."}
                 </Waiting>
             );
@@ -723,7 +718,7 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
         if (phase === "loadError") {
             return (
                 <Alert variant="danger">
-                    <strong>Nie udało się wczytać plików pisma.</strong>
+                    <strong>Nie udało się wczytać plików.</strong>
                     <div className="mt-1">{loadError}</div>
                     <div className="mt-1 small">Sprawdź połączenie i kliknij „Spróbuj ponownie”.</div>
                 </Alert>
@@ -731,7 +726,7 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
         }
         if (phase === "upload") {
             return (
-                <UploadSignedPanel letterId={letterId} onUploaded={onUploaded} />
+                <UploadSignedPanel source={source} onUploaded={onUploaded} />
             );
         }
         if (phase === "job") return renderJob();
@@ -852,12 +847,12 @@ function SignLetterModalContent({ letterId, letterNumber, onHide, onSigned, onUp
 }
 
 /** Okno „PDF z podpisem”. Zawartość montuje się od nowa przy każdym otwarciu (czysty stan). */
-export function SignLetterModal({
+export function SignDocumentsModal({
     show,
     ...rest
 }: ContentProps & {
     show: boolean;
 }) {
     if (!show) return null;
-    return <SignLetterModalContent {...rest} />;
+    return <SignDocumentsModalContent {...rest} />;
 }

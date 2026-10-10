@@ -2,8 +2,8 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useRef, useState } from "react";
 import { Alert, Button, Form, Spinner } from "react-bootstrap";
-import { invalidateLetterSignatures } from "./letterSignaturesStore";
-import { ManualUploadResult, SigningApi } from "./SigningApi";
+import { ManualUploadResult } from "./SigningApi";
+import { SigningSource } from "./SigningSource";
 
 /** Zgodny z limitem serwera (MAX_UPLOAD_BYTES = 10 MB); serwer i tak sprawdza to sam. */
 const MAX_UPLOAD_MB = 10;
@@ -20,10 +20,10 @@ type UploadState =
  * albo powód odmowy po polsku. Ten sam panel stoi w oknie podpisu (jako alternatywa) i we własnym oknie.
  */
 export function UploadSignedPanel({
-    letterId,
+    source,
     onUploaded,
 }: {
-    letterId: number;
+    source: SigningSource;
     onUploaded?: (result: ManualUploadResult) => void;
 }) {
     const [state, setState] = useState<UploadState>({ kind: "idle" });
@@ -41,8 +41,8 @@ export function UploadSignedPanel({
         }
         setState({ kind: "uploading", fileName: file.name });
         try {
-            const result = await SigningApi.uploadSigned(letterId, file);
-            invalidateLetterSignatures(letterId);
+            const result = await source.uploadSigned(file);
+            source.onChanged();
             setState({ kind: "done", result });
             onUploaded?.(result);
         } catch (error) {
@@ -61,14 +61,14 @@ export function UploadSignedPanel({
         <div>
             <p className="mb-2">
                 Masz PDF podpisany kwalifikowanym podpisem w innym programie (na przykład w Szafirze)? Wybierz go tutaj.
-                Po wybraniu pliku sprawdzę podpis i zapiszę go w folderze tego pisma na Dysku Google.
+                Po wybraniu pliku sprawdzę podpis i zapiszę go {source.texts.inFolder} na Dysku Google.
             </p>
             <p className="small text-muted">
-                Nie porównuję treści pliku z pismem w PS — wybierz właściwy plik. Przyjmuję tylko PDF z ważnym
+                Nie porównuję treści pliku z dokumentem w PS — wybierz właściwy plik. Przyjmuję tylko PDF z ważnym
                 podpisem kwalifikowanym (do {MAX_UPLOAD_MB} MB).
             </p>
 
-            <Form.Group controlId={`signed-upload-${letterId}`} className="mb-3">
+            <Form.Group controlId={`signed-upload-${source.key}`} className="mb-3">
                 <Form.Label className="visually-hidden">Podpisany plik PDF</Form.Label>
                 <Form.Control
                     ref={inputRef}
@@ -105,7 +105,7 @@ export function UploadSignedPanel({
                     <FontAwesomeIcon icon={faCircleCheck} className="me-2" />
                     <strong>Przyjęto. Plik podpisał(a): {state.result.signerName}.</strong>
                     <br />
-                    Zapisałem go w folderze pisma jako{" "}
+                    Zapisałem go {source.texts.inFolder} jako{" "}
                     <a href={state.result.signedUrl} target="_blank" rel="noopener noreferrer">
                         {state.result.signedName}
                     </a>

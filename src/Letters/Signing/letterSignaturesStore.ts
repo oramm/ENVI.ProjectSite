@@ -10,7 +10,7 @@
  * więc wiersz po prostu zostaje bez plakietki.
  */
 import { useEffect, useSyncExternalStore } from "react";
-import { LetterSignatureSummaryEntry, SigningApi } from "./SigningApi";
+import { LetterSignatureSummaryEntry, SigningApi } from "../../Signing/SigningApi";
 
 /** Okno zbierania próśb z jednego renderu listy. */
 const BATCH_DELAY_MS = 40;

@@ -24,7 +24,8 @@ vi.mock("./SigningApi", async (importOriginal) => ({
     SigningApi: api,
 }));
 
-import { PROGRAM_MISSING_AFTER_MS, SignLetterModal } from "./SignLetterModal";
+import { letterSigningSource } from "../Letters/Signing/letterSigningSource";
+import { PROGRAM_MISSING_AFTER_MS, SignDocumentsModal } from "./SignDocumentsModal";
 
 const SIGNABLE = {
     letterId: 6168,
@@ -42,7 +43,6 @@ const SIGNABLE = {
 function jobState(over: Partial<SigningJobState>): SigningJobState {
     return {
         jobId: 77,
-        letterId: 6168,
         status: "created",
         expiresAt: new Date(Date.now() + 9 * 60000).toISOString(),
         failureMessage: null,
@@ -57,7 +57,7 @@ function jobState(over: Partial<SigningJobState>): SigningJobState {
 function renderModal(extra: Record<string, unknown> = {}) {
     const onHide = vi.fn();
     const onSigned = vi.fn();
-    render(<SignLetterModal show letterId={6168} letterNumber="6168" onHide={onHide} onSigned={onSigned} {...extra} />);
+    render(<SignDocumentsModal show source={letterSigningSource(6168, "6168")} onHide={onHide} onSigned={onSigned} {...extra} />);
     return { onHide, onSigned };
 }
 
@@ -76,7 +76,7 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-describe("SignLetterModal — wybór plików", () => {
+describe("SignDocumentsModal — wybór plików", () => {
     it("pismo ma zablokowaną grafikę z wyjaśnieniem, załączniki domyślnie podpis tak, grafika nie, a niepodpisywalne są wyszarzone z powodem", async () => {
         renderModal();
 
@@ -140,7 +140,7 @@ describe("SignLetterModal — wybór plików", () => {
     });
 });
 
-describe("SignLetterModal — przebieg zlecenia", () => {
+describe("SignDocumentsModal — przebieg zlecenia", () => {
     async function startJob() {
         vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
         const handlers = renderModal();
@@ -264,7 +264,7 @@ describe("SignLetterModal — przebieg zlecenia", () => {
     });
 });
 
-describe("SignLetterModal — wgraj podpisany", () => {
+describe("SignDocumentsModal — wgraj podpisany", () => {
     it("w oknie jest alternatywą: zamyka aktywne zlecenie i pokazuje wybór pliku", async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
         vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);

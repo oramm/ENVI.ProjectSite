@@ -8,8 +8,8 @@
  * Bez ponawiania żądań (ToolsFetch.fetchJsonWithSafeError, nie fetchWithRetry): zakładanie zlecenia
  * i wgrywanie pliku zapisują dane, a odpytywanie stanu ponawia się samo co chwilę.
  */
-import MainSetup from "../../React/MainSetupReact";
-import ToolsFetch from "../../React/Tools/ToolsFetch";
+import MainSetup from "../React/MainSetupReact";
+import ToolsFetch from "../React/Tools/ToolsFetch";
 
 export type SigningJobStatus =
     | "created"
@@ -75,7 +75,6 @@ export type SigningJobFileStatus = {
 
 export type SigningJobState = {
     jobId: number;
-    letterId: number;
     status: SigningJobStatus;
     expiresAt: string;
     failureMessage: string | null;
