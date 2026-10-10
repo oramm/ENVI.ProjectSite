@@ -11,8 +11,8 @@ const offerListLabel = (offer: RowOffer) =>
     [offer._type?.name, offer._city?.name].filter(Boolean).join(" ") || undefined;
 
 /**
- * Akcja wiersza „PDF z podpisem” dla ofert. Tylko oferty ZEWNĘTRZNE (składane w przetargach): ich pliki
- * leżą w folderze „Oferta”. Oferta własna takiego folderu nie ma (decyzja właściciela 2026-10-10).
+ * Akcja wiersza „PDF z podpisem” dla ofert, zewnętrznych i własnych (decyzja właściciela 2026-10-10).
+ * Skąd brać pliki (podfolder „Oferta” albo folder „Przygotowanie oferty”), rozstrzyga serwer.
  */
 export function SignOfferFilesButton({ dataObject, layout }: RowActionMenuItemProps<RowOffer>) {
     const { id, alias, employerName } = dataObject;
@@ -22,12 +22,10 @@ export function SignOfferFilesButton({ dataObject, layout }: RowActionMenuItemPr
         [id, alias, employerName, listLabel]
     );
 
-    if (dataObject.isOur) return null;
-
     return <SignPdfRowAction source={source} layout={layout} />;
 }
 
-/** Akcja wiersza „Wgraj podpisany” dla ofert zewnętrznych. */
+/** Akcja wiersza „Wgraj podpisany” dla ofert. */
 export function UploadSignedOfferFileButton({ dataObject, layout }: RowActionMenuItemProps<RowOffer>) {
     const { id, alias, employerName } = dataObject;
     const listLabel = offerListLabel(dataObject);
@@ -35,8 +33,6 @@ export function UploadSignedOfferFileButton({ dataObject, layout }: RowActionMen
         () => offerSigningSource({ id, alias, employerName, listLabel }),
         [id, alias, employerName, listLabel]
     );
-
-    if (dataObject.isOur) return null;
 
     return <UploadSignedRowAction source={source} layout={layout} />;
 }

@@ -68,6 +68,8 @@ export type GraphicPlaceSearch = {
 export type OfferSignableFilesResult = {
     offerId: number;
     offerAlias: string;
+    /** Skąd serwer wziął pliki: podfolder „Oferta” albo, gdy go nie ma, folder sprawy „Przygotowanie oferty”. */
+    folder: "OFERTA" | "CASE";
     files: SignableFile[];
     notSignable: NotSignableFile[];
 };

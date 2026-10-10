@@ -79,15 +79,16 @@ describe("akcje wiersza — pismo (podpisujemy nasze)", () => {
 });
 
 describe("akcje wiersza — oferta (podpisujemy zewnętrzne)", () => {
-    it("oferta własna nie ma przycisku podpisu ani wgrania", () => {
-        const { container } = render(
+    it("oferta własna też ma przycisk podpisu i wgrania (decyzja właściciela 2026-10-10)", () => {
+        render(
             <>
                 <SignOfferFilesButton dataObject={offer(true)} layout="vertical" />
                 <UploadSignedOfferFileButton dataObject={offer(true)} layout="vertical" />
             </>
         );
 
-        expect(container).toBeEmptyDOMElement();
+        expect(screen.getByTitle(SIGN_TITLE)).toBeInTheDocument();
+        expect(screen.getByTitle(UPLOAD_TITLE)).toBeInTheDocument();
     });
 
     it("oferta zewnętrzna ma przycisk podpisu i wgrania", () => {

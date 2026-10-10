@@ -106,6 +106,17 @@ describe("offerSigningSource — teksty", () => {
         expect(source.texts.subject).toBe("oferta IK Nysa | OŚ, Gmina Brzeg");
     });
 
+    it("folder w tekstach zgadza się z tym, skąd serwer wziął pliki: „Oferta” albo „Przygotowanie oferty”", async () => {
+        const source = offerSigningSource({ id: 7, alias: "OŚ" });
+        expect(source.texts.inFolder).toBe("w folderze oferty");
+        api.listOfferSignableFiles.mockResolvedValueOnce({ offerId: 7, offerAlias: "OŚ", folder: "CASE", files: [], notSignable: [] });
+        await source.listFiles();
+        expect(source.texts.inFolder).toBe("w folderze „Przygotowanie oferty”");
+        api.listOfferSignableFiles.mockResolvedValueOnce({ offerId: 7, offerAlias: "OŚ", folder: "OFERTA", files: [], notSignable: [] });
+        await source.listFiles();
+        expect(source.texts.inFolder).toBe("w folderze „Oferta”");
+    });
+
     it("bez zleceniodawcy tytuł to samo „oferta {alias}”", () => {
         const source = offerSigningSource({ id: 42, alias: "OŚ" });
         expect(source.texts.subject).toBe("oferta OŚ");
@@ -118,7 +129,7 @@ describe("offerSigningSource — teksty", () => {
 
     it("folder, ostrzeżenie o podpisach i brak tekstów pisma", () => {
         const source = offerSigningSource({ id: 42, alias: "OŚ" });
-        expect(source.texts.inFolder).toBe("w folderze „Oferta”");
+        expect(source.texts.inFolder).toBe("w folderze oferty");
         expect(source.texts.thisHasAlready).toBe("Ta oferta ma już");
         expect(source.texts.mainDocBadge).toBeUndefined();
         expect(source.texts.lockedGraphicNote).toBeUndefined();
