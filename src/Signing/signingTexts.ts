@@ -115,3 +115,8 @@ export function pluralFiles(n: number): string {
 export function pluralPages(n: number): string {
     return plural(n, "strona", "strony", "stron");
 }
+
+/** „1 miejsce”, „2 miejsca”, „5 miejsc”. */
+export function pluralPlaces(n: number): string {
+    return plural(n, "miejsce", "miejsca", "miejsc");
+}

@@ -48,10 +48,36 @@ export type SignableFilesResult = {
     notSignable: NotSignableFile[];
 };
 
+/** Miejsce grafiki podpisu: strona od 1, prostokąt w punktach PDF (początek układu: lewy dolny róg strony). */
+export type GraphicPlacement = {
+    page: number;
+    rect: { x: number; y: number; width: number; height: number };
+};
+
+/**
+ * Odpowiedź serwera „gdzie w pliku może stanąć grafika”: rozmiary stron (punkty PDF), standardowy
+ * rozmiar grafiki jako ułamek strony i miejsca oznaczone w dokumencie jako podpis wykonawcy.
+ * Dokładnie jeden kandydat = bierzemy go bez pytania; zero albo kilka = użytkownik klika miejsce.
+ */
+export type GraphicPlaceSearch = {
+    pages: { width: number; height: number; placeable: boolean }[];
+    candidates: (GraphicPlacement & { label: string })[];
+    stampRel: { width: number; height: number };
+};
+
+export type OfferSignableFilesResult = {
+    offerId: number;
+    offerAlias: string;
+    files: SignableFile[];
+    notSignable: NotSignableFile[];
+};
+
 export type RequestedSigningFile = {
     kind: SignableFileKind;
     gdFileId?: string;
     withGraphic: boolean;
+    /** Tylko źródła z wyborem miejsca (oferta): gdzie ma stanąć grafika. */
+    placement?: GraphicPlacement;
 };
 
 export type CreatedSigningJob = {
@@ -86,7 +112,7 @@ export type SigningJobState = {
 
 export type LetterSignature = {
     id: number;
-    sourceType: "LETTER" | "LETTER_ATTACHMENT" | "CONTRACT_DOCUMENT";
+    sourceType: "LETTER" | "LETTER_ATTACHMENT" | "CONTRACT_DOCUMENT" | "OFFER_DOCUMENT";
     signedGdFileId: string;
     signedName: string;
     signedUrl: string;
@@ -184,13 +210,71 @@ export const SigningApi = {
     },
 
     uploadSigned(letterId: number, file: File): Promise<ManualUploadResult> {
-        const form = new FormData();
-        form.append("file", file);
-        // Bez nagłówka Content-Type: przeglądarka sama dopisze granicę multipart.
-        return ToolsFetch.fetchJsonWithSafeError(url(`letter/${letterId}/signedPdf`), {
-            method: "POST",
+        return uploadSignedTo(`letter/${letterId}/signedPdf`, file);
+    },
+
+    // ------------------------------------------------------------------ oferta (pliki z folderu „Oferta”)
+
+    listOfferSignableFiles(offerId: number): Promise<OfferSignableFilesResult> {
+        return ToolsFetch.fetchJsonWithSafeError(url(`offer/${offerId}/signableFiles`), {
             credentials: "include",
-            body: form,
         });
     },
+
+    createOfferJob(offerId: number, files: RequestedSigningFile[]): Promise<CreatedSigningJob> {
+        return ToolsFetch.fetchJsonWithSafeError(url("signingJob"), {
+            method: "POST",
+            credentials: "include",
+            headers: JSON_HEADERS,
+            body: JSON.stringify({ offerId, files }),
+        });
+    },
+
+    listOfferSignatures(offerId: number): Promise<{ offerId: number; signatures: LetterSignature[] }> {
+        return ToolsFetch.fetchJsonWithSafeError(url(`offer/${offerId}/signatures`), {
+            credentials: "include",
+        });
+    },
+
+    uploadSignedToOffer(offerId: number, file: File): Promise<ManualUploadResult> {
+        return uploadSignedTo(`offer/${offerId}/signedPdf`, file);
+    },
+
+    locateOfferGraphicPlace(offerId: number, gdFileId: string): Promise<GraphicPlaceSearch> {
+        return ToolsFetch.fetchJsonWithSafeError(
+            url(`offer/${offerId}/signableFile/${encodeURIComponent(gdFileId)}/graphicPlace`),
+            { credentials: "include", cache: "no-store" }
+        );
+    },
+
+    /** Obraz strony pliku oferty (PNG). Pobierany z sesją jak reszta API, dlatego jako Blob, a nie adres dla <img>. */
+    async offerFilePageImage(offerId: number, gdFileId: string, page: number): Promise<Blob> {
+        const response = await fetch(
+            url(`offer/${offerId}/signableFile/${encodeURIComponent(gdFileId)}/page/${page}`),
+            { credentials: "include", cache: "no-store" }
+        );
+        if (!response.ok) {
+            let message = "Nie udało się pobrać obrazu strony.";
+            try {
+                const body = await response.json();
+                if (typeof body?.errorMessage === "string") message = body.errorMessage;
+                else if (typeof body?.message === "string") message = body.message;
+            } catch {
+                // odpowiedź bez JSON - zostaje komunikat ogólny
+            }
+            throw new Error(message);
+        }
+        return response.blob();
+    },
 };
+
+function uploadSignedTo(path: string, file: File): Promise<ManualUploadResult> {
+    const form = new FormData();
+    form.append("file", file);
+    // Bez nagłówka Content-Type: przeglądarka sama dopisze granicę multipart.
+    return ToolsFetch.fetchJsonWithSafeError(url(path), {
+        method: "POST",
+        credentials: "include",
+        body: form,
+    });
+}

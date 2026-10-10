@@ -12,6 +12,8 @@ import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
 import {
     CreatedSigningJob,
     FINISHED_JOB_STATUSES,
+    GraphicPlacement,
+    GraphicPlaceSearch,
     LetterSignature,
     ManualUploadResult,
     SignableFile,
@@ -19,7 +21,8 @@ import {
     SigningJobState,
 } from "./SigningApi";
 import { SigningSource } from "./SigningSource";
-import { CANCEL_REASON_FROM_PS, explainCancelReason, formatCheckCode, pluralFiles, pluralPages } from "./signingTexts";
+import { GraphicPlacePicker } from "./GraphicPlacePicker";
+import { CANCEL_REASON_FROM_PS, explainCancelReason, formatCheckCode, pluralFiles, pluralPages, pluralPlaces } from "./signingTexts";
 import { UploadSignedPanel } from "./UploadSignedPanel";
 
 /** Po tylu sekundach bez reakcji programu zakładamy, że programu nie ma na tym komputerze. */
@@ -27,8 +30,13 @@ export const PROGRAM_MISSING_AFTER_MS = 20_000;
 /** Jak często pytamy serwer o stan zlecenia. */
 const POLL_MS = 1500;
 
-type Phase = "loading" | "loadError" | "select" | "starting" | "job" | "upload";
+type Phase = "loading" | "loadError" | "select" | "picker" | "starting" | "job" | "upload";
 type Selection = Record<string, { sign: boolean; graphic: boolean }>;
+type GraphicPlaceState =
+    | { status: "searching" }
+    | { status: "error"; message: string }
+    | { status: "unavailable" }
+    | { status: "ready"; search: GraphicPlaceSearch; placement?: GraphicPlacement; label?: string };
 
 const fileKey = (file: Pick<SignableFile, "kind" | "gdFileId">) =>
     file.kind === "LETTER_DOC" ? "LETTER_DOC" : `F:${file.gdFileId}`;
@@ -127,6 +135,9 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
     const [phase, setPhase] = useState<Phase>(startInUpload ? "upload" : "loading");
     const [signable, setSignable] = useState<Awaited<ReturnType<SigningSource["listFiles"]>> | null>(null);
     const [selection, setSelection] = useState<Selection>({});
+    const [places, setPlaces] = useState<Record<string, GraphicPlaceState>>({});
+    const [pickerFile, setPickerFile] = useState<SignableFile | null>(null);
+    const placeRequests = useRef<Record<string, symbol>>({});
     const [loadError, setLoadError] = useState<string | null>(null);
     const [startError, setStartError] = useState<string | null>(null);
     const [existing, setExisting] = useState<LetterSignature[]>([]);
@@ -145,12 +156,16 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
         mounted.current = true;
         return () => {
             mounted.current = false;
+            placeRequests.current = {};
         };
     }, []);
 
     // ------------------------------------------------------------------ 1. lista plików
 
     const loadFiles = useCallback(async () => {
+        placeRequests.current = {};
+        setPlaces({});
+        setPickerFile(null);
         setPhase("loading");
         setLoadError(null);
         try {
@@ -158,7 +173,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
             if (!mounted.current) return;
             setSignable(result);
             const initial: Selection = {};
-            for (const file of result.files) initial[fileKey(file)] = { sign: true, graphic: file.withGraphic };
+            for (const file of result.files) initial[fileKey(file)] = { sign: true, graphic: source.graphicPlace ? false : file.withGraphic };
             setSelection(initial);
             setPhase("select");
         } catch (error) {
@@ -180,12 +195,57 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    function clearPlace(file: SignableFile) {
+        const key = fileKey(file);
+        delete placeRequests.current[key];
+        setPlaces((prev) => {
+            const next = { ...prev };
+            delete next[key];
+            return next;
+        });
+    }
+
+    async function locatePlace(file: SignableFile) {
+        if (!source.graphicPlace) return;
+        const key = fileKey(file);
+        const request = Symbol();
+        placeRequests.current[key] = request;
+        setPlaces((prev) => ({ ...prev, [key]: { status: "searching" } }));
+        try {
+            const search = await source.graphicPlace.locate(file);
+            if (!mounted.current || placeRequests.current[key] !== request) return;
+            if (!search.pages.some((page) => page.placeable)) {
+                setSelection((prev) => ({ ...prev, [key]: { ...prev[key], graphic: false } }));
+                setPlaces((prev) => ({ ...prev, [key]: { status: "unavailable" } }));
+                return;
+            }
+            const candidate = search.candidates.length === 1 ? search.candidates[0] : undefined;
+            setPlaces((prev) => ({ ...prev, [key]: {
+                status: "ready", search,
+                placement: candidate ? { page: candidate.page, rect: candidate.rect } : undefined,
+                label: candidate?.label,
+            } }));
+        } catch (error) {
+            if (!mounted.current || placeRequests.current[key] !== request) return;
+            setPlaces((prev) => ({ ...prev, [key]: {
+                status: "error", message: error instanceof Error ? error.message : "Sprawdź połączenie z PS i spróbuj ponownie.",
+            } }));
+        }
+    }
+
+    const loadPickerPage = useCallback((page: number) => source.graphicPlace!.pageImage(pickerFile!, page), [source, pickerFile]);
+
     // ------------------------------------------------------------------ 2. zakładanie zlecenia
 
     const selectedFiles = (signable?.files ?? []).filter((file) => selection[fileKey(file)]?.sign);
+    const missingPlaces = source.graphicPlace ? selectedFiles.filter((file) => {
+        const key = fileKey(file);
+        const place = places[key];
+        return selection[key]?.graphic && (place?.status !== "ready" || !place.placement);
+    }) : [];
 
     async function startJob() {
-        if (!signable || selectedFiles.length === 0) return;
+        if (!signable || selectedFiles.length === 0 || missingPlaces.length > 0) return;
         setStartError(null);
         setActionError(null);
         setPhase("starting");
@@ -193,11 +253,17 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
         await cancelSilently();
         try {
             const created = await source.createJob(
-                selectedFiles.map((file) => ({
-                    kind: file.kind,
-                    gdFileId: file.kind === "DRIVE_FILE" ? file.gdFileId : undefined,
-                    withGraphic: file.graphicLocked ? true : !!selection[fileKey(file)]?.graphic,
-                }))
+                selectedFiles.map((file) => {
+                    const key = fileKey(file);
+                    const withGraphic = !source.graphicPlace && file.graphicLocked ? true : !!selection[key]?.graphic;
+                    const place = places[key];
+                    return {
+                        kind: file.kind,
+                        gdFileId: file.kind === "DRIVE_FILE" ? file.gdFileId : undefined,
+                        withGraphic,
+                        ...(source.graphicPlace && withGraphic && place?.status === "ready" ? { placement: place.placement } : {}),
+                    };
+                })
             );
             if (!mounted.current) return;
             reportedDone.current = false;
@@ -339,6 +405,50 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
     const texts = source.texts;
     const title = `PDF z podpisem — ${texts.subject}`;
 
+    function renderPlace(file: SignableFile) {
+        const place = places[fileKey(file)];
+        if (!place) return null;
+        if (place.status === "searching") return (
+            <div className="small text-muted mt-1" role="status">
+                <Spinner animation="border" size="sm" aria-hidden="true" className="me-2" />
+                Szukam w dokumencie miejsca na podpis…
+            </div>
+        );
+        if (place.status === "unavailable") return (
+            <Alert variant="warning" className="small py-2 mt-2 mb-0">
+                W tym pliku nie da się ustawić grafiki (strony są obrócone). Podpisz go bez grafiki.
+            </Alert>
+        );
+        if (place.status === "error") return (
+            <Alert variant="warning" className="small py-2 mt-2 mb-0">
+                Nie udało się sprawdzić dokumentu: {place.message}
+                <div><Button variant="link" size="sm" className="p-0" onClick={() => locatePlace(file)}>Spróbuj ponownie</Button></div>
+            </Alert>
+        );
+        const chooseButton = (
+            <Button variant="link" size="sm" className="p-0" onClick={() => { setPickerFile(file); setPhase("picker"); }}>
+                {place.placement ? "Pokaż lub zmień miejsce" : "Wskaż miejsce"}
+            </Button>
+        );
+        if (place.placement) return (
+            <div className="small text-muted mt-1" style={{ overflowWrap: "anywhere" }}>
+                <div>{place.label !== undefined
+                    ? `Grafika stanie na stronie ${place.placement.page}, przy napisie „${place.label}”.`
+                    : `Grafika stanie na stronie ${place.placement.page}, w miejscu wskazanym przez Ciebie.`}</div>
+                {chooseButton}
+            </div>
+        );
+        const count = pluralPlaces(place.search.candidates.length);
+        return (
+            <Alert variant="warning" className="small py-2 mt-2 mb-0">
+                <div>{place.search.candidates.length === 0
+                    ? "Nie znalazłem w dokumencie miejsca na podpis. Wskaż, gdzie ma stanąć grafika."
+                    : `W dokumencie ${count.endsWith("miejsca") ? "są" : "jest"} ${count} na podpis. Wskaż właściwe.`}</div>
+                {chooseButton}
+            </Alert>
+        );
+    }
+
     function renderSelect() {
         if (!signable) return null;
         const letterFile = signable.files.find((file) => file.kind === "LETTER_DOC");
@@ -347,9 +457,13 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
 
         function setSign(file: SignableFile, sign: boolean) {
             setSelection((prev) => ({ ...prev, [fileKey(file)]: { ...prev[fileKey(file)], sign } }));
+            if (!sign) clearPlace(file);
+            else if (selection[fileKey(file)]?.graphic) locatePlace(file);
         }
         function setGraphic(file: SignableFile, graphic: boolean) {
             setSelection((prev) => ({ ...prev, [fileKey(file)]: { ...prev[fileKey(file)], graphic } }));
+            if (graphic) locatePlace(file);
+            else clearPlace(file);
         }
 
         return (
@@ -423,13 +537,13 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                                             type="checkbox"
                                             id={`graphic-${key}`}
                                             label="grafika"
-                                            checked={file.graphicLocked ? true : choice.graphic}
-                                            disabled={file.graphicLocked || !choice.sign}
+                                            checked={!source.graphicPlace && file.graphicLocked ? true : choice.graphic}
+                                            disabled={(!source.graphicPlace && file.graphicLocked) || !choice.sign}
                                             onChange={(event) => setGraphic(file, event.target.checked)}
                                         />
                                     </div>
                                 </div>
-                                {file.graphicLocked ? (
+                                {source.graphicPlace ? (choice.sign && renderPlace(file)) : file.graphicLocked ? (
                                     <div className="small text-muted mt-1">{texts.lockedGraphicNote}</div>
                                 ) : (
                                     choice.sign &&
@@ -464,8 +578,26 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                     </div>
                 )}
 
-                {selectedFiles.length === 0 && (
-                    <div className="small text-danger">Zaznacz co najmniej jeden plik do podpisu.</div>
+                {rows.length === 0 ? (
+                    <Alert variant="info" className="py-2">
+                        Nie ma plików, które można podpisać {texts.inFolder} na Dysku Google. Włóż tam pliki PDF i
+                        odśwież listę.
+                        <div className="mt-2">
+                            <Button size="sm" variant="outline-secondary" onClick={loadFiles}>
+                                Odśwież listę plików
+                            </Button>
+                        </div>
+                    </Alert>
+                ) : (
+                    selectedFiles.length === 0 && (
+                        <div className="small text-danger">Zaznacz co najmniej jeden plik do podpisu.</div>
+                    )
+                )}
+                {missingPlaces.length > 0 && (
+                    <div className="small text-muted" style={{ overflowWrap: "anywhere" }} role="status">
+                        Wskaż miejsce grafiki w pliku „{missingPlaces[0].name}” albo wyłącz dla niego grafikę.
+                        {missingPlaces.length > 1 && ` Pozostałe pliki bez miejsca: ${missingPlaces.length - 1}.`}
+                    </div>
                 )}
             </>
         );
@@ -773,7 +905,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                     <Button variant="outline-primary" onClick={openUpload}>
                         Wgraj podpisany
                     </Button>
-                    <Button variant="success" disabled={selectedFiles.length === 0} onClick={startJob}>
+                    <Button variant="success" disabled={selectedFiles.length === 0 || missingPlaces.length > 0} onClick={startJob}>
                         Podpisz {selectedFiles.length > 0 ? `(${pluralFiles(selectedFiles.length)})` : ""}
                     </Button>
                 </>
@@ -822,6 +954,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
         );
     }
 
+    const pickerPlace = pickerFile ? places[fileKey(pickerFile)] : undefined;
     return (
         <Modal
             size="lg"
@@ -834,14 +967,39 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
             <Modal.Header closeButton={closable}>
                 <Modal.Title as="h5">{title}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                {phase !== "upload" && !jobStopped && <Stepper current={currentStep} />}
-                {phase === "upload" && (
-                    <h6 className="mb-2">Wgraj podpisany — plik podpisany poza PS</h6>
-                )}
-                {renderBody()}
-            </Modal.Body>
-            <Modal.Footer>{renderFooter()}</Modal.Footer>
+            {phase === "picker" && pickerFile && pickerPlace?.status === "ready" ? (
+                <GraphicPlacePicker
+                    fileName={pickerFile.name}
+                    search={pickerPlace.search}
+                    initial={pickerPlace.placement}
+                    // Bez oznaczonego miejsca zaczynamy od ostatniej strony: tam zwykle jest podpis.
+                    initialPage={pickerPlace.search.candidates[0]?.page ?? pickerPlace.search.pages.length}
+                    loadPage={loadPickerPage}
+                    onCancel={() => { setPickerFile(null); setPhase("select"); }}
+                    onConfirm={(placement) => {
+                        const key = fileKey(pickerFile);
+                        setPlaces((prev) => ({ ...prev, [key]: {
+                            ...pickerPlace, placement,
+                            label: placement === pickerPlace.placement ? pickerPlace.label : undefined,
+                        } }));
+                        setPickerFile(null);
+                        setPhase("select");
+                    }}
+                >
+                    <Stepper current={0} />
+                </GraphicPlacePicker>
+            ) : (
+                <>
+                    <Modal.Body>
+                        {phase !== "upload" && !jobStopped && <Stepper current={currentStep} />}
+                        {phase === "upload" && (
+                            <h6 className="mb-2">Wgraj podpisany — plik podpisany poza PS</h6>
+                        )}
+                        {renderBody()}
+                    </Modal.Body>
+                    <Modal.Footer>{renderFooter()}</Modal.Footer>
+                </>
+            )}
         </Modal>
     );
 }

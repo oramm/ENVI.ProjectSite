@@ -1,5 +1,6 @@
 import {
     CreatedSigningJob,
+    GraphicPlaceSearch,
     LetterSignature,
     ManualUploadResult,
     NotSignableFile,
@@ -22,6 +23,16 @@ export type SigningSource = {
     uploadSigned(file: File): Promise<ManualUploadResult>;
     /** Po podpisie albo wgraniu pliku: odświeżenie plakietek i podobnych. */
     onChanged(): void;
+    /**
+     * Wybór miejsca grafiki w zwykłych plikach (oferta, D-SIG-10). Gdy źródło to ma, okno po włączeniu
+     * grafiki pyta serwer o miejsce na podpis w dokumencie; znalezione jedno bierze samo, a w innym
+     * razie użytkownik klika miejsce na obrazie strony. Bez miejsca nie da się kliknąć „Podpisz”.
+     * Brak tego pola (pismo): miejsce wyznacza serwer — prawy dolny róg ostatniej strony.
+     */
+    graphicPlace?: {
+        locate(file: SignableFile): Promise<GraphicPlaceSearch>;
+        pageImage(file: SignableFile, page: number): Promise<Blob>;
+    };
     texts: {
         /** Do tytułu okna: „PDF z podpisem — pismo 12”. */
         subject: string;

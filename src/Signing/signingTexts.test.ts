@@ -4,7 +4,7 @@
  * musi mieć zwykłe zdanie i podpowiedź, co dalej.
  */
 import { describe, expect, it } from "vitest";
-import { explainCancelReason, formatCheckCode, pluralFiles, pluralPages } from "./signingTexts";
+import { explainCancelReason, formatCheckCode, pluralFiles, pluralPages, pluralPlaces } from "./signingTexts";
 
 /** Powody wysyłane przez program (desktop/envi-podpis/src/Messages.cs i MainForm.cs) oraz przez PS. */
 const REASONS_FROM_PROGRAM = [
@@ -74,5 +74,10 @@ describe("liczebniki", () => {
         expect(pluralPages(1)).toBe("1 strona");
         expect(pluralPages(3)).toBe("3 strony");
         expect(pluralPages(14)).toBe("14 stron");
+        expect(pluralPlaces(1)).toBe("1 miejsce");
+        expect(pluralPlaces(2)).toBe("2 miejsca");
+        expect(pluralPlaces(5)).toBe("5 miejsc");
+        expect(pluralPlaces(12)).toBe("12 miejsc");
+        expect(pluralPlaces(22)).toBe("22 miejsca");
     });
 });

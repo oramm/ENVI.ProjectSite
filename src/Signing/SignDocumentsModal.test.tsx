@@ -6,7 +6,8 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { SigningJobState } from "./SigningApi";
+import type { GraphicPlaceSearch, SignableFile, SigningJobState } from "./SigningApi";
+import type { SigningSource } from "./SigningSource";
 
 const api = vi.hoisted(() => ({
     listSignableFiles: vi.fn(),
@@ -304,5 +305,344 @@ describe("SignDocumentsModal — wgraj podpisany", () => {
 
         expect(await screen.findByText(/To nie jest plik PDF/)).toBeInTheDocument();
         expect(api.uploadSigned).not.toHaveBeenCalled();
+    });
+});
+
+describe("SignDocumentsModal — źródło z wyborem miejsca grafiki", () => {
+    const file: SignableFile = { kind: "DRIVE_FILE", gdFileId: "OFFERPDF000001", name: "Oferta.pdf", mimeType: "application/pdf", withGraphic: false, graphicLocked: false };
+    const candidate = { page: 2, rect: { x: 100, y: 200, width: 120, height: 80 }, label: "podpis wykonawcy" };
+    const search: GraphicPlaceSearch = {
+        pages: [{ width: 600, height: 800, placeable: true }, { width: 600, height: 800, placeable: true }],
+        stampRel: { width: 0.2, height: 0.1 },
+        candidates: [],
+    };
+    const graphic = () => document.getElementById(`graphic-F:${file.gdFileId}`) as HTMLInputElement;
+    const sign = () => document.getElementById(`sign-F:${file.gdFileId}`) as HTMLInputElement;
+
+    beforeEach(() => {
+        vi.stubGlobal("URL", class extends URL {
+            static createObjectURL = vi.fn(() => "blob:page");
+            static revokeObjectURL = vi.fn();
+        });
+        vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+    });
+    afterEach(() => vi.unstubAllGlobals());
+
+    function renderSource(result: GraphicPlaceSearch = search, files = [file]) {
+        const locate = vi.fn().mockResolvedValue(result);
+        const pageImage = vi.fn().mockResolvedValue(new Blob(["png"], { type: "image/png" }));
+        const createJob = vi.fn().mockResolvedValue({ jobId: 77, protocolUrl: "envi-podpis://job/TOKEN", expiresAt: new Date(Date.now() + 600000).toISOString() });
+        const listFiles = vi.fn().mockResolvedValue({ files, notSignable: [] });
+        const source: SigningSource = {
+            key: "graphic-test", listFiles, createJob, listSignatures: vi.fn().mockResolvedValue([]),
+            uploadSigned: vi.fn(), onChanged: vi.fn(), graphicPlace: { locate, pageImage },
+            texts: { subject: "oferta", inFolder: "w folderze oferty", thisHasAlready: "Ta oferta ma już" },
+        };
+        const onHide = vi.fn();
+        const view = render(<SignDocumentsModal show source={source} onHide={onHide} />);
+        return { ...view, source, onHide, locate, pageImage, createJob, listFiles };
+    }
+
+    async function clickPage(page = 1, x = 150, y = 200) {
+        const img = await screen.findByAltText(`Strona ${page} dokumentu ${file.name}`);
+        vi.spyOn(img, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 300, height: 400 } as DOMRect);
+        fireEvent.click(img, { clientX: x, clientY: y });
+    }
+
+    it("pusty folder: okno mówi, że nie ma czego podpisać, i pozwala odświeżyć listę", async () => {
+        const { listFiles } = renderSource(search, []);
+        expect(await screen.findByText(/Nie ma plików, które można podpisać w folderze oferty/)).toBeInTheDocument();
+        expect(screen.queryByText("Zaznacz co najmniej jeden plik do podpisu.")).not.toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+        fireEvent.click(screen.getByRole("button", { name: "Odśwież listę plików" }));
+        await waitFor(() => expect(listFiles).toHaveBeenCalledTimes(2));
+    });
+
+    it("bez grafiki nie szuka miejsca, a zlecenie nie zawiera placement", async () => {
+        const { locate, createJob } = renderSource();
+        await screen.findByText(file.name);
+        expect(graphic()).not.toBeChecked();
+        expect(locate).not.toHaveBeenCalled();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(createJob).toHaveBeenCalledWith([{ kind: "DRIVE_FILE", gdFileId: file.gdFileId, withGraphic: false }]));
+    });
+
+    it("grafika jest domyślnie wyłączona także gdy lista sugeruje withGraphic", async () => {
+        const { locate } = renderSource(search, [{ ...file, withGraphic: true }]);
+        await screen.findByText(file.name);
+        expect(graphic()).not.toBeChecked();
+        expect(locate).not.toHaveBeenCalled();
+    });
+
+    it("jeden kandydat jest przyjęty automatycznie; createJob dostaje placement bez label", async () => {
+        const { locate, createJob } = renderSource({ ...search, candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        expect(screen.getByText("Szukam w dokumencie miejsca na podpis…")).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+        expect(await screen.findByText("Grafika stanie na stronie 2, przy napisie „podpis wykonawcy”.")).toBeInTheDocument();
+        expect(locate).toHaveBeenCalledWith(file);
+        expect(screen.getByRole("button", { name: "Pokaż lub zmień miejsce" })).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(createJob).toHaveBeenCalledWith([{
+            kind: "DRIVE_FILE", gdFileId: file.gdFileId, withGraphic: true, placement: { page: 2, rect: candidate.rect },
+        }]));
+    });
+
+    it("zero kandydatów blokuje podpis; wskazanie w tym samym oknie odblokowuje i trafia do createJob", async () => {
+        const { createJob } = renderSource();
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        expect(await screen.findByText(/Nie znalazłem w dokumencie miejsca na podpis/)).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+        expect(screen.getByText("Wskaż miejsce grafiki w pliku „Oferta.pdf” albo wyłącz dla niego grafikę.")).toBeInTheDocument();
+        fireEvent.click(screen.getByRole("button", { name: "Wskaż miejsce" }));
+        expect(screen.getByText("Miejsce grafiki — Oferta.pdf")).toBeInTheDocument();
+        expect(screen.getByText("Wybór plików")).toHaveAttribute("aria-current", "step");
+        expect(document.querySelectorAll(".modal")).toHaveLength(1);
+        expect(document.querySelectorAll(".modal-footer")).toHaveLength(1);
+        await clickPage(2);
+        fireEvent.click(footerButton(/Zatwierdź miejsce/));
+        // bez oznaczonego miejsca podgląd zaczyna od ostatniej strony (tu: 2 z 2)
+        expect(await screen.findByText("Grafika stanie na stronie 2, w miejscu wskazanym przez Ciebie.")).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(createJob).toHaveBeenCalledWith([{
+            kind: "DRIVE_FILE", gdFileId: file.gdFileId, withGraphic: true,
+            placement: { page: 2, rect: { x: 240, y: 360, width: 120, height: 80 } },
+        }]));
+    });
+
+    it.each([[2, "są 2 miejsca"], [5, "jest 5 miejsc"]] as const)("%s kandydatów wymaga wyboru; podgląd zaczyna się na stronie pierwszego", async (count, description) => {
+        const { pageImage } = renderSource({ ...search, candidates: Array.from({ length: count }, (_, index) => ({ ...candidate, page: index === 0 ? 2 : 1 })) });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        expect(await screen.findByText(`W dokumencie ${description} na podpis. Wskaż właściwe.`)).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+        fireEvent.click(screen.getByRole("button", { name: "Wskaż miejsce" }));
+        await screen.findByAltText("Strona 2 dokumentu Oferta.pdf");
+        expect(pageImage).toHaveBeenCalledWith(file, 2);
+        expect(footerButton(/Zatwierdź miejsce/)).toBeDisabled();
+        await clickPage(2);
+        fireEvent.click(footerButton(/Zatwierdź miejsce/));
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+    });
+
+    it("błąd locate pokazuje komunikat i ponowienie, zachowując zaznaczoną grafikę", async () => {
+        const { locate } = renderSource({ ...search, candidates: [candidate] });
+        locate.mockRejectedValueOnce(new Error("Nie mogę pobrać pliku z Dysku."));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        expect(await screen.findByText("Nie udało się sprawdzić dokumentu: Nie mogę pobrać pliku z Dysku.")).toBeInTheDocument();
+        expect(graphic()).toBeChecked();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+        fireEvent.click(screen.getByRole("button", { name: "Spróbuj ponownie" }));
+        await screen.findByText(/Grafika stanie na stronie 2, przy napisie/);
+        expect(locate).toHaveBeenCalledTimes(2);
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+    });
+
+    it("odznaczenie grafiki zdejmuje blokadę i wysyła zlecenie bez placement", async () => {
+        const { createJob } = renderSource();
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        await screen.findByText(/Nie znalazłem w dokumencie/);
+        fireEvent.click(graphic());
+        expect(screen.queryByRole("button", { name: "Wskaż miejsce" })).toBeNull();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(createJob).toHaveBeenCalledWith([{ kind: "DRIVE_FILE", gdFileId: file.gdFileId, withGraphic: false }]));
+    });
+
+    it("wszystkie strony obrócone wyłączają grafikę, zostawiają wyjaśnienie i umożliwiają podpis", async () => {
+        renderSource({ ...search, pages: search.pages.map((page) => ({ ...page, placeable: false })), candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        expect(await screen.findByText("W tym pliku nie da się ustawić grafiki (strony są obrócone). Podpisz go bez grafiki.")).toBeInTheDocument();
+        expect(graphic()).not.toBeChecked();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+        expect(screen.queryByRole("button", { name: "Wskaż miejsce" })).toBeNull();
+    });
+
+    it("Anuluj podgląd zachowuje poprzednie miejsce", async () => {
+        const { createJob, pageImage } = renderSource({ ...search, candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        fireEvent.click(await screen.findByRole("button", { name: "Pokaż lub zmień miejsce" }));
+        await screen.findByAltText("Strona 2 dokumentu Oferta.pdf");
+        expect(screen.getByLabelText("Tu stanie grafika podpisu")).toBeInTheDocument();
+        expect(pageImage).toHaveBeenCalledWith(file, 2);
+        await clickPage(2);
+        fireEvent.click(footerButton(/^Anuluj$/));
+        await screen.findByText(/przy napisie „podpis wykonawcy”/);
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(createJob).toHaveBeenCalledWith([{
+            kind: "DRIVE_FILE", gdFileId: file.gdFileId, withGraphic: true, placement: { page: 2, rect: candidate.rect },
+        }]));
+    });
+
+    it("zatwierdzenie podglądu bez zmiany zachowuje opis automatycznego miejsca", async () => {
+        renderSource({ ...search, candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        fireEvent.click(await screen.findByRole("button", { name: "Pokaż lub zmień miejsce" }));
+        await screen.findByAltText("Strona 2 dokumentu Oferta.pdf");
+        fireEvent.click(footerButton(/Zatwierdź miejsce/));
+        expect(screen.getByText("Grafika stanie na stronie 2, przy napisie „podpis wykonawcy”.")).toBeInTheDocument();
+    });
+
+    it("przesunięcie automatycznego miejsca zmienia opis i wysyłany prostokąt", async () => {
+        const { createJob } = renderSource({ ...search, candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        fireEvent.click(await screen.findByRole("button", { name: "Pokaż lub zmień miejsce" }));
+        await clickPage(2);
+        fireEvent.click(footerButton(/Zatwierdź miejsce/));
+        expect(screen.getByText("Grafika stanie na stronie 2, w miejscu wskazanym przez Ciebie.")).toBeInTheDocument();
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(createJob).toHaveBeenCalledWith([{
+            kind: "DRIVE_FILE", gdFileId: file.gdFileId, withGraphic: true,
+            placement: { page: 2, rect: { x: 240, y: 360, width: 120, height: 80 } },
+        }]));
+    });
+
+    it("błąd createJob zachowuje miejsce, a Odśwież listę plików je czyści", async () => {
+        const { createJob, listFiles, locate } = renderSource({ ...search, candidates: [candidate] });
+        createJob.mockRejectedValueOnce(new Error("Odśwież listę."));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        await screen.findByText(/przy napisie „podpis wykonawcy”/);
+        fireEvent.click(footerButton(/^Podpisz/));
+        await screen.findByText("Odśwież listę.");
+        expect(screen.getByText(/przy napisie „podpis wykonawcy”/)).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+        fireEvent.click(screen.getByRole("button", { name: "Odśwież listę plików" }));
+        await waitFor(() => expect(listFiles).toHaveBeenCalledTimes(2));
+        await screen.findByText(file.name);
+        expect(graphic()).not.toBeChecked();
+        expect(screen.queryByText(/Grafika stanie na stronie/)).toBeNull();
+        fireEvent.click(graphic());
+        await waitFor(() => expect(locate).toHaveBeenCalledTimes(2));
+    });
+
+    it("Wróć do wyboru plików zachowuje miejsce po zakończeniu zlecenia", async () => {
+        api.getJobState.mockResolvedValue(jobState({ status: "failed", failureMessage: "Nie udało się podpisać." }));
+        const { locate } = renderSource({ ...search, candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        await screen.findByText(/przy napisie „podpis wykonawcy”/);
+        fireEvent.click(footerButton(/^Podpisz/));
+        fireEvent.click(await screen.findByRole("button", { name: "Wróć do wyboru plików" }));
+        expect(screen.getByText(/przy napisie „podpis wykonawcy”/)).toBeInTheDocument();
+        expect(graphic()).toBeChecked();
+        expect(locate).toHaveBeenCalledOnce();
+    });
+
+    it("odświeżenie listy unieważnia także szukanie miejsca w toku", async () => {
+        let resolve!: (result: GraphicPlaceSearch) => void;
+        const { createJob, locate, listFiles } = renderSource({ ...search, candidates: [candidate] });
+        createJob.mockRejectedValueOnce(new Error("Odśwież listę."));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        await screen.findByText(/przy napisie „podpis wykonawcy”/);
+        fireEvent.click(footerButton(/^Podpisz/));
+        await screen.findByText("Odśwież listę.");
+        fireEvent.click(graphic());
+        locate.mockImplementationOnce(() => new Promise<GraphicPlaceSearch>((done) => { resolve = done; }));
+        fireEvent.click(graphic());
+        fireEvent.click(screen.getByRole("button", { name: "Odśwież listę plików" }));
+        await waitFor(() => expect(listFiles).toHaveBeenCalledTimes(2));
+        await screen.findByText(file.name);
+        await act(async () => resolve({ ...search, candidates: [candidate] }));
+        expect(graphic()).not.toBeChecked();
+        expect(screen.queryByText(/Grafika stanie na stronie/)).toBeNull();
+    });
+
+    it.each(["grafika", "podpisz"])("odznaczenie %s czyści miejsce, ponowne zaznaczenie szuka od nowa i ignoruje starszy wynik", async (toggle) => {
+        let resolveOld!: (result: GraphicPlaceSearch) => void;
+        let resolveNew!: (result: GraphicPlaceSearch) => void;
+        const { locate } = renderSource();
+        locate.mockImplementationOnce(() => new Promise<GraphicPlaceSearch>((resolve) => { resolveOld = resolve; }))
+            .mockImplementationOnce(() => new Promise<GraphicPlaceSearch>((resolve) => { resolveNew = resolve; }));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        const checkbox = toggle === "grafika" ? graphic() : sign();
+        fireEvent.click(checkbox);
+        expect(screen.queryByText("Szukam w dokumencie miejsca na podpis…")).toBeNull();
+        fireEvent.click(checkbox);
+        expect(locate).toHaveBeenCalledTimes(2);
+        await act(async () => resolveNew(search));
+        await screen.findByText(/Nie znalazłem w dokumencie/);
+        await act(async () => resolveOld({ ...search, candidates: [candidate] }));
+        expect(screen.queryByText(/przy napisie/)).toBeNull();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+    });
+
+    it("wynik po wyłączeniu grafiki nie przywraca miejsca ani ostrzeżenia", async () => {
+        let reject!: (error: Error) => void;
+        const { locate } = renderSource();
+        locate.mockImplementationOnce(() => new Promise((_, fail) => { reject = fail; }));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        fireEvent.click(graphic());
+        await act(async () => reject(new Error("Stary błąd")));
+        expect(screen.queryByText(/Stary błąd/)).toBeNull();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+    });
+
+    it("wynik po zamknięciu nie zmienia stanu nowo otwartego okna", async () => {
+        let resolve!: (result: GraphicPlaceSearch) => void;
+        const { locate, source, onHide, rerender } = renderSource();
+        locate.mockImplementationOnce(() => new Promise<GraphicPlaceSearch>((done) => { resolve = done; }));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        rerender(<SignDocumentsModal show={false} source={source} onHide={onHide} />);
+        rerender(<SignDocumentsModal show source={source} onHide={onHide} />);
+        await screen.findByText(file.name);
+        await act(async () => resolve({ ...search, candidates: [candidate] }));
+        expect(graphic()).not.toBeChecked();
+        expect(screen.queryByText(/Grafika stanie na stronie/)).toBeNull();
+        expect(footerButton(/^Podpisz/)).toBeEnabled();
+    });
+
+    it("miejsca są niezależne dla plików; blokada wskazuje pierwszy brak i liczbę pozostałych", async () => {
+        const second = { ...file, gdFileId: "SECOND", name: "Załącznik.pdf" };
+        const { locate } = renderSource(search, [file, second]);
+        locate.mockResolvedValueOnce({ ...search, candidates: [candidate] });
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        await screen.findByText(/Grafika stanie na stronie 2/);
+        fireEvent.click(document.getElementById("graphic-F:SECOND") as HTMLInputElement);
+        await screen.findByText(/Nie znalazłem w dokumencie/);
+        expect(screen.getByText(/Wskaż miejsce grafiki w pliku „Załącznik.pdf”/)).toBeInTheDocument();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
+        fireEvent.click(graphic());
+        fireEvent.click(graphic());
+        await waitFor(() => expect(screen.getAllByText(/Nie znalazłem w dokumencie/)).toHaveLength(2));
+        expect(screen.getByText(/Wskaż miejsce grafiki w pliku „Oferta.pdf”.*Pozostałe pliki bez miejsca: 1/)).toBeInTheDocument();
+        fireEvent.click(document.getElementById("sign-F:SECOND") as HTMLInputElement);
+        expect(screen.queryByText(/Pozostałe pliki bez miejsca/)).toBeNull();
+    });
+});
+
+describe("SignDocumentsModal — regresja źródła bez graphicPlace", () => {
+    it("zachowuje tekst o prawym dolnym rogu i wysyła grafikę bez placement", async () => {
+        vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+        const source = letterSigningSource(6168, "6168");
+        expect(source.graphicPlace).toBeUndefined();
+        render(<SignDocumentsModal show source={source} onHide={vi.fn()} />);
+        await screen.findByText("Pismo próbne");
+        fireEvent.click(document.getElementById("graphic-F:ATTACHPDF0000001") as HTMLInputElement);
+        expect(screen.getByText("Grafika trafi do prawego dolnego rogu ostatniej strony.")).toBeInTheDocument();
+        expect(screen.queryByText(/Szukam w dokumencie/)).toBeNull();
+        expect(screen.queryByRole("button", { name: "Wskaż miejsce" })).toBeNull();
+        fireEvent.click(footerButton(/^Podpisz/));
+        await waitFor(() => expect(api.createJob).toHaveBeenCalledWith(6168, [
+            { kind: "LETTER_DOC", gdFileId: undefined, withGraphic: true },
+            { kind: "DRIVE_FILE", gdFileId: "ATTACHPDF0000001", withGraphic: true },
+            { kind: "DRIVE_FILE", gdFileId: "ATTACHDOC0000001", withGraphic: false },
+        ]));
     });
 });
