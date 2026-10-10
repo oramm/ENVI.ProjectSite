@@ -460,7 +460,7 @@ describe("SignDocumentsModal — źródło z wyborem miejsca grafiki", () => {
         renderSource({ ...search, pages: search.pages.map((page) => ({ ...page, placeable: false })), candidates: [candidate] });
         await screen.findByText(file.name);
         fireEvent.click(graphic());
-        expect(await screen.findByText("W tym pliku nie da się ustawić grafiki (strony są obrócone). Podpisz go bez grafiki.")).toBeInTheDocument();
+        expect(await screen.findByText("W tym pliku nie da się ustawić grafiki (strony mają nietypowy układ, np. są obrócone). Podpisz go bez grafiki.")).toBeInTheDocument();
         expect(graphic()).not.toBeChecked();
         expect(footerButton(/^Podpisz/)).toBeEnabled();
         expect(screen.queryByRole("button", { name: "Wskaż miejsce" })).toBeNull();

@@ -416,7 +416,8 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
         );
         if (place.status === "unavailable") return (
             <Alert variant="warning" className="small py-2 mt-2 mb-0">
-                W tym pliku nie da się ustawić grafiki (strony są obrócone). Podpisz go bez grafiki.
+                W tym pliku nie da się ustawić grafiki (strony mają nietypowy układ, np. są obrócone). Podpisz go
+                bez grafiki.
             </Alert>
         );
         if (place.status === "error") return (

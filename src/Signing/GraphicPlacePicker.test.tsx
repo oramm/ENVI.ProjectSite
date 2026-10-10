@@ -107,6 +107,26 @@ describe("GraphicPlacePicker", () => {
         expect(screen.getByRole("button", { name: "Zatwierdź miejsce" })).toBeDisabled();
     });
 
+    it("bez myszy: Enter stawia grafikę na środku strony, strzałki ją przesuwają, zatwierdzenie oddaje miejsce", async () => {
+        const { onConfirm } = renderPicker();
+        await screen.findByAltText("Strona 1 dokumentu Oferta.pdf");
+        const area = screen.getByRole("group", { name: /Strona 1: Enter stawia grafikę na środku/ });
+        expect(area).toHaveAttribute("tabindex", "0");
+        expect(screen.getByRole("button", { name: "Zatwierdź miejsce" })).toBeDisabled();
+        fireEvent.keyDown(area, { key: "ArrowRight" }); // bez miejsca strzałka nic nie robi
+        expect(screen.getByRole("button", { name: "Zatwierdź miejsce" })).toBeDisabled();
+        fireEvent.keyDown(area, { key: "Enter" });
+        fireEvent.keyDown(area, { key: "ArrowRight", shiftKey: true }); // +5% szerokości = 30 pt
+        fireEvent.keyDown(area, { key: "ArrowDown" }); // +1% wysokości w dół = 8 pt mniej w osi PDF
+        fireEvent.click(screen.getByRole("button", { name: "Zatwierdź miejsce" }));
+        const placement = onConfirm.mock.calls[0][0] as GraphicPlacement;
+        expect(placement.page).toBe(1);
+        expect(placement.rect.width).toBeCloseTo(120);
+        expect(placement.rect.height).toBeCloseTo(80);
+        expect(placement.rect.x).toBeCloseTo(300 - 60 + 30);
+        expect(placement.rect.y).toBeCloseTo(400 - 40 - 8);
+    });
+
     it("błąd pobrania mówi co zrobić, a ponowienie wczytuje stronę", async () => {
         const loadPage = vi.fn().mockRejectedValueOnce(new Error("Brak połączenia z PS.")).mockResolvedValueOnce(new Blob(["png"]));
         renderPicker({ loadPage });

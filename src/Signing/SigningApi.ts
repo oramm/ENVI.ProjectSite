@@ -254,6 +254,8 @@ export const SigningApi = {
             { credentials: "include", cache: "no-store" }
         );
         if (!response.ok) {
+            // Ta ścieżka omija fetchJsonWithSafeError, więc wygaśnięcie sesji zgłaszamy sami.
+            if (response.status === 401) ToolsFetch.notifySessionExpired();
             let message = "Nie udało się pobrać obrazu strony.";
             try {
                 const body = await response.json();

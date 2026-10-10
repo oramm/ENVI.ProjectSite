@@ -54,6 +54,26 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
     const [attempt, setAttempt] = useState(0);
     const size = search.pages[page - 1];
 
+    /** Wybór bez myszy: Enter albo spacja stawia grafikę na środku strony, strzałki ją przesuwają (Shift: większy krok). */
+    function onKeyDown(event: React.KeyboardEvent) {
+        if (!size.placeable) return;
+        const current = placement?.page === page ? placement.rect : undefined;
+        const step = event.shiftKey ? 0.05 : 0.01;
+        const move: Record<string, [number, number]> = {
+            ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step],
+        };
+        let fx = current ? (current.x + current.width / 2) / size.width : 0.5;
+        let fy = current ? 1 - (current.y + current.height / 2) / size.height : 0.5;
+        if (event.key === "Enter" || event.key === " ") {
+            if (current) return;
+        } else if (move[event.key] && current) {
+            fx += move[event.key][0];
+            fy += move[event.key][1];
+        } else return;
+        event.preventDefault();
+        setPlacement(placementFromClick(page, size, search.stampRel, fx, fy));
+    }
+
     useEffect(() => {
         let active = true;
         let objectUrl: string | undefined;
@@ -83,6 +103,7 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
                 <h6 style={{ overflowWrap: "anywhere" }}>Miejsce grafiki — {fileName}</h6>
                 <p className="small text-muted">
                     Kliknij w miejscu, w którym ma stanąć grafika podpisu. Gotowy PDF zobaczysz jeszcze przed wpisaniem PIN-u.
+                    Bez myszy: przejdź klawiszem Tab na obraz strony, Enter postawi grafikę na środku, strzałki ją przesuną.
                 </p>
                 {search.pages.length > 1 && (
                     <div className="d-flex flex-wrap align-items-center justify-content-between mb-2" style={{ gap: "8px" }}>
@@ -97,7 +118,8 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
                 )}
                 {!size.placeable && (
                     <Alert variant="warning" className="small py-2">
-                        Na tej stronie nie da się ustawić grafiki (strona jest obrócona). Wybierz inną stronę.
+                        Na tej stronie nie da się ustawić grafiki (ma nietypowy układ, np. jest obrócona). Wybierz inną
+                        stronę.
                     </Alert>
                 )}
                 {error ? (
@@ -110,7 +132,14 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
                         </div>
                     </Alert>
                 ) : image?.page === page ? (
-                    <div className="position-relative" style={{ width: "100%" }}>
+                    <div
+                        className="position-relative"
+                        style={{ width: "100%" }}
+                        tabIndex={0}
+                        role="group"
+                        aria-label={`Strona ${page}: Enter stawia grafikę na środku, strzałki ją przesuwają`}
+                        onKeyDown={onKeyDown}
+                    >
                         <img
                             src={image.url}
                             alt={`Strona ${page} dokumentu ${fileName}`}
