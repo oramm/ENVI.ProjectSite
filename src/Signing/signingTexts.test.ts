@@ -4,7 +4,7 @@
  * musi mieć zwykłe zdanie i podpowiedź, co dalej.
  */
 import { describe, expect, it } from "vitest";
-import { explainCancelReason, formatCheckCode, pluralFiles, pluralPages, pluralPlaces } from "./signingTexts";
+import { explainCancelReason, formatCheckCode, pluralFiles, pluralPages, pluralPlaces, pluralSignedFiles } from "./signingTexts";
 
 /** Powody wysyłane przez program (desktop/envi-podpis/src/Messages.cs i MainForm.cs) oraz przez PS. */
 const REASONS_FROM_PROGRAM = [
@@ -62,6 +62,15 @@ describe("formatCheckCode", () => {
         expect(formatCheckCode("abc")).toBe("ABC");
         expect(formatCheckCode(null)).toBe("");
     });
+});
+
+describe("liczebnik podpisanych plików", () => {
+    it.each([
+        [1, "1 podpisany plik"],
+        [2, "2 podpisane pliki"],
+        [5, "5 podpisanych plików"],
+        [22, "22 podpisane pliki"],
+    ])("%s → %s", (n, text) => expect(pluralSignedFiles(n)).toBe(text));
 });
 
 describe("liczebniki", () => {

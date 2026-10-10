@@ -101,6 +101,11 @@ describe("offerSigningSource — teksty", () => {
         expect(source.texts.subject).toBe("oferta OŚ, Gmina Brzeg");
     });
 
+    it("z oznaczeniem z listy tytuł zgadza się z wierszem: „oferta IK Nysa | OŚ, {zamawiający}”", () => {
+        const source = offerSigningSource({ id: 7, alias: "OŚ", employerName: "Gmina Brzeg", listLabel: "IK Nysa" });
+        expect(source.texts.subject).toBe("oferta IK Nysa | OŚ, Gmina Brzeg");
+    });
+
     it("bez zleceniodawcy tytuł to samo „oferta {alias}”", () => {
         const source = offerSigningSource({ id: 42, alias: "OŚ" });
         expect(source.texts.subject).toBe("oferta OŚ");

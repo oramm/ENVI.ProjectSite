@@ -127,6 +127,18 @@ describe("GraphicPlacePicker", () => {
         expect(placement.rect.y).toBeCloseTo(400 - 40 - 8);
     });
 
+    it("na stronie bez prostokąta mówi, na której stronie jest miejsce, i pozwala do niej wrócić", async () => {
+        renderPicker({ initial: INITIAL });
+        await screen.findByAltText("Strona 2 dokumentu Oferta.pdf");
+        expect(screen.queryByText(/Miejsce grafiki jest teraz wskazane na stronie/)).not.toBeInTheDocument();
+        fireEvent.click(screen.getByRole("button", { name: "‹ Poprzednia" }));
+        await screen.findByAltText("Strona 1 dokumentu Oferta.pdf");
+        expect(screen.getByText(/Miejsce grafiki jest teraz wskazane na stronie 2, nie na tej/)).toBeInTheDocument();
+        fireEvent.click(screen.getByRole("button", { name: "Pokaż stronę 2" }));
+        await screen.findByAltText("Strona 2 dokumentu Oferta.pdf");
+        expect(screen.getByLabelText("Tu stanie grafika podpisu")).toBeInTheDocument();
+    });
+
     it("błąd pobrania mówi co zrobić, a ponowienie wczytuje stronę", async () => {
         const loadPage = vi.fn().mockRejectedValueOnce(new Error("Brak połączenia z PS.")).mockResolvedValueOnce(new Blob(["png"]));
         renderPicker({ loadPage });

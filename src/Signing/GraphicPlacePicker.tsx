@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Modal, Spinner } from "react-bootstrap";
 import type { GraphicPlacement, GraphicPlaceSearch } from "./SigningApi";
 
@@ -53,6 +53,13 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
     const [error, setError] = useState<string | null>(null);
     const [attempt, setAttempt] = useState(0);
     const size = search.pages[page - 1];
+    const overlay = useRef<HTMLDivElement | null>(null);
+
+    // Po wczytaniu strony z już ustawionym miejscem pokazujemy to miejsce, a nie górę strony.
+    useEffect(() => {
+        if (image?.page === page && placement?.page === page) overlay.current?.scrollIntoView?.({ block: "center" });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [image]);
 
     /** Wybór bez myszy: Enter albo spacja stawia grafikę na środku strony, strzałki ją przesuwają (Shift: większy krok). */
     function onKeyDown(event: React.KeyboardEvent) {
@@ -116,6 +123,15 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
                         </Button>
                     </div>
                 )}
+                {placement && placement.page !== page && (
+                    <Alert variant="info" className="small py-2">
+                        Miejsce grafiki jest teraz wskazane na stronie {placement.page}, nie na tej.{" "}
+                        <Button variant="link" size="sm" className="p-0 align-baseline" onClick={() => setPage(placement.page)}>
+                            Pokaż stronę {placement.page}
+                        </Button>{" "}
+                        albo kliknij tutaj, żeby przenieść grafikę na tę stronę.
+                    </Alert>
+                )}
                 {!size.placeable && (
                     <Alert variant="warning" className="small py-2">
                         Na tej stronie nie da się ustawić grafiki (ma nietypowy układ, np. jest obrócona). Wybierz inną
@@ -156,6 +172,7 @@ export function GraphicPlacePicker({ fileName, search, initial, initialPage, loa
                         />
                         {placement?.page === page && (
                             <div
+                                ref={overlay}
                                 aria-label="Tu stanie grafika podpisu"
                                 className="position-absolute bg-success bg-opacity-25 border border-success small text-success d-flex align-items-center justify-content-center"
                                 style={{ ...placementToOverlay(placement, size), pointerEvents: "none", overflow: "hidden", whiteSpace: "nowrap", lineHeight: 1, fontSize: "clamp(.6rem, 1.6vw, .8rem)" }}

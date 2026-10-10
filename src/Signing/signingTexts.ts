@@ -116,6 +116,11 @@ export function pluralPages(n: number): string {
     return plural(n, "strona", "strony", "stron");
 }
 
+/** „1 podpisany plik”, „2 podpisane pliki”, „5 podpisanych plików”. */
+export function pluralSignedFiles(n: number): string {
+    return plural(n, "podpisany plik", "podpisane pliki", "podpisanych plików");
+}
+
 /** „1 miejsce”, „2 miejsca”, „5 miejsc”. */
 export function pluralPlaces(n: number): string {
     return plural(n, "miejsce", "miejsca", "miejsc");

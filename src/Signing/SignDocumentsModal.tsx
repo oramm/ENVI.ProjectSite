@@ -22,7 +22,15 @@ import {
 } from "./SigningApi";
 import { SigningSource } from "./SigningSource";
 import { GraphicPlacePicker } from "./GraphicPlacePicker";
-import { CANCEL_REASON_FROM_PS, explainCancelReason, formatCheckCode, pluralFiles, pluralPages, pluralPlaces } from "./signingTexts";
+import {
+    CANCEL_REASON_FROM_PS,
+    explainCancelReason,
+    formatCheckCode,
+    pluralFiles,
+    pluralPages,
+    pluralPlaces,
+    pluralSignedFiles,
+} from "./signingTexts";
 import { UploadSignedPanel } from "./UploadSignedPanel";
 
 /** Po tylu sekundach bez reakcji programu zakładamy, że programu nie ma na tym komputerze. */
@@ -480,7 +488,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
 
                 {existing.length > 0 && (
                     <Alert variant="warning" className="py-2 small">
-                        {texts.thisHasAlready} {pluralFiles(existing.length)} podpisanych (ostatni: „{existing[0].signedName}”,{" "}
+                        {texts.thisHasAlready} {pluralSignedFiles(existing.length)} (ostatni: „{existing[0].signedName}”,{" "}
                         {existing[0].signerName}). Kolejny podpis doda nowy plik z datą w nazwie — niczego nie nadpisze.
                     </Alert>
                 )}
@@ -596,7 +604,11 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                 )}
                 {missingPlaces.length > 0 && (
                     <div className="small text-muted" style={{ overflowWrap: "anywhere" }} role="status">
-                        Wskaż miejsce grafiki w pliku „{missingPlaces[0].name}” albo wyłącz dla niego grafikę.
+                        {places[fileKey(missingPlaces[0])]?.status === "searching"
+                            ? `Sprawdzam plik „${missingPlaces[0].name}”…`
+                            : places[fileKey(missingPlaces[0])]?.status === "error"
+                              ? `W pliku „${missingPlaces[0].name}” nie udało się ustalić miejsca grafiki — spróbuj ponownie albo wyłącz dla niego grafikę.`
+                              : `Wskaż miejsce grafiki w pliku „${missingPlaces[0].name}” albo wyłącz dla niego grafikę.`}
                         {missingPlaces.length > 1 && ` Pozostałe pliki bez miejsca: ${missingPlaces.length - 1}.`}
                     </div>
                 )}
@@ -853,7 +865,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                 <Alert variant="danger">
                     <strong>Nie udało się wczytać plików.</strong>
                     <div className="mt-1">{loadError}</div>
-                    <div className="mt-1 small">Sprawdź połączenie i kliknij „Spróbuj ponownie”.</div>
+                    <div className="mt-1 small">Gdy przyczyna zniknie, kliknij „Spróbuj ponownie”.</div>
                 </Alert>
             );
         }
@@ -964,6 +976,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
             backdrop={closable ? true : "static"}
             keyboard={closable}
             enforceFocus={false}
+            scrollable={phase === "picker"}
         >
             <Modal.Header closeButton={closable}>
                 <Modal.Title as="h5">{title}</Modal.Title>
