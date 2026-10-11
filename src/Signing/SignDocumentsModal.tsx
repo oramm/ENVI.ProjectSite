@@ -181,7 +181,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
             if (!mounted.current) return;
             setSignable(result);
             const initial: Selection = {};
-            for (const file of result.files) initial[fileKey(file)] = { sign: source.preselectFiles !== false, graphic: source.graphicPlace ? false : file.withGraphic };
+            for (const file of result.files) initial[fileKey(file)] = { sign: source.preselectFiles !== false && !file.signedNameHint, graphic: source.graphicPlace ? false : file.withGraphic };
             setSelection(initial);
             setPhase("select");
         } catch (error) {
@@ -509,7 +509,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                 <div className="mb-3">
                     {rows.map((file) => {
                         const key = fileKey(file);
-                        const choice = selection[key] ?? { sign: true, graphic: file.withGraphic };
+                        const choice = selection[key] ?? { sign: source.preselectFiles !== false && !file.signedNameHint, graphic: file.withGraphic };
                         const isLetter = file.kind === "LETTER_DOC";
                         return (
                             <div
@@ -527,6 +527,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                                             className={isLetter ? "text-success me-2" : "text-danger me-2"}
                                         />
                                         <strong>{file.name}</strong>
+                                        {file.signedNameHint && <span className="small text-muted ms-2">ma już podpis - dodamy kolejny</span>}
                                         {isLetter && texts.mainDocBadge && (
                                             <Badge bg="success" className="ms-2">
                                                 {texts.mainDocBadge}
@@ -607,7 +608,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                         {places[fileKey(missingPlaces[0])]?.status === "searching"
                             ? `Sprawdzam plik „${missingPlaces[0].name}”…`
                             : places[fileKey(missingPlaces[0])]?.status === "error"
-                              ? `W pliku „${missingPlaces[0].name}” nie udało się ustalić miejsca grafiki — spróbuj ponownie albo wyłącz dla niego grafikę.`
+                              ? "Spróbuj ponownie albo sprawdź komunikat powyżej."
                               : `Wskaż miejsce grafiki w pliku „${missingPlaces[0].name}” albo wyłącz dla niego grafikę.`}
                         {missingPlaces.length > 1 && ` Pozostałe pliki bez miejsca: ${missingPlaces.length - 1}.`}
                     </div>

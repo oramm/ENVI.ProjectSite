@@ -32,6 +32,7 @@ export type SignableFile = {
     mimeType: string;
     withGraphic: boolean;
     graphicLocked: boolean;
+    signedNameHint?: boolean;
 };
 
 export type NotSignableFile = {

@@ -78,6 +78,17 @@ afterEach(() => {
 });
 
 describe("SignDocumentsModal — wybór plików", () => {
+    it.each([true, false])("plik z podpowiedzia podpisu jest opisany i niezaznaczony (preselect=%s)", async (preselectFiles) => {
+        const hinted = { ...SIGNABLE.files[1], name: "Umowa-sig.pdf", signedNameHint: true };
+        api.listSignableFiles.mockResolvedValue({ ...SIGNABLE, files: [SIGNABLE.files[0], hinted, SIGNABLE.files[2]] });
+        renderModal({ source: { ...letterSigningSource(6168, "6168"), preselectFiles } });
+        await screen.findByText(hinted.name);
+        expect(screen.getByText("ma już podpis - dodamy kolejny")).toBeInTheDocument();
+        expect(document.getElementById("sign-F:ATTACHPDF0000001")).not.toBeChecked();
+        expect((document.getElementById("sign-LETTER_DOC") as HTMLInputElement).checked).toBe(preselectFiles);
+        expect((document.getElementById("sign-F:ATTACHDOC0000001") as HTMLInputElement).checked).toBe(preselectFiles);
+    });
+
     it("pismo ma zablokowaną grafikę z wyjaśnieniem, załączniki domyślnie podpis tak, grafika nie, a niepodpisywalne są wyszarzone z powodem", async () => {
         renderModal();
 
@@ -207,7 +218,7 @@ describe("SignDocumentsModal — przebieg zlecenia", () => {
 
     it.each([
         ["expired", { status: "expired" }, /Zlecenie podpisu wygasło/, /Spróbuj ponownie/],
-        ["failed", { status: "failed", failureMessage: "Plik „A.pdf” ma już podpis - drugiego nie dodajemy." }, /Plik „A.pdf” ma już podpis/, /Spróbuj ponownie/],
+        ["failed", { status: "failed", failureMessage: "Plik „A.pdf” ma już podpis w tym miejscu - wskaż inne miejsce na grafikę." }, /Plik „A.pdf” ma już podpis/, /Spróbuj ponownie/],
         ["cancelled w programie", { status: "cancelled", cancelReason: "no_certificate" }, /Program nie znalazł karty/, /Spróbuj ponownie/],
         ["cancelled PIN zablokowany", { status: "cancelled", cancelReason: "signing_PinBlocked" }, /Karta zablokowała PIN/, /Wgraj podpisany/],
     ] as const)("błąd %s: zwykłe słowa i następny krok", async (_name, over, message, nextAction) => {
@@ -370,6 +381,17 @@ describe("SignDocumentsModal — źródło z wyborem miejsca grafiki", () => {
         expect(footerButton(/^Podpisz/)).toBeDisabled();
         fireEvent.click(screen.getByRole("button", { name: "Odśwież listę plików" }));
         await waitFor(() => expect(listFiles).toHaveBeenCalledTimes(2));
+    });
+
+    it("odmowa serwera pokazuje komunikat i nie radzi wyłączać grafiki", async () => {
+        const { locate } = renderSource();
+        locate.mockRejectedValueOnce(new Error('Plik „Oferta.pdf” ma już podpis w tym miejscu - wskaż inne miejsce na grafikę.'));
+        await screen.findByText(file.name);
+        fireEvent.click(graphic());
+        await screen.findByText(/ma już podpis w tym miejscu/);
+        expect(screen.getByText("Spróbuj ponownie albo sprawdź komunikat powyżej.")).toBeInTheDocument();
+        expect(screen.queryByText(/albo wyłącz dla niego grafikę/)).toBeNull();
+        expect(footerButton(/^Podpisz/)).toBeDisabled();
     });
 
     it("bez grafiki nie szuka miejsca, a zlecenie nie zawiera placement", async () => {
