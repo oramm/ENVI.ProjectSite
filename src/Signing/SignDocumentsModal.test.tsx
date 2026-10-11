@@ -219,6 +219,7 @@ describe("SignDocumentsModal — przebieg zlecenia", () => {
     it.each([
         ["expired", { status: "expired" }, /Zlecenie podpisu wygasło/, /Spróbuj ponownie/],
         ["failed", { status: "failed", failureMessage: "Plik „A.pdf” ma już podpis w tym miejscu - wskaż inne miejsce na grafikę." }, /Plik „A.pdf” ma już podpis/, /Spróbuj ponownie/],
+        ["failed z pozostawionym plikiem", { status: "failed", failureMessage: "Na Dysku został plik A.pdf. Usuń go ręcznie i spróbuj ponownie." }, /Na Dysku został plik A.pdf/, /Spróbuj ponownie/],
         ["cancelled w programie", { status: "cancelled", cancelReason: "no_certificate" }, /Program nie znalazł karty/, /Spróbuj ponownie/],
         ["cancelled PIN zablokowany", { status: "cancelled", cancelReason: "signing_PinBlocked" }, /Karta zablokowała PIN/, /Wgraj podpisany/],
     ] as const)("błąd %s: zwykłe słowa i następny krok", async (_name, over, message, nextAction) => {
@@ -226,6 +227,7 @@ describe("SignDocumentsModal — przebieg zlecenia", () => {
         await startJob();
 
         expect(await screen.findByText(message)).toBeInTheDocument();
+        if (over.status === "failed") expect(screen.queryByText(/Nic nie zostało zapisane na Dysku/)).not.toBeInTheDocument();
         expect(screen.getAllByText(nextAction).length).toBeGreaterThan(0);
         // po zakończeniu okno da się zamknąć
         expect(footerButton(/^Zamknij/)).toBeEnabled();

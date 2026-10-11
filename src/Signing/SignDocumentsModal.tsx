@@ -826,8 +826,7 @@ function SignDocumentsModalContent({ source, onHide, onSigned, onUploaded, start
                 <Alert variant="danger">
                     <strong>Podpisywanie się nie udało.</strong>
                     <div className="mt-1">
-                        {state?.failureMessage ?? "Coś poszło nie tak po stronie PS."} Nic nie zostało zapisane na
-                        Dysku.
+                        {state?.failureMessage ?? "Coś poszło nie tak po stronie PS."}
                     </div>
                     <div className="mt-1 small">
                         Kliknij „Spróbuj ponownie”. Jeśli błąd się powtarza, użyj „Wgraj podpisany” albo zgłoś problem.
