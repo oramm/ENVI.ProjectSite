@@ -55,6 +55,10 @@ export interface ProjectData extends RepositoryDataItem {
     totalValue?: string | number;
     qualifiedValue?: string | number;
     dotationValue?: string | number;
+    /** numer umowy o dofinansowanie (opcjonalny) */
+    fundingAgreementNumber?: string | null;
+    /** program (opcjonalny) */
+    program?: string | null;
     gdFolderId: string | undefined;
     _lastUpdated?: string;
     _engineers?: EntityData[];

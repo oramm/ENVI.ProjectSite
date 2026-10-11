@@ -21,6 +21,8 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
             name: initialData?.name,
             alias: initialData?.alias,
             comment: initialData?.comment,
+            fundingAgreementNumber: initialData?.fundingAgreementNumber,
+            program: initialData?.program,
             startDate: initialData?.startDate || new Date().toISOString().slice(0, 10),
             endDate: initialData?.endDate || new Date().toISOString().slice(0, 10),
             status: initialData?.status || MainSetup.ProjectStatuses.IN_PROGRESS,
@@ -72,6 +74,30 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
                     {...register("alias")}
                 />
                 <ErrorMessage errors={errors} name="alias" />
+            </Form.Group>
+
+            <Form.Group controlId="fundingAgreementNumber">
+                <Form.Label>Numer umowy o dofinansowanie</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Podaj numer umowy"
+                    isValid={!errors?.fundingAgreementNumber}
+                    isInvalid={!!errors?.fundingAgreementNumber}
+                    {...register("fundingAgreementNumber")}
+                />
+                <ErrorMessage errors={errors} name="fundingAgreementNumber" />
+            </Form.Group>
+
+            <Form.Group controlId="program">
+                <Form.Label>Program</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Podaj program"
+                    isValid={!errors?.program}
+                    isInvalid={!!errors?.program}
+                    {...register("program")}
+                />
+                <ErrorMessage errors={errors} name="program" />
             </Form.Group>
 
             <Form.Group controlId="comment">

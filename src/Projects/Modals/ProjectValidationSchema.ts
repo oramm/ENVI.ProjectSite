@@ -8,6 +8,8 @@ const commonFields = {
     comment: Yup.string().max(1000, "Komentarz może mieć maksymalnie 1000 znaków"),
 
     alias: Yup.string().max(30, "Alias może mieć maksymalnie 30 znaków"),
+    fundingAgreementNumber: Yup.string().nullable().max(50, "Maksymalnie 50 znaków"),
+    program: Yup.string().nullable().max(50, "Maksymalnie 50 znaków"),
     value: Yup.string(),
     status: Yup.string().required("Status jest wymagany"),
     startDate: Yup.date()
