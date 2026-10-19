@@ -1,5 +1,11 @@
 import MainSetup from "../React/MainSetupReact";
 
+export interface SbLevels {
+    repos: "none" | "read" | "write";
+    psDb: "none" | "ro" | "rw";
+    drive: "none" | "connector";
+    mail: string[];
+}
 export interface SbEntry {
     id: number;
     personId: number;
@@ -8,6 +14,8 @@ export interface SbEntry {
     githubInvitationId: number | null;
     drivePermissionId: string | null;
     isGrantedManually: boolean;
+    levels?: SbLevels;
+    canManageSb?: boolean;
     createdAt: string;
     updatedAt: string;
     name: string;
@@ -69,4 +77,9 @@ export async function performSbAction(personId: number, action: SbAction, github
     if ((response.data?.result !== "OK" && response.data?.result !== "PARTIAL") || typeof response.data.note !== "string")
         return { ok: false, status: 200, message: "Nieprawidłowa odpowiedź serwera PS." };
     return { ok: true, result: response.data.result, note: response.data.note };
+}
+export async function setSbLevels(personId: number, levels: SbLevels): Promise<SbFetchResult<SbEntry>> {
+    return request<SbEntry>(`${personId}/levels`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(levels),
+    });
 }

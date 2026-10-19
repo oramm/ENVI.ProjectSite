@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SbEntry } from "../sbManageApi";
-import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeOutcome, roleLabel, statusViews } from "../sbManageView";
+import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, toggleMailbox, statusViews } from "../sbManageView";
 
 const entry = (over: Partial<SbEntry> = {}): SbEntry => ({
     id: 1, personId: 1, name: "Anna", surname: "Nowak", systemEmail: "anna@example.com",
@@ -65,5 +65,24 @@ describe("Widok zarządzania SB", () => {
     it("describeFailure dla pustej treści 409/422/400 nie zwraca pustego tekstu", () => {
         expect(describeFailure(409, "")).toBe("Nie udało się wykonać operacji (kod 409).");
         expect(describeFailure(422, "Konto zajęte.")).toBe("Konto zajęte.");
+    });
+});
+describe("Poziomy dostępu w widoku", () => {
+    it("brak poziomów to same 'brak'; podane poziomy mają polskie nazwy", () => {
+        expect(describeLevels(entry())).toEqual({ repos: "brak", psDb: "brak", drive: "brak", mail: "brak" });
+        expect(describeLevels(entry({ levels: { repos: "write", psDb: "ro", drive: "connector", mail: ["faktury", "marek"] } })))
+            .toEqual({ repos: "zapis", psDb: "odczyt", drive: "konektor", mail: "faktury, marek" });
+    });
+    it("skrzynki: dodanie bez powtórzeń i zdjęcie jednej", () => {
+        expect(toggleMailbox(["faktury"], "marek", true)).toEqual(["faktury", "marek"]);
+        expect(toggleMailbox(["faktury"], "faktury", true)).toEqual(["faktury"]);
+        expect(toggleMailbox(["faktury", "marek"], "faktury", false)).toEqual(["marek"]);
+    });
+    it("grupy tabeli: admin tylko aktywny ze znacznikiem, zaproszeni osobno, reszta w zamkniętych", () => {
+        expect(groupKey(entry({ statusCode: "ACTIVE", canManageSb: true }))).toBe("admin");
+        expect(groupKey(entry({ statusCode: "ACTIVE" }))).toBe("staff");
+        expect(groupKey(entry({ statusCode: "INVITED", canManageSb: true }))).toBe("invited");
+        expect(groupKey(entry({ statusCode: "BLOCKED" }))).toBe("closed");
+        expect(groupKey(entry({ statusCode: "REVOKED" }))).toBe("closed");
     });
 });

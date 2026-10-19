@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Badge, Button, Card, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
 import ConfirmModal from "../View/Modals/ConfirmModal";
+import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
-import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbUnlinkedMembers, performSbAction,
-    SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbUnlinkedMember } from "./sbManageApi";
+import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbUnlinkedMembers, performSbAction, setSbLevels,
+    SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbUnlinkedMember } from "./sbManageApi";
 import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure,
-    describeGithub, describeOutcome, manualExplanation, roleLabel, statusViews } from "./sbManageView";
+    describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, mailboxChoices, manualExplanation, noLevels,
+    psDbOptions, repoOptions, roleLabel, statusViews, toggleMailbox } from "./sbManageView";
 
 const personLabel = (person: { name: string; surname: string; systemEmail: string | null }) =>
     `${person.surname} ${person.name} - ${person.systemEmail || "brak adresu"}`;
 const loading = <Spinner animation="border" size="sm" role="status" aria-label="Wczytywanie" />;
+// Okno Dostępy SB jest stylowane Tailwindem (v3, tylko wewnątrz #sb-access-admin); reszta strony zostaje na Bootstrapie.
+const pillTone = { ok: "bg-[#e3f3ea] text-[#1d7a46]", warn: "bg-[#fbefd9] text-[#9a5b00]", off: "bg-[#eef1f5] text-[#5d6878]" };
+const Pill = ({ tone, children }: { tone: keyof typeof pillTone; children: React.ReactNode }) =>
+    <span className={`inline-block whitespace-nowrap rounded-full px-2 py-px text-xs ${pillTone[tone]}`}>{children}</span>;
+const levelPill = (label: string, high: boolean) => label === "brak" ? <Pill tone="off">brak</Pill> : <Pill tone={high ? "warn" : "ok"}>{label}</Pill>;
+const chip = "whitespace-nowrap rounded bg-[#eef1f5] px-1.5 font-mono text-xs";
 
 export default function SbAccessManagePage({ title }: { title: string }) {
     const [access, setAccess] = useState<"loading" | "error" | "denied" | "granted">("loading");
@@ -23,6 +31,9 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const [assignments, setAssignments] = useState<Record<string, string>>({});
     const [confirmation, setConfirmation] = useState<{ action: "block" | "revoke"; entry: SbEntry } | null>(null);
     const [historyPerson, setHistoryPerson] = useState<SbEntry | null>(null);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [levelsDraft, setLevelsDraft] = useState<SbLevels>(noLevels);
+    const [levelsError, setLevelsError] = useState<string | null>(null);
     const [events, setEvents] = useState<SbFetchResult<SbEvent[]> | null>(null);
 
     async function refresh() {
@@ -66,6 +77,20 @@ export default function SbAccessManagePage({ title }: { title: string }) {
         if (!result.ok && inConfirmation) throw new Error(describeFailure(result.status, result.message));
     }
 
+    function selectEntry(entry: SbEntry) {
+        setSelectedId(entry.personId); setLevelsDraft(entry.levels ?? noLevels); setLevelsError(null);
+    }
+    async function saveLevels(entry: SbEntry) {
+        if (busy) return;
+        setBusy(`${entry.personId}/levels`); setLevelsError(null);
+        const result = await setSbLevels(entry.personId, levelsDraft);
+        if (result.ok) {
+            setMessage({ variant: "success", message: `Zapisano uprawnienia: ${personLabel(entry)}.` });
+            await refresh();
+        } else setLevelsError(describeFailure(result.status, result.message));
+        setBusy(null);
+    }
+
     if (access === "loading") return <Container fluid className="py-4">{loading}</Container>;
     if (access !== "granted") return <Container fluid className="py-4"><Alert variant={access === "error" ? "danger" : "info"}>
         {access === "error" ? "Nie udało się sprawdzić dostępu do Second Brain. Odśwież stronę." : "Nie masz uprawnienia do zarządzania dostępem do Second Brain. Znacznik nadaje się w oknie Personel i uprawnienia."}
@@ -75,41 +100,101 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const assignable = assignableEntries(rows);
     const candidate = candidates?.ok ? candidates.data.find(person => String(person.personId) === candidateId) : undefined;
     const content = confirmation && confirmationContent(confirmation.action, confirmation.entry);
-    const labels = ["Osoba", "Stan", "Konto GitHub", "Dysk", "Nadane ręcznie", "Akcje"];
-    const widths = [3, 1, 2, 1, 1, 4];
+    const selected = rows.find(entry => entry.personId === selectedId);
+    const selectedStatus = selected && statusViews[selected.statusCode];
+    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk"];
 
     return <Container fluid className="px-3" style={{ overflowWrap: "anywhere" }}>
         <h4>Dostęp do Second Brain</h4>
-        <p className="text-muted">Tutaj zapraszasz, blokujesz, odblokowujesz i odbierasz dostęp oraz sprawdzasz historię każdej osoby; blokada i odebranie zatrzymują dalsze pobieranie wiedzy, a kopia już pobrana zostaje.</p>
+        <p className="text-muted">Tutaj zapraszasz, blokujesz, odblokowujesz i odbierasz dostęp, ustawiasz poziomy uprawnień oraz sprawdzasz historię każdej osoby; blokada i odebranie zatrzymują dalsze pobieranie wiedzy, a kopia już pobrana zostaje.</p>
         {message && <Alert variant={message.variant} dismissible onClose={() => setMessage(null)}>{message.message}</Alert>}
         <Button className="mb-3" onClick={() => { setCandidateId(""); setInviting(true); }} disabled={!!busy}>Zaproś osobę</Button>
-        <Card className="mb-4"><Card.Body>
-            {!entries ? loading : !entries.ok ? <Alert variant="danger">{describeFailure(entries.status, entries.message)}</Alert> : !rows.length ? <p>Nikt nie ma jeszcze wpisu w rejestrze.</p> : <>
-                <Row className="d-none d-md-flex fw-semibold border-bottom pb-2">{labels.map((label, i) => <Col md={widths[i]} key={label}>{label}</Col>)}</Row>
-                {rows.map(entry => {
-                    const status = statusViews[entry.statusCode];
-                    const cells = [
-                        <><strong>{entry.surname} {entry.name}</strong><div className="small text-muted">{entry.systemEmail || "brak adresu"}</div></>,
-                        <Badge bg={status.variant} text={entry.statusCode === "INVITED" ? "dark" : undefined}>{status.label}</Badge>,
-                        describeGithub(entry), describeDrive(entry), entry.isGrantedManually ? <Badge bg="secondary">ręcznie</Badge> : " - ",
-                        <div className="d-flex flex-wrap gap-2">
-                            {entry.isGrantedManually && <small className="text-muted">{manualExplanation}</small>}
-                            {availableActions(entry).map(item => <Button key={item.label} size="sm" variant="outline-primary" disabled={!!busy}
-                                onClick={() => item.confirm && (item.action === "block" || item.action === "revoke")
-                                    ? setConfirmation({ action: item.action, entry }) : void operate(item.action, entry)}>
-                                {busy === `${entry.personId}/${item.action}` && loading} {item.label}
-                            </Button>)}
-                            <Button size="sm" variant="outline-secondary" onClick={() => setHistoryPerson(entry)}>Historia</Button>
-                        </div>,
-                    ];
-                    return <Row className="g-2 py-3 border-bottom" key={entry.personId}>{cells.map((cell, i) => <Col xs={12} md={widths[i]} key={labels[i]}>
-                        <span className="d-md-none fw-semibold">{labels[i]}: </span>{cell}
-                    </Col>)}</Row>;
-                })}
-            </>}
-        </Card.Body></Card>
 
-        <Card><Card.Header>Członkowie organizacji GitHub bez przypisanej osoby</Card.Header><Card.Body>
+        <div id="sb-access-admin">
+        <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_340px]">
+            <div className="min-w-0 overflow-x-auto rounded-md border border-[#dfe3ea] bg-white">
+                {!entries ? <div className="p-3">{loading}</div> : !entries.ok ? <Alert className="m-3" variant="danger">{describeFailure(entries.status, entries.message)}</Alert>
+                    : !rows.length ? <p className="p-3">Nikt nie ma jeszcze wpisu w rejestrze.</p> :
+                    <table className="mb-0 w-full min-w-[620px] text-sm">
+                        <thead className="border-b border-[#dfe3ea] text-left text-xs uppercase tracking-wide text-[#5d6878]">
+                            <tr>{columns.map(label => <th className="p-2" key={label}>{label}</th>)}</tr>
+                        </thead>
+                        <tbody>
+                            {entryGroups.map(group => {
+                                const list = rows.filter(entry => groupKey(entry) === group.key);
+                                if (!list.length) return null;
+                                return <React.Fragment key={group.key}>
+                                    <tr><td colSpan={columns.length} className="bg-[#e8edf4] p-2 text-xs font-semibold uppercase tracking-wide text-[#5d6878]">
+                                        {group.label} · {list.length}{group.hint && <span className="font-normal normal-case"> - {group.hint}</span>}
+                                    </td></tr>
+                                    {list.map(entry => {
+                                        const levels = entry.levels ?? noLevels, text = describeLevels(entry), active = entry.personId === selectedId;
+                                        return <tr key={entry.personId} tabIndex={0} aria-selected={active}
+                                            className={`cursor-pointer border-b border-[#dfe3ea] ${active ? "bg-[#eaf1fb]" : "hover:bg-[#eef1f5]"}`}
+                                            onClick={() => selectEntry(entry)} onKeyDown={event => { if (event.key === "Enter") selectEntry(entry); }}>
+                                            <td className="whitespace-nowrap p-2 pl-4 font-medium">{entry.surname} {entry.name}
+                                                <div className="text-xs font-normal text-[#5d6878]">{entry.systemEmail || "brak adresu"}</div></td>
+                                            <td className="p-2">{levelPill(text.repos, levels.repos === "write")}</td>
+                                            <td className="p-2">{levels.mail.length ? <span className="flex flex-wrap gap-1">{levels.mail.map(code =>
+                                                <span key={code} className={chip}>{code}</span>)}</span> : <Pill tone="off">brak</Pill>}</td>
+                                            <td className="p-2">{levelPill(text.psDb, levels.psDb === "rw")}</td>
+                                            <td className="p-2">{levels.drive === "none" ? <Pill tone="off">brak</Pill> : <Pill tone="ok">{text.drive}</Pill>}</td>
+                                        </tr>;
+                                    })}
+                                </React.Fragment>;
+                            })}
+                        </tbody>
+                    </table>}
+            </div>
+            <aside className="flex min-w-0 flex-col gap-3 rounded-md border border-[#dfe3ea] bg-white p-3" aria-label="Panel osoby">
+                {!selected || !selectedStatus ? <p className="mb-0 text-sm text-[#5d6878]">Kliknij osobę w tabeli, żeby zobaczyć i zmienić jej uprawnienia.</p> : <>
+                    <div>
+                        <h2 className="text-base font-semibold">{selected.surname} {selected.name}</h2>
+                        <p className="mb-0 text-xs text-[#5d6878]">{selected.systemEmail || "brak adresu"} · <Badge bg={selectedStatus.variant} text={selected.statusCode === "INVITED" ? "dark" : undefined}>{selectedStatus.label}</Badge></p>
+                        <p className="mb-0 mt-1 text-xs text-[#5d6878]">Konto GitHub: {describeGithub(selected)} · Dysk SB.ENVI: {describeDrive(selected)}</p>
+                    </div>
+                    <section className="flex flex-col gap-2">
+                        <h3 className="text-sm font-semibold">Uprawnienia</h3>
+                        <div className="grid grid-cols-[100px_1fr] items-center gap-2 text-sm">
+                            {([["Repozytoria", "sbLevelRepos", "repos", repoOptions], ["Baza PS", "sbLevelPsDb", "psDb", psDbOptions], ["Dysk", "sbLevelDrive", "drive", driveOptions]] as const).map(([label, id, key, options]) =>
+                                <React.Fragment key={id}>
+                                    <label htmlFor={id} className="mb-0 text-[#5d6878]">{label}</label>
+                                    <select id={id} className="rounded-md border border-[#dfe3ea] bg-white px-1.5 py-1 text-[13px]" value={levelsDraft[key]} disabled={!!busy}
+                                        onChange={event => setLevelsDraft({ ...levelsDraft, [key]: event.target.value } as SbLevels)}>
+                                        {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
+                                    </select>
+                                </React.Fragment>)}
+                            <span className="self-start text-[#5d6878]">Poczta</span>
+                            <div className="flex flex-col gap-1">{mailboxChoices(levelsDraft.mail).map(code => <label key={code} className="mb-0 flex items-center gap-2">
+                                <input type="checkbox" aria-label={`Skrzynka ${code}`} checked={levelsDraft.mail.includes(code)} disabled={!!busy}
+                                    onChange={event => setLevelsDraft({ ...levelsDraft, mail: toggleMailbox(levelsDraft.mail, code, event.target.checked) })} />
+                                <span className={chip}>{code}</span>
+                            </label>)}</div>
+                        </div>
+                        {levelsError && <Alert className="mb-0" variant="danger">{levelsError}</Alert>}
+                        <div className="flex gap-2">
+                            <Button size="sm" disabled={!!busy} onClick={() => void saveLevels(selected)}>{busy === `${selected.personId}/levels` && loading} Zapisz uprawnienia</Button>
+                            <Button size="sm" variant="outline-secondary" onClick={() => setHistoryPerson(selected)}>Historia zmian</Button>
+                        </div>
+                    </section>
+                    <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3">
+                        <h3 className="text-sm font-semibold">Dostęp do Second Brain</h3>
+                        {selected.isGrantedManually && <p className="mb-0 text-xs text-[#5d6878]">{manualExplanation}</p>}
+                        <div className="flex flex-wrap gap-2">
+                            {availableActions(selected).map(item => <Button key={item.label} size="sm" variant="outline-primary" disabled={!!busy}
+                                onClick={() => item.confirm && (item.action === "block" || item.action === "revoke")
+                                    ? setConfirmation({ action: item.action, entry: selected }) : void operate(item.action, selected)}>
+                                {busy === `${selected.personId}/${item.action}` && loading} {item.label}
+                            </Button>)}
+                        </div>
+                    </section>
+                </>}
+            </aside>
+        </div>
+        </div>
+
+        <h5>Członkowie organizacji GitHub bez przypisanej osoby</h5>
+        <div className="mb-4 rounded border bg-white p-3">
             {!members ? loading : !members.ok ? <Alert variant="danger">{members.status === 503 ? "Funkcja nieskonfigurowana - nie można pobrać listy członków GitHub." : describeFailure(members.status, members.message)}</Alert>
                 : !members.data.length ? <p>Każdy członek organizacji jest przypisany do osoby.</p> : members.data.map(member => <Row className="g-2 mb-3 align-items-center" key={member.login}>
                     <Col xs={12} md={3}><a href={member.profileUrl} target="_blank" rel="noopener noreferrer">{member.login}</a></Col>
@@ -123,7 +208,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                         if (entry) void operate("assign", entry, member.login);
                     }}>{busy === `${assignments[member.login]}/assign` && loading} Przypisz</Button></Col>
                 </Row>)}
-        </Card.Body></Card>
+        </div>
 
         <Modal size="lg" show={inviting} onHide={() => { if (!busy) setInviting(false); }}>
             <Modal.Header closeButton><Modal.Title>Zaproś osobę</Modal.Title></Modal.Header>

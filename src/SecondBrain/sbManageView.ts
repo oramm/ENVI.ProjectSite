@@ -1,4 +1,4 @@
-import type { SbAction, SbEntry } from "./sbManageApi";
+import type { SbAction, SbEntry, SbLevels } from "./sbManageApi";
 
 export const statusViews = {
     INVITED: { label: "Zaproszony", variant: "warning" },
@@ -61,3 +61,33 @@ export function confirmationContent(action: "block" | "revoke", entry: SbEntry) 
 }
 export const assignableEntries = (entries: SbEntry[]) => entries.filter(entry =>
     (entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE") && entry.githubLogin === null && !entry.isGrantedManually);
+export const noLevels: SbLevels = { repos: "none", psDb: "none", drive: "none", mail: [] };
+export const repoOptions = [["none", "brak"], ["read", "odczyt"], ["write", "zapis"]] as const;
+export const psDbOptions = [["none", "brak"], ["ro", "odczyt"], ["rw", "zapis"]] as const;
+export const driveOptions = [["none", "brak"], ["connector", "konektor"]] as const;
+const optionLabel = (options: readonly (readonly [string, string])[], value: string) => options.find(([key]) => key === value)?.[1] ?? value;
+export function describeLevels(entry: SbEntry) {
+    const levels = entry.levels ?? noLevels;
+    return {
+        repos: optionLabel(repoOptions, levels.repos), psDb: optionLabel(psDbOptions, levels.psDb),
+        drive: optionLabel(driveOptions, levels.drive), mail: levels.mail.length ? levels.mail.join(", ") : "brak",
+    };
+}
+// Skrzynki znane z konfiguracji poczty firmowej; inne kody z bazy też zostają widoczne w panelu.
+export const knownMailboxes = ["marek", "faktury", "chocianow-ik", "wp"];
+export const mailboxChoices = (selected: string[]) => [...knownMailboxes, ...selected.filter(code => !knownMailboxes.includes(code))];
+export const toggleMailbox = (mail: string[], code: string, on: boolean) =>
+    on ? (mail.includes(code) ? mail : [...mail, code]) : mail.filter(item => item !== code);
+// Grupy tabeli: administratorzy SB (znacznik CanManageSbAccess) przed pracownikami i zaproszonymi;
+// zablokowani i odebrani mają własną grupę, żeby nie znikali z ekranu.
+export const entryGroups = [
+    { key: "admin", label: "Administratorzy SB", hint: "nadają dostępy" },
+    { key: "staff", label: "Pracownicy", hint: "" },
+    { key: "invited", label: "Zaproszeni", hint: "jeszcze nie przyjęli zaproszenia" },
+    { key: "closed", label: "Zablokowani i odebrani", hint: "" },
+] as const;
+export function groupKey(entry: SbEntry): (typeof entryGroups)[number]["key"] {
+    if (entry.statusCode === "INVITED") return "invited";
+    if (entry.statusCode !== "ACTIVE") return "closed";
+    return entry.canManageSb ? "admin" : "staff";
+}

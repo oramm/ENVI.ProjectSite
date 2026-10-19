@@ -29,7 +29,13 @@ export default {
             },
             {
                 test: /\.css$/,
+                exclude: /sbTailwind\.css$/,
                 use: ['style-loader', 'css-loader'],
+            },
+            {
+                // Tailwind v3 tylko dla okna Dostepy SB (patrz tailwind.config.cjs).
+                test: /sbTailwind\.css$/,
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
             },
             //{ test: /\.(png|jp(e*)g|svg|gif)$/, use: ['file-loader'], }
             {

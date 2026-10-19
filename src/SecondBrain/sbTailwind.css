@@ -1,0 +1,3 @@
+/* Bez @tailwind base: nie dokladamy zmiennych ani resetu na poziomie globalnym. */
+@tailwind components;
+@tailwind utilities;

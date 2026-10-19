@@ -30,6 +30,7 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); MainSetup.serverUrl = originalUrl; });
 const renderPage = () => render(<SbAccessManagePage title="Dostęp do Second Brain" />);
+const pick = async (n = 1) => fireEvent.click(await screen.findByRole("row", { name: new RegExp(`Nowak${n} Anna`) }));
 const mutations = () => fetchMock.mock.calls.filter(call => call[1]?.method);
 
 describe("Panel SB", () => {
@@ -42,11 +43,14 @@ describe("Panel SB", () => {
     it("pokazuje różne stany i blokuje dopiero po potwierdzeniu", async () => {
         rows = [row(), row(2, { statusCode: "INVITED" }), row(3, { statusCode: "BLOCKED" }), row(4, { statusCode: "REVOKED" })];
         renderPage();
-        await screen.findByText("Zaproszony");
-        expect(screen.getByText("Aktywny")).toBeVisible();
-        expect(screen.getByText("Zablokowany")).toBeVisible();
-        expect(screen.getByText("Odebrany")).toBeVisible();
-        fireEvent.click(screen.getAllByRole("button", { name: "Zablokuj" })[0]);
+        await screen.findByText(/Zaproszeni · 1/);
+        expect(screen.getByText(/Pracownicy · 1/)).toBeVisible();
+        expect(screen.getByText(/Zablokowani i odebrani · 2/)).toBeVisible();
+        await pick(2); expect(screen.getByText("Zaproszony")).toBeVisible();
+        await pick(3); expect(screen.getByText("Zablokowany")).toBeVisible();
+        await pick(4); expect(screen.getByText("Odebrany")).toBeVisible();
+        await pick(1); expect(screen.getByText("Aktywny")).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: "Zablokuj" }));
         const dialog = await screen.findByRole("dialog");
         expect(within(dialog).getByText("To, co już pobrała na swój komputer (kopia wiedzy, skille), zostaje - zdalnego kasowania nie ma.")).toBeVisible();
         expect(mutations()).toHaveLength(0);
@@ -58,29 +62,29 @@ describe("Panel SB", () => {
     });
     it("PARTIAL pokazuje żółte ostrzeżenie z uwagą", async () => {
         rows = [row(1, { statusCode: "BLOCKED" })]; operationBody = { result: "PARTIAL", note: "Dysk pozostał." };
-        renderPage(); fireEvent.click(await screen.findByRole("button", { name: "Odblokuj" }));
+        renderPage(); await pick(); fireEvent.click(await screen.findByRole("button", { name: "Odblokuj" }));
         const alert = await screen.findByRole("alert");
         expect(alert).toHaveClass("alert-warning"); expect(alert).toHaveTextContent("Dysk pozostał.");
     });
     it("503 operacji zostaje w potwierdzeniu i pozwala ponowić", async () => {
         operationStatus = 503; operationBody = { errorMessage: "Brak tokenu" };
-        renderPage(); fireEvent.click(await screen.findByRole("button", { name: "Zablokuj" }));
+        renderPage(); await pick(); fireEvent.click(await screen.findByRole("button", { name: "Zablokuj" }));
         fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Zablokuj" }));
         expect(await screen.findByText(/Funkcja nieskonfigurowana/)).toBeVisible();
         expect(within(screen.getByRole("dialog")).getByRole("button", { name: "Zablokuj" })).toBeEnabled();
     });
     it("ręczne nadania mają wyjaśnienie i historię bez zmiany stanu", async () => {
         rows = [row(1, { isGrantedManually: true })]; renderPage();
-        await screen.findByText(/Nadane ręcznie przed uruchomieniem/);
+        await pick(); await screen.findByText(/Nadane ręcznie przed uruchomieniem/);
         expect(screen.queryByRole("button", { name: "Zablokuj" })).toBeNull();
         expect(screen.queryByRole("button", { name: "Odbierz" })).toBeNull();
-        fireEvent.click(screen.getByRole("button", { name: "Historia" }));
+        fireEvent.click(screen.getByRole("button", { name: "Historia zmian" }));
         expect(await screen.findByText("Brak zdarzeń.")).toBeVisible();
     });
     it("503 członków GitHuba nie zasłania rejestru", async () => {
         membersStatus = 503; renderPage();
         await screen.findByText("Funkcja nieskonfigurowana - nie można pobrać listy członków GitHub.");
-        expect(screen.getByText("Nowak1 Anna")).toBeVisible();
+        await pick(); expect(screen.getByText("Nowak1 Anna", { selector: "h2" })).toBeVisible();
         expect(screen.getByRole("button", { name: "Zablokuj" })).toBeEnabled();
     });
     it("przypisuje konto przez PUT i odświeża listy", async () => {
@@ -90,6 +94,24 @@ describe("Panel SB", () => {
         await screen.findByText(/Wykonano: Przypisanie/);
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/githubAccount", {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" }, body: '{"githubLogin":"anna-gh"}',
+        }]);
+    });
+    it("tabela grupuje wg roli i pokazuje poziomy, a panel wysyła PUT z poziomami i skrzynkami", async () => {
+        rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } }), row(2)]; renderPage();
+        await screen.findByText(/Administratorzy SB · 1/); expect(screen.getByText(/Pracownicy · 1/)).toBeVisible();
+        expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.getByText("konektor")).toBeVisible();
+        expect(screen.queryByText("Hasła")).toBeNull(); expect(screen.queryByText("Komputer")).toBeNull();
+        await pick();
+        const panel = screen.getByLabelText("Panel osoby");
+        fireEvent.change(within(panel).getByLabelText("Repozytoria"), { target: { value: "write" } });
+        fireEvent.change(within(panel).getByLabelText("Baza PS"), { target: { value: "ro" } });
+        fireEvent.click(within(panel).getByLabelText("Skrzynka marek"));
+        fireEvent.click(within(panel).getByLabelText("Skrzynka faktury"));
+        fireEvent.click(within(panel).getByRole("button", { name: "Zapisz uprawnienia" }));
+        await screen.findByText(/Zapisano uprawnienia/);
+        expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/levels", {
+            method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
+            body: '{"repos":"write","psDb":"ro","drive":"connector","mail":["marek"]}',
         }]);
     });
     it("zaproszenie pokazuje adres i wysyła POST bez treści", async () => {
