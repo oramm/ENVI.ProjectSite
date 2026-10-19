@@ -16,12 +16,20 @@ export interface SbEntry {
     isGrantedManually: boolean;
     levels?: SbLevels;
     canManageSb?: boolean;
+    /** Klucz publiczny komputera pracownika (instalator SB); null = brak klucza. */
+    publicKeyJwk?: SbPublicKeyJwk | null;
+    keyThumbprint?: string | null;
+    keyFingerprint?: string | null;
+    /** Nazwy haseł, które wynikają z uprawnień (reguła w PS) i które już udostępniono. */
+    secretsExpected?: string[];
+    secretsGiven?: string[];
     createdAt: string;
     updatedAt: string;
     name: string;
     surname: string;
     systemEmail: string | null;
 }
+export interface SbPublicKeyJwk { kty: "RSA"; n: string; e: "AQAB" }
 export interface SbCandidate {
     personId: number;
     name: string;
@@ -83,3 +91,11 @@ export async function setSbLevels(personId: number, levels: SbLevels): Promise<S
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(levels),
     });
 }
+/** Wysyła wyłącznie szyfrogram i odcisk klucza, którym szyfrowano; jawne hasło nie opuszcza przeglądarki. */
+export function giveSbSecret(personId: number, name: string, ciphertext: string, keyThumbprint: string) {
+    return request<{ name: string; given: true }>(`${personId}/secrets/${encodeURIComponent(name)}`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ciphertext, keyThumbprint }),
+    });
+}
+export const takeSbSecret = (personId: number, name: string) =>
+    request<{ name: string; given: false }>(`${personId}/secrets/${encodeURIComponent(name)}`, { method: "DELETE" });

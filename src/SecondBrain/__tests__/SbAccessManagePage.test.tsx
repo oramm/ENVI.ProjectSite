@@ -5,6 +5,8 @@ import MainSetup from "../../React/MainSetupReact";
 import SbAccessManagePage from "../SbAccessManagePage";
 import { fetchSbEntries, performSbAction, SbEntry } from "../sbManageApi";
 
+const encryptMock = vi.fn(async (_jwk: unknown, _plain: string) => "SZYFR+base64==");
+vi.mock("../sbSecretCrypto", () => ({ encryptSecretForKey: (jwk: unknown, plain: string) => encryptMock(jwk, plain) }));
 vi.mock("../../View/Resultsets/CommonComponents", () => ({ AlertComponent: ({ message }: { message: string }) => <div role="alert">{message}</div> }));
 const fetchMock = vi.fn();
 const response = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body });
@@ -100,7 +102,7 @@ describe("Panel SB", () => {
         rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } }), row(2)]; renderPage();
         await screen.findByText(/Administratorzy SB · 1/); expect(screen.getByText(/Pracownicy · 1/)).toBeVisible();
         expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.getByText("konektor")).toBeVisible();
-        expect(screen.queryByText("Hasła")).toBeNull(); expect(screen.queryByText("Komputer")).toBeNull();
+        expect(screen.getByText("Hasła")).toBeVisible(); expect(screen.queryByText("Komputer")).toBeNull();
         await pick();
         const panel = screen.getByLabelText("Panel osoby");
         fireEvent.change(within(panel).getByLabelText("Repozytoria"), { target: { value: "write" } });
@@ -113,6 +115,65 @@ describe("Panel SB", () => {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
             body: '{"repos":"write","psDb":"ro","drive":"connector","mail":["marek"]}',
         }]);
+    });
+    it("kolumna Hasła: X z Y wg uprawnień, kreska gdy nic się nie należy; bez klucza panel blokuje udostępnienie", async () => {
+        rows = [row(1, { secretsExpected: ["poczta-faktury", "baza-ps"], secretsGiven: ["baza-ps"], keyFingerprint: null }), row(2, { secretsExpected: [] })];
+        renderPage();
+        expect(await screen.findByText("1 z 2")).toBeVisible(); expect(screen.getByText("—")).toBeVisible();
+        await pick();
+        const section = within(screen.getByLabelText("Panel osoby")).getByRole("region", { name: "Hasła" });
+        expect(within(section).getByText("brak klucza")).toBeVisible();
+        expect(within(section).getByText(/dopiero po uruchomieniu instalatora/)).toBeVisible();
+        expect(within(section).getByRole("button", { name: "Udostępnij hasło…" })).toBeDisabled();
+    });
+    it("udostępnienie: szyfruje kluczem osoby, wysyła tylko szyfr i odcisk, czyści pole", async () => {
+        const jwk = { kty: "RSA" as const, n: "n-klucza", e: "AQAB" as const };
+        rows = [row(1, { publicKeyJwk: jwk, keyThumbprint: "a".repeat(64), keyFingerprint: "aaaa aaaa",
+            secretsExpected: ["poczta-faktury", "baza-ps"], secretsGiven: ["poczta-faktury"] })];
+        renderPage(); await pick();
+        const section = within(screen.getByLabelText("Panel osoby")).getByRole("region", { name: "Hasła" });
+        expect(within(section).getByText("aaaa aaaa")).toBeVisible();
+        expect(within(section).getByText(/PS zapisuje tylko szyfr/)).toBeVisible();
+        fireEvent.click(within(section).getByRole("button", { name: "Udostępnij hasło…" }));
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByLabelText("Hasło do")).toHaveValue("baza-ps");
+        const field = within(dialog).getByLabelText("Hasło");
+        expect(field).toHaveAttribute("type", "password");
+        fireEvent.change(field, { target: { value: "Tajne-Haslo-1" } });
+        fireEvent.click(within(dialog).getByRole("button", { name: /Zaszyfruj i udostępnij/ }));
+        await screen.findByText(/Udostępniono hasło \(baza PS\)/);
+        expect(encryptMock).toHaveBeenCalledWith(jwk, "Tajne-Haslo-1");
+        expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/secrets/baza-ps", {
+            method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ciphertext: "SZYFR+base64==", keyThumbprint: "a".repeat(64) }),
+        }]);
+        expect(JSON.stringify(fetchMock.mock.calls)).not.toContain("Tajne-Haslo-1");
+        await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+        fireEvent.click(within(screen.getByLabelText("Panel osoby")).getByRole("button", { name: "Udostępnij hasło…" }));
+        expect(within(await screen.findByRole("dialog")).getByLabelText("Hasło")).toHaveValue("");
+    });
+    it("błąd udostępnienia zostaje w dialogu, a pole hasła i tak jest czyszczone", async () => {
+        operationStatus = 409; operationBody = { errorMessage: "Klucz komputera pracownika zmienił się." };
+        rows = [row(1, { publicKeyJwk: { kty: "RSA", n: "n", e: "AQAB" }, keyThumbprint: "b".repeat(64), keyFingerprint: "bbbb bbbb", secretsExpected: ["baza-ps"], secretsGiven: [] })];
+        renderPage(); await pick();
+        fireEvent.click(screen.getByRole("button", { name: "Udostępnij hasło…" }));
+        const dialog = await screen.findByRole("dialog");
+        fireEvent.change(within(dialog).getByLabelText("Hasło"), { target: { value: "x" } });
+        fireEvent.click(within(dialog).getByRole("button", { name: /Zaszyfruj i udostępnij/ }));
+        expect(await within(dialog).findByText("Klucz komputera pracownika zmienił się.")).toBeVisible();
+        expect(within(dialog).getByLabelText("Hasło")).toHaveValue("");
+    });
+    it("odebranie hasła dopiero po potwierdzeniu z przypomnieniem o zmianie hasła u źródła", async () => {
+        rows = [row(1, { publicKeyJwk: { kty: "RSA", n: "n", e: "AQAB" }, keyThumbprint: "c".repeat(64), keyFingerprint: "cccc cccc", secretsExpected: ["poczta-faktury"], secretsGiven: ["poczta-faktury"] })];
+        operationBody = { name: "poczta-faktury", given: false };
+        renderPage(); await pick();
+        fireEvent.click(within(screen.getByRole("region", { name: "Hasła" })).getByRole("button", { name: "Odbierz" }));
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByText(/zmień hasło u źródła/)).toBeVisible();
+        expect(mutations()).toHaveLength(0);
+        fireEvent.click(within(dialog).getByRole("button", { name: "Odbierz hasło" }));
+        await screen.findByText(/Odebrano hasło \(poczta: faktury\)/);
+        expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/secrets/poczta-faktury", { method: "DELETE", credentials: "include" }]);
     });
     it("zaproszenie pokazuje adres i wysyła POST bez treści", async () => {
         renderPage(); fireEvent.click(await screen.findByRole("button", { name: "Zaproś osobę" }));

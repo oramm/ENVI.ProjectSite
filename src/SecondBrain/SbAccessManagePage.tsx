@@ -3,11 +3,13 @@ import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from 
 import ConfirmModal from "../View/Modals/ConfirmModal";
 import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
-import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbUnlinkedMembers, performSbAction, setSbLevels,
-    SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbUnlinkedMember } from "./sbManageApi";
+import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, setSbLevels,
+    takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbUnlinkedMember } from "./sbManageApi";
 import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure,
     describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, mailboxChoices, manualExplanation, noLevels,
-    psDbOptions, repoOptions, roleLabel, statusViews, toggleMailbox } from "./sbManageView";
+    psDbOptions, repoOptions, roleLabel, secretInputError, secretLabel, secretsState, statusViews, takeSecretConfirmation,
+    toggleMailbox } from "./sbManageView";
+import { encryptSecretForKey } from "./sbSecretCrypto";
 
 const personLabel = (person: { name: string; surname: string; systemEmail: string | null }) =>
     `${person.surname} ${person.name} - ${person.systemEmail || "brak adresu"}`;
@@ -35,6 +37,12 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const [levelsDraft, setLevelsDraft] = useState<SbLevels>(noLevels);
     const [levelsError, setLevelsError] = useState<string | null>(null);
     const [events, setEvents] = useState<SbFetchResult<SbEvent[]> | null>(null);
+    // Hasła (SBD-2): jawne hasło żyje tylko w polu dialogu i znika po wysyłce albo zamknięciu.
+    const [sharing, setSharing] = useState<SbEntry | null>(null);
+    const [shareName, setShareName] = useState("");
+    const [sharePassword, setSharePassword] = useState("");
+    const [shareError, setShareError] = useState<string | null>(null);
+    const [taking, setTaking] = useState<{ entry: SbEntry; name: string } | null>(null);
 
     async function refresh() {
         // Każda lista ma własny wynik; awaria GitHuba nie zasłania rejestru ani kandydatów.
@@ -91,6 +99,45 @@ export default function SbAccessManagePage({ title }: { title: string }) {
         setBusy(null);
     }
 
+    function openShare(entry: SbEntry) {
+        const expected = entry.secretsExpected ?? [], given = entry.secretsGiven ?? [];
+        setShareName(expected.find(name => !given.includes(name)) ?? expected[0] ?? "");
+        setSharePassword(""); setShareError(null); setSharing(entry);
+    }
+    function closeShare() { if (busy) return; setSharePassword(""); setShareError(null); setSharing(null); }
+    async function shareSecret() {
+        const entry = sharing;
+        if (!entry || busy) return;
+        const inputError = secretInputError(sharePassword);
+        if (inputError) { setShareError(inputError); return; }
+        if (!entry.publicKeyJwk || !entry.keyThumbprint) { setShareError("Brak klucza komputera pracownika."); return; }
+        setBusy(`${entry.personId}/secret`); setShareError(null);
+        let result: SbFetchResult<unknown>;
+        try {
+            const ciphertext = await encryptSecretForKey(entry.publicKeyJwk, sharePassword);
+            result = await giveSbSecret(entry.personId, shareName, ciphertext, entry.keyThumbprint);
+        } catch {
+            result = { ok: false, status: -1, message: "" };
+        } finally {
+            setSharePassword("");
+        }
+        if (result.ok) {
+            setSharing(null);
+            setMessage({ variant: "success", message: `Udostępniono hasło (${secretLabel(shareName)}): ${personLabel(entry)}. PS zapisał tylko szyfr.` });
+            await refresh();
+        } else setShareError(result.status === -1 ? "Nie udało się zaszyfrować hasła w tej przeglądarce. Nic nie wysłano." : describeFailure(result.status, result.message));
+        setBusy(null);
+    }
+    async function takeSecret(entry: SbEntry, name: string) {
+        if (busy) return;
+        setBusy(`${entry.personId}/take`);
+        const result = await takeSbSecret(entry.personId, name);
+        await refresh();
+        setBusy(null);
+        if (!result.ok) throw new Error(describeFailure(result.status, result.message));
+        setMessage({ variant: "warning", message: `Odebrano hasło (${secretLabel(name)}): ${personLabel(entry)}. Zmień je u źródła - komputer pracownika mógł je już pobrać.` });
+    }
+
     if (access === "loading") return <Container fluid className="py-4">{loading}</Container>;
     if (access !== "granted") return <Container fluid className="py-4"><Alert variant={access === "error" ? "danger" : "info"}>
         {access === "error" ? "Nie udało się sprawdzić dostępu do Second Brain. Odśwież stronę." : "Nie masz uprawnienia do zarządzania dostępem do Second Brain. Znacznik nadaje się w oknie Personel i uprawnienia."}
@@ -102,7 +149,8 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const content = confirmation && confirmationContent(confirmation.action, confirmation.entry);
     const selected = rows.find(entry => entry.personId === selectedId);
     const selectedStatus = selected && statusViews[selected.statusCode];
-    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk"];
+    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk", "Hasła"];
+    const takeContent = taking && takeSecretConfirmation(taking.entry, taking.name);
 
     return <Container fluid className="px-3" style={{ overflowWrap: "anywhere" }}>
         <h4>Dostęp do Second Brain</h4>
@@ -139,6 +187,8 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                                                 <span key={code} className={chip}>{code}</span>)}</span> : <Pill tone="off">brak</Pill>}</td>
                                             <td className="p-2">{levelPill(text.psDb, levels.psDb === "rw")}</td>
                                             <td className="p-2">{levels.drive === "none" ? <Pill tone="off">brak</Pill> : <Pill tone="ok">{text.drive}</Pill>}</td>
+                                            <td className="p-2">{(state => state.text === "—" ? <span className="text-[#5d6878]">—</span>
+                                                : <Pill tone={state.tone}>{state.text}</Pill>)(secretsState(entry))}</td>
                                         </tr>;
                                     })}
                                 </React.Fragment>;
@@ -176,6 +226,24 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                             <Button size="sm" disabled={!!busy} onClick={() => void saveLevels(selected)}>{busy === `${selected.personId}/levels` && loading} Zapisz uprawnienia</Button>
                             <Button size="sm" variant="outline-secondary" onClick={() => setHistoryPerson(selected)}>Historia zmian</Button>
                         </div>
+                    </section>
+                    <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3" aria-label="Hasła">
+                        <h3 className="text-sm font-semibold">Hasła</h3>
+                        {!selected.keyFingerprint ? <p className="mb-0 text-xs text-[#5d6878]"><Pill tone="off">brak klucza</Pill>{" "}
+                            Hasło da się udostępnić dopiero po uruchomieniu instalatora u pracownika.</p> : <>
+                            <p className="mb-0 text-xs text-[#5d6878]">Klucz komputera <span className={chip}>{selected.keyFingerprint}</span>. Porównaj z ekranem instalatora u pracownika.</p>
+                            <p className="mb-0 text-xs text-[#5d6878]">Hasło wpisane tutaj zostaje zaszyfrowane w Twojej przeglądarce. PS zapisuje tylko szyfr.</p>
+                        </>}
+                        {!(selected.secretsExpected ?? []).length ? <p className="mb-0 text-xs text-[#5d6878]">Uprawnienia tej osoby nie obejmują żadnego hasła (skrzynki poczty, baza PS).</p>
+                            : <ul className="mb-0 flex list-none flex-col gap-1 p-0 text-sm">{(selected.secretsExpected ?? []).map(name => {
+                                const given = (selected.secretsGiven ?? []).includes(name);
+                                return <li key={name} className="flex items-center justify-between gap-2">
+                                    <span>{secretLabel(name)} {given ? <Pill tone="ok">udostępnione</Pill> : <Pill tone="warn">czeka</Pill>}</span>
+                                    {given && <Button size="sm" variant="outline-danger" disabled={!!busy} onClick={() => setTaking({ entry: selected, name })}>Odbierz</Button>}
+                                </li>;
+                            })}</ul>}
+                        <div><Button size="sm" disabled={!!busy || !selected.keyFingerprint || !(selected.secretsExpected ?? []).length}
+                            onClick={() => openShare(selected)}>Udostępnij hasło…</Button></div>
                     </section>
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3">
                         <h3 className="text-sm font-semibold">Dostęp do Second Brain</h3>
@@ -233,6 +301,32 @@ export default function SbAccessManagePage({ title }: { title: string }) {
             confirmLabel={confirmation.action === "block" ? "Zablokuj" : "Odbierz na stałe"} confirmVariant="danger"
             onClose={() => { if (!busy) setConfirmation(null); }}
             onConfirm={() => operate(confirmation.action, confirmation.entry, undefined, true)} />}
+
+        <Modal show={!!sharing} onHide={closeShare}>
+            <Modal.Header closeButton><Modal.Title>Udostępnij hasło</Modal.Title></Modal.Header>
+            {sharing && <Form onSubmit={event => { event.preventDefault(); void shareSecret(); }}>
+                <Modal.Body>
+                    <p>Osoba: {personLabel(sharing)}. Klucz komputera: <code>{sharing.keyFingerprint}</code>.</p>
+                    <Form.Label htmlFor="sbSecretName">Hasło do</Form.Label>
+                    <Form.Select id="sbSecretName" className="mb-3" value={shareName} disabled={!!busy} onChange={event => setShareName(event.target.value)}>
+                        {(sharing.secretsExpected ?? []).map(name => <option key={name} value={name}>
+                            {secretLabel(name)}{(sharing.secretsGiven ?? []).includes(name) ? " (podmiana udostępnionego)" : ""}</option>)}
+                    </Form.Select>
+                    <Form.Label htmlFor="sbSecretValue">Hasło</Form.Label>
+                    <Form.Control id="sbSecretValue" type="password" autoComplete="off" value={sharePassword} disabled={!!busy}
+                        onChange={event => setSharePassword(event.target.value)} />
+                    <Form.Text muted>Hasło zostanie zaszyfrowane w tej przeglądarce kluczem komputera pracownika. PS zapisuje tylko szyfr, a pole czyści się po wysłaniu.</Form.Text>
+                    {shareError && <Alert className="mt-3 mb-0" variant="danger">{shareError}</Alert>}
+                </Modal.Body>
+                <Modal.Footer><Button variant="secondary" disabled={!!busy} onClick={closeShare}>Anuluj</Button>
+                    <Button type="submit" disabled={!!busy || !shareName || !sharePassword}>{busy === `${sharing.personId}/secret` && loading} Zaszyfruj i udostępnij</Button></Modal.Footer>
+            </Form>}
+        </Modal>
+
+        {taking && takeContent && <ConfirmModal show title={takeContent.title} prompt={takeContent.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+            confirmLabel="Odbierz hasło" confirmVariant="danger"
+            onClose={() => { if (!busy) setTaking(null); }}
+            onConfirm={() => takeSecret(taking.entry, taking.name)} />}
 
         <Modal show={!!historyPerson} onHide={() => setHistoryPerson(null)}>
             <Modal.Header closeButton><Modal.Title>Historia - {historyPerson && personLabel(historyPerson)}</Modal.Title></Modal.Header>

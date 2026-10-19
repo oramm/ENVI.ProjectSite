@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SbEntry } from "../sbManageApi";
-import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, toggleMailbox, statusViews } from "../sbManageView";
+import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, statusViews } from "../sbManageView";
 
 const entry = (over: Partial<SbEntry> = {}): SbEntry => ({
     id: 1, personId: 1, name: "Anna", surname: "Nowak", systemEmail: "anna@example.com",
@@ -84,5 +84,16 @@ describe("Poziomy dostępu w widoku", () => {
         expect(groupKey(entry({ statusCode: "INVITED", canManageSb: true }))).toBe("invited");
         expect(groupKey(entry({ statusCode: "BLOCKED" }))).toBe("closed");
         expect(groupKey(entry({ statusCode: "REVOKED" }))).toBe("closed");
+    });
+    it("hasła: stan X z Y liczy tylko oczekiwane, kreska gdy nic się nie należy", () => {
+        expect(secretsState(entry())).toEqual({ text: "—", tone: "off" });
+        expect(secretsState(entry({ secretsExpected: ["poczta-faktury", "baza-ps"], secretsGiven: ["baza-ps", "poczta-stara"] }))).toEqual({ text: "1 z 2", tone: "warn" });
+        expect(secretsState(entry({ secretsExpected: ["baza-ps"], secretsGiven: ["baza-ps"] }))).toEqual({ text: "1 z 1", tone: "ok" });
+        expect(secretLabel("baza-ps")).toBe("baza PS"); expect(secretLabel("poczta-chocianow-ik")).toBe("poczta: chocianow-ik");
+    });
+    it("hasło: puste i dłuższe niż mieści RSA-OAEP 2048 (190 bajtów UTF-8) odrzucone", () => {
+        expect(secretInputError("")).toBe("Wpisz hasło.");
+        expect(secretInputError("a".repeat(190))).toBeNull();
+        expect(secretInputError("ż".repeat(96))).toMatch(/za długie/);
     });
 });

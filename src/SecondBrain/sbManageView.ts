@@ -91,3 +91,27 @@ export function groupKey(entry: SbEntry): (typeof entryGroups)[number]["key"] {
     if (entry.statusCode !== "ACTIVE") return "closed";
     return entry.canManageSb ? "admin" : "staff";
 }
+// Hasła (SBD-2). Które hasła należą się osobie, rozstrzyga PS (secretsExpected); tu tylko podpis i stan.
+export const secretLabel = (name: string) =>
+    name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
+export function secretsState(entry: SbEntry): { text: string; tone: "ok" | "warn" | "off" } {
+    const expected = entry.secretsExpected ?? [], given = (entry.secretsGiven ?? []).filter(name => expected.includes(name));
+    if (!expected.length) return { text: "—", tone: "off" };
+    return { text: `${given.length} z ${expected.length}`, tone: given.length === expected.length ? "ok" : "warn" };
+}
+/** RSA-OAEP SHA-256 z kluczem 2048 bit mieści najwyżej 190 bajtów tekstu (UTF-8). */
+export const SECRET_MAX_BYTES = 190;
+export function secretInputError(value: string): string | null {
+    if (!value) return "Wpisz hasło.";
+    return new TextEncoder().encode(value).length > SECRET_MAX_BYTES ? `Hasło jest za długie (najwyżej ${SECRET_MAX_BYTES} bajtów).` : null;
+}
+export function takeSecretConfirmation(entry: SbEntry, name: string) {
+    return {
+        title: `Odebrać hasło: ${secretLabel(name)}?`,
+        paragraphs: [
+            `Osoba: ${entry.name} ${entry.surname} - ${entry.systemEmail || "brak adresu"}.`,
+            "Szyfr zostanie usunięty z PS, więc komputer pracownika nie pobierze go ponownie.",
+            "Jeśli komputer już go pobrał, nie da się tego cofnąć - zmień hasło u źródła (w poczcie albo w bazie).",
+        ],
+    };
+}
