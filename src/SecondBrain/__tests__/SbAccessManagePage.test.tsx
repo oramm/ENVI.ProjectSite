@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import MainSetup from "../../React/MainSetupReact";
 import SbAccessManagePage from "../SbAccessManagePage";
-import { fetchSbEntries, performSbAction, SbEntry } from "../sbManageApi";
+import { fetchSbEntries, performSbAction, SbEntry, SbHealth } from "../sbManageApi";
 
 const encryptMock = vi.fn(async (_jwk: unknown, _plain: string) => "SZYFR+base64==");
 vi.mock("../sbSecretCrypto", () => ({ encryptSecretForKey: (jwk: unknown, plain: string) => encryptMock(jwk, plain) }));
@@ -26,6 +26,7 @@ beforeEach(() => {
         if (url.endsWith("/candidates")) return response([{ personId: 9, name: "Jan", surname: "Lis", systemEmail: "jan@example.com", systemRoleName: "ENVI_EMPLOYEE", statusCode: null }]);
         if (url.endsWith("/unlinked")) return response([{ login: "anna-gh", profileUrl: "https://github.com/anna-gh" }], membersStatus);
         if (url.endsWith("/events")) return response([]);
+        if (url.endsWith("/healthReport")) return { ok: true, status: 200, headers: { get: () => 'attachment; filename="raport-sb-nowak1-2026-10-19.json"' }, blob: async () => new Blob(["{}"]) };
         throw new Error(`Nieoczekiwana trasa: ${url}`);
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -102,7 +103,7 @@ describe("Panel SB", () => {
         rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } }), row(2)]; renderPage();
         await screen.findByText(/Administratorzy SB · 1/); expect(screen.getByText(/Pracownicy · 1/)).toBeVisible();
         expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.getByText("konektor")).toBeVisible();
-        expect(screen.getByText("Hasła")).toBeVisible(); expect(screen.queryByText("Komputer")).toBeNull();
+        expect(screen.getByText("Hasła")).toBeVisible(); expect(screen.getByRole("columnheader", { name: "Komputer" })).toBeVisible();
         await pick();
         const panel = screen.getByLabelText("Panel osoby");
         fireEvent.change(within(panel).getByLabelText("Repozytoria"), { target: { value: "write" } });
@@ -184,6 +185,86 @@ describe("Panel SB", () => {
         await screen.findByText(/Wykonano: Zaproszenie/);
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/9/invite", { method: "POST", credentials: "include" }]);
     });
+});
+describe("Panel SB - Komputer", () => {
+        const sbHealth = (over: Partial<SbHealth> = {}): SbHealth => ({
+            reportedAt: new Date().toISOString(), state: "ok", stale: false, refreshRequested: false, sbVersion: "1.14", installerVersion: "0.16.0",
+            tools: [{ name: "poczta-faktury", ok: true }, { name: "baza-ps", ok: true }], events: [], ...over });
+        const computer = () => within(screen.getByLabelText("Panel osoby")).getByRole("region", { name: "Komputer" });
+        it("kolumna pokazuje wszystkie cztery stany i zdanie o raporcie raz dziennie i 7 dniach", async () => {
+            rows = [row(1), row(2, { health: sbHealth() }), row(3, { health: sbHealth({ state: "fail", tools: [{ name: "baza-ps", ok: false, error: "x" }] }) }),
+                row(4, { health: sbHealth({ stale: true, reportedAt: new Date(Date.now() - 9 * 864e5).toISOString() }) })];
+            renderPage();
+            const table = await screen.findByRole("table");
+            expect(within(table).getByRole("columnheader", { name: "Komputer" })).toBeVisible();
+            for (const [n, text] of [[1, "nie zainstalowano"], [2, "działa"], [3, "błąd"], [4, "brak raportu"]] as const)
+                expect(within(screen.getByRole("row", { name: new RegExp(`Nowak${n} Anna`) })).getByText(text)).toBeVisible();
+            expect(within(screen.getByRole("row", { name: /Nowak1 Anna/ })).queryByText(/dziś|\d\d\.\d\d/)).toBeNull();
+            expect(within(screen.getByRole("row", { name: /Nowak2 Anna/ })).getByText(/^dziś \d\d:\d\d$/)).toBeVisible();
+            expect(screen.getByText(/wysyłany raz dziennie.*starszy niż 7 dni jest szary/)).toBeVisible();
+        });
+        it("bez raportu: panel mówi, że instalator nie był uruchomiony; pobranie wyłączone, prośba możliwa", async () => {
+            renderPage(); await pick();
+            expect(within(computer()).getByText(/nie uruchomił jeszcze instalatora SB/)).toBeVisible();
+            expect(within(computer()).getByRole("button", { name: "Pobierz raport diagnostyczny" })).toBeDisabled();
+            expect(within(computer()).getByRole("button", { name: "Poproś o świeży raport" })).toBeEnabled();
+        });
+        it("z błędem: wersje, lista narzędzi działa/błąd, log w ramce, zdanie o zawartości raportu", async () => {
+            rows = [row(1, { health: sbHealth({ state: "fail", tools: [{ name: "poczta-faktury", ok: true }, { name: "baza-ps", ok: false, error: "logowanie odrzucone" }],
+                events: ["18.10 17:40  baza PS: logowanie odrzucone (hasło nieaktualne)"] }) })];
+            renderPage(); await pick();
+            const section = computer();
+            expect(within(section).getByText(/^SB 1.14 · instalator 0.16.0 · raport dziś/)).toBeVisible();
+            expect(within(section).getByText("poczta: faktury")).toBeVisible(); expect(within(section).getByText("baza PS")).toBeVisible();
+            expect(within(section).getByText("działa")).toBeVisible(); expect(within(section).getByText("błąd")).toBeVisible();
+            expect(within(section).getByLabelText("Log komputera")).toHaveTextContent("baza PS: logowanie odrzucone (hasło nieaktualne)");
+            expect(within(section).getByText("Raport zawiera tylko wersje, stan narzędzi i krótkie opisy błędów. Bez haseł i bez treści poczty.")).toBeVisible();
+        });
+        it("bez problemów: komunikat zamiast logu; raport sprzed 7 dni ma szarą plakietkę", async () => {
+            rows = [row(1, { health: sbHealth() }), row(2, { health: sbHealth({ stale: true }) })];
+            renderPage(); await pick();
+            expect(within(computer()).getByText("Brak problemów w ostatnim raporcie.")).toBeVisible();
+            expect(within(computer()).queryByLabelText("Log komputera")).toBeNull();
+            await pick(2);
+            expect(within(computer()).getByText(/Raport jest starszy niż 7 dni/)).toBeVisible();
+        });
+        it("prośba o świeży raport: POST bez treści, odświeża listę i pokazuje, że prośba czeka", async () => {
+            operationBody = { requested: true, alreadyPending: false };
+            renderPage(); await pick();
+            fireEvent.click(within(computer()).getByRole("button", { name: "Poproś o świeży raport" }));
+            await waitFor(() => expect(mutations()).toHaveLength(1));
+            expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/healthRequest", { method: "POST", credentials: "include" }]);
+            await waitFor(() => expect(fetchMock.mock.calls.filter(call => call[0].endsWith("/entries"))).toHaveLength(2));
+        });
+        it("prośba czeka: plakietka i zablokowany przycisk; zablokowana osoba nie dostaje prośby", async () => {
+            rows = [row(1, { health: sbHealth({ refreshRequested: true }) }), row(2, { statusCode: "BLOCKED" })];
+            renderPage(); await pick();
+            expect(within(computer()).getByText("prośba czeka")).toBeVisible();
+            expect(within(computer()).getByRole("button", { name: "Poproś o świeży raport" })).toBeDisabled();
+            await pick(2);
+            expect(within(computer()).getByRole("button", { name: "Poproś o świeży raport" })).toBeDisabled();
+        });
+        it("błąd prośby zostaje w sekcji", async () => {
+            operationStatus = 409; operationBody = { errorMessage: "Osoba nie ma aktywnego dostępu do Second Brain." };
+            renderPage(); await pick();
+            fireEvent.click(within(computer()).getByRole("button", { name: "Poproś o świeży raport" }));
+            expect(await within(computer()).findByText("Osoba nie ma aktywnego dostępu do Second Brain.")).toBeVisible();
+        });
+        it("pobranie raportu: GET z ciasteczkiem i plik pod nazwą z PS", async () => {
+            rows = [row(1, { health: sbHealth() })];
+            const create = vi.fn(() => "blob:raport"), revoke = vi.fn();
+            vi.stubGlobal("URL", Object.assign(URL, { createObjectURL: create, revokeObjectURL: revoke }));
+            const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+            renderPage(); await pick();
+            let download = "";
+            const append = vi.spyOn(document.body, "appendChild").mockImplementation(node => { download = (node as HTMLAnchorElement).download; return node; });
+            fireEvent.click(within(computer()).getByRole("button", { name: "Pobierz raport diagnostyczny" }));
+            await waitFor(() => expect(click).toHaveBeenCalled());
+            expect(fetchMock.mock.calls.find(call => call[0].endsWith("/healthReport"))).toEqual(["http://localhost:3000/sbAccess/1/healthReport", { credentials: "include" }]);
+            expect(download).toBe("raport-sb-nowak1-2026-10-19.json");
+            expect(revoke).toHaveBeenCalledWith("blob:raport");
+            append.mockRestore(); click.mockRestore();
+        });
 });
 describe("API zarządzania SB", () => {
     it.each([null, {}, { result: "FAILED", note: "Nie wykonano" }])("nie rzuca i nie ogłasza sukcesu nieprawidłowej odpowiedzi %s", async body => {

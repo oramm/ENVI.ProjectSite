@@ -1,4 +1,4 @@
-import type { SbAction, SbEntry, SbLevels } from "./sbManageApi";
+import type { SbAction, SbEntry, SbHealth, SbLevels } from "./sbManageApi";
 
 export const statusViews = {
     INVITED: { label: "Zaproszony", variant: "warning" },
@@ -115,3 +115,28 @@ export function takeSecretConfirmation(entry: SbEntry, name: string) {
         ],
     };
 }
+// Komputer (SBD-4): ostatni raport instalatora. Czy raport jest "starszy niż 7 dni", rozstrzyga PS (health.stale);
+// ekran tylko to pokazuje, więc reguła ma jedno miejsce.
+export type HealthTone = "ok" | "bad" | "off";
+export const healthRetentionNote = "Komputer to ostatni raport instalatora SB u pracownika, wysyłany raz dziennie. Raport starszy niż 7 dni jest szary.";
+export const healthContentNote = "Raport zawiera tylko wersje, stan narzędzi i krótkie opisy błędów. Bez haseł i bez treści poczty.";
+const two = (value: number) => String(value).padStart(2, "0");
+/** "dziś 08:12" dla bieżącego dnia, inaczej "18.10 17:40". */
+export function formatHealthDate(iso: string, now: Date = new Date()): string {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "";
+    const time = `${two(date.getHours())}:${two(date.getMinutes())}`;
+    return date.toDateString() === now.toDateString() ? `dziś ${time}` : `${two(date.getDate())}.${two(date.getMonth() + 1)} ${time}`;
+}
+export function healthColumn(entry: SbEntry, now: Date = new Date()): { text: string; tone: HealthTone; date: string | null } {
+    const health = entry.health;
+    if (!health) return { text: "nie zainstalowano", tone: "off", date: null };
+    const date = formatHealthDate(health.reportedAt, now);
+    if (health.stale) return { text: "brak raportu", tone: "off", date };
+    return health.state === "ok" ? { text: "działa", tone: "ok", date } : { text: "błąd", tone: "bad", date };
+}
+export const healthToolLabel = (name: string) =>
+    name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
+export const healthVersions = (health: SbHealth, now: Date = new Date()) =>
+    `SB ${health.sbVersion ?? "?"} · instalator ${health.installerVersion ?? "?"} · raport ${formatHealthDate(health.reportedAt, now)}`;
+export const canRequestHealth = (entry: SbEntry) => entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE";

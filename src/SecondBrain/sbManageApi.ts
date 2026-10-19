@@ -23,11 +23,25 @@ export interface SbEntry {
     /** Nazwy haseł, które wynikają z uprawnień (reguła w PS) i które już udostępniono. */
     secretsExpected?: string[];
     secretsGiven?: string[];
+    /** Ostatni raport instalatora z komputera pracownika (SBD-4); null = nie było raportu. */
+    health?: SbHealth | null;
     createdAt: string;
     updatedAt: string;
     name: string;
     surname: string;
     systemEmail: string | null;
+}
+export interface SbHealthTool { name: string; ok: boolean; error?: string }
+/** `stale` (starszy niż 7 dni) rozstrzyga PS - to jedyne miejsce tej reguły. */
+export interface SbHealth {
+    reportedAt: string;
+    state: "ok" | "fail";
+    stale: boolean;
+    refreshRequested: boolean;
+    sbVersion: string | null;
+    installerVersion: string | null;
+    tools: SbHealthTool[];
+    events: string[];
 }
 export interface SbPublicKeyJwk { kty: "RSA"; n: string; e: "AQAB" }
 export interface SbCandidate {
@@ -99,3 +113,20 @@ export function giveSbSecret(personId: number, name: string, ciphertext: string,
 }
 export const takeSbSecret = (personId: number, name: string) =>
     request<{ name: string; given: false }>(`${personId}/secrets/${encodeURIComponent(name)}`, { method: "DELETE" });
+/** Prośba o świeży raport z komputera pracownika; instalator dośle go przy najbliższym sprawdzeniu. */
+export const requestSbHealth = (personId: number) =>
+    request<{ requested: true; alreadyPending: boolean }>(`${personId}/healthRequest`, { method: "POST" });
+/** Ostatni raport jako plik JSON; nazwę (z nazwiskiem i datą) nadaje PS w Content-Disposition. */
+export async function fetchSbHealthReport(personId: number): Promise<SbFetchResult<{ blob: Blob; fileName: string }>> {
+    let response: Response;
+    try {
+        response = await fetch(`${MainSetup.serverUrl}sbAccess/${personId}/healthReport`, { credentials: "include" });
+    } catch { return { ok: false, status: 0, message: "" }; }
+    if (!response.ok) {
+        let message = "";
+        try { const body = await response.json(); if (typeof body?.errorMessage === "string") message = body.errorMessage; } catch { /* bez JSON */ }
+        return { ok: false, status: response.status, message };
+    }
+    const fileName = /filename="([^"]+)"/.exec(response.headers?.get("Content-Disposition") ?? "")?.[1] ?? "raport-sb.json";
+    return { ok: true, data: { blob: await response.blob(), fileName } };
+}

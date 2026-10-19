@@ -3,10 +3,11 @@ import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from 
 import ConfirmModal from "../View/Modals/ConfirmModal";
 import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
-import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, setSbLevels,
-    takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbUnlinkedMember } from "./sbManageApi";
-import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure,
-    describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, mailboxChoices, manualExplanation, noLevels,
+import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
+    setSbLevels, takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbUnlinkedMember } from "./sbManageApi";
+import { assignableEntries, availableActions, canRequestHealth, confirmationContent, describeDrive, describeFailure,
+    describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
+    healthToolLabel, healthVersions, mailboxChoices, manualExplanation, noLevels,
     psDbOptions, repoOptions, roleLabel, secretInputError, secretLabel, secretsState, statusViews, takeSecretConfirmation,
     toggleMailbox } from "./sbManageView";
 import { encryptSecretForKey } from "./sbSecretCrypto";
@@ -15,7 +16,7 @@ const personLabel = (person: { name: string; surname: string; systemEmail: strin
     `${person.surname} ${person.name} - ${person.systemEmail || "brak adresu"}`;
 const loading = <Spinner animation="border" size="sm" role="status" aria-label="Wczytywanie" />;
 // Okno Dostępy SB jest stylowane Tailwindem (v3, tylko wewnątrz #sb-access-admin); reszta strony zostaje na Bootstrapie.
-const pillTone = { ok: "bg-[#e3f3ea] text-[#1d7a46]", warn: "bg-[#fbefd9] text-[#9a5b00]", off: "bg-[#eef1f5] text-[#5d6878]" };
+const pillTone = { ok: "bg-[#e3f3ea] text-[#1d7a46]", bad: "bg-[#fbe4e4] text-[#a32020]", warn: "bg-[#fbefd9] text-[#9a5b00]", off: "bg-[#eef1f5] text-[#5d6878]" };
 const Pill = ({ tone, children }: { tone: keyof typeof pillTone; children: React.ReactNode }) =>
     <span className={`inline-block whitespace-nowrap rounded-full px-2 py-px text-xs ${pillTone[tone]}`}>{children}</span>;
 const levelPill = (label: string, high: boolean) => label === "brak" ? <Pill tone="off">brak</Pill> : <Pill tone={high ? "warn" : "ok"}>{label}</Pill>;
@@ -43,6 +44,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const [sharePassword, setSharePassword] = useState("");
     const [shareError, setShareError] = useState<string | null>(null);
     const [taking, setTaking] = useState<{ entry: SbEntry; name: string } | null>(null);
+    const [healthError, setHealthError] = useState<string | null>(null);
 
     async function refresh() {
         // Każda lista ma własny wynik; awaria GitHuba nie zasłania rejestru ani kandydatów.
@@ -86,7 +88,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     }
 
     function selectEntry(entry: SbEntry) {
-        setSelectedId(entry.personId); setLevelsDraft(entry.levels ?? noLevels); setLevelsError(null);
+        setSelectedId(entry.personId); setLevelsDraft(entry.levels ?? noLevels); setLevelsError(null); setHealthError(null);
     }
     async function saveLevels(entry: SbEntry) {
         if (busy) return;
@@ -138,6 +140,26 @@ export default function SbAccessManagePage({ title }: { title: string }) {
         setMessage({ variant: "warning", message: `Odebrano hasło (${secretLabel(name)}): ${personLabel(entry)}. Zmień je u źródła - komputer pracownika mógł je już pobrać.` });
     }
 
+    async function requestHealth(entry: SbEntry) {
+        if (busy) return;
+        setBusy(`${entry.personId}/healthRequest`); setHealthError(null);
+        const result = await requestSbHealth(entry.personId);
+        if (result.ok) await refresh(); else setHealthError(describeFailure(result.status, result.message));
+        setBusy(null);
+    }
+    async function downloadHealth(entry: SbEntry) {
+        if (busy) return;
+        setBusy(`${entry.personId}/healthReport`); setHealthError(null);
+        const result = await fetchSbHealthReport(entry.personId);
+        if (!result.ok) setHealthError(describeFailure(result.status, result.message));
+        else {
+            const url = URL.createObjectURL(result.data.blob), link = document.createElement("a");
+            link.href = url; link.download = result.data.fileName; document.body.appendChild(link); link.click(); link.remove();
+            URL.revokeObjectURL(url);
+        }
+        setBusy(null);
+    }
+
     if (access === "loading") return <Container fluid className="py-4">{loading}</Container>;
     if (access !== "granted") return <Container fluid className="py-4"><Alert variant={access === "error" ? "danger" : "info"}>
         {access === "error" ? "Nie udało się sprawdzić dostępu do Second Brain. Odśwież stronę." : "Nie masz uprawnienia do zarządzania dostępem do Second Brain. Znacznik nadaje się w oknie Personel i uprawnienia."}
@@ -149,7 +171,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const content = confirmation && confirmationContent(confirmation.action, confirmation.entry);
     const selected = rows.find(entry => entry.personId === selectedId);
     const selectedStatus = selected && statusViews[selected.statusCode];
-    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk", "Hasła"];
+    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk", "Hasła", "Komputer"];
     const takeContent = taking && takeSecretConfirmation(taking.entry, taking.name);
 
     return <Container fluid className="px-3" style={{ overflowWrap: "anywhere" }}>
@@ -163,7 +185,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
             <div className="min-w-0 overflow-x-auto rounded-md border border-[#dfe3ea] bg-white">
                 {!entries ? <div className="p-3">{loading}</div> : !entries.ok ? <Alert className="m-3" variant="danger">{describeFailure(entries.status, entries.message)}</Alert>
                     : !rows.length ? <p className="p-3">Nikt nie ma jeszcze wpisu w rejestrze.</p> :
-                    <table className="mb-0 w-full min-w-[620px] text-sm">
+                    <table className="mb-0 w-full min-w-[720px] text-sm">
                         <thead className="border-b border-[#dfe3ea] text-left text-xs uppercase tracking-wide text-[#5d6878]">
                             <tr>{columns.map(label => <th className="p-2" key={label}>{label}</th>)}</tr>
                         </thead>
@@ -189,12 +211,15 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                                             <td className="p-2">{levels.drive === "none" ? <Pill tone="off">brak</Pill> : <Pill tone="ok">{text.drive}</Pill>}</td>
                                             <td className="p-2">{(state => state.text === "—" ? <span className="text-[#5d6878]">—</span>
                                                 : <Pill tone={state.tone}>{state.text}</Pill>)(secretsState(entry))}</td>
+                                            <td className="p-2">{(state => <><Pill tone={state.tone}>{state.text}</Pill>
+                                                {state.date && <div className="mt-0.5 text-xs text-[#5d6878]">{state.date}</div>}</>)(healthColumn(entry))}</td>
                                         </tr>;
                                     })}
                                 </React.Fragment>;
                             })}
                         </tbody>
                     </table>}
+                {rows.length > 0 && <p className="mb-0 border-t border-[#dfe3ea] p-2 text-xs text-[#5d6878]">{healthRetentionNote}</p>}
             </div>
             <aside className="flex min-w-0 flex-col gap-3 rounded-md border border-[#dfe3ea] bg-white p-3" aria-label="Panel osoby">
                 {!selected || !selectedStatus ? <p className="mb-0 text-sm text-[#5d6878]">Kliknij osobę w tabeli, żeby zobaczyć i zmienić jej uprawnienia.</p> : <>
@@ -244,6 +269,31 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                             })}</ul>}
                         <div><Button size="sm" disabled={!!busy || !selected.keyFingerprint || !(selected.secretsExpected ?? []).length}
                             onClick={() => openShare(selected)}>Udostępnij hasło…</Button></div>
+                    </section>
+                    <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3" aria-label="Komputer">
+                        <h3 className="text-sm font-semibold">Komputer</h3>
+                        {!selected.health ? <p className="mb-0 text-xs text-[#5d6878]"><Pill tone="off">nie zainstalowano</Pill>{" "}
+                            Pracownik nie uruchomił jeszcze instalatora SB, więc nie ma raportu ani klucza komputera.</p> : <>
+                            <p className="mb-0 text-xs text-[#5d6878]">{healthVersions(selected.health)}
+                                {selected.health.stale && <> <Pill tone="off">brak raportu</Pill> Raport jest starszy niż 7 dni.</>}</p>
+                            {!selected.health.tools.length ? <p className="mb-0 text-xs text-[#5d6878]">Raport nie wymienia narzędzi.</p>
+                                : <ul className="mb-0 flex list-none flex-col gap-1 p-0 text-sm">{selected.health.tools.map(tool => <li key={tool.name} className="flex items-center justify-between gap-2">
+                                    <span>{healthToolLabel(tool.name)}</span>
+                                    <Pill tone={tool.ok ? "ok" : "bad"}>{tool.ok ? "działa" : "błąd"}</Pill>
+                                </li>)}</ul>}
+                            {selected.health.events.length ? <pre aria-label="Log komputera" className="mb-0 max-h-40 overflow-auto whitespace-pre-wrap rounded border border-[#dfe3ea] bg-[#f6f8fb] p-2 font-mono text-xs">{selected.health.events.join("\n")}</pre>
+                                : <p className="mb-0 text-xs text-[#5d6878]">{selected.health.tools.some(tool => !tool.ok) ? "Raport nie podaje opisów błędów." : "Brak problemów w ostatnim raporcie."}</p>}
+                            {selected.health.tools.filter(tool => !tool.ok && tool.error).map(tool => <p key={tool.name} className="mb-0 text-xs text-[#a32020]">{healthToolLabel(tool.name)}: {tool.error}</p>)}
+                        </>}
+                        {healthError && <Alert className="mb-0" variant="danger">{healthError}</Alert>}
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Button size="sm" variant="outline-secondary" disabled={!!busy || !canRequestHealth(selected) || !!selected.health?.refreshRequested}
+                                onClick={() => void requestHealth(selected)}>{busy === `${selected.personId}/healthRequest` && loading} Poproś o świeży raport</Button>
+                            <Button size="sm" variant="outline-secondary" disabled={!!busy || !selected.health}
+                                onClick={() => void downloadHealth(selected)}>{busy === `${selected.personId}/healthReport` && loading} Pobierz raport diagnostyczny</Button>
+                            {selected.health?.refreshRequested && <Pill tone="warn">prośba czeka</Pill>}
+                        </div>
+                        <p className="mb-0 text-xs text-[#5d6878]">{healthContentNote}</p>
                     </section>
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3">
                         <h3 className="text-sm font-semibold">Dostęp do Second Brain</h3>

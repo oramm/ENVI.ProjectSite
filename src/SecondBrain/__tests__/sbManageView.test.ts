@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { SbEntry } from "../sbManageApi";
-import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, statusViews } from "../sbManageView";
+import type { SbEntry, SbHealth } from "../sbManageApi";
+import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, statusViews, healthColumn, formatHealthDate, healthVersions, healthToolLabel, canRequestHealth } from "../sbManageView";
 
 const entry = (over: Partial<SbEntry> = {}): SbEntry => ({
     id: 1, personId: 1, name: "Anna", surname: "Nowak", systemEmail: "anna@example.com",
@@ -95,5 +95,35 @@ describe("Poziomy dostępu w widoku", () => {
         expect(secretInputError("")).toBe("Wpisz hasło.");
         expect(secretInputError("a".repeat(190))).toBeNull();
         expect(secretInputError("ż".repeat(96))).toMatch(/za długie/);
+    });
+});
+const NOW = new Date(2026, 9, 19, 12, 0);
+const health = (over: Partial<SbHealth> = {}): SbHealth => ({
+    reportedAt: new Date(2026, 9, 19, 8, 12).toISOString(), state: "ok", stale: false, refreshRequested: false,
+    sbVersion: "1.14", installerVersion: "0.16.0", tools: [{ name: "dysk", ok: true }], events: [], ...over,
+});
+describe("Komputer - kolumna i panel", () => {
+    it("cztery stany kolumny: nie zainstalowano, działa, błąd, brak raportu (szary po 7 dniach wg PS)", () => {
+        expect(healthColumn(entry(), NOW)).toEqual({ text: "nie zainstalowano", tone: "off", date: null });
+        expect(healthColumn(entry({ health: health() }), NOW)).toEqual({ text: "działa", tone: "ok", date: "dziś 08:12" });
+        const failedAt = new Date(2026, 9, 18, 17, 40).toISOString();
+        expect(healthColumn(entry({ health: health({ state: "fail", reportedAt: failedAt }) }), NOW)).toEqual({ text: "błąd", tone: "bad", date: "18.10 17:40" });
+        const oldAt = new Date(2026, 9, 10, 9, 5).toISOString();
+        // Szarość rozstrzyga PS (stale): nawet raport z błędem jest wtedy "brak raportu", ale z datą.
+        expect(healthColumn(entry({ health: health({ state: "fail", stale: true, reportedAt: oldAt }) }), NOW)).toEqual({ text: "brak raportu", tone: "off", date: "10.10 09:05" });
+    });
+    it("data: dziś z godziną, inny dzień z dniem i miesiącem, śmieci jako pusty tekst", () => {
+        expect(formatHealthDate(new Date(2026, 9, 19, 0, 5).toISOString(), NOW)).toBe("dziś 00:05");
+        expect(formatHealthDate(new Date(2026, 9, 1, 23, 59).toISOString(), NOW)).toBe("01.10 23:59");
+        expect(formatHealthDate("nie-data", NOW)).toBe("");
+    });
+    it("wersje, nazwy narzędzi i prawo do prośby", () => {
+        expect(healthVersions(health(), NOW)).toBe("SB 1.14 · instalator 0.16.0 · raport dziś 08:12");
+        expect(healthVersions(health({ sbVersion: null, installerVersion: null }), NOW)).toContain("SB ? · instalator ?");
+        expect(healthToolLabel("poczta-faktury")).toBe("poczta: faktury");
+        expect(healthToolLabel("baza-ps")).toBe("baza PS");
+        expect(healthToolLabel("dysk")).toBe("dysk");
+        expect(canRequestHealth(entry())).toBe(true);
+        expect(canRequestHealth(entry({ statusCode: "BLOCKED" }))).toBe(false);
     });
 });
