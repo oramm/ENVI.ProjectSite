@@ -21,7 +21,7 @@ export type ChatSpaceScope = "contract" | "project";
 /** Wartość pola formularza `_chatSpaceSelection` — dokładnie to, co przyjmuje serwer. */
 export type ChatSpaceSelection =
     | { mode: "none" }
-    | { mode: "new"; scope: ChatSpaceScope; displayName?: string }
+    | { mode: "new"; scope: ChatSpaceScope; displayName?: string; personIds?: number[] }
     | { mode: "existing"; chatSpaceId: number };
 
 export interface ChatSpaceListItem {
@@ -38,6 +38,8 @@ export interface ChatSpaceListItem {
 
 /** Wynik per osoba. INVITED = zaproszenie wysłane (gość z Gmaila musi je przyjąć). */
 export interface ChatMemberResult {
+    personId?: number;
+    displayName?: string;
     email: string;
     state: "JOINED" | "INVITED" | "FAILED";
     error?: string;
@@ -84,12 +86,13 @@ export async function createContractChatSpace(
     contractId: number,
     scope: ChatSpaceScope,
     displayName?: string,
+    personIds?: number[],
 ): Promise<CreateChatSpaceResult> {
     return ToolsFetch.fetchJsonWithSafeError(`${MainSetup.serverUrl}contract/${contractId}/chatSpace`, {
         method: "POST",
         headers: JSON_HEADERS,
         credentials: "include",
-        body: JSON.stringify({ scope, displayName: displayName?.trim() || undefined }),
+        body: JSON.stringify({ scope, displayName: displayName?.trim() || undefined, personIds }),
     });
 }
 
@@ -107,6 +110,15 @@ export async function detachContractChatSpace(contractId: number): Promise<void>
     await ToolsFetch.fetchJsonWithSafeError(`${MainSetup.serverUrl}contract/${contractId}/chatSpace`, {
         method: "DELETE",
         credentials: "include",
+    });
+}
+
+export async function inviteContractChatMembers(contractId: number, personIds: number[]): Promise<{ members: ChatMemberResult[] }> {
+    return ToolsFetch.fetchJsonWithSafeError(`${MainSetup.serverUrl}contract/${contractId}/chatSpace/members`, {
+        method: "POST",
+        headers: JSON_HEADERS,
+        credentials: "include",
+        body: JSON.stringify({ personIds }),
     });
 }
 

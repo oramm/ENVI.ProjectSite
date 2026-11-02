@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form, Spinner } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
-import { ProjectData } from "../../../../Typings/bussinesTypes";
+import { ProjectData, PersonData } from "../../../../Typings/bussinesTypes";
+import { ChatMembersSelector, CHAT_MEMBERS_FIELD } from "./ChatMembersSelector";
 import {
     CHAT_SPACE_NAME_MAX,
     ChatSpaceListItem,
@@ -29,6 +30,13 @@ export function ChatSpaceSelection() {
     const contractAlias = watch("alias") as string | undefined;
     const contractName = watch("name") as string | undefined;
     const selection = (watch("_chatSpaceSelection") as ChatSpaceSelectionValue | undefined) ?? { mode: "none" };
+    const persons = watch(CHAT_MEMBERS_FIELD) as PersonData[] | undefined;
+    const personIds = persons?.map(person => person.id);
+    useEffect(() => {
+        if (selection.mode === "new" && (selection.personIds ?? []).join() !== (personIds ?? []).join()) {
+            setValue("_chatSpaceSelection", { ...selection, personIds }, { shouldValidate: true });
+        }
+    }, [persons, selection, setValue]);
 
     // Nazwa wpisana przez użytkownika; null = nie ruszał, pokazujemy podpowiedź.
     const [typedName, setTypedName] = useState<string | null>(null);
@@ -83,6 +91,7 @@ export function ChatSpaceSelection() {
         write({
             mode: "new",
             scope: nextScope,
+            ...(personIds?.length ? { personIds } : {}),
             displayName: trimmed ? trimmed.slice(0, CHAT_SPACE_NAME_MAX) : undefined,
         });
     }
@@ -172,8 +181,9 @@ export function ChatSpaceSelection() {
                         placeholder={placeholder}
                         onChange={(e) => changeName(e.target.value)}
                     />
+                    <ChatMembersSelector />
                     <div className="text-muted small mt-1">
-                        Pokój powstanie po zapisie kontraktu; zaproszeni zostaną koordynator, administrator i Ty.
+                        Pokój powstanie po zapisie kontraktu; zaproszeni zostaną wybrane osoby oraz koordynator, administrator i Ty.
                     </div>
                 </div>
             )}
