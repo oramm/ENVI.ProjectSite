@@ -131,7 +131,7 @@ describe("Treść instalatora", () => {
         const { container } = renderPage("/sbInstaller?sekcja=po-instalacji");
         await screen.findByRole("button", { name: "Pobierz instalator" });
         expect(screen.queryByText(/Nie musisz go rozpakowywać/)).toBeNull();
-        expect(screen.getByText(/Wyodrębnij wszystkie/)).toBeVisible();
+        expect(screen.getAllByText(/Wyodrębnij wszystkie/)).toHaveLength(2);
         expect(screen.getByText("Instalacja krok po kroku")).toBeVisible();
         expect(screen.getByRole("region", { name: "Instalacja krok po kroku" }).querySelectorAll("li")).toHaveLength(12);
         expect(container.querySelector("#po-instalacji")).not.toBeNull();
@@ -154,6 +154,29 @@ describe("Treść instalatora", () => {
         expect(screen.getByText("Zgoda człowieka")).toBeVisible();
         fireEvent.click(screen.getByRole("button", { name: "„Po instalacji - co dalej”" }));
         expect(await screen.findByText("Po instalacji - co dalej")).toBeVisible();
+    });
+});
+
+describe("Zanim pobierzesz", () => {
+    it("stoi przed przyciskiem i mówi o starych plikach, jednym pobraniu, odblokowaniu i każdym antywirusie", async () => {
+        fetchMock.mockImplementation((url: string) => Promise.resolve(String(url).endsWith("sbInstaller/info") ? response({ version: "0.18.1" }) : response(invited)));
+        renderPage();
+        const button = await screen.findByRole("button", { name: "Pobierz instalator" });
+        const section = screen.getByRole("region", { name: "Zanim pobierzesz" });
+        expect(section.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        const text = section.textContent ?? "";
+        expect(text).toMatch(/Pobrane.*ENVI-SB-instalator/);
+        expect(text).toMatch(/unieważnia/);
+        expect(text).toMatch(/Właściwości.*Odblokuj.*Wyodrębnij wszystkie/);
+        expect(text).toMatch(/każdy antywirus/);
+        expect(text).toMatch(/nie tylko Avast/);
+        expect(await screen.findByText("ENVI-SB-instalator-0.18.1.zip")).toBeVisible();
+    });
+    it("bez wersji z PS nie wymyśla nazwy pliku", async () => {
+        fetchMock.mockImplementation((url: string) => Promise.resolve(String(url).endsWith("sbInstaller/info") ? response({ version: null }) : response(invited)));
+        renderPage();
+        await screen.findByRole("region", { name: "Zanim pobierzesz" });
+        expect(screen.queryByText(/ENVI-SB-instalator-\d/)).toBeNull();
     });
 });
 
