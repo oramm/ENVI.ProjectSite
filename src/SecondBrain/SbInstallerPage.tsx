@@ -52,6 +52,47 @@ function Link({ href, children }: { href: string; children: React.ReactNode }) {
     );
 }
 
+/**
+ * Pułapki z pierwszej instalacji u pracownika (pack SB.RDZEN.01, N4): stary ZIP w Pobranych, drugie
+ * pobranie unieważniające pierwsze (nowy token), blokada Windows i antywirus inny niż Avast,
+ * który nic nie zapisał w dziennikach Avasta ani Defendera.
+ */
+function BeforeDownload({ packageVersion }: { packageVersion: string | null }) {
+    return (
+        <Card as="section" aria-label="Zanim pobierzesz" className="mb-4 border-warning">
+            <Card.Body>
+                <Card.Title>Zanim pobierzesz</Card.Title>
+                <ol className="mb-0 ps-3">
+                    <li className="mb-2">
+                        <strong>Usuń stare pliki.</strong> W folderze <em>Pobrane</em> skasuj wszystko, co zaczyna się
+                        od <em>ENVI-SB-instalator</em> - pliki ZIP i foldery z wcześniejszych prób. Inaczej łatwo
+                        uruchomić starą wersję.
+                        {packageVersion && <> Nowy plik będzie się nazywał <strong>{`ENVI-SB-instalator-${packageVersion}.zip`}</strong>.</>}
+                    </li>
+                    <li className="mb-2">
+                        <strong>Pobierz tylko raz.</strong> Każde pobranie unieważnia plik pobrany wcześniej - stary
+                        instalator przestaje wtedy działać. Nie pobieraj na zapas.
+                    </li>
+                    <li className="mb-2">
+                        <strong>Odblokuj, potem rozpakuj.</strong> Prawy przycisk na pobranym pliku ZIP →{" "}
+                        <em>Właściwości</em> → na dole zaznacz <em>Odblokuj</em> → <em>OK</em>. Jeśli pola{" "}
+                        <em>Odblokuj</em> nie ma, Windows niczego nie zablokował. Potem prawy przycisk →{" "}
+                        <em>Wyodrębnij wszystkie</em> i uruchamiaj instalator tylko z rozpakowanego folderu.
+                    </li>
+                    <li>
+                        <strong>Plik zniknął albo folderu nie da się usunąć</strong> (na przykład błąd 0x800700E1)?
+                        To antywirus uznał instalator za zagrożenie - nie walcz z folderem. Otwórz każdy antywirus,
+                        który masz na komputerze, nie tylko Avast: także na przykład Reason, HP Wolf Security albo
+                        Zabezpieczenia Windows. W historii albo kwarantannie znajdź wpis instalatora i wybierz
+                        zaufanie do pliku (<em>Ufam</em>, <em>Zezwól</em> albo <em>Przywróć i dodaj wyjątek</em>).
+                        Jeśli nigdzie go nie ma, daj znać przełożonemu, zanim pobierzesz plik jeszcze raz.
+                    </li>
+                </ol>
+            </Card.Body>
+        </Card>
+    );
+}
+
 export default function SbInstallerPage() {
     const sb = useSbAccess();
     const [searchParams] = useSearchParams();
@@ -174,6 +215,7 @@ export default function SbInstallerPage() {
 
             <Tabs activeKey={tab} onSelect={key => setTab(key ?? "instalator")} mountOnEnter unmountOnExit className="mb-4">
             <Tab eventKey="instalator" title="Instalator">
+            <BeforeDownload packageVersion={packageVersion} />
             <Card className="mb-4">
                 <Card.Body className="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>

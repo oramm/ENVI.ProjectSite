@@ -168,14 +168,14 @@ export default function SbInstallerComic({ loginAddress }: { loginAddress: React
                 już wysłano). Bez tego instalator nie pobierze wiedzy firmy.</>,
         },
         {
-            title: "Pobierasz", role: "you", icon: "download", caption: "ENVI-SB-instalator.zip",
+            title: "Pobierasz", role: "you", icon: "download", caption: "ENVI-SB-instalator-….zip",
             bubbles: [{ who: "you", text: "„Pobierz instalator.”" }],
             note: "Przycisk jest wyżej. Plik ZIP ląduje w folderze Pobrane.",
         },
         {
             title: "Rozpakowujesz", role: "you", icon: "unzip",
             bubbles: [{ who: "you", text: "„Prawy przycisk na ZIP-ie → Wyodrębnij wszystkie.”" }],
-            note: "Nie uruchamiaj niczego z wnętrza ZIP-a. Instalator to wykryje i poprosi, żeby najpierw rozpakować.",
+            note: "Najpierw odblokuj plik (patrz „Zanim pobierzesz”). Nie uruchamiaj niczego z wnętrza ZIP-a. Instalator to wykryje i poprosi, żeby najpierw rozpakować.",
         },
         {
             title: "Uruchamiasz", role: "installer", icon: "console", caption: "instalator",
