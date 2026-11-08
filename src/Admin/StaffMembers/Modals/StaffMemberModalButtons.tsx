@@ -100,6 +100,7 @@ export function mergeAccountIntoRow(row: StaffMemberData, account: PersonAccount
         _systemRoleId: account.systemRoleId ?? null,
         _systemEmail: account.systemEmail ?? null,
         _fidmanEnabled: !!account.fidmanEnabled,
+        _finEnabled: !!account.finEnabled,
     };
 }
 

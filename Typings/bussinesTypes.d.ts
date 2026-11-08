@@ -562,6 +562,7 @@ export interface SystemUserData extends RepositoryDataItem {
     systemEmail: string;
     /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
     fidmanEnabled?: boolean;
+    finEnabled?: boolean;
 }
 
 export interface PersonAccountV2Payload {
@@ -575,6 +576,7 @@ export interface PersonAccountV2Payload {
     isActive?: boolean;
     /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
     fidmanEnabled?: boolean;
+    finEnabled?: boolean;
     /**
      * Tylko w odpowiedzi PUT konta (D-PER-10): zapis dotyczył WŁASNEJ roli wołającego, serwer
      * skasował jego sesję - kolejne żądania dostaną 401, klient ma przejść do logowania.
@@ -907,6 +909,7 @@ export interface StaffMemberData extends RepositoryDataItem {
      */
     _systemEmail?: string | null;
     _fidmanEnabled?: boolean;
+    _finEnabled?: boolean;
     _hasStaffRow?: boolean;
     /** Ostatnia wysyłka konta do FIDmana; null = nigdy nie wysyłano. Tylko do odczytu. */
     _fidmanSync?: FidmanUserSyncStatus | null;

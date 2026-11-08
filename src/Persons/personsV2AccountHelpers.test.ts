@@ -155,3 +155,11 @@ describe("saveProjectAssignments", () => {
         expect(hoisted.fetchJsonWithSafeError).not.toHaveBeenCalled();
     });
 });
+
+describe("buildAccountPayload - FIN", () => {
+    it.each([true, false, undefined, null])("zawsze wysyła jawną flagę FIN (%s)", (finEnabled) => {
+        const payload = buildAccountPayload({ finEnabled, fidmanEnabled: true });
+        expect(payload).toHaveProperty("finEnabled", !!finEnabled);
+        expect(payload.fidmanEnabled).toBe(true);
+    });
+});

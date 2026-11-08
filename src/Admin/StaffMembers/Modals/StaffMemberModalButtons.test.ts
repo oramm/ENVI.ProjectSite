@@ -63,6 +63,7 @@ const serverRow = {
     _systemRoleId: 6,
     _systemEmail: "stary@envi.com.pl",
     _fidmanEnabled: false,
+    _finEnabled: false,
     _hasStaffRow: true,
 } as any;
 
@@ -72,10 +73,11 @@ const submitted = {
     systemRoleId: 3,
     systemEmail: "nowy@envi.com.pl",
     fidmanEnabled: true,
+    finEnabled: true,
     _projectAssignments: [],
 } as any;
 
-const savedAccount = { personId: PERSON_ID, systemRoleId: 3, systemEmail: "nowy@envi.com.pl", fidmanEnabled: true };
+const savedAccount = { personId: PERSON_ID, systemRoleId: 3, systemEmail: "nowy@envi.com.pl", fidmanEnabled: true, finEnabled: true };
 
 beforeEach(() => {
     saveAssignments.mockReset().mockResolvedValue(undefined);
@@ -88,20 +90,20 @@ beforeEach(() => {
 
 describe("saveStaffMemberAccountData - konto trasą v2, potem przypisania", () => {
     it("wysyła rolę, e-mail i flagę FIDmana JAWNIE, także gdy odznaczona", async () => {
-        await saveStaffMemberAccountData(PERSON_ID, { systemRoleId: 3, systemEmail: "a@envi.com.pl", fidmanEnabled: false });
+        await saveStaffMemberAccountData(PERSON_ID, { systemRoleId: 3, systemEmail: "a@envi.com.pl", fidmanEnabled: false, finEnabled: false });
 
         expect(saveV2).toHaveBeenCalledWith(
             PERSON_ID,
-            { systemRoleId: 3, systemEmail: "a@envi.com.pl", fidmanEnabled: false },
+            { systemRoleId: 3, systemEmail: "a@envi.com.pl", fidmanEnabled: false, finEnabled: false },
             {},
             "StaffMembers"
         );
     });
 
     it("zaznaczony FIDman jedzie jako true", async () => {
-        await saveStaffMemberAccountData(PERSON_ID, { systemRoleId: 3, systemEmail: "a@envi.com.pl", fidmanEnabled: true });
+        await saveStaffMemberAccountData(PERSON_ID, { systemRoleId: 3, systemEmail: "a@envi.com.pl", fidmanEnabled: true, finEnabled: true });
 
-        expect(saveV2.mock.calls[0][1]).toMatchObject({ fidmanEnabled: true });
+        expect(saveV2.mock.calls[0][1]).toMatchObject({ fidmanEnabled: true, finEnabled: true });
     });
 
     it("kolejność: najpierw konto, potem przypisania - z wartościami formularza", async () => {
@@ -134,7 +136,7 @@ describe("saveStaffMemberAccountData - konto trasą v2, potem przypisania", () =
             errors: ["Konto systemowe: Użytkownik FIDmana musi mieć e-mail systemowy."],
         });
 
-        const result = await saveStaffMemberAccountData(PERSON_ID, { systemRoleId: 3, fidmanEnabled: true });
+        const result = await saveStaffMemberAccountData(PERSON_ID, { systemRoleId: 3, fidmanEnabled: true, finEnabled: true });
 
         expect(result.account).toBeNull();
         expect(result.errors).toEqual(["Konto systemowe: Użytkownik FIDmana musi mieć e-mail systemowy."]);
@@ -155,7 +157,7 @@ describe("mergeAccountIntoRow", () => {
     it("konto z odpowiedzi v2 nadpisuje rolę, e-mail i FIDmana w wierszu", () => {
         const row = mergeAccountIntoRow(serverRow, savedAccount);
 
-        expect(row).toMatchObject({ _systemRoleId: 3, _systemEmail: "nowy@envi.com.pl", _fidmanEnabled: true });
+        expect(row).toMatchObject({ _systemRoleId: 3, _systemEmail: "nowy@envi.com.pl", _fidmanEnabled: true, _finEnabled: true });
         // Flagi z odpowiedzi na zapis flag zostają nietknięte.
         expect(row.isInScrum).toBe(true);
     });
@@ -172,7 +174,7 @@ describe("handler onEdit modalu uprawnień", () => {
 
         expect(saveV2).toHaveBeenCalledWith(
             PERSON_ID,
-            { systemRoleId: 3, systemEmail: "nowy@envi.com.pl", fidmanEnabled: true },
+            { systemRoleId: 3, systemEmail: "nowy@envi.com.pl", fidmanEnabled: true, finEnabled: true },
             {},
             "StaffMembers"
         );
@@ -188,6 +190,7 @@ describe("handler onEdit modalu uprawnień", () => {
             _systemRoleId: 3,
             _systemEmail: "nowy@envi.com.pl",
             _fidmanEnabled: true,
+            _finEnabled: true,
         });
         expect(repositoryMock.replaceItemById).toHaveBeenCalledWith(PERSON_ID, expectedRow);
         expect(repositoryMock.replaceCurrentItemById).toHaveBeenCalledWith(PERSON_ID, expectedRow);
@@ -228,6 +231,7 @@ describe("handler onEdit - świeży odczyt wiersza po zapisie konta (D-PER-8)", 
             _systemRoleId: 3,
             _systemEmail: "nowy@envi.com.pl",
             _fidmanEnabled: true,
+            _finEnabled: true,
             _fidmanSync: {
                 status: "FAILED",
                 requestedEnabled: true,
@@ -255,7 +259,7 @@ describe("handler onEdit - świeży odczyt wiersza po zapisie konta (D-PER-8)", 
         await makeStaffMemberEditHandler(onEdit)(serverRow, submitted);
 
         expect(onEdit).toHaveBeenCalledWith(
-            expect.objectContaining({ _systemEmail: "nowy@envi.com.pl", _fidmanEnabled: true }),
+            expect.objectContaining({ _systemEmail: "nowy@envi.com.pl", _fidmanEnabled: true, _finEnabled: true }),
         );
     });
 });
@@ -299,4 +303,9 @@ describe("zmiana WŁASNEJ roli (D-PER-10) - serwer skasował sesję wołającego
         expect(ownRoleChangeLogout.notify).not.toHaveBeenCalled();
         expect(ownRoleChangeLogout.reload).not.toHaveBeenCalled();
     });
+});
+
+it.each([true, false])("odczyt konta FIN nadpisuje poprzedni stan wiersza (%s)", (finEnabled) => {
+    expect(mergeAccountIntoRow({ ...serverRow, _finEnabled: !finEnabled }, { ...savedAccount, finEnabled }))
+        .toMatchObject({ _finEnabled: finEnabled });
 });

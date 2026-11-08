@@ -11,7 +11,7 @@ vi.mock("../../../React/MainSetupReact", () => ({
 }));
 
 import { makeStaffMemberValidationSchema } from "./StaffMemberValidationSchema";
-import { FIDMAN_EMAIL_MESSAGE } from "../../../Persons/accountFieldsValidation";
+import { FIDMAN_EMAIL_MESSAGE, FIN_EMAIL_MESSAGE } from "../../../Persons/accountFieldsValidation";
 
 const base = {
     systemRoleId: 3,
@@ -49,5 +49,26 @@ describe("StaffMemberValidationSchema - reguły konta w modalu uprawnień", () =
     it("FIDman z e-mailem systemowym przechodzi", async () => {
         const errors = await errorsFor({ ...base, systemEmail: "anna@envi.com.pl", fidmanEnabled: true });
         expect(errors).toEqual([]);
+    });
+});
+
+describe("FIN - wspólna walidacja konta", () => {
+    it.each(["", "   "])("wymaga e-maila przy obu polach: %j", async (systemEmail) => {
+        const errors = await errorsFor({ ...base, systemEmail, finEnabled: true });
+        expect(errors.filter((e) => e.message === FIN_EMAIL_MESSAGE).map((e) => e.path))
+            .toEqual(expect.arrayContaining(["systemEmail", "finEnabled"]));
+    });
+
+    it.each([
+        { systemEmail: "anna@envi.com.pl", finEnabled: true },
+        { systemEmail: "", finEnabled: false },
+    ])("dopuszcza poprawne konto FIN: %j", async (values) => {
+        expect(await errorsFor({ ...base, ...values })).toEqual([]);
+    });
+
+    it("obie flagi wymagają e-maila niezależnie", async () => {
+        const errors = await errorsFor({ ...base, systemEmail: "", fidmanEnabled: true, finEnabled: true });
+        expect(errors.filter((e) => e.path === "systemEmail").map((e) => e.message))
+            .toEqual(expect.arrayContaining([FIDMAN_EMAIL_MESSAGE, FIN_EMAIL_MESSAGE]));
     });
 });

@@ -35,30 +35,33 @@ function Harness({ initialData }: { initialData: any }) {
 
 const CHECKBOX_LABEL = "Użytkownik FIDmana (loguje się tym samym kontem Google)";
 
-describe("UserModalBody - checkbox użytkownika FIDmana przy zakładaniu", () => {
+describe.each([
+    ["fidmanEnabled", CHECKBOX_LABEL],
+    ["finEnabled", "Użytkownik FIN (loguje się tym samym kontem Google)"],
+])("UserModalBody - %s przy zakładaniu", (field, label) => {
     it("renderuje się z opisem po polsku i domyślnie jest odznaczony", async () => {
         render(<Harness initialData={{}} />);
 
-        const checkbox = (await screen.findByLabelText(CHECKBOX_LABEL)) as HTMLInputElement;
+        const checkbox = (await screen.findByLabelText(label)) as HTMLInputElement;
         expect(checkbox.checked).toBe(false);
-        expect(form.getValues("fidmanEnabled")).toBe(false);
+        expect(form.getValues(field)).toBe(false);
     });
 
     it("zaznaczenie trafia do wartości formularza, czyli do payloadu zapisu", async () => {
         render(<Harness initialData={{}} />);
-        const checkbox = (await screen.findByLabelText(CHECKBOX_LABEL)) as HTMLInputElement;
+        const checkbox = (await screen.findByLabelText(label)) as HTMLInputElement;
 
         await act(async () => {
             checkbox.click();
         });
 
         expect(checkbox.checked).toBe(true);
-        expect(form.getValues("fidmanEnabled")).toBe(true);
+        expect(form.getValues(field)).toBe(true);
     });
 
     it("startuje bez pola przypisań - brak pola znaczy „nie ruszaj”, pusta lista „wyczyść”", async () => {
         render(<Harness initialData={{}} />);
-        await screen.findByLabelText(CHECKBOX_LABEL);
+        await screen.findByLabelText(label);
 
         expect(form.getValues("_projectAssignments")).toBeUndefined();
     });

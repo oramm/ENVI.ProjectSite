@@ -1,3 +1,4 @@
+import { AccountAccessFields } from "./AccountAccessFields";
 import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { SystemUserData } from "../../../../Typings/bussinesTypes";
@@ -48,6 +49,7 @@ export function UserModalBody({ initialData }: ModalBodyProps<SystemUserData>) {
             systemRoleId: "",
             systemEmail: "",
             fidmanEnabled: false,
+            finEnabled: false,
             // Celowo BEZ _projectAssignments - patrz `saveProjectAssignments`: brak pola
             // znaczy „nie ruszaj", pusta tablica znaczy „wyczyść". Przy zakładaniu nie ma
             // czego czyścić, a selektor doda pole, gdy rola go pokaże.
@@ -146,18 +148,7 @@ export function UserModalBody({ initialData }: ModalBodyProps<SystemUserData>) {
 
             <SystemRoleSelector name="systemRoleId" />
 
-            <Form.Group controlId="fidmanEnabled" className="mt-2">
-                <Form.Check
-                    type="checkbox"
-                    label="Użytkownik FIDmana (loguje się tym samym kontem Google)"
-                    isInvalid={!!errors?.fidmanEnabled}
-                    {...register("fidmanEnabled")}
-                />
-                <Form.Text className="text-muted">
-                    Konto w FIDmanie zakłada się z e-maila systemowego. Odznaczenie wyłącza je, nie kasuje.
-                </Form.Text>
-                <ErrorMessage name="fidmanEnabled" errors={errors} />
-            </Form.Group>
+            <AccountAccessFields />
 
             {isProjectScopedRole && (
                 <Form.Group className="mt-2">

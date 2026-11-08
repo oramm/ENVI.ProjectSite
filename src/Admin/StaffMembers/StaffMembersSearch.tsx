@@ -137,6 +137,11 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                                         sync={person._fidmanSync}
                                         className="ms-2 align-middle"
                                     />
+                                    <FidmanUserSyncBadge
+                                        system="FIN"
+                                        enabled={!!person._finEnabled}
+                                        className="ms-2 align-middle"
+                                    />
                                 </div>
                                 <div className="text-muted small">
                                     {person._systemEmail || <span className="fst-italic">bez e-maila systemowego</span>}

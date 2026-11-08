@@ -1,3 +1,4 @@
+import { AccountAccessFields } from "./AccountAccessFields";
 import { FidmanUserSyncLine } from "../FidmanUserSyncBadge";
 import React, { useEffect } from "react";
 import { Alert, Form } from "react-bootstrap";
@@ -38,6 +39,7 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             // żądania jak na ekranie użytkowników. Zapis idzie osobno trasą konta v2.
             systemEmail: initialData?._systemEmail ?? "",
             fidmanEnabled: !!initialData?._fidmanEnabled,
+            finEnabled: !!initialData?._finEnabled,
             isDriver: !!initialData?.isDriver,
             isInScrum: !!initialData?.isInScrum,
             hasCostInvoiceAccess: !!initialData?.hasCostInvoiceAccess,
@@ -123,21 +125,9 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
 
             {isEditing && initialData?.personId && <StaffPrivacyStatus key={initialData.personId} personId={initialData.personId} />}
 
-            <Form.Group controlId="fidmanEnabled" className="mt-2">
-                <Form.Check
-                    type="checkbox"
-                    label="Użytkownik FIDmana (loguje się tym samym kontem Google)"
-                    isInvalid={!!errors?.fidmanEnabled}
-                    {...register("fidmanEnabled")}
-                />
-                <Form.Text className="text-muted">
-                    Konto w FIDmanie zakłada się z e-maila systemowego. Odznaczenie wyłącza je, nie kasuje.
-                </Form.Text>
-                {/* Stan z kolejki wysyłek, nie z checkboxa (D-PER-8) - to samo, co plakietka
-                    w wierszu listy, pełnym zdaniem. */}
+            <AccountAccessFields>
                 <FidmanUserSyncLine enabled={!!initialData?._fidmanEnabled} sync={initialData?._fidmanSync} />
-                <ErrorMessage name="fidmanEnabled" errors={errors} />
-            </Form.Group>
+            </AccountAccessFields>
 
             {isProjectScopedRole && (
                 <div className="mt-3">
