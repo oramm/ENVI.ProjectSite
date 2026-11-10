@@ -170,6 +170,10 @@ const chatSpaceSelectionRule = Yup.mixed()
     .test("chat-space-name-length", "Nazwa pokoju może mieć najwyżej 128 znaków", (value) => {
         const v = value as { mode?: string; displayName?: string } | undefined;
         return !v || v.mode !== "new" || (v.displayName ?? "").length <= 128;
+    })
+    .test("chat-space-members-limit", "Wybierz maksymalnie 50 osób do pokoju", (value) => {
+        const v = value as { mode?: string; personIds?: number[] } | undefined;
+        return !v || v.mode !== "new" || !v.personIds || v.personIds.length <= 50;
     });
 
 export function ourContractValidationSchema(isEditing: boolean) {

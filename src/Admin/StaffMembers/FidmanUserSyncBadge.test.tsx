@@ -123,3 +123,9 @@ describe("komponenty", () => {
         expect(screen.getByTestId("fidman-sync-line")).toHaveTextContent("Ostatnia wysyłka do FIDmana: wysłano.");
     });
 });
+
+it.each([true, false])("FIN pokazuje tylko stan dostępu (%s)", (enabled) => {
+    render(<FidmanUserSyncBadge system="FIN" enabled={enabled} />);
+    expect(screen.getByTestId("fin-access-badge")).toHaveTextContent(enabled ? "FIN: włączony" : "FIN: wyłączony");
+    expect(screen.queryByText(/wysłano|oczekuje|błąd/)).not.toBeInTheDocument();
+});

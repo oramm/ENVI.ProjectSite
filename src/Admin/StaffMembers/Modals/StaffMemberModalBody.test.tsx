@@ -99,3 +99,20 @@ describe("StaffMemberModalBody - konto przy edycji bierze się z wiersza listy",
         expect(form.getValues("fidmanEnabled")).toBe(true);
     });
 });
+
+describe("StaffMemberModalBody - FIN", () => {
+    it.each([true, false, undefined])("odczytuje FIN z wiersza (%s), zmiana trafia do zapisu", async (enabled) => {
+        hoisted.fetchPersonProjectAssignments.mockResolvedValue([]);
+        const save = vi.fn();
+        render(<Harness initialData={{ personId: 42, _finEnabled: enabled }} onSave={save} />);
+        const checkbox = await screen.findByLabelText("Użytkownik FIN (loguje się tym samym kontem Google)");
+        expect(checkbox).toHaveProperty("checked", !!enabled);
+        await waitFor(() => expect(form.getValues("_projectAssignments")).toEqual([]));
+        expect(form.getValues("finEnabled")).toBe(!!enabled);
+        fireEvent.click(checkbox);
+        fireEvent.click(screen.getByRole("button", { name: "Zapisz" }));
+        await waitFor(() =>
+            expect(save).toHaveBeenCalledWith(expect.objectContaining({ finEnabled: !enabled }), expect.anything()),
+        );
+    });
+});

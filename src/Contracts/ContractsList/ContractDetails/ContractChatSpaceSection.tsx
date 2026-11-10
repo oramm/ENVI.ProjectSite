@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Form, Modal, Spinner } from "react-bootstrap";
-import { OurContract } from "../../../../Typings/bussinesTypes";
+import { OurContract, PersonData } from "../../../../Typings/bussinesTypes";
+import { useForm } from "react-hook-form";
+import { FormProvider } from "../../../View/Modals/FormContext";
+import { ChatMembersSelector, CHAT_MEMBERS_FIELD } from "../Modals/ChatMembersSelector";
 import ConfirmModal from "../../../View/Modals/ConfirmModal";
 import {
     CHAT_SPACE_NAME_MAX,
     ChatSpaceListItem,
+    ChatMemberResult,
     ChatSpaceScope,
     CreateChatSpaceResult,
     attachContractChatSpace,
@@ -12,11 +16,12 @@ import {
     describeMemberState,
     detachContractChatSpace,
     fetchContractChatSpaces,
+    inviteContractChatMembers,
     suggestChatSpaceName,
 } from "../Modals/chatSpacesService";
 import { useContractDetails } from "./ContractDetailsContext";
 
-type Dialog = "none" | "create" | "attach" | "change" | "detach";
+type Dialog = "none" | "create" | "attach" | "change" | "detach" | "invite";
 
 /**
  * Pokój Google Chat w widoku kontraktu ENVI: link „Otwórz czat", założenie albo podpięcie
@@ -79,6 +84,9 @@ export function ContractChatSpaceSection() {
                         <span className="text-muted small">{attached ? "Pokój bez zapisanego linku" : "Czat"}</span>
                     )}
                     {attached && <span className="text-muted small">{attached.displayName}</span>}
+                    <Button variant="outline-primary" size="sm" onClick={() => setDialog("invite")}>
+                        Dodaj osoby do czatu
+                    </Button>
                     <Button variant="outline-secondary" size="sm" onClick={() => setDialog("change")}>
                         Zmień pokój
                     </Button>
@@ -97,6 +105,9 @@ export function ContractChatSpaceSection() {
                 </>
             )}
 
+            {dialog === "invite" && (
+                <InviteChatMemberModal contract={current} onClose={() => setDialog("none")} />
+            )}
             {dialog === "create" && (
                 <CreateChatSpaceModal
                     contract={current}
@@ -132,6 +143,58 @@ export function ContractChatSpaceSection() {
     );
 }
 
+export function InviteChatMemberModal({ contract, onClose }: { contract: OurContract; onClose: () => void }) {
+    const methods = useForm();
+    const persons = methods.watch(CHAT_MEMBERS_FIELD, []) as PersonData[];
+    const [isWaiting, setIsWaiting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [members, setMembers] = useState<ChatMemberResult[] | null>(null);
+
+    async function invite() {
+        setIsWaiting(true);
+        setError(null);
+        setMembers(null);
+        try {
+            const result = await inviteContractChatMembers(contract.id, persons.map(person => person.id));
+            setMembers(result.members);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Nie udało się wysłać zaproszenia.");
+        } finally {
+            setIsWaiting(false);
+        }
+    }
+
+    return (
+        <Modal show onHide={isWaiting ? () => {} : onClose} backdrop={isWaiting ? "static" : true}>
+            <FormProvider value={methods}>
+            <Form onSubmit={methods.handleSubmit(invite)}>
+                <Modal.Header closeButton={!isWaiting}>
+                    <Modal.Title>Dodaj osoby do czatu</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Wybierz osoby z bazy. PS wyśle zaproszenia na adresy ich aktywnych kont Google. Osoby z kontem Gmail muszą przyjąć zaproszenie w Google Chat.</p>
+                    <fieldset disabled={isWaiting}>
+                        <ChatMembersSelector />
+                    </fieldset>
+                    {error && <Alert variant="danger" className="mt-2 mb-0">{error}</Alert>}
+                    {members?.map((member) => (
+                        <Alert key={member.personId ?? member.email} variant={member.state === "JOINED" || member.state === "INVITED" ? "success" : "danger"} className="mt-2 mb-0" role="status">
+                            {member.displayName || member.email}: {describeMemberState(member)}
+                        </Alert>
+                    ))}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={onClose} disabled={isWaiting}>Zamknij</Button>
+                    <Button type="submit" variant="primary" disabled={isWaiting || !persons.length || persons.length > 50}>
+                        {isWaiting ? <><Spinner size="sm" animation="border" /> Wysyłam…</> : "Wyślij zaproszenia"}
+                    </Button>
+                </Modal.Footer>
+            </Form>
+            </FormProvider>
+        </Modal>
+    );
+}
+
 function CreateChatSpaceModal({
     contract,
     onClose,
@@ -141,6 +204,8 @@ function CreateChatSpaceModal({
     onClose: () => void;
     onCreated: (result: CreateChatSpaceResult) => void;
 }) {
+    const methods = useForm();
+    const persons = methods.watch(CHAT_MEMBERS_FIELD, []) as PersonData[];
     const [scope, setScope] = useState<ChatSpaceScope>("contract");
     const [typedName, setTypedName] = useState<string | null>(null);
     const [isWaiting, setIsWaiting] = useState(false);
@@ -157,7 +222,7 @@ function CreateChatSpaceModal({
         setIsWaiting(true);
         setError(null);
         try {
-            const created = await createContractChatSpace(contract.id, scope, shownName);
+            const created = await createContractChatSpace(contract.id, scope, shownName, persons.map(person => person.id));
             setResult(created);
             onCreated(created);
         } catch (e) {
@@ -215,8 +280,11 @@ function CreateChatSpaceModal({
                                 onChange={(e) => setTypedName(e.target.value)}
                             />
                         </Form.Group>
+                        <FormProvider value={methods}>
+                            <ChatMembersSelector />
+                        </FormProvider>
                         <div className="text-muted small mt-1">
-                            Do pokoju zostaną zaproszeni koordynator, administrator kontraktu i Ty.
+                            Do pokoju zostaną zaproszeni wybrane osoby oraz koordynator, administrator kontraktu i Ty.
                         </div>
                         {error && (
                             <Alert variant="danger" className="mt-2 mb-0">
@@ -231,7 +299,7 @@ function CreateChatSpaceModal({
                     {result ? "Zamknij" : "Anuluj"}
                 </Button>
                 {!result && (
-                    <Button variant="primary" onClick={handleCreate} disabled={isWaiting || !shownName.trim()}>
+                    <Button variant="primary" onClick={handleCreate} disabled={isWaiting || !shownName.trim() || persons.length > 50}>
                         {isWaiting ? <Spinner size="sm" animation="border" /> : "Załóż pokój"}
                     </Button>
                 )}

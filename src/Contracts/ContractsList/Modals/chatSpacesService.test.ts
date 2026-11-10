@@ -56,4 +56,8 @@ describe("_chatSpaceSelection w schemacie kontraktu ENVI", () => {
         expect(await errors({ mode: "new", scope: "project", displayName: "a".repeat(129) })).toHaveLength(1);
         expect(await errors({ mode: "new", scope: "contract" })).toEqual([]);
     });
+
+    it("ogranicza liste zapraszanych osob do 50", async () => {
+        expect(await errors({mode:"new",scope:"contract",personIds:Array(51).fill(1)})).toEqual(["Wybierz maksymalnie 50 osób do pokoju"]);
+    });
 });

@@ -27,6 +27,15 @@ const existingRadio = () => document.getElementById("chatSpaceMode-existing");
 const SPACE = { id: 5, displayName: "Pokój" };
 
 describe("ChatSpaceSelection: opcja Istniejący pokój", () => {
+    it("przekazuje wybrane osoby przy rejestracji i zachowuje je po zmianie nazwy pokoju", async () => {
+        hoisted.fetchChatSpacesForProject.mockResolvedValue([]);
+        render(<Harness />);
+        act(() => document.getElementById("chatSpaceMode-new")!.click());
+        act(() => form.setValue("_chatSpacePersons", [{ id: 11 }, { id: 12 }]));
+        await waitFor(() => expect(form.getValues("_chatSpaceSelection").personIds).toEqual([11,12]));
+        act(() => form.setValue("_chatSpaceSelection", {mode:"new", scope:"project", displayName:"Nowy"}));
+        await waitFor(() => expect(form.getValues("_chatSpaceSelection")).toMatchObject({scope:"project",displayName:"Nowy",personIds:[11,12]}));
+    });
     it("jest ukryta przy pustej liście", async () => {
         hoisted.fetchChatSpacesForProject.mockResolvedValue([]);
         render(<Harness />);

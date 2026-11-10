@@ -129,3 +129,10 @@ describe("AccountEventsList - stany listy", () => {
         await waitFor(() => expect(screen.getByText("Nie udało się pobrać historii zmian.")).toBeTruthy());
     });
 });
+
+it("historia FIN ma polską etykietę i wartości tak/nie", () => {
+    const view = describeAccountEvent(event({ field: "finEnabled", valueBefore: "true", valueAfter: "false" }));
+    expect(view.what).toBe("Użytkownik FIN");
+    expect(view.before).toBe("tak");
+    expect(view.after).toBe("nie");
+});
