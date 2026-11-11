@@ -271,7 +271,7 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
     return createPortal(
         <ToastContainer
             position="bottom-end"
-            className="p-3"
+            className="p-3 app-pomoc-margin"
             style={{ zIndex: 1050, overflowX: "hidden", position: "fixed", right: 0, bottom: 0 }}
         >
             <div ref={toastWrapperRef} className={`good-tip-toast-wrapper ${isVisible ? "show" : "hide"}`}>

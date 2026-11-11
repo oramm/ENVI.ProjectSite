@@ -63,6 +63,17 @@ const CONTACTS_PATHS = ["/entities", "/persons", "/person/", "/admin/gusEntities
 export default function MainMenu() {
     const location = useLocation();
     const currentUser = MainSetup.currentUserOrNull;
+    const menuRef = React.useRef<HTMLElement>(null);
+
+    React.useLayoutEffect(() => {
+        const menu = menuRef.current;
+        if (!menu) return;
+        const update = () => document.body.style.setProperty("--envi-pomoc-top", `${menu.offsetHeight}px`);
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(menu);
+        return () => { observer.disconnect(); document.body.style.removeProperty("--envi-pomoc-top"); };
+    }, [currentUser?.systemEmail]);
 
     // Wizyty na budowie - rola 1/2 albo flaga StaffMembers.CanLogSiteVisits.
     const visitsAccess = useModuleAccess("site-visits/access");
@@ -87,7 +98,7 @@ export default function MainMenu() {
 
     if (!currentUser) {
         return (
-            <Navbar sticky="top" bg="light" expand="md">
+            <Navbar ref={menuRef} sticky="top" bg="light" expand="md">
                 <Container>
                     <Navbar.Brand as={Link} to={"/"}>
                         Witryna Projektów
@@ -111,12 +122,11 @@ export default function MainMenu() {
 
     return (
         <>
-            <Navbar sticky="top" bg="light" expand="md">
+            <Navbar ref={menuRef} sticky="top" bg="light" expand="md">
                 <Container>
                     <Navbar.Brand as={Link} to={"/"}>
                         Witryna Projektów
                     </Navbar.Brand>
-                    <Pomoc key={currentUser.systemEmail} />
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
@@ -367,7 +377,8 @@ export default function MainMenu() {
                                 </NavDropdown>
                             )}
                         </Nav>
-                        <Nav className="ms-auto">
+                        <Nav className="ms-auto flex-row align-items-center justify-content-end gap-2">
+                            <Pomoc key={currentUser.systemEmail} />
                             <NavDropdown
                                 title={
                                     <>

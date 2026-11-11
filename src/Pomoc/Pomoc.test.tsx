@@ -47,11 +47,14 @@ test('błąd dostępności ukrywa przycisk', async () => {
 test('available pokazuje przycisk, F1 otwiera panel, Escape oddaje fokus', async () => {
     renderPomoc();
     const button = await screen.findByRole('button', { name: 'Pomoc' });
+    expect(document.body.style.getPropertyValue('--envi-pomoc-drawer-width')).toBe('');
     expect(fetchMock.mock.calls[0]).toEqual(['http://localhost:3000/pomoc/available', { credentials: 'include' }]);
     fireEvent.keyDown(window, { key: 'F1' });
     expect(screen.getByRole('textbox')).toHaveFocus();
+    expect(document.body.style.getPropertyValue('--envi-pomoc-drawer-width')).not.toBe('');
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(screen.queryByRole('textbox')).toBeNull();
+    expect(document.body.style.getPropertyValue('--envi-pomoc-drawer-width')).toBe('');
     expect(button).toHaveFocus();
 });
 test('nie przejmuje F1 aktywnemu modalowi', async () => {

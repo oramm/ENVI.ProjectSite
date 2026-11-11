@@ -1,4 +1,10 @@
-.envi-pomoc { --envi-pomoc-z: 1040; }
+/* Pasek sticky (Bootstrap: 1020) i jego menu pozostają nad szufladą. */
+.envi-pomoc { --envi-pomoc-z: 1019; }
+.app-pomoc-margin { margin-right: var(--envi-pomoc-drawer-width, 0px); }
+@media (max-width: 1040px) {
+    .envi-pomoc { width: 100%; }
+    .app-pomoc-margin { margin-right: 0; }
+}
 .pomoc-highlight { outline: 3px solid #548a24 !important; outline-offset: 4px; }
 .pomoc-notice { position: fixed; z-index: 1041; right: 16px; bottom: 80px; max-width: min(410px, 95vw); padding: 12px; background: white; border: 1px solid #548a24; border-radius: 6px; }
 .pomoc-notice textarea { display: block; width: 100%; min-height: 140px; }

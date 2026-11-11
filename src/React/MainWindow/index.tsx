@@ -211,7 +211,7 @@ function AppRoutes() {
             <MainMenu />
             {/* Dobre rady zasłaniają za dużo ekranu na telefonie/w aplikacji - tylko desktop */}
             {!isMobileOrAppView() && <GoodTipToast />}
-            <div className="mt-3 mb-3">
+            <div className="mt-3 mb-3 app-pomoc-margin">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/privacy" element={<PrivacyAcknowledgement load={systemPrivacy} acknowledge={systemPrivacy} />} />
