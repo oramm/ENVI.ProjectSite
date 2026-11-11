@@ -54,6 +54,7 @@ export function CaseAddNewModalButton({
                 makeValidationSchema: makeCaseValidationSchema,
             }}
             buttonProps={{
+                "data-pomoc": "case-add",
                 buttonCaption: "Dodaj sprawę",
                 buttonVariant: "outline-success",
                 ...buttonProps,

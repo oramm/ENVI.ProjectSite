@@ -56,6 +56,7 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
 };
 
 export type GeneralModalButtonButtonProps = {
+    "data-pomoc"?: string;
     buttonCaption?: string;
     buttonVariant?: ButtonVariant;
     buttonSize?: ButtonProps["size"];

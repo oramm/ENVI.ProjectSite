@@ -65,6 +65,7 @@ export function OurLetterAddNewModalButton({
                 enforceFocus: false,
             }}
             buttonProps={{
+                "data-pomoc": "letter-add",
                 buttonCaption: "Rejestruj wychodzące",
                 buttonVariant: "outline-success",
             }}

@@ -1,6 +1,7 @@
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import Pomoc from "../../Pomoc/Pomoc";
 import { Badge, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import MainController from "../MainControllerReact";
@@ -115,6 +116,7 @@ export default function MainMenu() {
                     <Navbar.Brand as={Link} to={"/"}>
                         Witryna Projektów
                     </Navbar.Brand>
+                    <Pomoc key={currentUser.systemEmail} />
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">

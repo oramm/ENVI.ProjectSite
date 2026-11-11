@@ -89,6 +89,7 @@ export function OurContractAddNewModalButtonGeneric({
                 enforceFocus: false,
             }}
             buttonProps={{
+                "data-pomoc": "contract-add",
                 buttonCaption: "Rejestruj umowę ENVI",
                 buttonVariant: "outline-success",
                 ...buttonProps,

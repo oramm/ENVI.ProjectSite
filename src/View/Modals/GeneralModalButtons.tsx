@@ -146,6 +146,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         buttonSize = "sm",
         buttonIsActive = false,
         buttonIsDisabled = false,
+        "data-pomoc": pomocMarker,
     },
 }: GeneralAddNewModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
@@ -159,6 +160,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
     return (
         <>
             <Button
+                data-pomoc={pomocMarker}
                 key={buttonCaption}
                 variant={buttonVariant}
                 size={buttonSize}

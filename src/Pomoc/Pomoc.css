@@ -1,0 +1,4 @@
+.envi-pomoc { --envi-pomoc-z: 1040; }
+.pomoc-highlight { outline: 3px solid #548a24 !important; outline-offset: 4px; }
+.pomoc-notice { position: fixed; z-index: 1041; right: 16px; bottom: 80px; max-width: min(410px, 95vw); padding: 12px; background: white; border: 1px solid #548a24; border-radius: 6px; }
+.pomoc-notice textarea { display: block; width: 100%; min-height: 140px; }
