@@ -64,7 +64,7 @@ test('nie przejmuje F1 aktywnemu modalowi', async () => {
 test('wysyła kontekst z ciasteczkiem, renderuje odpowiedź z wersją i kopiuje szkic', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
-    fetchMock.mockImplementation(async (url: string) => ({ ok: true, json: async () => url.endsWith('/available') ? { available: true, version: 'wersja-testowa' } : url.endsWith('/ask') ? { taskId: 'zadanie-testowe', status: 'processing' } : { status: 'done', result: {
+    fetchMock.mockImplementation(async (url: string) => ({ ok: true, json: async () => url.endsWith('/available') ? { available: true, version: 'serwer abc1234, ekran def5678' } : url.endsWith('/ask') ? { taskId: 'zadanie-testowe', status: 'processing' } : { status: 'done', result: {
         decision: 'allowed', text: 'Wybierz Dodaj sprawę.', conversation: [], markers: [], ticket_draft: { title: 'Szkic', description: 'Opis problemu' },
     } } }));
     renderPomoc();
@@ -72,13 +72,41 @@ test('wysyła kontekst z ciasteczkiem, renderuje odpowiedź z wersją i kopiuje 
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Jak dodać sprawę?' } });
     fireEvent.submit(screen.getByRole('textbox').closest('form')!);
     expect(await screen.findByText('Wybierz Dodaj sprawę.')).toBeVisible();
-    expect(screen.getByText(/Na podstawie PS ENVI wersja-testowa/)).toBeVisible();
+    expect(screen.getByText('Na podstawie PS ENVI serwer abc1234, ekran def5678')).toBeVisible();
     const call = fetchMock.mock.calls.find(([url]) => url.endsWith('/ask'))!;
     expect(call[1].credentials).toBe('include');
     expect(JSON.parse(call[1].body)).toMatchObject({ question: 'Jak dodać sprawę?', history: [], screen: { path: '/' } });
     fireEvent.click(screen.getAllByRole('button', { name: 'Zgłoś problem' })[0]);
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(expect.stringContaining('Opis problemu')));
     expect(await screen.findByRole('status')).toHaveTextContent('skopiowano');
+});
+
+test('odmowa wyjaśnia kopiowanie szkicu do schowka zamiast obiecywać zakładkę', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    fetchMock.mockImplementation(async (url: string) => ({ ok: true, json: async () => url.endsWith('/available') ? { available: true, version: 'test' } : url.endsWith('/ask') ? { taskId: 'odmowa' } : { status: 'done', result: {
+        decision: 'denied', reason: 'Limit pytań.', text: '', conversation: [], markers: [], ticket_draft: null,
+    } } }));
+    renderPomoc();
+    fireEvent.click(await screen.findByRole('button', { name: 'Pomoc' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Jak dodać sprawę?' } });
+    fireEvent.submit(screen.getByRole('textbox').closest('form')!);
+    expect(await screen.findByText(/Skopiuję opis do schowka — wklej go w wiadomości do administratora\./)).toBeVisible();
+    expect(screen.queryByText(/Zgłoszenie trafi do zakładki/)).toBeNull();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Zgłoś problem' })[0]);
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(expect.stringContaining('Limit pytań.')));
+});
+
+test('powielony znacznik wysyła i podświetla widoczny przycisk, choć pierwszy jest ukryty', () => {
+    render(<><button data-pomoc="case-add" hidden>Ukryty</button><button data-pomoc="case-add">Widoczny</button></>);
+    const visible = screen.getByText('Widoczny');
+    vi.spyOn(visible, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList);
+    visible.scrollIntoView = vi.fn();
+    expect(visiblePomocMarkers()).toEqual([{ id: 'case-add', label: POMOC_MARKERS['case-add'] }]);
+    highlightPomocMarker('case-add');
+    expect(visible).toHaveClass('pomoc-highlight');
+    expect(screen.getByText('Ukryty')).not.toHaveClass('pomoc-highlight');
+    expect(visible.scrollIntoView).toHaveBeenCalled();
 });
 test('katalog i znaczniki wskazują rzeczywiste przyciski, niewidoczne nie są wysyłane', () => {
     const sourceFiles = [

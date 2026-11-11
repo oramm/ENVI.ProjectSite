@@ -109,7 +109,9 @@ export default function Pomoc() {
         <PomocButton open={open} busy={busy} onClick={() => open ? close() : setOpen(true)} />
         {open && createPortal(<>
             <PomocDrawer model={{ system: 'PS ENVI', systemLocative: 'PS ENVI', systemAccusative: 'PS ENVI', version,
-                screen: path, messages, busy, reportDestination: 'schowek',
+                screen: path, busy,
+                messages: messages.map((message) => message.role === 'assistant' && message.reportProblem
+                    ? { ...message, text: `${message.text}\n\nSkopiuję opis do schowka — wklej go w wiadomości do administratora.` } : message),
                 starters: ['Jaką mam rolę i uprawnienia?', 'Jak dodać sprawę?', 'Jak zarejestrować pismo?'] }}
                 onClose={close} onAsk={(question) => void ask(question)}
                 onNewConversation={() => { generation.current++; setMessages([]); setConversation([]); setTicket(null); setBusy(false); setNotice(""); setManualDraft(""); clearPomocHighlight(); }}

@@ -10,16 +10,15 @@ export function clearPomocHighlight() {
 
 export function visiblePomocMarkers() {
     return Object.entries(POMOC_MARKERS).filter(([id]) => {
-        const element = document.querySelector(`[data-pomoc="${id}"]`);
-        return !!element?.getClientRects().length;
+        return Array.from(document.querySelectorAll(`[data-pomoc="${id}"]`)).some((element) => element.getClientRects().length > 0);
     }).map(([id, label]) => ({ id, label }));
 }
 
 export function highlightPomocMarker(id: string) {
     clearPomocHighlight();
     if (!Object.prototype.hasOwnProperty.call(POMOC_MARKERS, id)) return;
-    const element = document.querySelector<HTMLElement>(`[data-pomoc="${id}"]`);
-    if (!element?.getClientRects().length) return;
+    const element = Array.from(document.querySelectorAll<HTMLElement>(`[data-pomoc="${id}"]`)).find((element) => element.getClientRects().length > 0);
+    if (!element) return;
     element.classList.add('pomoc-highlight');
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
