@@ -123,7 +123,9 @@ export function ExampleCard({ example }: { example: Example }) {
 function FlowDiagram({ id, title, box: viewBox, nodes, arrows, steps }: {
     id: string; title: string; box: string; nodes: FlowNode[]; arrows: FlowArrow[]; steps: FlowStep[];
 }) {
-    const [index, setIndex] = useState(0);
+    const [chosen, setIndex] = useState(0);
+    // Zabezpieczenie: indeks spoza listy kroków (np. po podmianie kroków) wraca do ostatniego kroku zamiast wywrócić stronę.
+    const index = Math.min(chosen, steps.length - 1);
     const step = steps[index];
     const motion = motionAllowed();
     const lit = (arrow: string) => step.arrows.includes(arrow);
@@ -196,8 +198,8 @@ function FlowDiagram({ id, title, box: viewBox, nodes, arrows, steps }: {
                 {step.text}
             </figcaption>
             {step.card && <div className="mt-3"><ExampleCard example={step.card} /></div>}
-            {index < steps.length - 1 && <div className="mt-2 text-end">
-                <Button variant="dark" size="sm" onClick={() => setIndex(index + 1)}>{GUIDE.next}: {steps[index + 1].label} ›</Button>
+            {index < steps.length - 1 && <div className="mt-2">
+                <Button variant="outline-dark" size="sm" onClick={() => setIndex(index + 1)}>{GUIDE.nextStep}: {steps[index + 1].label} ↓</Button>
             </div>}
         </figure>
     );
@@ -333,16 +335,17 @@ const skille = flow(FLOWS.skille, {
 const dwieStrony = flow(FLOWS.dwieStrony, {
     nodes: {
         rozmowa: { x: 10, y: 10, w: 180, h: 140, fill: "#fdf0e2", art: ART.computer },
+        ps: { x: 10, y: 270, w: 180, h: 140, fill: ROLE.site, art: ART.site },
         app: { x: 290, y: 10, w: 180, h: 140, fill: ROLE.site, art: ART.site },
-        program: { x: 140, y: 270, w: 190, h: 140, fill: ROLE.agent, art: ART.agent },
+        program: { x: 290, y: 270, w: 180, h: 140, fill: ROLE.agent, art: ART.agent },
     },
     arrows: {
-        zapis: { d: "M192 70L286 70", color: "#b0603a", label: { x: 240, y: 100, anchor: "middle" } },
-        analiza: { d: "M380 154L300 266", color: "#3d6a8f", both: true, label: { x: 348, y: 226 } },
+        zapis: { d: "M100 154L100 266", color: "#b0603a", label: { x: 112, y: 204 } },
+        analiza: { d: "M380 154L380 266", color: "#3d6a8f", both: true, label: { x: 368, y: 204, anchor: "end" } },
     },
     steps: {
         calosc: { arrows: ["zapis", "analiza"] },
-        rozmowa: { arrows: ["zapis"], nodes: ["rozmowa", "app"] },
+        rozmowa: { arrows: ["zapis"], nodes: ["rozmowa", "ps"] },
         aplikacja: { arrows: ["analiza"], nodes: ["app", "program"] },
     },
 });
@@ -355,7 +358,7 @@ const zespol = flow(FLOWS.zespol, {
         teczka: { x: 160, y: 300, w: 160, h: 120, fill: "#ece7f6", art: ART.folder },
     },
     arrows: {
-        tyChat: { d: "M100 156L172 120", color: "#b0603a", label: { x: 30, y: 148 } },
+        tyChat: { d: "M100 156L172 120", color: "#b0603a", label: { x: 140, y: 116, anchor: "end" } },
         chatKolega: { d: "M308 120L380 156", color: "#b0603a" },
         tyTeczka: { d: "M80 284L156 340", color: "#6a5a92", both: true },
         kolegaTeczka: { d: "M400 284L324 340", color: "#6a5a92", both: true },
@@ -377,9 +380,9 @@ function HotNode({ x, y, w, h, fill, title, sub, selected, onSelect }: {
             onClick={onSelect} onKeyDown={onActivate(onSelect)} style={{ cursor: "pointer" }}>
             {selected && <rect x={x - 5} y={y - 5} width={w + 10} height={h + 10} rx={18} fill="none" stroke={INK} strokeWidth={2} strokeDasharray="6 5" />}
             <rect className="sb-hot-box" x={x} y={y} width={w} height={h} rx={14} fill={fill} stroke={INK} strokeWidth={selected ? 4 : 2} />
-            <text x={x + w / 2} y={sub ? y + h / 2 - 2 : y + h / 2 + 8} textAnchor="middle" fill={INK}
+            <text x={x + w / 2} y={sub ? y + h / 2 - 2 : y + h / 2 + 8} textAnchor="middle" fill={INK} className={sub ? "sb-map-title-sub" : undefined}
                 style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{selected ? `▸ ${title}` : title}</text>
-            {sub && <text x={x + w / 2} y={y + h / 2 + 22} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 21 }}>{sub}</text>}
+            {sub && <text className="sb-map-sub" x={x + w / 2} y={y + h / 2 + 22} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 21 }}>{sub}</text>}
         </g>
     );
 }
@@ -391,9 +394,9 @@ const MAP_GEO: Record<MapNodeId, { x: number; y: number; w: number; h: number; f
     kanon: { x: 25, y: 296, w: 190, h: 80, fill: "#e5eef8" },
     teczki: { x: 25, y: 390, w: 190, h: 80, fill: "#ece7f6" },
     skille: { x: 25, y: 484, w: 190, h: 80, fill: "#e3f3ea" },
-    ps: { x: 265, y: 296, w: 190, h: 46, fill: ROLE.site },
-    fidman: { x: 265, y: 350, w: 190, h: 46, fill: ROLE.site },
-    fin: { x: 265, y: 404, w: 190, h: 46, fill: ROLE.site },
+    ps: { x: 265, y: 292, w: 190, h: 62, fill: ROLE.site },
+    fidman: { x: 265, y: 360, w: 190, h: 42, fill: ROLE.site },
+    fin: { x: 265, y: 408, w: 190, h: 42, fill: ROLE.site },
     dysk: { x: 250, y: 478, w: 220, h: 50, fill: ROLE.google },
     poczta: { x: 250, y: 540, w: 220, h: 50, fill: ROLE.github },
 };
@@ -401,7 +404,7 @@ const MAP_GEO: Record<MapNodeId, { x: number; y: number; w: number; h: number; f
 function EcosystemMap({ selected, onSelect, onOpen }: {
     selected: MapNodeId; onSelect: (id: MapNodeId) => void; onOpen: (screen: ScreenId) => void;
 }) {
-    const node = MAP.nodes[selected];
+    const node: { title: string; sub?: string; text: string; screen: ScreenId } = MAP.nodes[selected];
     const target = SCREENS.find(s => s.id === node.screen)!;
     const line = { fill: "none", stroke: INK, strokeWidth: 2, strokeLinecap: "round" as const, markerEnd: "url(#sb-mapa-grot)" };
     return (
@@ -434,7 +437,7 @@ function EcosystemMap({ selected, onSelect, onOpen }: {
                 ))}
             </svg>
             <div aria-live="polite" className="mt-3" style={box({ boxShadow: "3px 4px 0 rgba(47,52,55,.10)" })}>
-                <div style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700, lineHeight: 1.1 }}>{node.title}</div>
+                <div style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700, lineHeight: 1.1 }}>{node.sub ? `${node.title} (${node.sub})` : node.title}</div>
                 <div style={{ fontSize: 17, lineHeight: 1.5 }}>{node.text}</div>
                 <Button variant="dark" size="sm" className="mt-2" onClick={() => onOpen(node.screen)}>
                     {GUIDE.goTo} {SCREENS.indexOf(target) + 1}: {target.short} ›
@@ -456,7 +459,7 @@ function Doors() {
     const ids = Object.keys(DOORS) as DoorId[];
     return (
         <div>
-            <svg viewBox="0 0 480 330" role="group" aria-label="Trzy drzwi: agent, aplikacja, Pomoc"
+            <svg viewBox="0 0 480 350" role="group" aria-label="Trzy drzwi: agent, aplikacja, Pomoc"
                 style={{ width: "100%", maxWidth: 600, height: "auto", display: "block", margin: "0 auto" }}>
                 {ids.map((id, i) => {
                     const x = 20 + i * 160, isOpen = id === open, door = DOORS[id], art = DOOR_ART[id];
@@ -464,7 +467,7 @@ function Doors() {
                     return (
                         <g key={id} role="button" tabIndex={0} aria-pressed={isOpen} aria-label={`Drzwi: ${door.title}`} className="sb-hot"
                             onClick={select} onKeyDown={onActivate(select)} style={{ cursor: "pointer" }}>
-                            <rect x={x - 6} y={4} width={132} height={322} fill="transparent" />
+                            <rect x={x - 6} y={4} width={132} height={342} fill="transparent" />
                             <rect x={x} y={12} width={120} height={38} rx={8} fill="#fffdf8" stroke={INK} strokeWidth={isOpen ? 3 : 2} />
                             <text x={x + 60} y={40} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{door.title}</text>
                             <rect className="sb-hot-box" x={x} y={60} width={120} height={190} fill={isOpen ? "#fffdf8" : "#ecebe6"} stroke={INK} strokeWidth={isOpen ? 4 : 2} />
@@ -498,6 +501,8 @@ function SyncIcon() {
     const spin = state === "pracuje" && motionAllowed();
     return (
         <figure className="mb-0">
+            <h6 style={{ fontFamily: HAND, fontSize: 27, fontWeight: 700, lineHeight: 1.1 }}>{SYNC.title}</h6>
+            <p style={{ fontSize: 17 }}>{SYNC.lead}</p>
             <svg viewBox="0 0 360 170" role="img" aria-label={`${SYNC.title}: ${s.word}, ${s.look}`}
                 style={{ width: "100%", maxWidth: 480, height: "auto", display: "block", margin: "0 auto" }}>
                 <path d="M190 10h150a8 8 0 0 1 8 8v40a8 8 0 0 1-8 8h-100l-10 14-10-14h-30a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z"
@@ -555,6 +560,7 @@ function Examples() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))", gap: 16 }}>
                 {shown.map(e => <ExampleCard key={e.says} example={e} />)}
             </div>
+            <p className="mt-3 mb-0" style={{ fontSize: 17 }}>{GUIDE.fillIn}</p>
         </div>
     );
 }
@@ -604,7 +610,7 @@ export default function SbHowItWorks({ onShowPostInstall }: { onShowPostInstall:
     return (
         <section aria-label="Jak to działa" style={{ color: INK }}>
             <SketchDefs />
-            <style>{`.sb-hot:focus{outline:none}.sb-hot:focus-visible .sb-hot-box{stroke:#1a5fb4;stroke-width:5px}`}</style>
+            <style>{`.sb-hot:focus{outline:none}.sb-hot:focus-visible .sb-hot-box{stroke:#1a5fb4;stroke-width:5px}@media (max-width:575.98px){.sb-map-sub{display:none}.sb-map-title-sub{transform:translateY(10px)}}`}</style>
             <nav aria-label={GUIDE.navLabel} className="mb-3">
                 <ol className="list-unstyled d-flex flex-wrap m-0" style={{ gap: 6 }}>
                     {SCREENS.map((s, i) => {
@@ -630,7 +636,8 @@ export default function SbHowItWorks({ onShowPostInstall }: { onShowPostInstall:
             </h5>
             <p style={{ fontSize: 17 }}>{current.lead.join(" ")}</p>
 
-            <ScreenBody id={screen} mapSel={mapSel} onMapSelect={setMapSel} onOpen={goTo} />
+            {/* Klucz ekranu: stan wewnątrz ekranu (wybrany krok, drzwi, filtr) zaczyna się od nowa po zmianie ekranu. */}
+            <ScreenBody key={screen} id={screen} mapSel={mapSel} onMapSelect={setMapSel} onOpen={goTo} />
 
             <div className="mt-4 d-flex flex-wrap align-items-center justify-content-between"
                 style={box({ gap: 8, borderRadius: "16px 16px 3px 16px", background: "#f3f8ff" })}>

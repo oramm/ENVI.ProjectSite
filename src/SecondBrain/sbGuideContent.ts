@@ -41,13 +41,15 @@ export const GUIDE = {
     kinds: { read: "tylko czyta", write: "zmienia albo zapisuje" },
     goTo: "Przejdź do ekranu",
     next: "Dalej",
+    nextStep: "Następny krok",
+    fillIn: "To, co w nawiasach kwadratowych, zastąp swoimi danymi.",
     postInstall: { before: "Jak otworzyć agenta, mówi część", link: "„Po instalacji - co dalej”" },
 };
 
 const EX = {
     teczka: {
         where: "u agenta", kind: "read",
-        says: "Od czego zacząć w ZBS.IK.01? Co jest otwarte?",
+        says: "Od czego zacząć w [kod kontraktu]? Co jest otwarte?",
         gets: "Agent czyta teczkę kontraktu i wskazuje, co czeka na ruch.",
         decision: "Żadnej - agent tylko czyta i niczego nie zapisuje.",
     },
@@ -66,7 +68,7 @@ const EX = {
     },
     pismo: {
         where: "u agenta", kind: "write",
-        says: "Zarejestruj w PS pismo przychodzące z tego maila",
+        says: "Zarejestruj w PS pismo przychodzące z maila [temat albo nadawca maila]",
         gets: "Numer pisma i wpis w rejestrze pism PS.",
         decision: "Agent pokazuje, co wpisze, i czeka na Twoje „tak”.",
         note: "Zapis do PS zależy od Twojego dostępu - zapytaj agenta, czy masz go włączony.",
@@ -91,26 +93,26 @@ export const EXAMPLES: Example[] = [
     EX.pismo,
     {
         where: "u agenta", kind: "write",
-        says: "Zrób wyciąg z umowy (link do Dysku) do teczki NWY.IK.01",
+        says: "Zrób wyciąg z umowy [link do pliku na Dysku] do teczki [kod kontraktu]",
         gets: "Karta dokumentu z linkiem i wyciąg tekstu w teczce; oryginał zostaje na Dysku.",
         decision: "Wskazujesz plik i teczkę.",
     },
     {
         where: "u agenta", kind: "write",
-        says: "Załóż teczkę dla kontraktu NWY.IK.01",
+        says: "Załóż teczkę dla kontraktu [kod kontraktu]",
         gets: "Nowa teczka projektu w Second Brain.",
         decision: "Podajesz kod kontraktu - agent go nie zgaduje.",
     },
     {
         where: "u agenta", kind: "write",
-        says: "Wpisz do PS dane kontraktu z umowy",
+        says: "Wpisz do PS dane kontraktu [kod kontraktu] z umowy [link do pliku na Dysku]",
         gets: "Numer, daty, wartość i zamawiający w PS.",
         decision: "Agent pokazuje, co wpisze, i czeka na Twoje „tak”.",
         note: "Tę umiejętność może mieć tylko jeden z programów agenta. Jeśli Twój jej nie zna, zapytaj administratora.",
     },
     {
         where: "u agenta", kind: "write",
-        says: "Sprawdź tę odpowiedź do zamawiającego, zanim ją wyślę",
+        says: "Sprawdź tę odpowiedź do zamawiającego, zanim ją wyślę: [wklej tekst albo link]",
         gets: "Pismo oczyszczone ze śladów pracy wewnętrznej.",
         decision: "Wysyłasz Ty, po przeczytaniu poprawionej wersji.",
     },
@@ -142,14 +144,14 @@ export const MAP = {
             text: "Wspólne notatki zespołu o kontraktach i sprawach; agent w nich czyta i zapisuje." },
         skille: { title: "Skille", sub: "sposoby pracy firmy", screen: "skille",
             text: "Spisane sposoby, w jakie w ENVI robi się konkretne rzeczy; agent sam dobiera je do Twojej prośby." },
-        ps: { title: "PS", screen: "dwie-strony",
-            text: "Dane kontraktów, projektów i spraw oraz rejestr pism; agent je czyta, a zapisuje dopiero po Twoim „tak”." },
+        ps: { title: "PS", sub: "Witryna Projektów", screen: "dwie-strony",
+            text: "Dane kontraktów, projektów i spraw oraz rejestr pism. Agent je czyta, a zapisuje dopiero po Twoim „tak” - o ile masz to włączone; zapytaj agenta." },
         fidman: { title: "FIDman", screen: "dwie-strony",
             text: "System, w którym pracujesz sam; ma przycisk Pomoc, a tam, gdzie widzisz znak ENVI, także analizę przez agenta." },
         fin: { title: "FIN", screen: "dwie-strony",
             text: "System, w którym pracujesz sam; ma przycisk Pomoc, a tam, gdzie widzisz znak ENVI, także analizę przez agenta." },
         dysk: { title: "Dysk Google", screen: "u-siebie",
-            text: "Oryginały dokumentów: umowy, pisma, skany; agent czyta je z Twoimi uprawnieniami, a w teczce zostawia wyciąg z linkiem." },
+            text: "Oryginały dokumentów: umowy, pisma, skany. Agent czyta je z Twoimi uprawnieniami i zostawia w teczce wyciąg z linkiem - o ile masz to włączone; zapytaj agenta." },
         poczta: { title: "Poczta", screen: "przyklady",
             text: "Twoja skrzynka; agent przegląda i streszcza maile, gdy go o to poprosisz - zapytaj go, czy masz ją podłączoną." },
     } satisfies Record<string, { title: string; sub?: string; screen: ScreenId; text: string }>,
@@ -160,13 +162,14 @@ export type MapNodeId = keyof typeof MAP.nodes;
 export const DOORS = {
     agent: { title: "Agent", lines: ["dokumenty, poczta,", "kilka kroków", "albo „nie wiem jak”"], card: EX.teczka },
     aplikacja: { title: "Aplikacja", lines: ["przeglądasz", "i poprawiasz", "pojedyncze dane"], card: EX.aplikacja },
-    pomoc: { title: "Pomoc", lines: ["„jak to zrobić", "na tym ekranie?”", "w PS, FIDmanie, FIN"], card: EX.pomoc },
+    pomoc: { title: "Pomoc", lines: ["„jak to zrobić", "na tym ekranie?”", "w PS, FIDmanie", "i FIN"], card: EX.pomoc },
 } satisfies Record<string, { title: string; lines: string[]; card: Example }>;
 
 export type DoorId = keyof typeof DOORS;
 
 export const SYNC = {
     title: "Znak ENVI przy zegarze",
+    lead: "Kliknij stan, żeby zobaczyć, jak wygląda znak i co znaczy.",
     tray: "pasek zadań",
     hint: "Nie widzisz znaku? Windows chowa nowe ikony pod strzałką przy zegarze - przeciągnij go raz na pasek.",
     states: {
@@ -200,7 +203,16 @@ export const FLOWS = {
             czytasz: { label: "Kanon czytasz", text: "Kanon jest wspólny dla całej firmy, dlatego u Ciebie jest tylko do czytania." },
             piszesz: { label: "W teczce piszesz", text: "Teczki są wspólne: Ty, koledzy i agent zapisujecie w nich notatki i wyciągi." },
             dysk: { label: "Oryginały na Dysku", text: "Umowa zostaje na Dysku Google, w teczce jest jej karta z linkiem i wyciąg, a dane kontraktu są w PS." },
-            kanon: { label: "Teczka → kanon", text: "To, co przyda się całej firmie, administrator przenosi z teczki do kanonu." },
+            kanon: {
+                label: "Teczka → kanon",
+                text: "Wiesz coś, co przyda się całej firmie? Powiedz to agentowi. Agent przygotuje propozycję, a administrator zdecyduje, czy trafi do kanonu.",
+                card: {
+                    where: "u agenta",
+                    says: "To warto zapamiętać dla całej firmy: …",
+                    gets: "Agent przygotuje propozycję dla administratora.",
+                    decision: "Administrator zdecyduje, czy trafi do kanonu.",
+                },
+            },
             blad: { label: "Błąd w kanonie", text: "Widzisz błąd w kanonie - zgłaszasz go przez agenta, a nie poprawiasz sam." },
         },
     },
@@ -214,13 +226,14 @@ export const FLOWS = {
             dobor: { label: "Dobór", text: "Agent sam znajduje spisany sposób firmy, który pasuje do prośby." },
             kroki: { label: "Krok po kroku", text: "Pracuje według tego sposobu i pokazuje, co znalazł." },
             decyzja: { label: "Twoja decyzja", text: "Przed zapisem w systemie pokazuje, co zapisze, i czeka na Twoje „tak”." },
-            zgloszenie: { label: "Brakuje skilla", text: "Robisz coś często, a agent tego nie umie - zgłoś to, a powstanie skill." },
+            zgloszenie: { label: "Brakuje skilla", text: "Robisz coś często, a agent tego nie umie - napisz do administratora Second Brain, co i jak często robisz; z takich zgłoszeń powstają nowe skille." },
         },
     },
     dwieStrony: {
         title: "Agent i aplikacje: dwie strony",
         nodes: {
             rozmowa: { title: "Ty i agent" },
+            ps: { title: "PS", sub: "Witryna Projektów" },
             app: { title: "PS · FIDman · FIN" },
             program: { title: "ENVI Agent", sub: "na Twoim komputerze" },
         },
@@ -259,10 +272,11 @@ export const SCREENS: { id: ScreenId; short: string; title: string; lead: string
     {
         id: "u-siebie", short: "Co masz u siebie", title: "Co masz u siebie i skąd bierze się wiedza",
         lead: [
-            "W folderze Second Brain widzisz dwa miejsca: 40_wiki, czyli kanon, i 20_projects, czyli teczki projektów.",
+            "Dostajesz mailem umowę do nowego kontraktu: oryginał zostaje na Dysku, wyciąg trafia do teczki, a to, jak firma prowadzi takie kontrakty, jest w kanonie.",
+            "W folderze ENVI-Kanon najważniejsze są dwa miejsca: 40_wiki, czyli kanon, i 20_projects, czyli teczki projektów.",
             "Przejdź kroki pod rysunkiem: co czytasz, gdzie piszesz i jak wiedza dojrzewa.",
         ],
-        copy: "Co wiemy o kontrakcie NWY.IK.01? Streść, co jest w teczce i w kanonie.",
+        copy: "Co wiemy o kontrakcie [kod kontraktu]? Streść, co jest w teczce i w kanonie.",
     },
     {
         id: "gdzie", short: "Gdzie z czym", title: "Gdzie z czym: agent, aplikacja czy Pomoc",
@@ -271,13 +285,13 @@ export const SCREENS: { id: ScreenId; short: string; title: string; lead: string
             "Pracujesz w tym programie agenta, który masz; gdy agent mówi, że czegoś nie umie, zapytaj administratora, czy ta umiejętność jest w drugim programie.",
             "Szczegółów systemów przewodnik nie tłumaczy - robi to Pomoc w każdym z nich.",
         ],
-        copy: "Do czego możesz mi się przydać przy kontrakcie ZBS.IK.01?",
+        copy: "Do czego możesz mi się przydać przy kontrakcie [kod kontraktu]?",
     },
     {
         id: "przyklady", short: "Przykłady", title: "Przykłady: co piszesz i co dostajesz",
         lead: [
             "Piszesz zwykłym zdaniem, jak do kolegi z zespołu.",
-            "Skopiuj zdanie i podstaw kod swojego kontraktu.",
+            "Skopiuj zdanie i uzupełnij je swoimi danymi.",
             "Karty oznaczone okiem tylko czytają; przy zapisie do PS agent najpierw pokazuje, co wpisze, i czeka na Twoje „tak”.",
             "Na koniec poproś agenta, żeby sam pokazał, co jeszcze umie.",
         ],
@@ -286,7 +300,7 @@ export const SCREENS: { id: ScreenId; short: string; title: string; lead: string
     {
         id: "skille", short: "Skille", title: "Skille: skąd agent wie, jak to się u nas robi",
         lead: [
-            "Skill to spisany sposób, w jaki w ENVI robi się konkretną rzecz.",
+            "Prosisz agenta o rejestrację pisma, a on robi to tak, jak robi się to w ENVI, bo ma spisany sposób - skill.",
             "Nazw skilli nie musisz znać - agent dobiera je sam do Twojego zdania.",
         ],
         copy: "Jakie masz skille do pracy z pismami i do czego służą?",
@@ -294,7 +308,7 @@ export const SCREENS: { id: ScreenId; short: string; title: string; lead: string
     {
         id: "dwie-strony", short: "Dwie strony", title: "Dwie strony: z rozmowy do aplikacji i z aplikacji do agenta",
         lead: [
-            "Agent i aplikacje firmy współpracują w obie strony.",
+            "Prosisz agenta, żeby wpisał pismo do PS, a innym razem to system prosi agenta o przejrzenie dokumentów - agent i aplikacje firmy współpracują w obie strony.",
             "Kliknij kierunek pod rysunkiem.",
         ],
         copy: "Czy mam włączony zapis do PS?",
@@ -304,7 +318,7 @@ export const SCREENS: { id: ScreenId; short: string; title: string; lead: string
         lead: [
             "Teczka jest wspólna, a rezerwacja na Chacie to umowa między ludźmi - nic jej nie pilnuje samo.",
             "Co dzieje się z Twoimi plikami, mówi znak ENVI przy zegarze.",
-            "Gdy coś stoi, najpierw opisz agentowi, co widzisz, a dopiero potem pisz do administratora.",
+            "Gdy coś stoi, najpierw opisz agentowi, co widzisz. Jeśli to nie pomoże, wyślij administratorowi plik z przebiegiem instalacji - gdzie go znaleźć, mówi zakładka Instalator.",
         ],
         copy: "Sprawdź, czy mój Second Brain jest aktualny i działa.",
     },

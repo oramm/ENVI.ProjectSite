@@ -178,7 +178,7 @@ describe("Przewodnik Jak to działa", () => {
 
     it("element mapy działa z klawiatury, a drzwi zmieniają kartę przykładu", () => {
         render(<SbHowItWorks onShowPostInstall={() => {}} />);
-        fireEvent.keyDown(screen.getByRole("button", { name: "PS" }), { key: "Enter" });
+        fireEvent.keyDown(screen.getByRole("button", { name: "PS (Witryna Projektów)" }), { key: "Enter" });
         expect(screen.getByText(MAP.nodes.ps.text)).toBeVisible();
         fireEvent.click(screen.getByRole("button", { name: "3. Gdzie z czym" }));
         expect(screen.getByRole("article", { name: DOORS.agent.card.says })).toBeVisible();
@@ -199,6 +199,17 @@ describe("Przewodnik Jak to działa", () => {
         expect(await within(card).findByRole("button", { name: "Skopiowano" })).toBeVisible();
         fireEvent.click(screen.getByRole("button", { name: "Tylko czytają" }));
         expect(screen.getAllByRole("article")).toHaveLength(EXAMPLES.filter(e => e.kind === "read").length);
+    });
+
+    it("ostatni krok schematu na ekranie 5 nie przenosi się na krótszy schemat ekranu 6", () => {
+        render(<SbHowItWorks onShowPostInstall={() => {}} />);
+        fireEvent.click(screen.getByRole("button", { name: "5. Skille" }));
+        fireEvent.click(screen.getByRole("button", { name: FLOWS.skille.steps.zgloszenie.label }));
+        expect(screen.getByText(FLOWS.skille.steps.zgloszenie.text)).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: "6. Dwie strony" }));
+        expect(current()).toBe("6. Dwie strony");
+        expect(screen.getByRole("button", { name: FLOWS.dwieStrony.steps.calosc.label })).toHaveAttribute("aria-pressed", "true");
+        expect(screen.getByText(FLOWS.dwieStrony.steps.calosc.text)).toBeVisible();
     });
 
     it("tekst przewodnika nie używa słów warsztatowych", () => {
