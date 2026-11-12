@@ -1,25 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-import { ComicPanel, HAND, INK, Panel, ROLE, Sketch, SketchDefs } from "./SbInstallerComic";
+import { HAND, INK, ROLE, SketchDefs } from "./SbInstallerComic";
+import {
+    DOORS, DoorId, EXAMPLE_FILTERS, EXAMPLES, Example, FLOWS, FlowText, GUIDE, MAP, MapNodeId, SCREENS, ScreenId, SYNC, SyncState,
+} from "./sbGuideContent";
 
 /**
- * Zakładka "Jak to działa" strony Second Brain: zasady, które się nie zmieniają (przepływ wiedzy,
- * źródła agenta, rola człowieka), narysowane jak komiks instalacji. Szczegóły celowo zostają
- * u agenta - opis kroków na stronie zestarzałby się po cichu (makieta "SB onboarding" z 2026-10-08).
+ * Zakładka "Jak to działa" strony Second Brain: przewodnik z siedmiu ekranów (plan UZYCIE_SB,
+ * SB.RDZEN.01). Pierwszy ekran to mapa ekosystemu, z której wchodzi się na pozostałe; rysunek niesie
+ * treść, tekst tylko podpisuje. Cały tekst jest w `sbGuideContent.ts`, tu wygląd i geometria.
  */
 
 type Art = { box: string; body: React.ReactNode };
-type FlowNode = { id: string; x: number; y: number; w: number; h: number; fill: string; title: string; art: Art };
+type FlowNode = { id: string; x: number; y: number; w: number; h: number; fill: string; title: string; sub?: string; art: Art };
 type FlowArrow = {
     id: string; d: string; color: string; dashed?: boolean; both?: boolean;
-    label?: { x: number; y: number; lines: string[]; anchor?: "start" | "middle" };
+    label?: { x: number; y: number; lines: string[]; anchor?: "start" | "middle" | "end" };
 };
-type FlowStep = { label: string; text: React.ReactNode; arrows: string[]; nodes?: string[] };
-type Flow = { nodes: FlowNode[]; arrows: FlowArrow[]; steps: FlowStep[] };
+type FlowStep = { id: string; label: string; text: string; arrows: string[]; nodes?: string[]; card?: Example };
 
 /** Ruch wyłączamy, gdy system prosi o ograniczenie animacji. */
 function motionAllowed() {
     return !(typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+}
+
+/** Enter i spacja działają na klikanym elemencie rysunku tak jak na przycisku. */
+function onActivate(action: () => void) {
+    return (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); action(); }
+    };
 }
 
 /** Kartka, która jedzie po strzałce - widać, że coś płynie i w którą stronę. */
@@ -28,7 +37,8 @@ function Courier({ path, reverse }: { path: string; reverse?: boolean }) {
         <g>
             <rect x={-7} y={-9} width={14} height={18} rx={2} fill="#fff" stroke={INK} strokeWidth={1.5} />
             <path d="M-3.5 -3.5h7M-3.5 0h7M-3.5 3.5h4" stroke="#9aa0a6" strokeWidth={1.2} />
-            <animateMotion dur="2.4s" repeatCount="indefinite" begin={reverse ? "1.2s" : "0s"}
+            {/* Bez opóźnienia startu: kartka czekająca na start stałaby w rogu rysunku. */}
+            <animateMotion dur="2.4s" repeatCount="indefinite"
                 {...(reverse ? { keyPoints: "1;0", keyTimes: "0;1", calcMode: "linear" } : {})}>
                 <mpath href={`#${path}`} />
             </animateMotion>
@@ -36,12 +46,81 @@ function Courier({ path, reverse }: { path: string; reverse?: boolean }) {
     );
 }
 
+/** Kopiowanie jednym kliknięciem; gdy przeglądarka nie pozwala, mówi, co zrobić ręcznie. */
+export function CopyButton({ text }: { text: string }) {
+    const [label, setLabel] = useState(GUIDE.copy.idle);
+    async function copy() {
+        try {
+            await navigator.clipboard.writeText(text);
+            setLabel(GUIDE.copy.done);
+        } catch {
+            setLabel(GUIDE.copy.failed);
+        }
+        setTimeout(() => setLabel(GUIDE.copy.idle), 2500);
+    }
+    return (
+        <Button variant="outline-dark" size="sm" onClick={copy} aria-live="polite"
+            style={{ minHeight: 36, whiteSpace: "nowrap", alignSelf: "flex-start" }}>{label}</Button>
+    );
+}
+
+const box = (extra: React.CSSProperties = {}): React.CSSProperties => ({
+    background: "#fffdf8", border: `2px solid ${INK}`, borderRadius: "16px 16px 16px 3px", padding: "10px 14px", ...extra,
+});
+
+function KindTag({ kind }: { kind: "read" | "write" }) {
+    return (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, padding: "0 8px",
+            border: `1.5px solid ${INK}`, borderRadius: 9, background: kind === "read" ? "#e5eef8" : "#fdf0e2" }}>
+            <svg width="18" height="14" viewBox="0 0 24 18" fill="none" stroke={INK} strokeWidth={2} aria-hidden="true">
+                {kind === "read"
+                    ? <><path d="M1 9s4-7 11-7 11 7 11 7-4 7-11 7S1 9 1 9z" /><circle cx="12" cy="9" r="3" /></>
+                    : <path d="M3 15l2-5L15 1l3 3-9 10zM5 10l3 3" />}
+            </svg>
+            {GUIDE.kinds[kind]}
+        </span>
+    );
+}
+
+/**
+ * Jedna karta przykładu dla wszystkiego: zdań do agenta, przycisku Pomoc i analizy przez agenta.
+ * Trzy pola idą po strzałkach od góry: co piszesz albo klikasz, co dostajesz, gdzie jest decyzja.
+ */
+export function ExampleCard({ example }: { example: Example }) {
+    const arrow = <div aria-hidden="true" style={{ textAlign: "center", fontSize: 20, lineHeight: 1, margin: "2px 0" }}>↓</div>;
+    const field = (name: string, body: React.ReactNode, fill: string) => (
+        <div style={{ background: fill, border: `2px solid ${INK}`, borderRadius: 12, padding: "8px 12px" }}>
+            <div style={{ fontFamily: HAND, fontSize: 21, fontWeight: 700, lineHeight: 1.1 }}>{name}</div>
+            {body}
+        </div>
+    );
+    return (
+        <article aria-label={example.says ?? example.action} style={box({ display: "flex", flexDirection: "column", borderRadius: 16 })}>
+            <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: 8, fontSize: 14 }}>
+                <span className="text-muted">{example.where}</span>
+                {example.kind && <KindTag kind={example.kind} />}
+            </div>
+            {field(example.says && !example.action ? GUIDE.cardFields.says : GUIDE.cardFields.action, <>
+                {example.action && <div>{example.action}</div>}
+                {example.says && <div className="d-flex flex-wrap align-items-start justify-content-between" style={{ gap: 8 }}>
+                    <span style={{ fontFamily: HAND, fontSize: 23, lineHeight: 1.15 }}>„{example.says}”</span>
+                    <CopyButton text={example.says} />
+                </div>}
+            </>, ROLE.you)}
+            {arrow}
+            {field(GUIDE.cardFields.gets, <div>{example.gets}</div>, ROLE.agent)}
+            {arrow}
+            {field(GUIDE.cardFields.decision, <div>{example.decision}</div>, "#fff")}
+            {example.note && <div className="text-muted mt-2" style={{ fontSize: 14 }}>{example.note}</div>}
+        </article>
+    );
+}
+
 /**
  * Schemat krok po kroku: przyciski pod rysunkiem podświetlają jedną strzałkę naraz, a po niej
- * jadą kartki. Krok 0 pokazuje całość. Przyciski są sterowaniem dostępnym z klawiatury;
- * sam rysunek ma tylko etykietę.
+ * jadą kartki. Krok 0 pokazuje całość. Krok może nieść kartę przykładu.
  */
-function FlowDiagram({ id, title, box, nodes, arrows, steps }: {
+function FlowDiagram({ id, title, box: viewBox, nodes, arrows, steps }: {
     id: string; title: string; box: string; nodes: FlowNode[]; arrows: FlowArrow[]; steps: FlowStep[];
 }) {
     const [index, setIndex] = useState(0);
@@ -49,13 +128,12 @@ function FlowDiagram({ id, title, box, nodes, arrows, steps }: {
     const motion = motionAllowed();
     const lit = (arrow: string) => step.arrows.includes(arrow);
     const nodeLit = (node: string) => !step.nodes || step.nodes.includes(node);
-    const [, , boxW, boxH] = box.split(" ").map(Number);
+    const [, , boxW, boxH] = viewBox.split(" ").map(Number);
 
     return (
-        <figure className="mb-5" style={{ color: INK }}>
-            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700, lineHeight: 1.1 }}>{title}</h5>
-            <svg viewBox={box} role="img" aria-label={title} aria-describedby={`${id}-opis`}
-                style={{ width: "100%", height: "auto", display: "block" }}>
+        <figure className="mb-4" style={{ color: INK }}>
+            <svg viewBox={viewBox} role="img" aria-label={title} aria-describedby={`${id}-opis`}
+                style={{ width: "100%", maxWidth: 640, height: "auto", display: "block", margin: "0 auto" }}>
                 <defs>
                     {/* Własny obszar filtra: prosta pozioma albo pionowa kreska ma zerową ramkę i bez tego znika. */}
                     <filter id={`${id}-szkic`} filterUnits="userSpaceOnUse" x={0} y={0} width={boxW} height={boxH}>
@@ -80,7 +158,7 @@ function FlowDiagram({ id, title, box, nodes, arrows, steps }: {
                                 style={{ filter: `url(#${id}-szkic)` }} />
                             {a.label && (
                                 <text x={a.label.x} y={a.label.y} textAnchor={a.label.anchor ?? "start"} fill={a.color}
-                                    style={{ fontFamily: HAND, fontSize: 22 }}>
+                                    style={{ fontFamily: HAND, fontSize: 22, fontWeight: 700 }}>
                                     {a.label.lines.map((line, i) => <tspan key={line} x={a.label!.x} dy={i ? 22 : 0}>{line}</tspan>)}
                                 </text>
                             )}
@@ -93,31 +171,33 @@ function FlowDiagram({ id, title, box, nodes, arrows, steps }: {
                     <g key={n.id} style={{ opacity: nodeLit(n.id) ? 1 : 0.4, transition: "opacity .4s" }}>
                         <rect x={n.x} y={n.y} width={n.w} height={n.h} rx={16} fill={n.fill} stroke={INK} strokeWidth={2}
                             style={{ filter: "url(#sb-szkic)" }} />
-                        <svg x={n.x + 10} y={n.y + 10} width={n.w - 20} height={n.h - 48} viewBox={n.art.box} fill="none"
+                        <svg x={n.x + 10} y={n.y + 8} width={n.w - 20} height={n.h - (n.sub ? 64 : 44)} viewBox={n.art.box} fill="none"
                             stroke={INK} strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" style={{ filter: "url(#sb-szkic)" }}>
                             {n.art.body}
                         </svg>
-                        <text x={n.x + n.w / 2} y={n.y + n.h - 14} textAnchor="middle" fill={INK}
-                            style={{ fontFamily: HAND, fontSize: n.title.length > 16 ? 22 : 26, fontWeight: 700 }}>{n.title}</text>
+                        <text x={n.x + n.w / 2} y={n.y + n.h - (n.sub ? 32 : 12)} textAnchor="middle" fill={INK}
+                            style={{ fontFamily: HAND, fontSize: n.title.length > 14 ? 23 : 27, fontWeight: 700 }}>{n.title}</text>
+                        {n.sub && <text x={n.x + n.w / 2} y={n.y + n.h - 10} textAnchor="middle" fill={INK}
+                            style={{ fontFamily: HAND, fontSize: 20 }}>{n.sub}</text>}
                     </g>
                 ))}
             </svg>
             <div role="group" aria-label={`Kroki: ${title}`} className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
                 {steps.map((s, i) => (
-                    <button key={s.label} type="button" aria-pressed={i === index} onClick={() => setIndex(i)} style={{
+                    <button key={s.id} type="button" aria-pressed={i === index} onClick={() => setIndex(i)} style={{
                         minHeight: 44, padding: "4px 14px", fontFamily: HAND, fontSize: 21, color: INK, cursor: "pointer",
-                        background: i === index ? ROLE.you : "#fffdf8", border: `2px solid ${INK}`, borderRadius: "14px 10px 15px 11px",
+                        background: i === index ? ROLE.you : "#fffdf8", border: `${i === index ? 3 : 2}px solid ${INK}`,
+                        borderRadius: "14px 10px 15px 11px", fontWeight: i === index ? 700 : 400,
                     }}>{s.label}</button>
                 ))}
             </div>
-            <figcaption id={`${id}-opis`} aria-live="polite" className="mt-3" style={{
-                padding: "12px 16px", background: "#fffdf8", border: `2px solid ${INK}`, borderRadius: "16px 16px 16px 3px",
-                boxShadow: "3px 4px 0 rgba(47,52,55,.10)", fontSize: 16, lineHeight: 1.5,
-            }}>
+            <figcaption id={`${id}-opis`} aria-live="polite" className="mt-3"
+                style={box({ boxShadow: "3px 4px 0 rgba(47,52,55,.10)", fontSize: 17, lineHeight: 1.5 })}>
                 {step.text}
             </figcaption>
+            {step.card && <div className="mt-3"><ExampleCard example={step.card} /></div>}
             {index < steps.length - 1 && <div className="mt-2 text-end">
-                <Button variant="dark" size="sm" onClick={() => setIndex(index + 1)}>Dalej: {steps[index + 1].label} ›</Button>
+                <Button variant="dark" size="sm" onClick={() => setIndex(index + 1)}>{GUIDE.next}: {steps[index + 1].label} ›</Button>
             </div>}
         </figure>
     );
@@ -147,6 +227,12 @@ const ART = {
         <rect x="8" y="4" width="36" height="24" rx="2" fill={ROLE.agent} /><path d="M3 35h46l-4-7H7z" fill="#fff" />
         <path d="M15 9h18v9H22l-5 4v-4h-2z" fill="#fff" />
     </> },
+    person: { box: "0 0 30 30", body: <>
+        <circle cx="15" cy="9" r="5.5" fill={ROLE.you} /><path d="M5 28c0-7 4.5-12 10-12s10 5 10 12z" fill={ROLE.you} />
+    </> },
+    colleague: { box: "0 0 30 30", body: <>
+        <circle cx="15" cy="9" r="5.5" fill="#e3f3ea" /><path d="M5 28c0-7 4.5-12 10-12s10 5 10 12z" fill="#e3f3ea" />
+    </> },
     notes: { box: "0 0 20 24", body: <>
         <rect x="2.5" y="2.5" width="15" height="19" rx="1.5" fill="#fff" />
         <path d="M6 7.5h1M9 7.5h5.5M6 11.5h1M9 11.5h5.5M6 15.5h1M9 15.5h4" />
@@ -155,6 +241,10 @@ const ART = {
         <path d="M2.5 5A1.5 1.5 0 0 1 4 3.5h4.5l2 2.5H20A1.5 1.5 0 0 1 21.5 7.5v10A1.5 1.5 0 0 1 20 19H4a1.5 1.5 0 0 1-1.5-1.5z" fill={ROLE.google} />
         <path d="M7 10h7M7 13.5h10" stroke="#9aa0a6" />
     </> },
+    folder: { box: "0 0 24 22", body: <>
+        <path d="M2.5 5A1.5 1.5 0 0 1 4 3.5h4.5l2 2.5H20A1.5 1.5 0 0 1 21.5 7.5v10A1.5 1.5 0 0 1 20 19H4a1.5 1.5 0 0 1-1.5-1.5z" fill="#d9d0ee" />
+        <path d="M7 10h7M7 13.5h10" stroke="#5c6266" />
+    </> },
     site: { box: "0 0 24 24", body: <>
         <path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6" fill={ROLE.site} /><ellipse cx="12" cy="6" rx="7" ry="2.5" fill={ROLE.site} />
         <path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" />
@@ -162,282 +252,403 @@ const ART = {
     skills: { box: "0 0 24 22", body: <>
         <rect x="2.5" y="7" width="19" height="12" rx="1.5" fill={ROLE.agent} /><path d="M8.5 7V4.5h7V7M2.5 12h19M11 11v3h2v-3" />
     </> },
+    chat: { box: "0 0 28 24", body: <>
+        <path d="M3 3h22v13H12l-5 5v-5H3z" fill={ROLE.github} /><path d="M8 8h12M8 11.5h8" />
+    </> },
 } satisfies Record<string, Art>;
 
-const knowledge: Flow = {
-    nodes: [
-        { id: "admin", x: 10, y: 20, w: 180, h: 140, fill: "#f6e3e7", title: "Administrator", art: ART.admin },
-        { id: "canon", x: 270, y: 10, w: 180, h: 160, fill: "#e5eef8", title: "Kanon firmy", art: ART.canon },
-        { id: "team", x: 530, y: 20, w: 180, h: 140, fill: "#ece7f6", title: "Projekty zespołu", art: ART.team },
-        { id: "computer", x: 250, y: 290, w: 220, h: 150, fill: "#fdf0e2", title: "Twój komputer", art: ART.computer },
-    ],
-    arrows: [
-        { id: "publish", d: "M192 90L262 90", color: INK, label: { x: 230, y: 118, lines: ["co kilka", "godzin"], anchor: "middle" } },
-        { id: "copy", d: "M360 172L360 280", color: "#3d6a8f", label: { x: 374, y: 214, lines: ["odświeża się", "sama co 4 h"] } },
-        { id: "team", d: "M620 162L620 365L480 365", color: "#6a5a92", both: true, label: { x: 632, y: 236, lines: ["w obie", "strony,", "co godzinę"] } },
-        { id: "proposal", d: "M248 365L100 365L100 170", color: "#b0603a", dashed: true, label: { x: 112, y: 232, lines: ["propozycja:", "„to warto", "zapamiętać”"] } },
-    ],
-    steps: [
-        {
-            label: "Całość", arrows: ["publish", "copy", "team", "proposal"],
-            text: "Kanon, czyli sprawdzona wiedza firmy, leży w jednym miejscu. Każdy ma u siebie jego kopię, która odświeża się sama. Kanon zmienia tylko administrator, a nową wiedzę zgłaszasz mu jako propozycję przez agenta.",
-        },
-        {
-            label: "Administrator publikuje", arrows: ["publish"], nodes: ["admin", "canon"],
-            text: "Administrator decyduje, co trafia do wiedzy firmy. Kanon leży w prywatnym miejscu firmy na GitHubie - dlatego przy instalacji przyjmujesz zaproszenie z GitHuba. Bez niego instalator nie pobierze wiedzy firmy.",
-        },
-        {
-            label: "Kopia u Ciebie", arrows: ["copy"], nodes: ["canon", "computer"],
-            text: "Na Twoim komputerze jest kopia kanonu, w folderze ENVI-Kanon. Odświeża się sama co 4 godziny, nic nie klikasz. Twoja kopia jest tylko do czytania, bo kanon jest wspólny dla wszystkich.",
-        },
-        {
-            label: "Projekty zespołu", arrows: ["team"], nodes: ["team", "computer"],
-            text: "Ty i koledzy pracujecie na tych samych projektach i wymieniacie się wiedzą. Projekty wymieniają się zmianami w obie strony co godzinę.",
-        },
-        {
-            label: "Twoja propozycja", arrows: ["proposal"], nodes: ["computer", "admin"],
-            text: <>Wiesz coś, co przyda się całej firmie? Powiedz agentowi: <i>„To warto zapamiętać dla całej firmy: …”</i>.
-                Agent przygotuje propozycję, a administrator zdecyduje, czy trafi do kanonu.</>,
-        },
-    ],
-};
+type NodeGeo = Omit<FlowNode, "id" | "title" | "sub">;
+type ArrowGeo = Omit<FlowArrow, "id" | "label"> & { label?: Omit<NonNullable<FlowArrow["label"]>, "lines"> };
+type StepGeo = { arrows: string[]; nodes?: string[] };
 
-const sources: Flow = {
-    nodes: [
-        { id: "canon", x: 10, y: 20, w: 170, h: 120, fill: "#e5eef8", title: "Kanon firmy", art: ART.canon },
-        { id: "notes", x: 275, y: 0, w: 170, h: 120, fill: "#fdf0e2", title: "Twoje notatki", art: ART.notes },
-        { id: "drive", x: 540, y: 20, w: 170, h: 120, fill: "#fbf3dc", title: "Dysk Google", art: ART.drive },
-        { id: "skills", x: 10, y: 300, w: 170, h: 120, fill: "#e3f3ea", title: "Skille", art: ART.skills },
-        { id: "site", x: 540, y: 300, w: 170, h: 120, fill: "#ece7f6", title: "Witryna Projektów", art: ART.site },
-        { id: "agent", x: 250, y: 170, w: 220, h: 150, fill: ROLE.agent, title: "Twój agent", art: ART.agent },
-    ],
-    arrows: [
-        { id: "canon", d: "M182 100L246 186", color: "#3d6a8f" },
-        { id: "notes", d: "M360 122L360 164", color: "#b0603a" },
-        { id: "drive", d: "M538 100L474 186", color: "#8a6d12" },
-        { id: "skills", d: "M182 352L246 304", color: "#3d7a5a" },
-        { id: "site", d: "M538 352L474 304", color: "#6a5a92" },
-    ],
-    steps: [
-        {
-            label: "Całość", arrows: ["canon", "notes", "drive", "skills", "site"],
-            text: "Agent (Claude albo Codex) sam z siebie nic o firmie nie wie. Korzysta z kanonu, z Twoich notatek, z dokumentów na Dysku Google i z danych w Witrynie Projektów. Powtarzalne zadania wykonuje skillami, czyli gotowymi umiejętnościami.",
-        },
-        {
-            label: "Kanon", arrows: ["canon"], nodes: ["canon", "agent"],
-            text: "Kanon to wiedza sprawdzona i wspólna dla wszystkich. Agent czyta kanon, który jest na bieżąco poprawiany, więc odpowiada według stanu na dziś, a nie według kopii sprzed miesiąca.",
-        },
-        {
-            label: "Twoje notatki", arrows: ["notes"], nodes: ["notes", "agent"],
-            text: "Własne notatki trzymasz u siebie, w tym samym folderze, a agent z nich także korzysta.",
-        },
-        {
-            label: "Dysk Google", arrows: ["drive"], nodes: ["drive", "agent"],
-            text: "Dokumenty firmy, takie jak umowy, pisma i skany, leżą na Dysku Google. Na Dysku agent ma dokładnie Twoje uprawnienia, ani trochę więcej.",
-        },
-        {
-            label: "Witryna Projektów", arrows: ["site"], nodes: ["site", "agent"],
-            text: "Dane o kontraktach, projektach i sprawach są w Witrynie Projektów. Agent wie, gdzie szukać dokumentów, bo każdy kontrakt w Witrynie wskazuje swój folder na Dysku.",
-        },
-        {
-            label: "Skille", arrows: ["skills"], nodes: ["skills", "agent"],
-            text: <>Skille przychodzą z Dysku firmowego przy instalacji i przy każdej aktualizacji - niczego nie instalujesz sam.
-                Zapytaj agenta: <i>„Jakie masz skille i do czego służą?”</i></>,
-        },
-    ],
-};
+/** Skleja tekst z pliku danych z geometrią rysunku po wspólnych identyfikatorach. */
+function flow<T extends FlowText>(text: T, geo: {
+    nodes: Record<keyof T["nodes"], NodeGeo>; arrows: Record<keyof T["arrows"], ArrowGeo>; steps: Record<keyof T["steps"], StepGeo>;
+}) {
+    const ids = <K extends string>(o: Record<K, unknown>) => Object.keys(o) as K[];
+    return {
+        title: text.title,
+        nodes: ids(geo.nodes).map(id => ({ id, ...text.nodes[id], ...geo.nodes[id] })) as FlowNode[],
+        arrows: ids(geo.arrows).map(id => {
+            const g = geo.arrows[id];
+            return { id, ...g, label: g.label && { ...g.label, lines: text.arrows[id] } };
+        }) as FlowArrow[],
+        steps: ids(geo.steps).map(id => ({ id, ...text.steps[id], ...geo.steps[id] })) as FlowStep[],
+    };
+}
 
-const docIcon = (extra: React.ReactNode) => <Sketch w={96} h={74} box="0 0 60 46">
-    <path d="M10 4h22l7 7v31H10z" fill="#fff" /><path d="M32 4v7h7" /><path d="M15 17h18M15 22h18M15 27h12" stroke="#9aa0a6" />{extra}
-</Sketch>;
+const W = 190, H = 130;
+const uSiebie = flow(FLOWS.uSiebie, {
+    nodes: {
+        admin: { x: 10, y: 10, w: W, h: H, fill: "#f6e3e7", art: ART.admin },
+        kanon: { x: 280, y: 10, w: W, h: H, fill: "#e5eef8", art: ART.canon },
+        teczki: { x: 10, y: 200, w: W, h: H, fill: "#ece7f6", art: ART.team },
+        ty: { x: 280, y: 200, w: W, h: H, fill: "#fdf0e2", art: ART.computer },
+        dysk: { x: 10, y: 390, w: W, h: H, fill: "#fbf3dc", art: ART.drive },
+        ps: { x: 280, y: 390, w: W, h: H, fill: ROLE.site, art: ART.site },
+    },
+    arrows: {
+        read: { d: "M375 142L375 194", color: "#3d6a8f", label: { x: 387, y: 176 } },
+        write: { d: "M276 265L204 265", color: "#6a5a92", both: true, label: { x: 240, y: 252, anchor: "middle" } },
+        drive: { d: "M105 388L105 336", color: "#8a6d12", label: { x: 117, y: 368 } },
+        ps: { d: "M375 388L375 336", color: "#3d7a5a", label: { x: 387, y: 368 } },
+        promote: { d: "M105 198L105 146", color: "#b0603a", label: { x: 117, y: 178 } },
+        publish: { d: "M202 75L274 75", color: "#b0603a" },
+        report: { d: "M282 205L198 142", color: INK, dashed: true, label: { x: 252, y: 156 } },
+    },
+    steps: {
+        calosc: { arrows: ["read", "write", "drive", "ps", "promote", "publish", "report"] },
+        czytasz: { arrows: ["read"], nodes: ["kanon", "ty"] },
+        piszesz: { arrows: ["write"], nodes: ["ty", "teczki"] },
+        dysk: { arrows: ["drive", "ps"], nodes: ["dysk", "teczki", "ps", "ty"] },
+        kanon: { arrows: ["promote", "publish"], nodes: ["teczki", "admin", "kanon"] },
+        blad: { arrows: ["report"], nodes: ["ty", "admin"] },
+    },
+});
 
-const documentPanels: Panel[] = [
-    { title: "Zlecasz", role: "you", icon: "desk", bubbles: [{ who: "you", text: "„Zaplanuj opracowanie [dokument] z tych materiałów.”" }] },
-    {
-        title: "Agent planuje", role: "agent", caption: "plan",
-        icon: <Sketch w={80} h={62} box="0 0 52 40"><rect x="8" y="4" width="36" height="24" rx="2" fill={ROLE.agent} />
-            <path d="M3 35h46l-4-7H7z" fill="#fff" /><path d="M15 9h18v9H22l-5 4v-4h-2z" fill="#fff" /></Sketch>,
-        bubbles: [{ who: "agent", text: "„Jednego załącznika brakuje, jeden skan jest nieczytelny. Proponuję układ według wzoru i pracę w kilku podejściach.”" }],
+const skille = flow(FLOWS.skille, {
+    nodes: {
+        ty: { x: 10, y: 10, w: 180, h: H, fill: "#fdf0e2", art: ART.person },
+        agent: { x: 290, y: 10, w: 180, h: H, fill: ROLE.agent, art: ART.agent },
+        skille: { x: 10, y: 300, w: 180, h: H, fill: "#e3f3ea", art: ART.skills },
+        wynik: { x: 290, y: 300, w: 180, h: H, fill: "#fffdf8", art: ART.notes },
     },
-    {
-        title: "Akceptujesz", role: "you", icon: "desk", tag: "Twoja decyzja",
-        bubbles: [{ who: "you", text: "„Plan zatwierdzam, zaczynamy.”" }],
-        note: "Bez Twojej akceptacji pisanie się nie zaczyna.",
+    arrows: {
+        ask: { d: "M192 50L286 50", color: INK, label: { x: 240, y: 38, anchor: "middle" } },
+        confirm: { d: "M286 105L194 105", color: "#b0603a", dashed: true, label: { x: 240, y: 132, anchor: "middle" } },
+        recipe: { d: "M150 296L300 146", color: "#3d7a5a", label: { x: 244, y: 250 } },
+        work: { d: "M380 144L380 296", color: "#3d6a8f", label: { x: 368, y: 210, anchor: "end" } },
+        request: { d: "M100 144L100 296", color: "#6a5a92", dashed: true, label: { x: 112, y: 200 } },
     },
-    {
-        title: "Porcja po porcji", role: "agent",
-        icon: docIcon(<><path d="M40 44l12-20 4 2.5-12 20-5 2z" fill={ROLE.google} /></>),
-        bubbles: [{ who: "agent", text: "„Każde ustalenie ze wskazaniem źródła.”" }],
-        note: "Po każdej porcji agent zapisuje, co zrobione i co dalej, a pytania do Ciebie ma gotowe z opcjami.",
+    steps: {
+        calosc: { arrows: ["ask", "confirm", "recipe", "work", "request"] },
+        prosba: { arrows: ["ask"], nodes: ["ty", "agent"] },
+        dobor: { arrows: ["recipe"], nodes: ["skille", "agent"] },
+        kroki: { arrows: ["work"], nodes: ["agent", "wynik"] },
+        decyzja: { arrows: ["confirm"], nodes: ["agent", "ty"] },
+        zgloszenie: { arrows: ["request"], nodes: ["ty", "skille"] },
     },
-    {
-        title: "Kontrola", role: "agent",
-        icon: docIcon(<><circle cx="42" cy="27" r="9" fill="#e5eef8" fillOpacity={0.7} /><path d="M48.5 33.5l9 9" strokeWidth={3} />
-            <path d="M38 27l3 3 5.5-6" stroke="#3d7a5a" strokeWidth={2} /></>),
-        bubbles: [{ who: "agent", text: "„Czytam sam dokument, nie raport z pracy. Sprawdzam cytaty w źródłach.”" }],
-    },
-    {
-        title: "Dla klienta", role: "agent",
-        icon: docIcon(<><circle cx="46" cy="36" r="7" fill={ROLE.github} /><path d="M42.5 36l2.5 2.5 4.5-5" strokeWidth={1.8} /></>),
-        bubbles: [{ who: "agent", text: "„Gotowe: styl firmy, bez śladów pracy agenta, plik Word.”" }],
-    },
-];
+});
 
-const agentIcon = <Sketch w={80} h={62} box="0 0 52 40"><rect x="8" y="4" width="36" height="24" rx="2" fill={ROLE.agent} />
-    <path d="M3 35h46l-4-7H7z" fill="#fff" /><path d="M15 11h22M15 17h14" /></Sketch>;
-
-const siteIcon = <Sketch w={56} h={60} box="0 0 24 24">
-    <path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6" fill={ROLE.site} /><ellipse cx="12" cy="6" rx="7" ry="2.5" fill={ROLE.site} />
-    <path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" /></Sketch>;
-
-/** Zapowiedź: zapis w Witrynie włączany pracownikom po kolei (decyzja właściciela 2026-10-08). */
-const letterPanels: Panel[] = [
-    { title: "Prosisz", role: "you", icon: "desk", tag: "jeszcze nie działa", bubbles: [{ who: "you", text: "„Zarejestruj pismo do [adresat] w sprawie [kontrakt].”" }] },
-    { title: "Agent dopytuje", role: "agent", icon: agentIcon, bubbles: [{ who: "agent", text: "„Czy to odpowiedź na wcześniejsze pismo? Jakie dołączyć załączniki?”" }] },
-    {
-        title: "Dobiera sprawę", role: "agent", icon: agentIcon,
-        bubbles: [{ who: "agent", text: "„Pasuje sprawa [nazwa], bo dotyczy tego kontraktu i adresata.”" }],
-        note: "Gdy nic nie pasuje, agent nie zgaduje, tylko pyta Ciebie.",
+const dwieStrony = flow(FLOWS.dwieStrony, {
+    nodes: {
+        rozmowa: { x: 10, y: 10, w: 180, h: 140, fill: "#fdf0e2", art: ART.computer },
+        app: { x: 290, y: 10, w: 180, h: 140, fill: ROLE.site, art: ART.site },
+        program: { x: 140, y: 270, w: 190, h: 140, fill: ROLE.agent, art: ART.agent },
     },
-    {
-        title: "Zgoda człowieka", role: "you", icon: "desk", tag: "Twoja decyzja",
-        bubbles: [{ who: "agent", text: "„Oto podsumowanie. Zapisać? Pisma nie da się cofnąć.”" }, { who: "you", text: "„Tak.”" }],
+    arrows: {
+        zapis: { d: "M192 70L286 70", color: "#b0603a", label: { x: 240, y: 100, anchor: "middle" } },
+        analiza: { d: "M380 154L300 266", color: "#3d6a8f", both: true, label: { x: 348, y: 226 } },
     },
-    {
-        title: "Zapis w Witrynie", role: "site", icon: siteIcon, caption: "numer nadaje Witryna",
-        bubbles: [{ who: "agent", text: "„Zapisuję pismo w rejestrze.”" }],
-        note: "Agent zapisuje pismo tylko raz. Jeśli coś pójdzie nie tak, nie ponawia, tylko sprawdza, czy pismo powstało.",
+    steps: {
+        calosc: { arrows: ["zapis", "analiza"] },
+        rozmowa: { arrows: ["zapis"], nodes: ["rozmowa", "app"] },
+        aplikacja: { arrows: ["analiza"], nodes: ["app", "program"] },
     },
-    { title: "Sprawdzone", role: "agent", icon: agentIcon, tag: "jeszcze nie działa", bubbles: [{ who: "agent", text: "„Gotowe. Pismo jest w rejestrze, dokument na Dysku. Oto numer, link i sprawa.”" }] },
-];
+});
 
-/** Polecenia do skopiowania: tylko czytające albo zgłaszające, bez zapisów w Witrynie. */
-const PROMPTS: [string, string][] = [
-    ["Opowiedz mi, jak działa nasz Second Brain i od czego mam zacząć w mojej pracy.", "Dobre pierwsze zdanie."],
-    ["Co wiemy o kontrakcie [numer albo nazwa]? Streść ustalenia i otwarte sprawy.", "Agent zbierze to, co jest w kanonie, w projekcie i w Witrynie Projektów."],
-    ["Przeanalizuj ten przetarg: ryzyka i elementy kosztotwórcze.", "Agent przejdzie przez dokumenty przetargu według firmowego sposobu wyceny."],
-    ["To warto zapamiętać dla całej firmy: …", "Agent przygotuje propozycję dla administratora."],
-    ["Coś mi nie działa: [co widzisz]. Sprawdź, o co chodzi.", "Agent sprawdzi, co się dzieje, i powie, co zrobić albo komu to zgłosić."],
-];
+const zespol = flow(FLOWS.zespol, {
+    nodes: {
+        chat: { x: 160, y: 10, w: 160, h: 120, fill: ROLE.github, art: ART.chat },
+        ty: { x: 10, y: 160, w: 140, h: 120, fill: "#fdf0e2", art: ART.person },
+        kolega: { x: 330, y: 160, w: 140, h: 120, fill: "#e3f3ea", art: ART.colleague },
+        teczka: { x: 160, y: 300, w: 160, h: 120, fill: "#ece7f6", art: ART.folder },
+    },
+    arrows: {
+        tyChat: { d: "M100 156L172 120", color: "#b0603a", label: { x: 30, y: 148 } },
+        chatKolega: { d: "M308 120L380 156", color: "#b0603a" },
+        tyTeczka: { d: "M80 284L156 340", color: "#6a5a92", both: true },
+        kolegaTeczka: { d: "M400 284L324 340", color: "#6a5a92", both: true },
+    },
+    steps: {
+        calosc: { arrows: ["tyChat", "chatKolega", "tyTeczka", "kolegaTeczka"] },
+        biore: { arrows: ["tyChat", "chatKolega"], nodes: ["ty", "chat", "kolega"] },
+        praca: { arrows: ["tyTeczka"], nodes: ["ty", "teczka", "kolega"] },
+        zwalniam: { arrows: ["tyChat", "chatKolega", "kolegaTeczka"], nodes: ["ty", "chat", "kolega", "teczka"] },
+    },
+});
 
-function CopyPrompt({ text, hint }: { text: string; hint: string }) {
-    const [label, setLabel] = useState("Kopiuj");
-    async function copy() {
-        try {
-            await navigator.clipboard.writeText(text);
-            setLabel("Skopiowano");
-        } catch {
-            setLabel("Zaznacz i skopiuj ręcznie");
-        }
-        setTimeout(() => setLabel("Kopiuj"), 2500);
-    }
+/** Klikany element rysunku: przycisk dostępny z klawiatury; wybrany ma grubą ramkę i znacznik, nie tylko kolor. */
+function HotNode({ x, y, w, h, fill, title, sub, selected, onSelect }: {
+    x: number; y: number; w: number; h: number; fill: string; title: string; sub?: string; selected: boolean; onSelect: () => void;
+}) {
     return (
-        <li style={{ background: "#fffdf8", border: `2px solid ${INK}`, borderRadius: "16px 16px 3px 16px", padding: "10px 14px" }}>
-            <div style={{ fontFamily: HAND, fontSize: 22, lineHeight: 1.2 }}>„{text}”</div>
-            <div className="d-flex align-items-center justify-content-between gap-2 mt-1">
-                <span className="text-muted" style={{ fontSize: 14 }}>{hint}</span>
-                <Button variant="outline-dark" size="sm" onClick={copy} style={{ minHeight: 36, whiteSpace: "nowrap" }}>
-                    {label}
-                </Button>
-            </div>
-        </li>
+        <g role="button" tabIndex={0} aria-pressed={selected} aria-label={sub ? `${title} (${sub})` : title} className="sb-hot"
+            onClick={onSelect} onKeyDown={onActivate(onSelect)} style={{ cursor: "pointer" }}>
+            {selected && <rect x={x - 5} y={y - 5} width={w + 10} height={h + 10} rx={18} fill="none" stroke={INK} strokeWidth={2} strokeDasharray="6 5" />}
+            <rect className="sb-hot-box" x={x} y={y} width={w} height={h} rx={14} fill={fill} stroke={INK} strokeWidth={selected ? 4 : 2} />
+            <text x={x + w / 2} y={sub ? y + h / 2 - 2 : y + h / 2 + 8} textAnchor="middle" fill={INK}
+                style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{selected ? `▸ ${title}` : title}</text>
+            {sub && <text x={x + w / 2} y={y + h / 2 + 22} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 21 }}>{sub}</text>}
+        </g>
     );
 }
 
-const FAQ: [string, React.ReactNode, string?][] = [
-    ["Czym kanon różni się od moich notatek?",
-        "Kanon to wiedza sprawdzona i wspólna dla wszystkich, dlatego Twoja kopia jest tylko do czytania. Własne notatki trzymasz u siebie, w tym samym folderze, a agent z nich także korzysta.",
-        "Gdzie mam trzymać swoje notatki i co jest w kanonie na temat [temat]?"],
-    ["Skąd agent bierze dokumenty i dane?",
-        "Dokumenty firmy leżą na Dysku Google, a dane o kontraktach, projektach i sprawach są w Witrynie Projektów. Każdy kontrakt w Witrynie wskazuje swój folder na Dysku.",
-        "Gdzie są dokumenty kontraktu [numer]?"],
-    ["Coś nie działa. Co robię?",
-        "Najpierw opisz agentowi, co widzisz. Jeśli to nie pomoże, wyślij administratorowi plik z przebiegiem instalacji - gdzie go znaleźć, mówi zakładka Instalator.",
-        "Sprawdź, czy mój Second Brain jest aktualny i działa."],
-    ["Dlaczego nie ma tu pełnej instrukcji?",
-        "Instrukcja opisująca szczegóły rozjeżdża się z rzeczywistością już po kilku tygodniach, a nikt nie zauważa, że jest nieaktualna. Ta strona pokazuje tylko to, co się nie zmienia: jak płynie wiedza i kto za co odpowiada. Wszystko inne zna agent, bo czyta kanon, który jest na bieżąco poprawiany."],
-];
+const MAP_GEO: Record<MapNodeId, { x: number; y: number; w: number; h: number; fill: string }> = {
+    zespol: { x: 10, y: 10, w: 130, h: 64, fill: "#e3f3ea" },
+    ty: { x: 175, y: 10, w: 130, h: 64, fill: ROLE.you },
+    agent: { x: 130, y: 118, w: 220, h: 84, fill: ROLE.agent },
+    kanon: { x: 25, y: 296, w: 190, h: 80, fill: "#e5eef8" },
+    teczki: { x: 25, y: 390, w: 190, h: 80, fill: "#ece7f6" },
+    skille: { x: 25, y: 484, w: 190, h: 80, fill: "#e3f3ea" },
+    ps: { x: 265, y: 296, w: 190, h: 46, fill: ROLE.site },
+    fidman: { x: 265, y: 350, w: 190, h: 46, fill: ROLE.site },
+    fin: { x: 265, y: 404, w: 190, h: 46, fill: ROLE.site },
+    dysk: { x: 250, y: 478, w: 220, h: 50, fill: ROLE.google },
+    poczta: { x: 250, y: 540, w: 220, h: 50, fill: ROLE.github },
+};
+
+function EcosystemMap({ selected, onSelect, onOpen }: {
+    selected: MapNodeId; onSelect: (id: MapNodeId) => void; onOpen: (screen: ScreenId) => void;
+}) {
+    const node = MAP.nodes[selected];
+    const target = SCREENS.find(s => s.id === node.screen)!;
+    const line = { fill: "none", stroke: INK, strokeWidth: 2, strokeLinecap: "round" as const, markerEnd: "url(#sb-mapa-grot)" };
+    return (
+        <div>
+            <svg viewBox="0 0 480 600" aria-label={MAP.title} role="group"
+                style={{ width: "100%", maxWidth: 560, height: "auto", display: "block", margin: "0 auto", color: INK }}>
+                <defs>
+                    <marker id="sb-mapa-grot" orient="auto" markerWidth={8} markerHeight={8} refX={5} refY={4}>
+                        <path d="M0 0L8 4L0 8z" fill={INK} />
+                    </marker>
+                </defs>
+                <g aria-hidden="true">
+                    <rect x={10} y={250} width={220} height={340} rx={18} fill="#fffdf8" stroke={INK} strokeWidth={2} strokeDasharray="10 6" />
+                    <text x={120} y={282} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{MAP.groups.sb}</text>
+                    <rect x={250} y={250} width={220} height={210} rx={18} fill="#fffdf8" stroke={INK} strokeWidth={2} strokeDasharray="10 6" />
+                    <text x={360} y={282} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{MAP.groups.systems}</text>
+                    <path d="M240 76V112" {...line} />
+                    <text x={250} y={100} fill={INK} style={{ fontFamily: HAND, fontSize: 20 }}>{MAP.links.talk}</text>
+                    <path d="M307 42H460V244" {...line} strokeDasharray="7 6" />
+                    <text x={318} y={68} fill={INK} style={{ fontFamily: HAND, fontSize: 20 }}>{MAP.links.self}</text>
+                    <path d="M18 76V430H20" {...line} strokeDasharray="7 6" />
+                    <path d="M180 204L130 246" {...line} />
+                    <path d="M300 204L350 246" {...line} />
+                    <path d="M240 204V503H244" {...line} />
+                    <path d="M240 503V565H244" {...line} />
+                </g>
+                {(Object.keys(MAP_GEO) as MapNodeId[]).map(id => (
+                    <HotNode key={id} {...MAP_GEO[id]} title={MAP.nodes[id].title} sub={(MAP.nodes[id] as { sub?: string }).sub}
+                        selected={id === selected} onSelect={() => onSelect(id)} />
+                ))}
+            </svg>
+            <div aria-live="polite" className="mt-3" style={box({ boxShadow: "3px 4px 0 rgba(47,52,55,.10)" })}>
+                <div style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700, lineHeight: 1.1 }}>{node.title}</div>
+                <div style={{ fontSize: 17, lineHeight: 1.5 }}>{node.text}</div>
+                <Button variant="dark" size="sm" className="mt-2" onClick={() => onOpen(node.screen)}>
+                    {GUIDE.goTo} {SCREENS.indexOf(target) + 1}: {target.short} ›
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+const DOOR_ART: Record<DoorId, Art> = {
+    agent: ART.agent,
+    aplikacja: ART.site,
+    pomoc: { box: "0 0 24 24", body: <><circle cx="12" cy="12" r="10" fill={ROLE.google} /><path d="M9 9.5a3 3 0 1 1 4 2.8c-.7.3-1 .8-1 1.5v.7M12 17.5v.3" strokeWidth={2} /></> },
+};
+
+/** Trzy drzwi: kliknięte się otwierają i pokazują, co za nimi, a pod rysunkiem stoi karta przykładu. */
+function Doors() {
+    const [open, setOpen] = useState<DoorId>("agent");
+    const ids = Object.keys(DOORS) as DoorId[];
+    return (
+        <div>
+            <svg viewBox="0 0 480 330" role="group" aria-label="Trzy drzwi: agent, aplikacja, Pomoc"
+                style={{ width: "100%", maxWidth: 600, height: "auto", display: "block", margin: "0 auto" }}>
+                {ids.map((id, i) => {
+                    const x = 20 + i * 160, isOpen = id === open, door = DOORS[id], art = DOOR_ART[id];
+                    const select = () => setOpen(id);
+                    return (
+                        <g key={id} role="button" tabIndex={0} aria-pressed={isOpen} aria-label={`Drzwi: ${door.title}`} className="sb-hot"
+                            onClick={select} onKeyDown={onActivate(select)} style={{ cursor: "pointer" }}>
+                            <rect x={x - 6} y={4} width={132} height={322} fill="transparent" />
+                            <rect x={x} y={12} width={120} height={38} rx={8} fill="#fffdf8" stroke={INK} strokeWidth={isOpen ? 3 : 2} />
+                            <text x={x + 60} y={40} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{door.title}</text>
+                            <rect className="sb-hot-box" x={x} y={60} width={120} height={190} fill={isOpen ? "#fffdf8" : "#ecebe6"} stroke={INK} strokeWidth={isOpen ? 4 : 2} />
+                            {isOpen ? <>
+                                <svg x={x + 30} y={110} width={80} height={80} viewBox={art.box} fill="none" stroke={INK} strokeWidth={1.4}
+                                    strokeLinecap="round" strokeLinejoin="round">{art.body}</svg>
+                                <path d={`M${x} 60L${x + 26} 74V236L${x} 250z`} fill="#c9a77c" stroke={INK} strokeWidth={2} />
+                            </> : <>
+                                <rect x={x + 8} y={68} width={104} height={174} fill="#c9a77c" stroke={INK} strokeWidth={2} />
+                                <circle cx={x + 98} cy={160} r={5} fill={INK} />
+                            </>}
+                            {door.lines.map((l, j) => (
+                                <text key={l} x={x + 60} y={276 + j * 22} textAnchor="middle" fill={INK}
+                                    style={{ fontFamily: HAND, fontSize: 20, fontWeight: isOpen ? 700 : 400 }}>{l}</text>
+                            ))}
+                        </g>
+                    );
+                })}
+            </svg>
+            <div className="mt-3"><ExampleCard example={DOORS[open].card} /></div>
+        </div>
+    );
+}
+
+const SYNC_FILL: Record<SyncState, string> = { ok: "#4f9d69", pracuje: "#4f9d69", czeka: "#e2b93b", stop: "#c45a4a", brak: "#a3a7ab" };
+
+/** Znak przy zegarze w pięciu stanach; każdy stan ma własny kształt albo ruch i słowo w dymku, nie tylko kolor. */
+function SyncIcon() {
+    const [state, setState] = useState<SyncState>("ok");
+    const s = SYNC.states[state];
+    const spin = state === "pracuje" && motionAllowed();
+    return (
+        <figure className="mb-0">
+            <svg viewBox="0 0 360 170" role="img" aria-label={`${SYNC.title}: ${s.word}, ${s.look}`}
+                style={{ width: "100%", maxWidth: 480, height: "auto", display: "block", margin: "0 auto" }}>
+                <path d="M190 10h150a8 8 0 0 1 8 8v40a8 8 0 0 1-8 8h-100l-10 14-10-14h-30a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z"
+                    fill="#fffdf8" stroke={INK} strokeWidth={2} />
+                <text x={265} y={46} textAnchor="middle" fill={INK} style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700 }}>{s.word}</text>
+                <rect x={0} y={100} width={360} height={64} rx={6} fill="#ecebe6" stroke={INK} strokeWidth={2} />
+                <text x={16} y={138} fill="#5c6266" style={{ fontFamily: HAND, fontSize: 20 }}>{SYNC.tray}</text>
+                <path d="M182 128l8-8 8 8" fill="none" stroke={INK} strokeWidth={2} />
+                <g transform="translate(230 132)">
+                    <circle r={22} fill={SYNC_FILL[state]} stroke={INK} strokeWidth={2} />
+                    <g fill="#fff" stroke={INK} strokeWidth={1.2}>
+                        {[0, 120, 240].map(a => <path key={a} transform={`rotate(${a})`} d="M0 -2C4 -8 4 -15 0 -18C-3 -12 -3 -6 0 -2z" />)}
+                        <circle r={3} />
+                        {spin && <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="1.6s" repeatCount="indefinite" />}
+                    </g>
+                    {state === "czeka" && <circle cx={16} cy={-16} r={7} fill={INK} stroke="#fff" strokeWidth={2} />}
+                    {state === "stop" && <path d="M-20 20L20 -20" stroke={INK} strokeWidth={4} strokeLinecap="round" />}
+                    {state === "brak" && <path d="M-15 0H15" stroke={INK} strokeWidth={5} strokeLinecap="round" />}
+                </g>
+                <g transform="translate(305 132)" fill="none" stroke={INK} strokeWidth={2}>
+                    <circle r={16} fill="#fff" /><path d="M0 -9V0L7 4" />
+                </g>
+            </svg>
+            <div role="group" aria-label={`Stany: ${SYNC.title}`} className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+                {(Object.keys(SYNC.states) as SyncState[]).map(k => (
+                    <button key={k} type="button" aria-pressed={k === state} onClick={() => setState(k)} style={{
+                        minHeight: 44, padding: "4px 12px", fontSize: 15, color: INK, cursor: "pointer",
+                        background: k === state ? ROLE.you : "#fffdf8", border: `${k === state ? 3 : 2}px solid ${INK}`, borderRadius: 12,
+                        fontWeight: k === state ? 700 : 400,
+                    }}>{SYNC.states[k].word}</button>
+                ))}
+            </div>
+            <figcaption aria-live="polite" className="mt-3" style={box({ fontSize: 17, lineHeight: 1.5 })}>
+                <strong>{s.look}:</strong> {s.text}
+                <div className="text-muted mt-1" style={{ fontSize: 14 }}>{SYNC.hint}</div>
+            </figcaption>
+        </figure>
+    );
+}
+
+function Examples() {
+    const [filter, setFilter] = useState<keyof typeof EXAMPLE_FILTERS>("all");
+    const shown = EXAMPLES.filter(e => filter === "all" || e.kind === filter);
+    return (
+        <div>
+            <div role="group" aria-label="Pokaż karty" className="d-flex flex-wrap mb-3" style={{ gap: 8 }}>
+                {(Object.keys(EXAMPLE_FILTERS) as (keyof typeof EXAMPLE_FILTERS)[]).map(k => (
+                    <button key={k} type="button" aria-pressed={k === filter} onClick={() => setFilter(k)} style={{
+                        minHeight: 44, padding: "4px 14px", fontFamily: HAND, fontSize: 21, color: INK, cursor: "pointer",
+                        background: k === filter ? ROLE.you : "#fffdf8", border: `${k === filter ? 3 : 2}px solid ${INK}`, borderRadius: 12,
+                        fontWeight: k === filter ? 700 : 400,
+                    }}>{EXAMPLE_FILTERS[k]}</button>
+                ))}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))", gap: 16 }}>
+                {shown.map(e => <ExampleCard key={e.says} example={e} />)}
+            </div>
+        </div>
+    );
+}
+
+function ScreenBody({ id, mapSel, onMapSelect, onOpen }: {
+    id: ScreenId; mapSel: MapNodeId; onMapSelect: (id: MapNodeId) => void; onOpen: (s: ScreenId) => void;
+}) {
+    switch (id) {
+        case "mapa": return <EcosystemMap selected={mapSel} onSelect={onMapSelect} onOpen={onOpen} />;
+        case "u-siebie": return <FlowDiagram id="sb-u-siebie" box="0 0 480 530" {...uSiebie} />;
+        case "gdzie": return <Doors />;
+        case "przyklady": return <Examples />;
+        case "skille": return <FlowDiagram id="sb-skille" box="0 0 480 440" {...skille} />;
+        case "dwie-strony": return <FlowDiagram id="sb-dwie-strony" box="0 0 480 420" {...dwieStrony} />;
+        case "zespol": return <>
+            <FlowDiagram id="sb-zespol" box="0 0 480 425" {...zespol} />
+            <SyncIcon />
+        </>;
+    }
+}
+
+/** Pierwszy element mapy prowadzący na dany ekran - mapa pokazuje, skąd wracasz. */
+function mapNodeFor(screen: ScreenId, current: MapNodeId): MapNodeId {
+    if (MAP.nodes[current].screen === screen) return current;
+    return (Object.keys(MAP.nodes) as MapNodeId[]).find(id => MAP.nodes[id].screen === screen) ?? current;
+}
 
 export default function SbHowItWorks({ onShowPostInstall }: { onShowPostInstall: () => void }) {
+    const [screen, setScreen] = useState<ScreenId>("mapa");
+    const [mapSel, setMapSel] = useState<MapNodeId>("agent");
+    const heading = useRef<HTMLHeadingElement>(null);
+    const moved = useRef(false);
+    const index = SCREENS.findIndex(s => s.id === screen);
+    const current = SCREENS[index];
+
+    // Po zmianie ekranu fokus idzie na tytuł - czytnik ekranu i klawiatura zaczynają od początku ekranu.
+    useEffect(() => {
+        if (moved.current) heading.current?.focus();
+        moved.current = true;
+    }, [screen]);
+
+    function goTo(next: ScreenId) {
+        if (next !== "mapa") setMapSel(sel => mapNodeFor(next, sel));
+        setScreen(next);
+    }
+
     return (
         <section aria-label="Jak to działa" style={{ color: INK }}>
             <SketchDefs />
-            <p style={{ fontSize: 18 }}>
-                Second Brain to wspólna pamięć firmy. To, czego nauczyliśmy się przy kontraktach, przetargach i projektach,
-                jest zapisane tak, żeby agent (Claude albo Codex) mógł z tego korzystać razem z Tobą.
-            </p>
-            <div className="mb-4" style={{
-                padding: "12px 16px", background: "#f3f8ff", border: `2px solid ${INK}`, borderRadius: "14px 20px 12px 18px / 18px 12px 20px 14px",
-            }}>
-                <div style={{ fontFamily: HAND, fontSize: 26, fontWeight: 700, lineHeight: 1.1 }}>Tu są zasady, nie instrukcja obsługi</div>
-                Szczegóły, takie jak nazwy folderów, kolejne kroki czy ustawienia, zmieniają się co kilka tygodni. O nie pytasz
-                agenta: on czyta aktualną wiedzę firmy, a nie kopię sprzed miesiąca. Klikaj przyciski pod rysunkami.
+            <style>{`.sb-hot:focus{outline:none}.sb-hot:focus-visible .sb-hot-box{stroke:#1a5fb4;stroke-width:5px}`}</style>
+            <nav aria-label={GUIDE.navLabel} className="mb-3">
+                <ol className="list-unstyled d-flex flex-wrap m-0" style={{ gap: 6 }}>
+                    {SCREENS.map((s, i) => {
+                        const active = s.id === screen;
+                        return (
+                            <li key={s.id}>
+                                <button type="button" aria-current={active ? "step" : undefined} onClick={() => goTo(s.id)} style={{
+                                    minHeight: 40, padding: "2px 12px", fontSize: 15, color: active ? "#fff" : INK, cursor: "pointer",
+                                    background: active ? INK : "#fffdf8", border: `2px solid ${INK}`, borderRadius: 20, fontWeight: active ? 700 : 400,
+                                }}>{i + 1}. {s.short}</button>
+                            </li>
+                        );
+                    })}
+                </ol>
+            </nav>
+
+            <div className="d-flex flex-wrap align-items-center justify-content-between mb-2" style={{ gap: 8 }}>
+                <span className="text-muted" style={{ fontSize: 14 }}>{GUIDE.screenOf(index + 1, SCREENS.length)}</span>
+                {screen !== "mapa" && <Button variant="outline-dark" size="sm" onClick={() => goTo("mapa")}>‹ {GUIDE.backToMap}</Button>}
             </div>
-
-            <FlowDiagram id="sb-wiedza" title="Jedna wiedza, wiele komputerów" box="0 0 720 450" {...knowledge} />
-            <FlowDiagram id="sb-agent" title="Z czym pracuje Twój agent" box="0 0 720 430" {...sources} />
-
-            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700 }}>Pierwsze kroki</h5>
-            <ol className="mb-3">
-                <li>Otwórz agenta w folderze <code>ENVI-Kanon</code> - jak, mówi{" "}
-                    <Button variant="link" className="p-0 align-baseline" onClick={onShowPostInstall}>„Po instalacji - co dalej”</Button>.</li>
-                <li>Wpisz albo wklej jedno z poleceń niżej.</li>
-                <li>Potem po prostu mów, czego potrzebujesz, własnymi słowami.</li>
-            </ol>
-            <ul className="list-unstyled d-grid mb-5" style={{ gap: 12, gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
-                {PROMPTS.map(([text, hint]) => <CopyPrompt key={text} text={text} hint={hint} />)}
-            </ul>
-
-            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700, lineHeight: 1.1 }}>Przykład: duży dokument, porcja po porcji</h5>
-            <p className="text-muted">
-                To tylko przykład. Ty zlecasz i zatwierdzasz, agent wykonuje i sprawdza swoją pracę. Inne procesy działają podobnie.
-            </p>
-            <ol className="list-unstyled mb-5" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 22 }}>
-                {documentPanels.map((p, i) => <ComicPanel key={p.title} panel={p} index={i} />)}
-            </ol>
-
-            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700, lineHeight: 1.1 }}>
-                Wkrótce: zapis w Witrynie Projektów{" "}
-                <span style={{
-                    display: "inline-block", fontSize: 20, padding: "0 10px", background: "#fff3c4",
-                    border: `2px solid ${INK}`, borderRadius: "10px 14px 9px 13px", verticalAlign: "middle",
-                }}>zapowiedź</span>
+            <h5 ref={heading} tabIndex={-1} style={{ fontFamily: HAND, fontSize: 34, fontWeight: 700, lineHeight: 1.1, outline: "none" }}>
+                {current.title}
             </h5>
-            <p>
-                Agent będzie też zapisywał w Witrynie Projektów: zarejestruje pismo albo uzupełni dane kontraktu z umowy.
-                Włączamy to po kolei, osoba po osobie. <strong>Na razie działa tylko u administratora.</strong> Nie proś jeszcze agenta o taki
-                zapis - u Ciebie nie zadziała. Administrator da Ci znać, kiedy go włączymy.
-            </p>
-            <p className="text-muted">
-                Tak to będzie wyglądać przy piśmie. Pisma w rejestrze nie da się cofnąć, dlatego przed zapisem zawsze jest
-                podsumowanie i zgoda człowieka.
-            </p>
-            <ol className="list-unstyled mb-3" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 22 }}>
-                {letterPanels.map((p, i) => <ComicPanel key={p.title} panel={p} index={i} />)}
-            </ol>
-            <p className="mb-5">
-                Tak samo będzie z umową (<i>„Uzupełnij dane kontraktu z tej umowy”</i>): agent przeczyta umowę z Dysku i po Twoim
-                „tak” wpisze do Witryny numer, daty i wartość. Na razie nie próbuj - jeszcze nie działa.
-            </p>
+            <p style={{ fontSize: 17 }}>{current.lead.join(" ")}</p>
 
-            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700 }}>Dostęp do Google w skrócie</h5>
-            <div className="mb-5" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-                <div><strong>Logujesz się raz.</strong> Przy instalacji logujesz się do Google i zgadzasz się, żeby agent działał w Twoim
-                    imieniu. Potem dostęp odnawia się sam, nie logujesz się ponownie.</div>
-                <div><strong>Agent widzi to, co Ty.</strong> Na Dysku agent ma dokładnie Twoje uprawnienia. Dostęp jest zapisany zaszyfrowany na
-                    Twoim koncie Windows i nigdy nie trafia do notatek ani do rozmowy.</div>
+            <ScreenBody id={screen} mapSel={mapSel} onMapSelect={setMapSel} onOpen={goTo} />
+
+            <div className="mt-4 d-flex flex-wrap align-items-center justify-content-between"
+                style={box({ gap: 8, borderRadius: "16px 16px 3px 16px", background: "#f3f8ff" })}>
+                <div>
+                    <div className="text-muted" style={{ fontSize: 14 }}>{GUIDE.copySentence}</div>
+                    <div style={{ fontFamily: HAND, fontSize: 23, lineHeight: 1.15 }}>„{current.copy}”</div>
+                </div>
+                <CopyButton text={current.copy} />
             </div>
-
-            <h5 style={{ fontFamily: HAND, fontSize: 32, fontWeight: 700 }}>Chcesz wiedzieć więcej?</h5>
-            {FAQ.map(([q, a, ask]) => (
-                <details key={q} className="mb-2" style={{ border: `2px solid ${INK}`, borderRadius: 12, background: "#fffdf8" }}>
-                    <summary style={{ padding: "10px 14px", fontWeight: 600, cursor: "pointer" }}>{q}</summary>
-                    <div style={{ padding: "0 14px 12px" }}>
-                        {a}
-                        {ask && <div className="text-muted mt-2">Zapytaj agenta: <i>„{ask}”</i></div>}
-                    </div>
-                </details>
-            ))}
+            {screen === "mapa" && <p className="mt-3 mb-0">
+                {GUIDE.postInstall.before}{" "}
+                <Button variant="link" className="p-0 align-baseline" onClick={onShowPostInstall}>{GUIDE.postInstall.link}</Button>.
+            </p>}
+            {index < SCREENS.length - 1 && <div className="mt-3 text-end">
+                <Button variant="dark" onClick={() => goTo(SCREENS[index + 1].id)}>
+                    {GUIDE.next}: {index + 2}. {SCREENS[index + 1].short} ›
+                </Button>
+            </div>}
         </section>
     );
 }

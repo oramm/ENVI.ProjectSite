@@ -1,9 +1,11 @@
 import React from "react";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import MainSetup from "../../React/MainSetupReact";
 import SbInstallerPage from "../SbInstallerPage";
+import SbHowItWorks from "../SbHowItWorks";
+import { DOORS, EXAMPLES, FLOWS, GUIDE, MAP, SCREENS, SYNC } from "../sbGuideContent";
 import { fetchSbAccess, linkOwnGithubAccount, useSbAccess } from "../sbAccessApi";
 
 vi.mock("../../View/Resultsets/CommonComponents", () => ({ SpinnerBootstrap: () => <div role="status">Trwa ładowanie</div> }));
@@ -141,19 +143,67 @@ describe("Treść instalatora", () => {
         expect(screen.getByText(/Przypnij do paska zadań/)).toBeVisible();
         expect(screen.queryByText(/Uruchom instalator ponownie/)).toBeNull();
     });
-    it("zakładka Jak to działa prowadzi krokami po schemacie i wraca do Po instalacji", async () => {
+    it("zakładka Jak to działa zaczyna od mapy i wraca do Po instalacji", async () => {
         fetchMock.mockResolvedValue(response(invited));
         renderPage("/sbInstaller?widok=jak-to-dziala");
-        expect(await screen.findByRole("img", { name: "Jedna wiedza, wiele komputerów" })).toBeVisible();
+        expect(await screen.findByRole("group", { name: MAP.title })).toBeVisible();
         expect(screen.queryByRole("button", { name: "Pobierz instalator" })).toBeNull();
-        fireEvent.click(screen.getByRole("button", { name: "Kopia u Ciebie" }));
-        expect(screen.getByRole("button", { name: "Kopia u Ciebie" })).toHaveAttribute("aria-pressed", "true");
-        expect(screen.getByText(/Odświeża się sama co 4 godziny/)).toBeVisible();
-        expect(screen.getByText(/Na razie działa tylko u administratora/)).toBeVisible();
-        expect(screen.getAllByText("jeszcze nie działa")).toHaveLength(2);
-        expect(screen.getByText("Zgoda człowieka")).toBeVisible();
+        expect(screen.queryByText(/Na razie działa tylko u administratora/)).toBeNull();
+        expect(screen.queryByText(/Wkrótce/)).toBeNull();
         fireEvent.click(screen.getByRole("button", { name: "„Po instalacji - co dalej”" }));
         expect(await screen.findByText("Po instalacji - co dalej")).toBeVisible();
+    });
+});
+
+describe("Przewodnik Jak to działa", () => {
+    const current = () => screen.getByRole("navigation", { name: GUIDE.navLabel }).querySelector("[aria-current=step]")?.textContent;
+
+    it("element mapy prowadzi na swój ekran, a jedno kliknięcie wraca na mapę z zaznaczonym elementem", () => {
+        render(<SbHowItWorks onShowPostInstall={() => {}} />);
+        expect(current()).toBe("1. Mapa");
+        fireEvent.click(screen.getByRole("button", { name: "Kanon (40_wiki)" }));
+        expect(screen.getByRole("button", { name: "Kanon (40_wiki)" })).toHaveAttribute("aria-pressed", "true");
+        expect(screen.getByText(MAP.nodes.kanon.text)).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: /Przejdź do ekranu 2/ }));
+        expect(current()).toBe("2. Co masz u siebie");
+        expect(screen.getByRole("heading", { name: FLOWS.uSiebie.title })).toHaveFocus();
+        fireEvent.click(screen.getByRole("button", { name: "Teczka → kanon" }));
+        expect(screen.getByText(FLOWS.uSiebie.steps.kanon.text)).toBeVisible();
+        // Pasek prowadzi na ekran, a mapa po powrocie pokazuje element tego ekranu.
+        fireEvent.click(screen.getByRole("button", { name: "5. Skille" }));
+        fireEvent.click(screen.getByRole("button", { name: "‹ Wróć na mapę" }));
+        expect(current()).toBe("1. Mapa");
+        expect(screen.getByRole("button", { name: "Skille (sposoby pracy firmy)" })).toHaveAttribute("aria-pressed", "true");
+    });
+
+    it("element mapy działa z klawiatury, a drzwi zmieniają kartę przykładu", () => {
+        render(<SbHowItWorks onShowPostInstall={() => {}} />);
+        fireEvent.keyDown(screen.getByRole("button", { name: "PS" }), { key: "Enter" });
+        expect(screen.getByText(MAP.nodes.ps.text)).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: "3. Gdzie z czym" }));
+        expect(screen.getByRole("article", { name: DOORS.agent.card.says })).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: "Drzwi: Pomoc" }));
+        expect(screen.getByRole("article", { name: DOORS.pomoc.card.says })).toBeVisible();
+        expect(screen.queryByRole("article", { name: DOORS.agent.card.says })).toBeNull();
+    });
+
+    it("kopiuje zdanie karty jednym kliknięciem i filtruje karty tylko czytające", async () => {
+        const writeText = vi.fn().mockResolvedValue(undefined);
+        Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+        render(<SbHowItWorks onShowPostInstall={() => {}} />);
+        fireEvent.click(screen.getByRole("button", { name: "4. Przykłady" }));
+        expect(screen.getAllByRole("article")).toHaveLength(EXAMPLES.length);
+        const card = screen.getByRole("article", { name: EXAMPLES[2].says });
+        fireEvent.click(within(card).getByRole("button", { name: "Kopiuj" }));
+        expect(writeText).toHaveBeenCalledWith(EXAMPLES[2].says);
+        expect(await within(card).findByRole("button", { name: "Skopiowano" })).toBeVisible();
+        fireEvent.click(screen.getByRole("button", { name: "Tylko czytają" }));
+        expect(screen.getAllByRole("article")).toHaveLength(EXAMPLES.filter(e => e.kind === "read").length);
+    });
+
+    it("tekst przewodnika nie używa słów warsztatowych", () => {
+        const text = JSON.stringify([GUIDE.navLabel, MAP, DOORS, EXAMPLES, FLOWS, SCREENS, SYNC]);
+        expect(text).not.toMatch(/\b(git|repo|pull|token|MCP|frontmatter|ingest|bootstrap|vault)\b/i);
     });
 });
 
