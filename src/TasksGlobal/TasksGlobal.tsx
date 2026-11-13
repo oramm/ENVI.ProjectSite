@@ -41,6 +41,7 @@ import CaseInlineStatusDropdown from "./CaseInlineStatusDropdown";
 import MilestoneInlineStatusDropdown from "./MilestoneInlineStatusDropdown";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
 import "./TasksGlobal.css";
+import { MailboxesSection } from "../Mailboxes/MailboxStatus";
 import {
     casesRepository,
     contractsRepository,
@@ -206,6 +207,7 @@ export default function TasksGlobal() {
                         </ProjectTaskOwnersContext.Provider>
                     </Col>
                     <Col md="9">
+                        {selectedProject && <MailboxesSection projectId={selectedProject.id} />}
                         {!selectedProject ? (
                             <NoProjectSelectedMessage />
                         ) : !dataLoaded ? (

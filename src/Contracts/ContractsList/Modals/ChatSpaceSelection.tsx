@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Form, Spinner } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ProjectData, PersonData } from "../../../../Typings/bussinesTypes";
-import { ChatMembersSelector, CHAT_MEMBERS_FIELD } from "./ChatMembersSelector";
+import { CHAT_MEMBERS_FIELD } from "./ChatMembersSelector";
 import {
     CHAT_SPACE_NAME_MAX,
     ChatSpaceListItem,
@@ -181,7 +181,6 @@ export function ChatSpaceSelection() {
                         placeholder={placeholder}
                         onChange={(e) => changeName(e.target.value)}
                     />
-                    <ChatMembersSelector />
                     <div className="text-muted small mt-1">
                         Pokój powstanie po zapisie kontraktu; zaproszeni zostaną wybrane osoby oraz koordynator, administrator i Ty.
                     </div>

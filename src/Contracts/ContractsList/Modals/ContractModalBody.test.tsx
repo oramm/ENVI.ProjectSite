@@ -19,6 +19,7 @@ import { ContractModalBody } from "./ContractModalBody";
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     ContractRangeSelector: () => null,
     ProjectSelector: () => null,
+    PersonSelector: () => null,
 }));
 vi.mock("../../../View/Modals/CommonFormComponents/GenericComponents", () => ({
     ErrorMessage: () => null,

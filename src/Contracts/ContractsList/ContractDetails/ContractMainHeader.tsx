@@ -25,6 +25,7 @@ import {
 } from "../Modals/ContractValidationSchema";
 import { ContractDocumentBadge } from "../ContractRowContent";
 import { useContractDetails } from "./ContractDetailsContext";
+import { MailboxesSection } from "../../../Mailboxes/MailboxStatus";
 import { ContractChatSpaceSection } from "./ContractChatSpaceSection";
 
 export function ContractMainHeader() {
@@ -110,6 +111,7 @@ export function ContractMainHeader() {
                 </Col>
                 <Col sm={12} md={6} className="d-flex flex-wrap align-items-center gap-2">
                     <ContractChatSpaceSection />
+                    <MailboxesSection contractId={contract.id} />
                     <FidmanSyncSection />
                     <ContractDocumentSection />
                 </Col>

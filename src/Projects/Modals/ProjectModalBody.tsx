@@ -7,6 +7,9 @@ import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { ErrorMessage, ValueInPLNInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import { ProjectStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
+import { MailboxSelection } from "../../Mailboxes/MailboxSelection";
+import { MailboxesSection } from "../../Mailboxes/MailboxStatus";
+
 export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<ProjectData>) {
     const {
         register,
@@ -32,6 +35,7 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
             ourId: initialData?.ourId,
             _employers: initialData?._employers,
             _engineers: initialData?._engineers,
+            ...(!isEditing ? { _mailboxSelection: { mode: "project" } } : {}),
         };
         reset(resetData);
         trigger();
@@ -157,6 +161,7 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
                 </Form.Group>
             </Row>
             <ProjectStatusSelector />
+            {isEditing ? <MailboxesSection projectId={initialData?.id} /> : <MailboxSelection />}
         </>
     );
 }

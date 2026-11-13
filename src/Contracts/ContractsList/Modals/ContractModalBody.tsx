@@ -15,6 +15,10 @@ import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormCo
 import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { OptionalContractDateFields } from "./ContractModalBodiesPartial";
 
+import { MailboxSelection } from "../../../Mailboxes/MailboxSelection";
+import { MailboxesSection } from "../../../Mailboxes/MailboxStatus";
+import { ChatMembersSelector } from "./ChatMembersSelector";
+
 // Typy kontraktów, które mają kamień „Projektowanie - nadzór” (MilestoneType 6)
 // wg MilestoneTypes_ContractTypes: 3 = „Żółty”, 8 = „Usługa”. Tylko dla nich
 // opcja „Dokumentacja zatwierdzona” ma sens (gdzie indziej kamień 6 nie powstaje).
@@ -248,6 +252,10 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     <option value="MEASUREMENT">obmiar</option>
                 </Form.Control>
             </Form.Group>
+            {isEditing ? <MailboxesSection contractId={initialData?.id} /> : <>
+                <MailboxSelection contract />
+                <ChatMembersSelector contract />
+            </>}
             <ContractRangeInlineCreateDrawer
                 show={showCreateContractRange}
                 onHide={() => setShowCreateContractRange(false)}
