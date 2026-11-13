@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SbEntry, SbHealth } from "../sbManageApi";
-import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, statusViews, healthColumn, formatHealthDate, healthVersions, healthToolLabel, canRequestHealth } from "../sbManageView";
+import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, mailboxChoices, statusViews, healthColumn, formatHealthDate, healthVersions, healthToolLabel, canRequestHealth } from "../sbManageView";
 
 const entry = (over: Partial<SbEntry> = {}): SbEntry => ({
     id: 1, personId: 1, name: "Anna", surname: "Nowak", systemEmail: "anna@example.com",
@@ -75,6 +75,7 @@ describe("Poziomy dostępu w widoku", () => {
     });
     it("skrzynki: dodanie bez powtórzeń i zdjęcie jednej", () => {
         expect(toggleMailbox(["faktury"], "marek", true)).toEqual(["faktury", "marek"]);
+        expect(mailboxChoices(["chocianow-ik", "faktury"], ["faktury", "marek"])).toEqual(["chocianow-ik", "faktury", "marek"]);
         expect(toggleMailbox(["faktury"], "faktury", true)).toEqual(["faktury"]);
         expect(toggleMailbox(["faktury", "marek"], "faktury", false)).toEqual(["marek"]);
     });

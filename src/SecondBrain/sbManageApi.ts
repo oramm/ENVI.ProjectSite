@@ -86,6 +86,9 @@ async function request<T>(route: string, init: RequestInit = {}): Promise<SbFetc
 }
 export const fetchSbEntries = () => request<SbEntry[]>("entries");
 export const fetchSbCandidates = () => request<SbCandidate[]>("candidates");
+/** Spis skrzynek poczty z bazy PS (plan MBX); bez haseł. */
+export interface SbMailbox { code: string; address: string }
+export const fetchSbMailboxes = () => request<SbMailbox[]>("mailboxes");
 export const fetchSbUnlinkedMembers = () => request<SbUnlinkedMember[]>("githubMembers/unlinked");
 export const fetchSbEvents = (personId: number) => request<SbEvent[]>(`${personId}/events`);
 export async function performSbAction(personId: number, action: SbAction, githubLogin?: string): Promise<SbOperationResult> {

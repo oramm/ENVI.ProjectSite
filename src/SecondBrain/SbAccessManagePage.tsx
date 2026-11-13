@@ -3,8 +3,8 @@ import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from 
 import ConfirmModal from "../View/Modals/ConfirmModal";
 import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
-import { fetchSbCandidates, fetchSbEntries, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
-    setSbLevels, takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbUnlinkedMember } from "./sbManageApi";
+import { fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
+    setSbLevels, takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbUnlinkedMember } from "./sbManageApi";
 import { assignableEntries, availableActions, canRequestHealth, confirmationContent, describeDrive, describeFailure,
     describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
     healthToolLabel, healthVersions, mailboxChoices, manualExplanation, noLevels,
@@ -37,6 +37,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [levelsDraft, setLevelsDraft] = useState<SbLevels>(noLevels);
     const [levelsError, setLevelsError] = useState<string | null>(null);
+    const [mailboxes, setMailboxes] = useState<SbFetchResult<SbMailbox[]> | null>(null);
     const [events, setEvents] = useState<SbFetchResult<SbEvent[]> | null>(null);
     // Hasła (SBD-2): jawne hasło żyje tylko w polu dialogu i znika po wysyłce albo zamknięciu.
     const [sharing, setSharing] = useState<SbEntry | null>(null);
@@ -49,7 +50,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     async function refresh() {
         // Każda lista ma własny wynik; awaria GitHuba nie zasłania rejestru ani kandydatów.
         await Promise.all([
-            fetchSbEntries().then(setEntries), fetchSbCandidates().then(setCandidates),
+            fetchSbEntries().then(setEntries), fetchSbCandidates().then(setCandidates), fetchSbMailboxes().then(setMailboxes),
             fetchSbUnlinkedMembers().then(result => { setMembers(result); setAssignments({}); }),
         ]);
     }
@@ -240,7 +241,8 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                                     </select>
                                 </React.Fragment>)}
                             <span className="self-start text-[#5d6878]">Poczta</span>
-                            <div className="flex flex-col gap-1">{mailboxChoices(levelsDraft.mail).map(code => <label key={code} className="mb-0 flex items-center gap-2">
+                            <div className="flex flex-col gap-1">{mailboxes && !mailboxes.ok && <span className="text-[#b42318]">Nie udało się pobrać spisu skrzynek z PS.</span>}
+                                {mailboxChoices(mailboxes?.ok ? mailboxes.data.map(mailbox => mailbox.code) : [], levelsDraft.mail).map(code => <label key={code} className="mb-0 flex items-center gap-2">
                                 <input type="checkbox" aria-label={`Skrzynka ${code}`} checked={levelsDraft.mail.includes(code)} disabled={!!busy}
                                     onChange={event => setLevelsDraft({ ...levelsDraft, mail: toggleMailbox(levelsDraft.mail, code, event.target.checked) })} />
                                 <span className={chip}>{code}</span>

@@ -26,6 +26,7 @@ beforeEach(() => {
         if (url.endsWith("/candidates")) return response([{ personId: 9, name: "Jan", surname: "Lis", systemEmail: "jan@example.com", systemRoleName: "ENVI_EMPLOYEE", statusCode: null }]);
         if (url.endsWith("/unlinked")) return response([{ login: "anna-gh", profileUrl: "https://github.com/anna-gh" }], membersStatus);
         if (url.endsWith("/events")) return response([]);
+        if (url.endsWith("/mailboxes")) return response([{ code: "chocianow-ik", address: "chocianow.ik@envi.com.pl" }]);
         if (url.endsWith("/healthReport")) return { ok: true, status: 200, headers: { get: () => 'attachment; filename="raport-sb-nowak1-2026-10-19.json"' }, blob: async () => new Blob(["{}"]) };
         throw new Error(`Nieoczekiwana trasa: ${url}`);
     });
@@ -108,13 +109,13 @@ describe("Panel SB", () => {
         const panel = screen.getByLabelText("Panel osoby");
         fireEvent.change(within(panel).getByLabelText("Repozytoria"), { target: { value: "write" } });
         fireEvent.change(within(panel).getByLabelText("Baza PS"), { target: { value: "ro" } });
-        fireEvent.click(within(panel).getByLabelText("Skrzynka marek"));
+        fireEvent.click(within(panel).getByLabelText("Skrzynka chocianow-ik"));
         fireEvent.click(within(panel).getByLabelText("Skrzynka faktury"));
         fireEvent.click(within(panel).getByRole("button", { name: "Zapisz uprawnienia" }));
         await screen.findByText(/Zapisano uprawnienia/);
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/levels", {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
-            body: '{"repos":"write","psDb":"ro","drive":"connector","mail":["marek"]}',
+            body: '{"repos":"write","psDb":"ro","drive":"connector","mail":["chocianow-ik"]}',
         }]);
     });
     it("kolumna Hasła: X z Y wg uprawnień, kreska gdy nic się nie należy; bez klucza panel blokuje udostępnienie", async () => {

@@ -74,8 +74,8 @@ export function describeLevels(entry: SbEntry) {
     };
 }
 // Skrzynki znane z konfiguracji poczty firmowej; inne kody z bazy też zostają widoczne w panelu.
-export const knownMailboxes = ["marek", "faktury", "chocianow-ik", "wp"];
-export const mailboxChoices = (selected: string[]) => [...knownMailboxes, ...selected.filter(code => !knownMailboxes.includes(code))];
+/** Skrzynki ze spisu PS plus zaznaczone spoza spisu (żeby dało się je odznaczyć). */
+export const mailboxChoices = (known: string[], selected: string[]) => [...known, ...selected.filter(code => !known.includes(code))];
 export const toggleMailbox = (mail: string[], code: string, on: boolean) =>
     on ? (mail.includes(code) ? mail : [...mail, code]) : mail.filter(item => item !== code);
 // Grupy tabeli: administratorzy SB (znacznik CanManageSbAccess) przed pracownikami i zaproszonymi;
