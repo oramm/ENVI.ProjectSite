@@ -33,7 +33,7 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
         }
     }, [showInitialPassword, mailbox.id, mailbox.statusCode]);
 
-    async function act(action: "provision" | "project") {
+    async function act(action: "provision" | "project" | "agentCopy") {
         setBusy(true);
         setError("");
         setPassword(null);
@@ -52,6 +52,12 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
             <div><strong>{mailbox.address}</strong></div>
             <div>{mailbox.statusCode === "ACTIVE" ? "Założona" : mailbox.statusCode === "PENDING"
                 ? `Do założenia${mailbox.lastError ? `: ${mailbox.lastError}` : ""}` : "Nieaktywna"}</div>
+            {mailbox.statusCode === "ACTIVE" && <div>
+                {mailbox.agentCopyStatus === "SET" ? "Kopia dla agenta: ustawiona"
+                    : `Kopia dla agenta nie ustawiona: ${mailbox.agentCopyLastError || "oczekuje na ustawienie"}`}
+                {mailbox.agentCopyStatus !== "SET" && <> <Button size="sm" variant="outline-primary" disabled={busy}
+                    onClick={() => void act("agentCopy")}>Ponów kopię</Button></>}
+            </div>}
             <div className="d-flex gap-2 flex-wrap mt-1">
                 {mailbox.statusCode === "PENDING" && <Button size="sm" variant="outline-primary" disabled={busy}
                     onClick={() => void act("provision")}>Ponów</Button>}

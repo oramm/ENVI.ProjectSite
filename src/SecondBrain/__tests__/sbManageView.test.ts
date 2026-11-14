@@ -128,3 +128,9 @@ describe("Komputer - kolumna i panel", () => {
         expect(canRequestHealth(entry({ statusCode: "BLOCKED" }))).toBe(false);
     });
 });
+
+ it("konto techniczne ma ten sam polski podpis w sekretach i raporcie zdrowia", async () => {
+    const { secretLabel, healthToolLabel } = await import("../sbManageView");
+    expect(secretLabel("poczta-sb-agent")).toBe("konto techniczne poczty (agent)");
+    expect(healthToolLabel("poczta-sb-agent")).toBe("konto techniczne poczty (agent)");
+ });

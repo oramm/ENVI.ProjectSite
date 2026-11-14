@@ -93,7 +93,7 @@ export function groupKey(entry: SbEntry): (typeof entryGroups)[number]["key"] {
 }
 // Hasła (SBD-2). Które hasła należą się osobie, rozstrzyga PS (secretsExpected); tu tylko podpis i stan.
 export const secretLabel = (name: string) =>
-    name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
+    name === "poczta-sb-agent" ? "konto techniczne poczty (agent)" : name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
 export function secretsState(entry: SbEntry): { text: string; tone: "ok" | "warn" | "off" } {
     const expected = entry.secretsExpected ?? [], given = (entry.secretsGiven ?? []).filter(name => expected.includes(name));
     if (!expected.length) return { text: "—", tone: "off" };
@@ -135,8 +135,7 @@ export function healthColumn(entry: SbEntry, now: Date = new Date()): { text: st
     if (health.stale) return { text: "brak raportu", tone: "off", date };
     return health.state === "ok" ? { text: "działa", tone: "ok", date } : { text: "błąd", tone: "bad", date };
 }
-export const healthToolLabel = (name: string) =>
-    name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
+export const healthToolLabel = secretLabel;
 export const healthVersions = (health: SbHealth, now: Date = new Date()) =>
     `SB ${health.sbVersion ?? "?"} · instalator ${health.installerVersion ?? "?"} · raport ${formatHealthDate(health.reportedAt, now)}`;
 export const canRequestHealth = (entry: SbEntry) => entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE";

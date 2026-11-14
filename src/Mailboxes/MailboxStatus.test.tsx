@@ -7,7 +7,7 @@ import { MailboxRecord } from "./mailboxesService";
 const mocks = vi.hoisted(() => ({ action: vi.fn(), onSaved: vi.fn() }));
 vi.mock("./mailboxesService", () => ({ mailboxAction: mocks.action, fetchMailboxes: vi.fn() }));
 const ACTIVE: MailboxRecord = { id: 3, code: "chc-01", address: "chc.01@envi.com.pl", projectId: 4,
-    contractId: null, statusCode: "ACTIVE", lastError: null };
+    contractId: null, agentCopyStatus: "PENDING", agentCopyLastError: null, statusCode: "ACTIVE", lastError: null };
 
 describe("stan skrzynki i jednorazowe hasło", () => {
     beforeEach(() => { vi.clearAllMocks(); });
@@ -24,6 +24,25 @@ describe("stan skrzynki i jednorazowe hasło", () => {
         expect(mocks.action).toHaveBeenCalledTimes(1);
         expect(JSON.stringify(sessionStorage)).not.toContain("Jednorazowe12345");
         expect(JSON.stringify(localStorage)).not.toContain("Jednorazowe12345");
+    });
+    it("kopię ponawia osobno, pokazuje SET i nie zmienia hasła skrzynki", async () => {
+        mocks.action.mockResolvedValue({ ...ACTIVE, agentCopyStatus: "SET", agentCopyLastError: null });
+        render(<MailboxStatus initialMailbox={{ ...ACTIVE, agentCopyLastError: "Brak konfiguracji kopii" }} />);
+        expect(screen.getByText("Kopia dla agenta nie ustawiona: Brak konfiguracji kopii")).toBeInTheDocument();
+        fireEvent.click(screen.getByText("Ponów kopię"));
+        await waitFor(() => expect(screen.getByText("Kopia dla agenta: ustawiona")).toBeInTheDocument());
+        expect(mocks.action.mock.calls).toEqual([[3, "agentCopy"]]);
+        expect(screen.queryByText("Ponów kopię")).toBeNull();
+        expect(screen.queryByLabelText("Nowe hasło skrzynki")).toBeNull();
+    });
+    it("nieudane ponowienie kopii zachowuje ACTIVE i komunikat, bez hasła", async () => {
+        mocks.action.mockResolvedValue({ ...ACTIVE, agentCopyLastError: "Serwer poczty odrzucił operację" });
+        render(<MailboxStatus initialMailbox={ACTIVE} />);
+        fireEvent.click(screen.getByText("Ponów kopię"));
+        await waitFor(() => expect(screen.getByText("Kopia dla agenta nie ustawiona: Serwer poczty odrzucił operację")).toBeInTheDocument());
+        expect(screen.getByText("Założona")).toBeInTheDocument();
+        expect(screen.getByText("Ponów kopię")).not.toBeDisabled();
+        expect(mocks.action.mock.calls).toEqual([[3, "agentCopy"]]);
     });
     it("zwykły widok skrzynki nie zmienia hasła", () => {
         render(<MailboxStatus initialMailbox={ACTIVE} />);

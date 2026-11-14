@@ -9,6 +9,8 @@ export interface MailboxRecord {
     contractId: number | null;
     statusCode: string;
     lastError: string | null;
+    agentCopyStatus: "PENDING" | "SET";
+    agentCopyLastError: string | null;
 }
 
 export interface MailboxCreationResult {
@@ -33,7 +35,7 @@ export async function fetchMailboxes(scope: { projectId?: number; contractId?: n
     return result.mailboxes;
 }
 
-export function mailboxAction<T>(id: number, action: "provision" | "password" | "project"): Promise<T> {
+export function mailboxAction<T>(id: number, action: "provision" | "password" | "project" | "agentCopy"): Promise<T> {
     return ToolsFetch.fetchJsonWithSafeError(`${MainSetup.serverUrl}mailboxes/${id}/${action}`, {
         method: "POST",
         credentials: "include",
