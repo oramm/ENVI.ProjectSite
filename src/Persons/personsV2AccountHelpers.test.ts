@@ -16,6 +16,7 @@ vi.mock("../React/Tools/ToolsFetch", () => ({
 vi.mock("../React/MainSetupReact", () => ({
     default: {
         serverUrl: "http://localhost:3000/",
+        SystemRoles: { ENVI_COOPERATOR: { id: 4 } },
         isProjectScopedRoleId: (id: unknown) => Number(id) === 6 || Number(id) === 7,
     },
 }));
@@ -141,6 +142,13 @@ describe("saveProjectAssignments", () => {
         await saveProjectAssignments({ id: 7, systemRoleId: 3, _projectAssignments: [{ ourId: "AQM" }] });
 
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([[]]);
+    });
+
+    it("wspolpracownik: zapis konta niczego nie wysyla (nie kasuje, nie dopisuje)", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 4, _projectAssignments: [{ ourId: "AQM" }] });
+        await saveProjectAssignments({ id: 7, systemRoleId: "4" });
+
+        expect(hoisted.fetchJsonWithSafeError).not.toHaveBeenCalled();
     });
 
     it("rola jako string z legacy też jest rozpoznawana jako zakresowa", async () => {

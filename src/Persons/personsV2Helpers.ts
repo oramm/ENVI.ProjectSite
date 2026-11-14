@@ -408,6 +408,10 @@ export type ProjectAssignmentsFormValues = {
 export async function saveProjectAssignments(person: ProjectAssignmentsFormValues): Promise<void> {
     if (!person?.id) return;
 
+    // Współpracownik ma przypisania projektów, ale okno konta ich nie pokazuje (bramka makiety):
+    // zapis konta nie może ich ani kasować, ani dopisywać.
+    if (Number(person.systemRoleId) === MainSetup.SystemRoles.ENVI_COOPERATOR.id) return;
+
     if (!MainSetup.isProjectScopedRoleId(person.systemRoleId ?? undefined)) {
         await savePersonProjectAssignments(person.id, []);
         return;

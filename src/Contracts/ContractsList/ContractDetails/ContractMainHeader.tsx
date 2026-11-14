@@ -107,7 +107,7 @@ export function ContractMainHeader() {
                 </Col>
                 <Col sm={1}>{contract._gdFolderUrl && <GDFolderIconLink folderUrl={contract._gdFolderUrl} />}</Col>
                 <Col sm={12} md={6} className="d-flex align-items-center">
-                    <MoveContractButton />
+                    {!MainSetup.isRoleAllowed(MainSetup.PROJECT_SCOPED_ROLES) && <MoveContractButton />}
                 </Col>
                 <Col sm={12} md={6} className="d-flex flex-wrap align-items-center gap-2">
                     {/* Pokój Chat i FIDman: serwer daje je tylko pracownikom ENVI, skrzynkę - wszystkim
