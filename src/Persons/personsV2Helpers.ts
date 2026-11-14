@@ -401,23 +401,20 @@ export type ProjectAssignmentsFormValues = {
 };
 
 /**
- * Zapisuje przypisania projektów po zapisaniu konta. Dla ról spoza zakresowych
- * (pracownik kontraktowy, klient) wysyła pustą listę - dzięki temu zmiana roli na inną
- * odbiera dostęp do projektów, zamiast zostawiać go po cichu w bazie.
+ * Zapisuje przypisania projektów po zapisaniu konta. Przypisania ma każda rola poza
+ * użytkownikiem zewnętrznym (DOSTEP-7) - jemu wysyła pustą listę, żeby zmiana roli na nią
+ * odbierała przypisania, zamiast zostawiać je po cichu w bazie.
  */
 export async function saveProjectAssignments(person: ProjectAssignmentsFormValues): Promise<void> {
     if (!person?.id) return;
 
-    // Współpracownik ma przypisania projektów, ale okno konta ich nie pokazuje (bramka makiety):
-    // zapis konta nie może ich ani kasować, ani dopisywać.
-    if (Number(person.systemRoleId) === MainSetup.SystemRoles.ENVI_COOPERATOR.id) return;
-
-    if (!MainSetup.isProjectScopedRoleId(person.systemRoleId ?? undefined)) {
+    if (!MainSetup.hasProjectAssignmentsRoleId(person.systemRoleId)) {
         await savePersonProjectAssignments(person.id, []);
         return;
     }
 
-    const selected = person._projectAssignments;
+    // Wybór projektów po zdjęciu ostatniej pozycji daje null - to świadome wyczyszczenie, nie brak pola.
+    const selected = person._projectAssignments === null ? [] : person._projectAssignments;
     // Brak pola to NIE to samo co pusty wybór. Gdyby formularz go nie dowiózł,
     // pusta lista skasowałaby istniejące przypisania - a zapis, który po cichu
     // kasuje dane, jest gorszy niż zapis, który ich nie ruszy.

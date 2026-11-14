@@ -11,6 +11,8 @@ import {
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
+import { AccessPreview } from "../access/AccessPreview";
+import { assignmentsHint } from "./assignmentsHint";
 
 /**
  * Zakładanie użytkownika z okna „Personel i uprawnienia" (PER-3).
@@ -32,9 +34,10 @@ export function UserModalBody({ initialData }: ModalBodyProps<SystemUserData>) {
         formState: { errors },
     } = useFormContext();
 
-    // Role ograniczone do przypisanych projektów muszą te projekty dostać przy zakładaniu,
-    // inaczej konto powstaje bez dostępu do czegokolwiek.
-    const isProjectScopedRole = MainSetup.isProjectScopedRoleId(watch("systemRoleId"));
+    // Przypisania do projektów ma każda rola poza użytkownikiem zewnętrznym (DOSTEP-7).
+    const hasAssignments = MainSetup.hasProjectAssignmentsRoleId(watch("systemRoleId"));
+    const isExternalUser = Number(watch("systemRoleId")) === MainSetup.SystemRoles.EXTERNAL_USER.id;
+    const assigned: { ourId: string }[] = watch("_projectAssignments") ?? [];  // nowa osoba: brak pola = brak przypisań
 
     useEffect(() => {
         reset({
@@ -150,12 +153,19 @@ export function UserModalBody({ initialData }: ModalBodyProps<SystemUserData>) {
 
             <AccountAccessFields />
 
-            {isProjectScopedRole && (
-                <Form.Group className="mt-2">
+            {hasAssignments && (
+                <div className="mt-3">
                     <ProjectSelector name="_projectAssignments" multiple label="Przypisane projekty" />
-                    <Form.Text className="text-muted">Ta rola widzi wyłącznie dane wskazanych tu projektów.</Form.Text>
-                </Form.Group>
+                    <Form.Text className="text-muted">{assignmentsHint(watch("systemRoleId"))}</Form.Text>
+                </div>
             )}
+            {isExternalUser && (
+                <Form.Text className="text-muted d-block mt-2">
+                    Ta rola widzi wyłącznie pisma kontraktów, do których jest przypisana. Przypisań do kontraktów to okno nie zmienia.
+                </Form.Text>
+            )}
+
+            <AccessPreview systemRoleId={watch("systemRoleId")} projectOurIds={hasAssignments ? assigned.map((p) => p.ourId) : []} />
         </>
     );
 }

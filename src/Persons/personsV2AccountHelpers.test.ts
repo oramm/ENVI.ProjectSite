@@ -17,7 +17,7 @@ vi.mock("../React/MainSetupReact", () => ({
     default: {
         serverUrl: "http://localhost:3000/",
         SystemRoles: { ENVI_COOPERATOR: { id: 4 } },
-        isProjectScopedRoleId: (id: unknown) => Number(id) === 6 || Number(id) === 7,
+        hasProjectAssignmentsRoleId: (id: unknown) => [1, 2, 3, 4, 6, 7].includes(Number(id)),
     },
 }));
 
@@ -138,23 +138,30 @@ describe("saveProjectAssignments", () => {
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([["AQM"]]);
     });
 
-    it("zmiana roli na inną odbiera przypisania", async () => {
-        await saveProjectAssignments({ id: 7, systemRoleId: 3, _projectAssignments: [{ ourId: "AQM" }] });
+    it("zmiana roli na użytkownika zewnętrznego odbiera przypisania do projektów", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 5, _projectAssignments: [{ ourId: "AQM" }] });
 
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([[]]);
     });
 
-    it("wspolpracownik: zapis konta niczego nie wysyla (nie kasuje, nie dopisuje)", async () => {
-        await saveProjectAssignments({ id: 7, systemRoleId: 4, _projectAssignments: [{ ourId: "AQM" }] });
+    it("pracownik ENVI i współpracownik mają przypisania z okna uprawnień (DOSTEP-7)", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 3, _projectAssignments: [{ ourId: "AQM" }] });
+        await saveProjectAssignments({ id: 7, systemRoleId: 4, _projectAssignments: [{ ourId: "B" }] });
         await saveProjectAssignments({ id: 7, systemRoleId: "4" });
 
-        expect(hoisted.fetchJsonWithSafeError).not.toHaveBeenCalled();
+        expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([["AQM"], ["B"]]);
     });
 
     it("rola jako string z legacy też jest rozpoznawana jako zakresowa", async () => {
         await saveProjectAssignments({ id: 7, systemRoleId: "6", _projectAssignments: [{ ourId: "AQM" }] });
 
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([["AQM"]]);
+    });
+
+    it("null z pola wyboru (zdjęty ostatni projekt) czyści przypisania", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 4, _projectAssignments: null });
+
+        expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([[]]);
     });
 
     it("bez id nie robi nic", async () => {

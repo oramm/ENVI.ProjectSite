@@ -394,6 +394,25 @@ export default class MainSetup {
      * (klientowi backend zawęża wizyty do przypisanych projektów). */
     static readonly VISITS_OVERVIEW_ROLES: SystemRoleName[] = [...MainSetup.STAFF_ROLES, "CLIENT"];
 
+    /** Nazwa kręgu osoby do pokazania na ekranach uprawnień (DOSTEP-7). */
+    static readonly ROLE_LABELS: Record<SystemRoleName, string> = {
+        ADMIN: "Administrator",
+        ENVI_MANAGER: "Kierownik ENVI",
+        ENVI_EMPLOYEE: "Pracownik ENVI",
+        ENVI_COOPERATOR: "Współpracownik zewnętrzny",
+        EXTERNAL_USER: "Użytkownik zewnętrzny",
+        CONTRACT_WORKER: "Pracownik kontraktowy",
+        CLIENT: "Klient",
+    };
+
+    /** Role, którym okno uprawnień nadaje przypisania do projektów (DOSTEP-7, makieta wariant A).
+     * Bez użytkownika zewnętrznego: jego pisma idą za przypisaniem do kontraktów, nie projektów. */
+    static hasProjectAssignmentsRoleId(systemRoleId: number | string | null | undefined) {
+        return Object.values(MainSetup.SystemRoles).some(
+            (role) => role.id === Number(systemRoleId) && role.systemName !== "EXTERNAL_USER",
+        );
+    }
+
     /** Czy rola należy do NO_PROJECT_MAIL_ROLES: wybór osób dodatkowych kontraktu ją pomija,
      * a modal użytkownika wskazuje jej projekty. Modal zostaje przy pracowniku kontraktowym
      * i kliencie do czasu zatwierdzenia makiety ekranów uprawnień (plan DOSTEP, G-DOSTEP-4). */

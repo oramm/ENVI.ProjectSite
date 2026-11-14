@@ -25,7 +25,7 @@ vi.mock("../../../Persons/personsV2Helpers", () => ({
 }));
 vi.mock("../StaffPrivacyStatus", () => ({ default: () => null }));
 vi.mock("../../../React/MainSetupReact", () => ({
-    default: { isProjectScopedRoleId: () => false },
+    default: { isProjectScopedRoleId: () => false, hasProjectAssignmentsRoleId: () => false, SystemRoles: { EXTERNAL_USER: { id: 5 } } },
 }));
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     ProjectSelector: () => null,

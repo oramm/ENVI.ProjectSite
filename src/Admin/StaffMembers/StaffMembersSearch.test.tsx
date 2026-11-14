@@ -11,6 +11,7 @@ vi.mock("../../View/Resultsets/FilterableTable/FilterableTable", () => ({
     default: ({ tableStructure }: {
         tableStructure: { renderTdBody: (person: Partial<StaffMemberData>) => React.ReactNode }[];
     }) => <>{tableStructure[0].renderTdBody(row)}</>,
+    TableTitle: ({ title }: { title: string }) => <h1>{title}</h1>,
 }));
 vi.mock("./Modals/StaffMemberModalButtons", () => ({ StaffMemberEditModalButton: () => null }));
 vi.mock("./Modals/UserModalButtons", () => ({ UserAddNewModalButton: () => null }));

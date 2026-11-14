@@ -14,7 +14,7 @@ import { FormProvider } from "../../../View/Modals/FormContext";
 import { UserModalBody } from "./UserModalBody";
 
 vi.mock("../../../React/MainSetupReact", () => ({
-    default: { isProjectScopedRoleId: () => false },
+    default: { isProjectScopedRoleId: () => false, hasProjectAssignmentsRoleId: () => false, SystemRoles: { EXTERNAL_USER: { id: 5 } } },
 }));
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     EntitySelector: () => null,
