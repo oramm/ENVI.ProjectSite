@@ -76,10 +76,12 @@ export default function MainMenu() {
     }, [currentUser?.systemEmail]);
 
     // Wizyty na budowie - rola 1/2 albo flaga StaffMembers.CanLogSiteVisits.
-    const visitsAccess = useModuleAccess("site-visits/access");
+    // Użytkownik zewnętrzny ma od serwera tylko pisma - o moduły flagowe nie pytamy (403).
+    const asksModules = !!currentUser && !MainSetup.LETTERS_READ_ONLY_ROLES.includes(currentUser.systemRoleName);
+    const visitsAccess = useModuleAccess("site-visits/access", asksModules);
     // Kilometrówka - flaga StaffMembers.IsDriver. Pracownicy ENVI mają ją domyślnie,
     // pracownik kontraktowy nie.
-    const mileageAccess = useModuleAccess("mileage/access");
+    const mileageAccess = useModuleAccess("mileage/access", asksModules);
     // Faktury kosztowe i wyciągi bankowe - osobne flagi StaffMembers
     // (HasCostInvoiceAccess, HasBankAccess), więc i osobne pozycje w menu.
     // Oba moduły są firmowe, więc pytamy tylko dla pracowników ENVI.

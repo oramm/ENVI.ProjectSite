@@ -195,7 +195,7 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
     useEffect(() => {
         const isStaff = MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES);
         Promise.all([
-            fetchModuleAccess("mileage/access"),
+            MainSetup.isRoleAllowed(MainSetup.LETTERS_READ_ONLY_ROLES) ? Promise.resolve(false) : fetchModuleAccess("mileage/access"),
             isStaff ? fetchModuleAccess("cost-invoices/access") : Promise.resolve(false),
         ]).then(([mileageAccess, costInvoicesAccess]) => {
             if (tipPickedRef.current) return;

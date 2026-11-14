@@ -324,12 +324,14 @@ export default class MainSetup {
         ENVI_COOPERATOR: {
             id: 4,
             systemName: "ENVI_COOPERATOR",
-            description: "Współpracownik zewnętrzny – dostęp tylko do pism",
+            description:
+                "Współpracownik zewnętrzny – praca wyłącznie w przypisanych projektach, bez faktur, ofert i dotacji; poczta przypisanych projektów",
         },
         EXTERNAL_USER: {
             id: 5,
             systemName: "EXTERNAL_USER",
-            description: "Użytkownik zewnętrzny – domyślnie osoba bez dostępu do wirtyny, po dodaniu maila systemowego dostęp tylko do pism",
+            description:
+                "Użytkownik zewnętrzny – domyślnie osoba bez dostępu do witryny, po dodaniu maila systemowego wgląd tylko w pisma kontraktów, do których jest przypisana",
         },
         CONTRACT_WORKER: {
             id: 6,
@@ -361,24 +363,42 @@ export default class MainSetup {
      */
     static readonly ADMIN_PANEL_ROLES: SystemRoleName[] = ["ADMIN", "ENVI_MANAGER"];
 
-    /** Role, którym backend zawęża dane do projektów przypisanych w PersonProjects.
-     * Tym rolom wskazuje się projekty w modalu użytkownika. */
-    static readonly PROJECT_SCOPED_ROLES: SystemRoleName[] = ["CONTRACT_WORKER", "CLIENT"];
+    /** Role, które backend ogranicza do przypisań (allowlista tras i zakres danych).
+     * Musi odpowiadać PROJECT_SCOPED_ROLES po stronie backendu (src/setup/Sessions/projectScopedPolicy.ts).
+     * Użytkownikowi zewnętrznemu backend liczy zakres z przypisań do kontraktów, nie projektów. */
+    static readonly PROJECT_SCOPED_ROLES: SystemRoleName[] = [
+        "CONTRACT_WORKER",
+        "CLIENT",
+        "ENVI_COOPERATOR",
+        "EXTERNAL_USER",
+    ];
 
-    /** Role widzące kontrakty – pracownicy ENVI oraz role zakresowe
-     * (tym ostatnim backend zawęża dane do przypisanych projektów). */
+    /** Role bez poczty projektu, które nie mogą być osobą dodatkową kontraktu. Musi odpowiadać
+     * NO_PROJECT_MAIL_ROLES po stronie backendu (src/mailboxes/mailboxAccessPolicy.ts).
+     * Celowo węższe niż PROJECT_SCOPED_ROLES: współpracownik pocztę przypisanych projektów ma. */
+    static readonly NO_PROJECT_MAIL_ROLES: SystemRoleName[] = ["CONTRACT_WORKER", "CLIENT"];
+
+    /** Role, którym serwer daje wyłącznie odczyt pism przypisanych kontraktów (bez zapisu
+     * i bez modułów flagowych). Front nie pokazuje im przycisków ani nie pyta o te moduły. */
+    static readonly LETTERS_READ_ONLY_ROLES: SystemRoleName[] = ["EXTERNAL_USER"];
+
+    /** Role widzące kontrakty – pracownicy ENVI oraz role zakresowe po projektach
+     * (tym ostatnim backend zawęża dane do przypisanych projektów). Bez użytkownika
+     * zewnętrznego: on ma od serwera tylko pisma. */
     static readonly CONTRACT_SCOPED_ROLES: SystemRoleName[] = [
         ...MainSetup.STAFF_ROLES,
-        ...MainSetup.PROJECT_SCOPED_ROLES,
+        ...MainSetup.PROJECT_SCOPED_ROLES.filter((role) => !MainSetup.LETTERS_READ_ONLY_ROLES.includes(role)),
     ];
 
     /** Role z przeglądem cudzych wizyt na budowie – pracownicy ENVI oraz klient
      * (klientowi backend zawęża wizyty do przypisanych projektów). */
     static readonly VISITS_OVERVIEW_ROLES: SystemRoleName[] = [...MainSetup.STAFF_ROLES, "CLIENT"];
 
-    /** Czy rola należy do zakresowych (przypisania projektów, węższe menu). */
+    /** Czy rola należy do NO_PROJECT_MAIL_ROLES: wybór osób dodatkowych kontraktu ją pomija,
+     * a modal użytkownika wskazuje jej projekty. Modal zostaje przy pracowniku kontraktowym
+     * i kliencie do czasu zatwierdzenia makiety ekranów uprawnień (plan DOSTEP, G-DOSTEP-4). */
     static isProjectScopedRoleId(systemRoleId: number | string | undefined) {
-        return this.PROJECT_SCOPED_ROLES.some(
+        return this.NO_PROJECT_MAIL_ROLES.some(
             (role) => MainSetup.SystemRoles[role].id === Number(systemRoleId),
         );
     }

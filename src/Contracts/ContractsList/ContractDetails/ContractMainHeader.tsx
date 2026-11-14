@@ -110,9 +110,11 @@ export function ContractMainHeader() {
                     <MoveContractButton />
                 </Col>
                 <Col sm={12} md={6} className="d-flex flex-wrap align-items-center gap-2">
-                    <ContractChatSpaceSection />
-                    <MailboxesSection contractId={contract.id} />
-                    <FidmanSyncSection />
+                    {/* Pokój Chat i FIDman: serwer daje je tylko pracownikom ENVI, skrzynkę - wszystkim
+                        poza NO_PROJECT_MAIL_ROLES. Bez warunku role zakresowe wołałyby zamknięte trasy. */}
+                    {MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES) && <ContractChatSpaceSection />}
+                    {!MainSetup.isRoleAllowed(MainSetup.NO_PROJECT_MAIL_ROLES) && <MailboxesSection contractId={contract.id} />}
+                    {MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES) && <FidmanSyncSection />}
                     <ContractDocumentSection />
                 </Col>
                 <Col sm={12} md={6}>
