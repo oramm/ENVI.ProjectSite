@@ -29,7 +29,12 @@ beforeEach(() => {
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     ContractRangeSelector: () => null,
     ProjectSelector: () => null,
-    PersonSelector: () => null,
+    PersonSelector: ({ filterBy }: any) => <div data-testid="person-candidates">{
+        [{ id: 1, systemRoleId: 3, name: "Pracownik ENVI" },
+         { id: 2, systemRoleId: 6, name: "Pracownik wykonawcy" },
+         { id: 3, systemRoleId: 7, name: "Klient" }]
+            .filter(filterBy ?? (() => true)).map(person => person.name).join(", ")
+    }</div>,
 }));
 vi.mock("../../../View/Modals/CommonFormComponents/GenericComponents", () => ({
     ErrorMessage: () => null,
@@ -178,4 +183,9 @@ describe("ContractModalBody — dodatkowe osoby przy edycji", () => {
         await waitFor(() => expect(getByRole("alert")).toHaveTextContent("Nie udało się wczytać"));
         expect(form.getValues("_selectedPersonIds")).toBeUndefined();
     });
+});
+
+it("dodatkowe osoby przy kontrakcie nie proponują klienta ani pracownika wykonawcy", async () => {
+    const view = render(<Harness initialData={{ id: 4242, _type: NOT_SYNCED_TYPE }} />);
+    await waitFor(() => expect(view.getByTestId("person-candidates").textContent).toBe("Pracownik ENVI"));
 });

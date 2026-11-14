@@ -1375,6 +1375,7 @@ export function OurLetterTemplateSelector({
 }
 
 export type PersonSelectorProps = {
+    filterBy?: (person: PersonData) => boolean;
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
@@ -1385,6 +1386,7 @@ export type PersonSelectorProps = {
 };
 
 export function PersonSelector({
+    filterBy,
     name = "_person",
     showValidationInfo = true,
     multiple = false,
@@ -1428,6 +1430,7 @@ export function PersonSelector({
             labelKey="_nameSurnameEmail"
             searchKey="searchText"
             repository={localRepository}
+            filterBy={filterBy}
             renderMenuItemChildren={renderOption}
             multiple={multiple}
             allowNew={allowNew}

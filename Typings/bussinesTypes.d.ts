@@ -534,6 +534,7 @@ export interface EntityData extends RepositoryDataItem {
 }
 
 export interface PersonData extends RepositoryDataItem {
+    systemRoleId?: number;
     name: string;
     surname: string;
     email: string;

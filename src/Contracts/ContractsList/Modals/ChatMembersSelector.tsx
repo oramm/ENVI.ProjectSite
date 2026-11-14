@@ -39,7 +39,8 @@ export function ChatMembersSelector({ contract = false, contractId }: { contract
             <Form.Label>{contract ? "Dodatkowe osoby przy kontrakcie" : "Osoby do zaproszenia"}</Form.Label>
             {contractId && loadedId !== contractId
                 ? <div role={error ? "alert" : "status"}>{error || "Wczytywanie dodatkowych osób…"}</div>
-                : <PersonSelector name={CHAT_MEMBERS_FIELD} multiple showValidationInfo={false} />}
+                : <PersonSelector name={CHAT_MEMBERS_FIELD} multiple showValidationInfo={false}
+                    filterBy={contractId ? person => !MainSetup.isProjectScopedRoleId(person.systemRoleId) : undefined} />}
             <Form.Text>{contract
                 ? contractId ? "Wybrane osoby dostaną dostęp do skrzynki. Zmiana tej listy nie zmienia członków pokoju Google Chat."
                     : "Wybrane osoby dostaną dostęp do skrzynki. Jeśli zakładasz pokój Google Chat, zostaną też do niego zaproszone."
