@@ -10,6 +10,7 @@
  * więc wiersz po prostu zostaje bez plakietki.
  */
 import { useEffect, useSyncExternalStore } from "react";
+import MainSetup from "../../React/MainSetupReact";
 import { LetterSignatureSummaryEntry, SigningApi } from "../../Signing/SigningApi";
 
 /** Okno zbierania próśb z jednego renderu listy. */
@@ -35,6 +36,12 @@ async function flush() {
     timer = undefined;
     const ids = [...pending];
     pending.clear();
+    // Podpis jest zamknięty dla ról zakresowych (projectScopedPolicy) - zapytanie dałoby tylko 403.
+    if (MainSetup.isRoleAllowed(MainSetup.PROJECT_SCOPED_ROLES)) {
+        ids.forEach((id) => cache.set(id, null));
+        emit();
+        return;
+    }
     for (let start = 0; start < ids.length; start += BATCH_SIZE) {
         const chunk = ids.slice(start, start + BATCH_SIZE);
         chunk.forEach((id) => inFlight.add(id));

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Container, Card, Col, Row, Button, Alert } from "react-bootstrap";
 import { ContractsSettlementData, EntityData, Invoice } from "../../../../Typings/bussinesTypes";
+import MainSetup from "../../../React/MainSetupReact";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import { contractsSettlementRepository, invoicesRepository } from "../ContractsController";
 import { useContractDetails } from "./ContractDetailsContext";
@@ -19,7 +20,8 @@ export default function ContractOtherDetails() {
             if (!contract?.id) throw new Error("Nie kontraktu");
             const params = [{ id: contract.id }];
             const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServerPOST(params))[0];
-            const fetchInvoicesData = await invoicesRepository.loadItemsFromServerPOST(params);
+            // Faktury sprzedaży dostają tylko pracownicy ENVI - reszta dostałaby 403.
+            const fetchInvoicesData = MainSetup.canViewInvoices() ? await invoicesRepository.loadItemsFromServerPOST(params) : [];
             try {
                 const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
                 setSettlemenData(settlementData);

@@ -5,7 +5,7 @@ import { EntityData, OtherContract, OurContract, ProjectData } from "../../../..
 import MainSetup from "../../../React/MainSetupReact";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import { FormProvider } from "../../../View/Modals/FormContext";
-import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
+import { PartialEditTrigger as ModalEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { ContractStatusBadge, FidmanSyncBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
 import {
     FidmanSyncStatus,
@@ -27,6 +27,13 @@ import { ContractDocumentBadge } from "../ContractRowContent";
 import { useContractDetails } from "./ContractDetailsContext";
 import { MailboxesSection } from "../../../Mailboxes/MailboxStatus";
 import { ContractChatSpaceSection } from "./ContractChatSpaceSection";
+
+/**
+ * Pola nagłówka edytuje PUT /contract/:id, który serwer zamyka rolom ograniczonym do przypisań
+ * (projectScopedPolicy) - klik dałby 403 i raport błędu. Dla tych ról pole jest tylko do odczytu.
+ */
+export const PartialEditTrigger: typeof ModalEditTrigger = (props) =>
+    MainSetup.isRoleAllowed(MainSetup.PROJECT_SCOPED_ROLES) ? <span>{props.children}</span> : <ModalEditTrigger {...props} />;
 
 export function ContractMainHeader() {
     const { contract, setContract, contractsRepository } = useContractDetails();
