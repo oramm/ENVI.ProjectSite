@@ -11,10 +11,20 @@
  */
 import React from "react";
 import { render, waitFor, act, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useForm, UseFormReturn, FieldValues } from "react-hook-form";
 import { FormProvider } from "../../../View/Modals/FormContext";
 import { ContractModalBody } from "./ContractModalBody";
+
+const mailboxMocks = vi.hoisted(() => ({ selectedPersons: vi.fn(), fetch: vi.fn() }));
+vi.mock("../../../React/Tools/ToolsFetch", () => ({ default: {
+    fetchJsonWithSafeError: mailboxMocks.fetch,
+} }));
+beforeEach(() => {
+    mailboxMocks.selectedPersons.mockReset().mockResolvedValue([{ id: 7, name: "Anna" }, { id: 9, name: "Jan" }]);
+    mailboxMocks.fetch.mockReset().mockImplementation((url: string) => url.endsWith("/selectedPersons")
+        ? mailboxMocks.selectedPersons(url) : Promise.resolve({ mailboxes: [] }));
+});
 
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     ContractRangeSelector: () => null,
@@ -127,5 +137,45 @@ describe("ContractModalBody — pole „Objęta synchronizacją”", () => {
             fireEvent.click(checkbox!);
         });
         await waitFor(() => expect(form.getValues("fidmanSyncEnabled")).toBe(false));
+    });
+});
+
+describe("ContractModalBody — dodatkowe osoby przy edycji", () => {
+    it("wczytuje bieżące osoby i wysyła zmienioną listę bez zaproszenia do Chatu", async () => {
+        const { getByText } = renderForm(contract());
+        expect(getByText("Dodatkowe osoby przy kontrakcie")).toBeInTheDocument();
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([7, 9]));
+        expect(mailboxMocks.selectedPersons).toHaveBeenCalledWith(expect.stringContaining("contract/4242/selectedPersons"));
+        expect(form.getValues("_chatSpacePersons")).toEqual([{ id: 7, name: "Anna" }, { id: 9, name: "Jan" }]);
+        act(() => form.setValue("_chatSpacePersons", [{ id: 9 }, { id: 11 }]));
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([9, 11]));
+        const submit = vi.fn();
+        await act(async () => { await form.handleSubmit(submit)(); });
+        expect(submit.mock.calls[0][0]._selectedPersonIds).toEqual([9, 11]);
+        expect(submit.mock.calls[0][0]._chatSpaceSelection).toBeUndefined();
+        expect(mailboxMocks.fetch.mock.calls.every(([url]) => !String(url).includes("chatSpace"))).toBe(true);
+    });
+
+    it("pusta lista czyści osoby przy kontrakcie", async () => {
+        renderForm(contract());
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([7, 9]));
+        act(() => form.setValue("_chatSpacePersons", []));
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([]));
+    });
+
+    it("błąd odczytu nie wysyła pustej listy i nie odbiera przypisań", async () => {
+        mailboxMocks.selectedPersons.mockRejectedValue(new Error("offline"));
+        const { getByRole } = renderForm(contract());
+        await waitFor(() => expect(getByRole("alert")).toHaveTextContent("Nie udało się wczytać dodatkowych osób"));
+        expect(form.getValues("_selectedPersonIds")).toBeUndefined();
+    });
+
+    it("zmiana kontraktu nie zachowuje starej listy, gdy nowej nie udało się odczytać", async () => {
+        const { rerender, getByRole } = renderForm(contract());
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([7, 9]));
+        mailboxMocks.selectedPersons.mockRejectedValue(new Error("offline"));
+        rerender(<Harness initialData={contract({ id: 888 })} />);
+        await waitFor(() => expect(getByRole("alert")).toHaveTextContent("Nie udało się wczytać"));
+        expect(form.getValues("_selectedPersonIds")).toBeUndefined();
     });
 });

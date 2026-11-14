@@ -44,8 +44,7 @@ export function MailboxSelection({ contract = false }: { contract?: boolean }) {
             <div>
                 {([
                     ["project", "Skrzynka projektu"],
-                    ...(contract ? [["separate", "Osobna skrzynka kontraktu"]] : []),
-                    ["none", "Bez skrzynki"],
+                    ...(contract ? [["separate", "Osobna skrzynka kontraktu"], ["none", "Bez skrzynki"]] : []),
                 ] as [MailboxSelectionValue["mode"], string][]).map(([value, label]) => (
                     <Form.Check key={value} type="radio" inline name="mailboxMode" id={`mailboxMode-${value}`}
                         label={label} checked={mode === value}

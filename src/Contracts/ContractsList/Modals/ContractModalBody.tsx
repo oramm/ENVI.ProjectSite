@@ -252,7 +252,10 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     <option value="MEASUREMENT">obmiar</option>
                 </Form.Control>
             </Form.Group>
-            {isEditing ? <MailboxesSection contractId={initialData?.id} /> : <>
+            {isEditing ? <>
+                <MailboxesSection contractId={initialData?.id} />
+                <ChatMembersSelector contract contractId={initialData?.id} />
+            </> : <>
                 <MailboxSelection contract />
                 <ChatMembersSelector contract />
             </>}

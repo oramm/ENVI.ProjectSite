@@ -28,10 +28,15 @@ describe("wybór skrzynki", () => {
         expect(form.getValues("_mailboxSelection")).toEqual({ mode: "project" });
         await waitFor(() => expect(screen.getByLabelText("Adres skrzynki")).toHaveValue("chc.01@envi.com.pl"));
     });
-    it("pozwala zmienić adres i zrezygnować ze skrzynki", async () => {
+    it("projekt pozwala zmienić adres i zawsze ma skrzynkę", async () => {
         render(<Harness contract={false} />);
         fireEvent.change(screen.getByLabelText("Adres skrzynki"), { target: { value: "inny@envi.com.pl" } });
         expect(form.getValues("_mailboxSelection")).toEqual({ mode: "project", address: "inny@envi.com.pl" });
+        expect(screen.queryByLabelText("Bez skrzynki")).toBeNull();
+        expect(screen.queryByLabelText("Osobna skrzynka kontraktu")).toBeNull();
+    });
+    it("kontrakt pozwala zrezygnować ze skrzynki", () => {
+        render(<Harness />);
         fireEvent.click(screen.getByLabelText("Bez skrzynki"));
         expect(form.getValues("_mailboxSelection")).toEqual({ mode: "none" });
         expect(screen.queryByLabelText("Adres skrzynki")).toBeNull();
