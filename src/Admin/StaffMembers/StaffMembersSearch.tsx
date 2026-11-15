@@ -16,10 +16,8 @@ import { AccessOverview } from "./access/AccessOverview";
 /** Nazwa roli systemowej po numerze - rola przychodzi z JOIN-a jako identyfikator. */
 function roleNameById(systemRoleId: number | null | undefined): string {
     if (systemRoleId === null || systemRoleId === undefined) return "-";
-    const entry = Object.entries(MainSetup.SystemRoles).find(
-        ([, role]: [string, any]) => role.id === Number(systemRoleId),
-    );
-    return entry ? entry[0] : String(systemRoleId);
+    const role = Object.values(MainSetup.SystemRoles).find((role) => role.id === Number(systemRoleId));
+    return role ? MainSetup.ROLE_LABELS[role.systemName] : String(systemRoleId);
 }
 
 /** Klucz, pod którym FilterableTable pamięta kryteria tego okna (patrz FilterPanel). */
@@ -116,8 +114,6 @@ export default function StaffMembersSearch({ title }: { title: string }) {
     }, [frazaParam, setSearchParams]);
 
     // Wariant A makiety DOSTEP-6: nadawanie i przegląd „kto ma do czego dostęp” w jednym oknie.
-    // „Zmień uprawnienia” z widoku osoby wraca na pierwszą zakładkę z tą osobą w filtrze
-    // (ten sam zasiew co pomost z okna „Osoby”); tabela montuje się od nowa, więc filtr ją odczyta.
     const [tab, setTab] = useState("grant");
 
     return (
@@ -210,16 +206,12 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                 EditButtonComponent={StaffMemberEditModalButton}
                 isDeletable={false}
                 repository={staffMembersRepository}
+                initialObjects={staffMembersRepository.items}
                 searchOnMount={true}
             />
             ) : (
                 <Container>
-                    <AccessOverview
-                        onEdit={(person) => {
-                            seedStaffMembersFilter({ fraza: `${person.name} ${person.surname}` });
-                            setTab("grant");
-                        }}
-                    />
+                    <AccessOverview />
                 </Container>
             )}
         </>

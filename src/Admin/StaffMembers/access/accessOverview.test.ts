@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("../../../React/MainSetupReact", () => ({ default: { serverUrl: "http://x/" } }));
+vi.mock("../../../React/MainSetupReact", async (original) => ({
+    default: class extends (await original<typeof import("../../../React/MainSetupReact")>()).default {
+        static serverUrl = "http://x/";
+    },
+}));
 
 import { AreaAccess, filterOverview, PersonAccessView } from "./accessOverviewApi";
 import { removalEffect } from "./PersonAccessPanel";

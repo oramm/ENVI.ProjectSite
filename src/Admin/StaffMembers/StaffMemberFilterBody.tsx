@@ -41,9 +41,9 @@ export function StaffMembersFilterBody() {
                 <Form.Label>Rola systemowa</Form.Label>
                 <Form.Select {...register("systemRoleId")}>
                     <option value="">Wszystkie</option>
-                    {Object.entries(MainSetup.SystemRoles).map(([roleName, role]: [string, any]) => (
+                    {Object.values(MainSetup.SystemRoles).map((role) => (
                         <option key={role.id} value={role.id}>
-                            {roleName}
+                            {MainSetup.ROLE_LABELS[role.systemName]}
                         </option>
                     ))}
                 </Form.Select>

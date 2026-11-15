@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Spinner, Table } from "react-bootstrap";
 import MainSetup from "../../../React/MainSetupReact";
 import { savePersonProjectAssignments } from "../../../Persons/personsV2Helpers";
 import { AREA_LABEL, AreaAccess, fetchAccessPreview, fetchPersonAccess, PersonAccessView } from "./accessOverviewApi";
 import { SeesPill, SourcePill } from "./AccessPills";
+import { StaffMemberData } from "../../../../Typings/bussinesTypes";
+import { StaffMemberEditModalButton } from "../Modals/StaffMemberModalButtons";
+import { fetchStaffMemberRow } from "../Modals/UserModalButtons";
+import { staffMembersRepository } from "../StaffMembersController";
 
 /** Co się zmieni po odebraniu przypisania - porównanie dwóch odpowiedzi serwera, nie zgadywanie. */
 export function removalEffect(before: AreaAccess[], after: AreaAccess[]) {
@@ -23,20 +27,25 @@ const roleDescription = (role: PersonAccessView["role"]) => {
     return rest.length ? rest.join(" – ") : text;
 };
 
-type Props = { personId: number; onBack: () => void; onEdit: (person: PersonAccessView) => void; onChanged: () => void };
+type Props = { personId: number; onBack: () => void; onChanged: () => void };
 
 /** Widok jednej osoby: skąd ma dostęp, co widzi i dlaczego, odebranie przypisania z jasnym skutkiem (DOSTEP-7). */
-export function PersonAccessPanel({ personId, onBack, onEdit, onChanged }: Props) {
+export function PersonAccessPanel({ personId, onBack, onChanged }: Props) {
     const [person, setPerson] = useState<PersonAccessView | null | undefined>(undefined);
     const [removing, setRemoving] = useState<{ ourId: string; effect: ReturnType<typeof removalEffect> } | null>(null);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [editRow, setEditRow] = useState<StaffMemberData | null>(null);
+    const [loadingEdit, setLoadingEdit] = useState(false);
+    const currentPersonId = useRef<number | null>(personId);
 
     const load = () => fetchPersonAccess(personId).then(setPerson).catch(() => setPerson(null));
     useEffect(() => {
+        currentPersonId.current = personId;
         setPerson(undefined);
         setRemoving(null);
         load();
+        return () => { currentPersonId.current = null; };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [personId]);
 
@@ -50,6 +59,24 @@ export function PersonAccessPanel({ personId, onBack, onEdit, onChanged }: Props
 
     const isStaff = MainSetup.STAFF_ROLES.includes(person.role);
     const remaining = (ourId: string) => person.assignments.map((a) => a.ourId).filter((id) => id !== ourId);
+
+    const openEdit = async () => {
+        setError(null);
+        setLoadingEdit(true);
+        try {
+            const row = await fetchStaffMemberRow(personId);
+            // Po wyjściu z panelu odczyt nie może zmienić osoby edytowanej na liście.
+            if (currentPersonId.current !== personId) return;
+            if (!row) throw new Error("Brak wiersza osoby");
+            // GeneralModal scala formularz z bieżącym wierszem repozytorium przy zapisie.
+            staffMembersRepository.currentItems = [row];
+            setEditRow(row);
+        } catch {
+            setError("Nie udało się wczytać osoby do zmiany uprawnień. Spróbuj ponownie.");
+        } finally {
+            setLoadingEdit(false);
+        }
+    };
 
     const askRemove = async (ourId: string) => {
         setError(null);
@@ -84,8 +111,15 @@ export function PersonAccessPanel({ personId, onBack, onEdit, onChanged }: Props
                 <Button variant="link" className="p-0" onClick={onBack}>← Przegląd</Button>
                 <h5 className="mb-0">{person.name} {person.surname}</h5>
                 <span className="text-muted">{person.entityName}</span>
-                <Button size="sm" className="ms-auto" onClick={() => onEdit(person)}>Zmień uprawnienia</Button>
+                <Button size="sm" className="ms-auto" disabled={loadingEdit} onClick={openEdit}>
+                    {loadingEdit ? <><Spinner size="sm" /> Wczytywanie…</> : "Zmień uprawnienia"}
+                </Button>
             </div>
+            {editRow && <StaffMemberEditModalButton
+                show={true}
+                onClose={() => setEditRow(null)}
+                modalProps={{ initialData: editRow, onEdit: () => { load(); onChanged(); } }}
+            />}
             {error && <Alert variant="danger" className="py-1 small">{error}</Alert>}
             {!person.areas.some((a) => a.sees) && (
                 <Alert variant="warning" className="py-2 small"><b>Ta osoba nie zobaczy nic.</b> Po zalogowaniu trafi do pustego systemu.</Alert>

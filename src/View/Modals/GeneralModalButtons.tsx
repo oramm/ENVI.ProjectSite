@@ -29,6 +29,8 @@ import { DeleteIconButton, EditIconButton, CopyIconButton } from "../Resultsets/
  */
 export function GeneralEditModalButton<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     buttonProps,
+    show,
+    onClose,
     modalProps: {
         onEdit,
         specialActionRoute,
@@ -55,14 +57,15 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
     }
     function handleClose() {
         setShowForm(false);
+        onClose?.();
     }
 
     return (
         <>
-            <GeneraEditButton {...buttonProps} onClick={handleOpen} />
+            {show === undefined && <GeneraEditButton {...buttonProps} onClick={handleOpen} />}
             <GeneralModal<DataItemType>
                 onClose={handleClose}
-                show={showForm}
+                show={show ?? showForm}
                 isEditing={true}
                 title={modalTitle}
                 subtitle={modalSubtitle}

@@ -1,7 +1,7 @@
 import React from "react";
 import { PersonAccountV2Payload, StaffMemberData } from "../../../../Typings/bussinesTypes";
 import { GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
-import { ModalSaveCallback, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
+import { GeneralEditModalButtonProps, ModalSaveCallback, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import {
     AccountFormValues,
     buildAccountPayload,
@@ -160,9 +160,13 @@ export function makeStaffMemberEditHandler(onEdit: ModalSaveCallback<StaffMember
  */
 export function StaffMemberEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<StaffMemberData>) {
+    show,
+    onClose,
+}: SpecificEditModalButtonProps<StaffMemberData> & Pick<GeneralEditModalButtonProps<StaffMemberData>, "show" | "onClose">) {
     return (
         <GeneralEditModalButton<StaffMemberData>
+            show={show}
+            onClose={onClose}
             modalProps={{
                 onEdit: makeStaffMemberEditHandler(onEdit),
                 ModalBodyComponent: StaffMemberModalBody,

@@ -98,6 +98,9 @@ type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;
     buttonProps?: GeneralEditModalButtonButtonProps;
+    /** Sterowanie z zewnątrz zastępuje przycisk otwierający. */
+    show?: boolean;
+    onClose?: () => void;
 };
 
 export type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {

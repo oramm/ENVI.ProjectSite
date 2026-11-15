@@ -15,13 +15,11 @@ import {
 import { SeesPill, SourceLegend, SourcePill } from "./AccessPills";
 import { PersonAccessPanel } from "./PersonAccessPanel";
 
-type Props = { onEdit: (person: PersonAccessView) => void };
-
 /**
  * „Kto ma do czego dostęp” - zakładka okna „Personel i uprawnienia” (makieta DOSTEP-6, wariant A).
  * Każda odpowiedź (widzi, skąd, dlaczego) przychodzi z serwera; tu tylko filtry i układ.
  */
-export function AccessOverview({ onEdit }: Props) {
+export function AccessOverview() {
     const ROLE_ORDER = Object.keys(MainSetup.ROLE_LABELS) as SystemRoleName[];
     const [persons, setPersons] = useState<PersonAccessView[] | null>(null);
     const [error, setError] = useState(false);
@@ -50,7 +48,7 @@ export function AccessOverview({ onEdit }: Props) {
     );
 
     if (personId)
-        return <PersonAccessPanel personId={personId} onBack={() => setPersonId(null)} onEdit={onEdit} onChanged={load} />;
+        return <PersonAccessPanel personId={personId} onBack={() => setPersonId(null)} onChanged={load} />;
     if (error) return <Alert variant="danger">Nie udało się wczytać przeglądu dostępów.</Alert>;
     if (!persons) return <Spinner size="sm" />;
 
