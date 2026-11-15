@@ -162,6 +162,10 @@ describe("mergeAccountIntoRow", () => {
         expect(row.isInScrum).toBe(true);
     });
 
+    it("„Aktywny” w wierszu bierze się z konta (U2)", () => {
+        expect(mergeAccountIntoRow({ ...serverRow, isActive: true }, { ...savedAccount, isActive: false }).isActive).toBe(false);
+    });
+
     it("bez konta (zapis padł) wiersz zostaje taki, jaki wrócił z serwera", () => {
         expect(mergeAccountIntoRow(serverRow, null)).toBe(serverRow);
     });
@@ -174,7 +178,8 @@ describe("handler onEdit modalu uprawnień", () => {
 
         expect(saveV2).toHaveBeenCalledWith(
             PERSON_ID,
-            { systemRoleId: 3, systemEmail: "nowy@envi.com.pl", fidmanEnabled: true, finEnabled: true },
+            // U2: „Aktywny” z formularza jedzie trasą konta - to on wyłącza logowanie przy odejściu.
+            { systemRoleId: 3, systemEmail: "nowy@envi.com.pl", fidmanEnabled: true, finEnabled: true, isActive: true },
             {},
             "StaffMembers"
         );

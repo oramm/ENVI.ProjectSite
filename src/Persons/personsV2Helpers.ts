@@ -363,6 +363,8 @@ export type AccountFormValues = {
     systemEmail?: string | null;
     fidmanEnabled?: boolean | null;
     finEnabled?: boolean | null;
+    /** Aktywność konta logowania - tylko okno personelu; brak pola = nie ruszaj (U2). */
+    isActive?: boolean | null;
 };
 
 /**
@@ -390,6 +392,8 @@ export function buildAccountPayload(values: AccountFormValues): Partial<PersonAc
         systemEmail: values.systemEmail || undefined,
         fidmanEnabled: Boolean(values.fidmanEnabled),
         finEnabled: Boolean(values.finEnabled),
+        // Okno użytkowników nie ma przełącznika „Aktywny” - wtedy pole nie jedzie i konto zostaje, jakie było.
+        ...(typeof values.isActive === "boolean" ? { isActive: values.isActive } : {}),
     };
 }
 

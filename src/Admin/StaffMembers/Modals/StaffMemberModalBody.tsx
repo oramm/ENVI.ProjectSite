@@ -198,7 +198,9 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             <Form.Group controlId="isActive">
                 <Form.Check type="switch" label="Aktywny" {...register("isActive")} />
                 <Form.Text muted>
-                    Odejście z firmy to wyłączenie tej opcji - historia zadań, urlopów i przejazdów zostaje.
+                    Odejście z firmy to wyłączenie tej opcji. Osoba od razu traci logowanie do PS (także otwarte okna),
+                    konta w FIDmanie i FIN, Second Brain i pokoje Google Chat projektów. Historia zadań, urlopów
+                    i przejazdów zostaje. Hasła skrzynek, które osoba znała, trzeba zmienić osobno.
                 </Form.Text>
             </Form.Group>
 

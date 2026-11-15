@@ -33,6 +33,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
     onClose,
     modalProps: {
         onEdit,
+        beforeSubmit,
         specialActionRoute,
         specialRetrieveActionRoute,
         ModalBodyComponent,
@@ -72,6 +73,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                 headerBadge={headerBadge}
                 repository={repository}
                 onEdit={onEdit}
+                beforeSubmit={beforeSubmit}
                 specialActionRoute={specialActionRoute}
                 specialRetrieveActionRoute={specialRetrieveActionRoute}
                 ModalBodyComponent={ModalBodyComponent}
@@ -274,6 +276,7 @@ export function GeneralCopyModalButton<DataItemType extends RepositoryDataItem>(
 export function PartialEditTrigger<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     modalProps: {
         onEdit,
+        beforeSubmit,
         specialActionRoute,
         ModalBodyComponent,
         additionalModalBodyProps,
@@ -310,6 +313,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
                 subtitle={modalSubtitle}
                 repository={repository}
                 onEdit={onEdit}
+                beforeSubmit={beforeSubmit}
                 specialActionRoute={specialActionRoute}
                 ModalBodyComponent={ModalBodyComponent}
                 makeValidationSchema={makeValidationSchema}

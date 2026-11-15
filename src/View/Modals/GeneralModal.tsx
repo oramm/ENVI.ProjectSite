@@ -7,7 +7,7 @@ import { parseFieldValuestoFormData as parseFieldValuesToFormData } from "../Res
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "../../Css/styles.css";
-import { ModalBodyProps, ModalSaveCallback } from "./ModalsTypes";
+import { ModalBeforeSubmit, ModalBodyProps, ModalSaveCallback } from "./ModalsTypes";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ErrorBoundary from "./ErrorBoundary";
 import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
@@ -22,6 +22,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     headerBadge?: React.ReactNode;
     isEditing: boolean;
     onEdit?: ModalSaveCallback<DataItemType>;
+    beforeSubmit?: ModalBeforeSubmit;
     specialActionRoute?: string;
     specialRetrieveActionRoute?: string;
     onAddNew?: ModalSaveCallback<DataItemType>;
@@ -127,6 +128,7 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
     specialActionRoute,
     specialRetrieveActionRoute,
     onEdit,
+    beforeSubmit,
     onAddNew,
     onClose,
     repository,
@@ -253,6 +255,11 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
             setErrorMessage("");
             setProgressData({ text: "" });
             setRequestPending(true);
+
+            if (beforeSubmit && !(await beforeSubmit(data))) {
+                setRequestPending(false);
+                return;
+            }
 
             // Traktuj pole pliku jako "obecne" tylko gdy faktycznie wybrano plik.
             const hasFiles = Object.values(data).some((value) => {

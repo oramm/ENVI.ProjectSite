@@ -6,6 +6,7 @@
  */
 
 import type { ReactNode } from "react";
+import type { FieldValues } from "react-hook-form";
 import RepositoryReact from "../../React/RepositoryReact";
 import * as yup from "yup";
 import { ButtonProps } from "react-bootstrap";
@@ -36,6 +37,9 @@ export type ModalSaveCallback<DataItemType extends RepositoryDataItem = Reposito
     object: DataItemType,
     submitted?: DataItemType
 ) => void | Promise<void>;
+
+/** false wstrzymuje cały zapis, także zapis rekordu bazowego. */
+export type ModalBeforeSubmit = (data: FieldValues) => boolean | Promise<boolean>;
 
 type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
@@ -88,6 +92,7 @@ export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataIte
 type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
     GeneralModalButtonModalProps<DataItemType> & {
         onEdit: ModalSaveCallback<DataItemType>;
+        beforeSubmit?: ModalBeforeSubmit;
         specialActionRoute?: string;
         specialRetrieveActionRoute?: string;
         initialData: DataItemType;

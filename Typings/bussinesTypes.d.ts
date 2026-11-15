@@ -897,6 +897,7 @@ export interface StaffMemberData extends RepositoryDataItem {
     hasBankAccess: boolean;
     canLogSiteVisits: boolean;
     canManageSbAccess: boolean;
+    /** Aktywność KONTA logowania (U2): odczyt z wiersza, zapis trasą konta v2, nie flagami panelu. */
     isActive: boolean;
     _personName?: string;
     _personSurname?: string;

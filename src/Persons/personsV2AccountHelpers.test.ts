@@ -66,6 +66,12 @@ describe("buildAccountPayload - flaga uzytkownika FIDmana (GLO-P1)", () => {
         expect(payload.fidmanEnabled).toBe(false);
     });
 
+    it("„Aktywny” z okna personelu jedzie jawnie (false = odejście); formularz bez pola go nie wysyła (U2)", () => {
+        expect(buildAccountPayload({ systemRoleId: "2", isActive: false }).isActive).toBe(false);
+        expect(buildAccountPayload({ systemRoleId: "2", isActive: true }).isActive).toBe(true);
+        expect("isActive" in buildAccountPayload({ systemRoleId: "2" })).toBe(false);
+    });
+
     it("rola z Typeahead (liczba) i z legacy (string) daje tę samą liczbę", () => {
         expect(buildAccountPayload({ systemRoleId: 3 }).systemRoleId).toBe(3);
         expect(buildAccountPayload({ systemRoleId: "3" }).systemRoleId).toBe(3);
