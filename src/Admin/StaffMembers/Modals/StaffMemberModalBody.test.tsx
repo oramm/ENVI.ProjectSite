@@ -51,6 +51,18 @@ describe("StaffMemberModalBody - konto przy edycji bierze się z wiersza listy",
         hoisted.fetchPersonProjectAssignments.mockReset().mockResolvedValue([]);
     });
 
+    it.each([true, false])("Finanse firmy zachowuje pole hasBankAccess (%s) przy zapisie", async hasBankAccess => {
+        const save = vi.fn();
+        render(<Harness initialData={{ personId: 42, hasBankAccess }} onSave={save} />);
+        const checkbox = await screen.findByLabelText("Finanse firmy");
+        expect(checkbox).toHaveProperty("checked", hasBankAccess);
+        expect(screen.getByText("Wyciągi bankowe i raporty finansowe firmy")).toBeInTheDocument();
+        await waitFor(() => expect(form.getValues("_projectAssignments")).toEqual([]));
+        fireEvent.click(checkbox);
+        fireEvent.click(screen.getByRole("button", { name: "Zapisz" }));
+        await waitFor(() => expect(save).toHaveBeenCalledWith(expect.objectContaining({ hasBankAccess: !hasBankAccess }), expect.anything()));
+    });
+
     it.each([true, false])("znacznik zarządzania SB z wiersza (%s) trafia do zapisu", async canManageSbAccess => {
         const save = vi.fn();
         render(<Harness initialData={{ personId: 42, canManageSbAccess }} onSave={save} />);

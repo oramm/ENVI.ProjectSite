@@ -187,7 +187,7 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                         colMd: 1,
                     },
                     {
-                        header: "Bank",
+                        header: "Finanse firmy",
                         renderTdBody: (person: StaffMemberData) => <BoolCell value={person.hasBankAccess} />,
                         colMd: 1,
                     },

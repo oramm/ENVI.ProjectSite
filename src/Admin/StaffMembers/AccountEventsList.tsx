@@ -20,7 +20,7 @@ const FIELD_LABELS: Record<string, string> = {
     "STAFF_FLAGS.isDriver": "Kierowca",
     "STAFF_FLAGS.isInScrum": "W scrumie",
     "STAFF_FLAGS.hasCostInvoiceAccess": "Faktury kosztowe",
-    "STAFF_FLAGS.hasBankAccess": "Wyciągi bankowe",
+    "STAFF_FLAGS.hasBankAccess": "Finanse firmy",
     "STAFF_FLAGS.canLogSiteVisits": "Wizyty na budowie",
     "STAFF_FLAGS.canManageSbAccess": "Zarządza dostępem do SB",
     "STAFF_FLAGS.isActive": "Aktywny (panel)",

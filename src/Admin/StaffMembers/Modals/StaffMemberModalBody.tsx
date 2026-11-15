@@ -179,8 +179,8 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             </Form.Group>
 
             <Form.Group controlId="hasBankAccess" className="mt-3">
-                <Form.Check type="switch" label="Wyciągi bankowe" {...register("hasBankAccess")} />
-                <Form.Text muted>Otwiera moduł bankowy z danymi rozliczeniowymi. Zmiana działa natychmiast.</Form.Text>
+                <Form.Check type="switch" label="Finanse firmy" {...register("hasBankAccess")} />
+                <Form.Text muted>Wyciągi bankowe i raporty finansowe firmy</Form.Text>
             </Form.Group>
 
             <Form.Group controlId="canLogSiteVisits" className="mt-3">
