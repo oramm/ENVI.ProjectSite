@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import MainSetup from "../../React/MainSetupReact";
 import SbAccessManagePage from "../SbAccessManagePage";
 import { fetchSbEntries, performSbAction, SbEntry, SbHealth } from "../sbManageApi";
+import * as sbManageApi from "../sbManageApi";
 
 const encryptMock = vi.fn(async (_jwk: unknown, _plain: string) => "SZYFR+base64==");
 vi.mock("../sbSecretCrypto", () => ({ encryptSecretForKey: (jwk: unknown, plain: string) => encryptMock(jwk, plain) }));
@@ -17,6 +18,7 @@ const row = (personId = 1, over: Partial<SbEntry> = {}): SbEntry => ({ id: perso
 let rows: SbEntry[], manage: boolean, operationStatus: number, operationBody: unknown, membersStatus: number;
 const originalUrl = MainSetup.serverUrl;
 beforeEach(() => {
+    encryptMock.mockReset().mockResolvedValue("SZYFR+base64==");
     MainSetup.serverUrl = "http://localhost:3000/";
     rows = [row()]; manage = true; operationStatus = 200; operationBody = { result: "OK", note: "" }; membersStatus = 200;
     fetchMock.mockReset().mockImplementation(async (url: string, init?: RequestInit) => {
@@ -32,7 +34,7 @@ beforeEach(() => {
     });
     vi.stubGlobal("fetch", fetchMock);
 });
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); MainSetup.serverUrl = originalUrl; });
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); MainSetup.serverUrl = originalUrl; });
 const renderPage = () => render(<SbAccessManagePage title="Dostęp do Second Brain" />);
 const pick = async (n = 1) => fireEvent.click(await screen.findByRole("row", { name: new RegExp(`Nowak${n} Anna`) }));
 const mutations = () => fetchMock.mock.calls.filter(call => call[1]?.method);
@@ -142,14 +144,18 @@ describe("Panel SB", () => {
         const field = within(dialog).getByLabelText("Hasło");
         expect(field).toHaveAttribute("type", "password");
         fireEvent.change(field, { target: { value: "Tajne-Haslo-1" } });
+        fireEvent.change(within(dialog).getByLabelText("Powtórz hasło"), { target: { value: "Tajne-Haslo-1" } });
         fireEvent.click(within(dialog).getByRole("button", { name: /Zaszyfruj i udostępnij/ }));
-        await screen.findByText(/Udostępniono hasło \(baza PS\)/);
+        await within(dialog).findByText("Udostępniono");
         expect(encryptMock).toHaveBeenCalledWith(jwk, "Tajne-Haslo-1");
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/secrets/baza-ps", {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ciphertext: "SZYFR+base64==", keyThumbprint: "a".repeat(64) }),
         }]);
         expect(JSON.stringify(fetchMock.mock.calls)).not.toContain("Tajne-Haslo-1");
+        await waitFor(() => expect(field).toHaveValue(""));
+        expect(within(dialog).getByLabelText("Powtórz hasło")).toHaveValue("");
+        fireEvent.click(within(dialog).getByRole("button", { name: "Zamknij" }));
         await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
         fireEvent.click(within(screen.getByLabelText("Panel osoby")).getByRole("button", { name: "Udostępnij hasło…" }));
         expect(within(await screen.findByRole("dialog")).getByLabelText("Hasło")).toHaveValue("");
@@ -161,8 +167,9 @@ describe("Panel SB", () => {
         fireEvent.click(screen.getByRole("button", { name: "Udostępnij hasło…" }));
         const dialog = await screen.findByRole("dialog");
         fireEvent.change(within(dialog).getByLabelText("Hasło"), { target: { value: "x" } });
+        fireEvent.change(within(dialog).getByLabelText("Powtórz hasło"), { target: { value: "x" } });
         fireEvent.click(within(dialog).getByRole("button", { name: /Zaszyfruj i udostępnij/ }));
-        expect(await within(dialog).findByText("Klucz komputera pracownika zmienił się.")).toBeVisible();
+        expect(await within(dialog).findByText("Błąd: Klucz komputera pracownika zmienił się.")).toBeVisible();
         expect(within(dialog).getByLabelText("Hasło")).toHaveValue("");
     });
     it("odebranie hasła dopiero po potwierdzeniu z przypomnieniem o zmianie hasła u źródła", async () => {
@@ -282,5 +289,234 @@ describe("API zarządzania SB", () => {
             .mockResolvedValueOnce(response({ errorMessage: "Odmowa" }, 409));
         expect(await fetchSbEntries()).toEqual({ ok: false, status: 502, message: "" });
         expect(await performSbAction(1, "invite")).toEqual({ ok: false, status: 409, message: "Odmowa" });
+    });
+});
+
+describe("Panel SB - Hasła wspólne", () => {
+    const keyedRow = (id: number, over: Partial<SbEntry> = {}) => row(id, {
+        publicKeyJwk: { kty: "RSA", n: `key-${id}`, e: "AQAB" }, keyThumbprint: `thumb-${id}`, keyFingerprint: `finger-${id}`,
+        secretsExpected: ["baza-ps"], secretsGiven: [], ...over,
+    });
+    const openCommon = async () => {
+        renderPage(); await screen.findByRole("table");
+        fireEvent.click(screen.getByRole("button", { name: "Hasła wspólne" }));
+        return screen.findByRole("dialog");
+    };
+    const fill = (dialog: HTMLElement, value = "haslo-test-123") => {
+        fireEvent.change(within(dialog).getByLabelText("Hasło"), { target: { value } });
+        fireEvent.change(within(dialog).getByLabelText("Powtórz hasło"), { target: { value } });
+    };
+    const send = (dialog: HTMLElement) => within(dialog).getByRole("button", { name: /Zaszyfruj i udostępnij/ });
+    const person = (dialog: HTMLElement, id: number) => within(dialog).getByRole("checkbox", { name: new RegExp(`Nowak${id} Anna`) });
+    it("pokazuje różnicę dopiero po wpisaniu powtórzenia, tuż pod polem i z powiązaniem ARIA", async () => {
+        rows = Array.from({ length: 20 }, (_, i) => keyedRow(i + 1));
+        const dialog = await openCommon();
+        const password = within(dialog).getByLabelText("Hasło"), repeated = within(dialog).getByLabelText("Powtórz hasło");
+        expect(within(dialog).queryByRole("alert")).toBeNull();
+        fireEvent.change(password, { target: { value: "a" } });
+        expect(within(dialog).queryByRole("alert")).toBeNull();
+        expect(repeated).toHaveAttribute("aria-invalid", "false");
+        expect(send(dialog)).toBeDisabled();
+        fireEvent.submit(send(dialog).closest("form")!);
+        expect(mutations()).toHaveLength(0); expect(encryptMock).not.toHaveBeenCalled();
+        fireEvent.change(repeated, { target: { value: "b" } });
+        const error = within(dialog).getByRole("alert");
+        expect(error).toHaveTextContent("Hasła różnią się");
+        expect(repeated.nextElementSibling).toBe(error);
+        expect(error.closest(".modal-body")).not.toBeNull();
+        expect(repeated).toHaveAttribute("aria-describedby", error.id);
+        expect(repeated).toHaveAttribute("aria-invalid", "true");
+        expect(send(dialog)).toBeDisabled();
+        fireEvent.change(repeated, { target: { value: "a" } });
+        expect(within(dialog).queryByRole("alert")).toBeNull();
+        expect(repeated).toHaveAttribute("aria-invalid", "false");
+        expect(repeated).not.toHaveAttribute("aria-describedby");
+        expect(send(dialog)).toBeEnabled();
+        fireEvent.change(repeated, { target: { value: "" } });
+        expect(within(dialog).queryByRole("alert")).toBeNull();
+        expect(send(dialog)).toBeDisabled();
+        fireEvent.change(password, { target: { value: "ż".repeat(96) } });
+        expect(within(dialog).getByRole("alert")).toHaveTextContent("za długie");
+        expect(send(dialog)).toBeDisabled();
+    });
+    it("wyjaśnia brak czekających i pozwala wysłać wszystkim po włączeniu zmiany hasła", async () => {
+        rows = [keyedRow(1, { secretsExpected: ["baza-ps", "poczta-faktury"], secretsGiven: ["baza-ps", "poczta-faktury"] }),
+            keyedRow(2, { secretsGiven: ["baza-ps"] })];
+        const dialog = await openCommon(); fill(dialog);
+        const hint = "Nikt nie czeka na to hasło - włącz 'Hasło zmieniło się u źródła', żeby wysłać je ponownie.";
+        expect(within(dialog).getByText(hint)).toBeVisible();
+        expect(send(dialog)).toBeDisabled();
+        const changed = within(dialog).getByLabelText(/Hasło zmieniło się u źródła/);
+        fireEvent.click(changed);
+        expect(within(dialog).queryByText(hint)).toBeNull();
+        expect(person(dialog, 1)).toBeChecked(); expect(person(dialog, 2)).toBeChecked();
+        expect(send(dialog)).toBeEnabled();
+        fireEvent.click(changed);
+        expect(within(dialog).getByText(hint)).toBeVisible();
+        expect(send(dialog)).toBeDisabled();
+        fireEvent.change(within(dialog).getByLabelText("Hasło do"), { target: { value: "poczta-faktury" } });
+        expect(within(dialog).getByText(hint)).toBeVisible();
+    });
+    it("gdy czeka tylko osoba bez klucza, wyjaśnia przełącznik i instalator", async () => {
+        rows = [keyedRow(1, { secretsGiven: ["baza-ps"] }), keyedRow(2, { publicKeyJwk: null })];
+        const dialog = await openCommon(); fill(dialog);
+        expect(within(dialog).getByText(/Nikt nie czeka.*Osoby bez klucza komputera dostaną je dopiero po uruchomieniu instalatora/)).toBeVisible();
+        expect(within(dialog).getByText(/po uruchomieniu instalatora u tej osoby/)).toBeVisible();
+        expect(send(dialog)).toBeDisabled();
+    });
+    it.each([true, false])("zostawia podsumowanie po zamknięciu i zastępuje stary stan wynikiem (sukces: %s)", async ok => {
+        rows = [keyedRow(1, { secretsGiven: ["baza-ps"] }), keyedRow(2, { secretsGiven: ["baza-ps"] })];
+        vi.spyOn(sbManageApi, "giveSbSecret").mockResolvedValue(ok
+            ? { ok: true, data: { name: "baza-ps", given: true } }
+            : { ok: false, status: 409, message: "Klucz zmieniony." });
+        const dialog = await openCommon();
+        const resultsRegion = within(dialog).getByRole("group", { name: "Osoby" });
+        expect(resultsRegion).toHaveAttribute("aria-live", "polite");
+        fireEvent.click(within(dialog).getByLabelText(/Hasło zmieniło się u źródła/));
+        fill(dialog); fireEvent.click(send(dialog));
+        await waitFor(() => expect(within(dialog).getByRole("button", { name: "Zamknij" })).toBeEnabled());
+        expect(resultsRegion).toHaveFocus();
+        expect(within(dialog).getByRole("group", { name: "Osoby" })).toBe(resultsRegion);
+        expect(within(dialog).getAllByText(ok ? "Udostępniono" : "Błąd: Klucz zmieniony.")).toHaveLength(2);
+        expect(within(dialog).queryByText("Już udostępnione")).toBeNull();
+        expect(within(dialog).queryByText("Czeka na udostępnienie")).toBeNull();
+        expect(dialog.querySelectorAll('[aria-live="polite"]')).toHaveLength(1);
+        expect(within(dialog).queryByRole("status")).toBeNull();
+        fireEvent.click(within(dialog).getByRole("button", { name: "Zamknij" }));
+        await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+        const summary = screen.getByRole("alert");
+        expect(summary).toHaveClass(ok ? "alert-success" : "alert-danger");
+        expect(summary).toHaveTextContent(ok ? "Udostępniono hasło (baza PS) - liczba osób: 2. Błędy: 0." : "Nie udostępniono hasła (baza PS) nikomu. Błędy: 2.");
+    });
+    it("sumuje nazwy, pokazuje uprawnione osoby, zaznacza czekających i przełącza rotację", async () => {
+        rows = [keyedRow(1, { secretsExpected: ["baza-ps", "poczta-faktury"] }), keyedRow(2, { secretsGiven: ["baza-ps"] }),
+            keyedRow(3, { publicKeyJwk: null }), keyedRow(4, { secretsExpected: ["poczta-faktury"], secretsGiven: ["poczta-stara"] }),
+            keyedRow(5, { keyThumbprint: null })];
+        const dialog = await openCommon();
+        expect(within(dialog).getAllByRole("option").map(option => option.textContent)).toEqual(["baza PS", "poczta: faktury"]);
+        expect(person(dialog, 1)).toBeChecked(); expect(person(dialog, 2)).not.toBeChecked();
+        expect(person(dialog, 3)).toBeDisabled(); expect(person(dialog, 3)).not.toBeChecked();
+        expect(person(dialog, 5)).toBeDisabled(); expect(person(dialog, 5)).not.toBeChecked();
+        expect(within(dialog).queryByRole("checkbox", { name: /Nowak4 Anna/ })).toBeNull();
+        expect(within(dialog).getAllByText(/po uruchomieniu instalatora u tej osoby/)).toHaveLength(2);
+        const changed = within(dialog).getByLabelText(/Hasło zmieniło się u źródła/);
+        fireEvent.click(changed);
+        expect(person(dialog, 1)).toBeChecked(); expect(person(dialog, 2)).toBeChecked();
+        expect(person(dialog, 3)).not.toBeChecked(); expect(person(dialog, 5)).not.toBeChecked();
+        fireEvent.click(changed); expect(person(dialog, 2)).not.toBeChecked();
+        fill(dialog);
+        fireEvent.change(within(dialog).getByLabelText("Hasło do"), { target: { value: "poczta-faktury" } });
+        expect(person(dialog, 1)).toBeChecked(); expect(person(dialog, 4)).toBeChecked();
+        expect(within(dialog).queryByRole("checkbox", { name: /Nowak2 Anna/ })).toBeNull();
+        expect(within(dialog).getByLabelText("Hasło")).toHaveValue("");
+        expect(within(dialog).getByLabelText("Powtórz hasło")).toHaveValue("");
+        expect(changed).not.toBeChecked();
+    });
+    it("blokuje różne i za długie hasła oraz brak osób, liczy znaki, czyści oba pola po zamknięciu", async () => {
+        rows = [keyedRow(1)];
+        const dialog = await openCommon();
+        expect(send(dialog)).toBeDisabled(); expect(within(dialog).getByText("Liczba znaków: 0")).toBeVisible();
+        fill(dialog, "a".repeat(14));
+        expect(send(dialog)).toBeEnabled(); expect(within(dialog).getByText("Liczba znaków: 14")).toBeVisible();
+        fireEvent.change(within(dialog).getByLabelText("Powtórz hasło"), { target: { value: "inne" } });
+        expect(send(dialog)).toBeDisabled(); expect(within(dialog).getByRole("alert")).toHaveTextContent("Hasła różnią się");
+        fireEvent.submit(send(dialog).closest("form")!);
+        expect(mutations()).toHaveLength(0); expect(encryptMock).not.toHaveBeenCalled();
+        fill(dialog, "ż".repeat(96));
+        expect(send(dialog)).toBeDisabled(); expect(within(dialog).getByRole("alert")).toHaveTextContent("za długie");
+        fill(dialog); fireEvent.click(person(dialog, 1)); expect(send(dialog)).toBeDisabled();
+        fireEvent.click(within(dialog).getByRole("button", { name: "Zamknij" }));
+        await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+        fireEvent.click(screen.getByRole("button", { name: "Hasła wspólne" }));
+        const reopened = await screen.findByRole("dialog");
+        expect(within(reopened).getByLabelText("Hasło")).toHaveValue("");
+        expect(within(reopened).getByLabelText("Powtórz hasło")).toHaveValue("");
+        expect(person(reopened, 1)).toBeChecked();
+    });
+    it("wysyła kolejno, 409 nie zatrzymuje reszty, daje wyniki każdej osoby i odświeża listę", async () => {
+        rows = [keyedRow(1), keyedRow(2), keyedRow(3, { secretsGiven: ["baza-ps"] }), keyedRow(4, { keyThumbprint: null })];
+        let finishFirst!: (result: Awaited<ReturnType<typeof sbManageApi.giveSbSecret>>) => void;
+        const give = vi.spyOn(sbManageApi, "giveSbSecret")
+            .mockImplementationOnce(() => new Promise(resolve => { finishFirst = resolve; }))
+            .mockResolvedValueOnce({ ok: true, data: { name: "baza-ps", given: true } });
+        encryptMock.mockImplementation(async jwk => `szyfr-${(jwk as { n: string }).n}`);
+        const dialog = await openCommon(); fill(dialog, "tajne-testowe");
+        fireEvent.click(send(dialog));
+        await waitFor(() => expect(give).toHaveBeenCalledTimes(1));
+        expect(give).toHaveBeenNthCalledWith(1, 1, "baza-ps", "szyfr-key-1", "thumb-1");
+        expect(encryptMock).toHaveBeenCalledTimes(1); expect(send(dialog)).toBeDisabled();
+        expect(within(dialog).getByRole("button", { name: "Zamknij" })).toBeDisabled();
+        finishFirst({ ok: false, status: 409, message: "Klucz komputera pracownika zmienił się." });
+        expect(await within(dialog).findByText("Błąd: Klucz komputera pracownika zmienił się.")).toBeVisible();
+        expect(await within(dialog).findByText("Udostępniono")).toBeVisible();
+        expect(give).toHaveBeenCalledTimes(2);
+        expect(give).toHaveBeenNthCalledWith(2, 2, "baza-ps", "szyfr-key-2", "thumb-2");
+        expect(encryptMock.mock.calls.map(call => call[0])).toEqual([rows[0].publicKeyJwk, rows[1].publicKeyJwk]);
+        expect(JSON.stringify(give.mock.calls)).not.toContain("tajne-testowe");
+        await waitFor(() => expect(within(dialog).getByLabelText("Hasło")).toHaveValue(""));
+        expect(within(dialog).getByLabelText("Powtórz hasło")).toHaveValue("");
+        await waitFor(() => expect(fetchMock.mock.calls.filter(call => call[0].endsWith("/entries"))).toHaveLength(2));
+        await waitFor(() => expect(within(dialog).getByRole("group", { name: "Osoby" })).toHaveFocus());
+        expect(within(dialog).queryByRole("status")).toBeNull();
+        fireEvent.click(within(dialog).getByRole("button", { name: "Zamknij" }));
+        await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+        const summary = screen.getByRole("alert");
+        expect(summary).toHaveClass("alert-warning");
+        expect(summary).toHaveTextContent("Udostępniono hasło (baza PS) - liczba osób: 1. Błędy: 1.");
+    });
+    it("błąd szyfrowania jednej osoby nie zatrzymuje wysyłki następnej", async () => {
+        rows = [keyedRow(1), keyedRow(2)];
+        encryptMock.mockRejectedValueOnce(new Error("importKey failed"));
+        const give = vi.spyOn(sbManageApi, "giveSbSecret").mockResolvedValue({ ok: true, data: { name: "baza-ps", given: true } });
+        const dialog = await openCommon(); fill(dialog); fireEvent.click(send(dialog));
+        expect(await within(dialog).findByText(/Błąd: Nie udało się zaszyfrować lub wysłać/)).toBeVisible();
+        expect(await within(dialog).findByText("Udostępniono")).toBeVisible();
+        expect(give).toHaveBeenCalledExactlyOnceWith(2, "baza-ps", "SZYFR+base64==", "thumb-2");
+        await waitFor(() => expect(within(dialog).getByLabelText("Hasło")).toHaveValue(""));
+        expect(within(dialog).getByLabelText("Powtórz hasło")).toHaveValue("");
+    });
+    it("wejście od osoby używa tego samego okna, zaznacza tylko ją także przy podmianie", async () => {
+        rows = [keyedRow(1, { secretsGiven: ["baza-ps"] }), keyedRow(2)];
+        const give = vi.spyOn(sbManageApi, "giveSbSecret").mockResolvedValue({ ok: true, data: { name: "baza-ps", given: true } });
+        renderPage(); await pick(); fireEvent.click(screen.getByRole("button", { name: "Udostępnij hasło…" }));
+        const dialog = await screen.findByRole("dialog");
+        expect(person(dialog, 1)).toBeChecked();
+        expect(within(dialog).queryByRole("checkbox", { name: /Nowak2 Anna/ })).toBeNull();
+        fill(dialog); fireEvent.click(send(dialog));
+        await within(dialog).findByText("Udostępniono");
+        expect(give).toHaveBeenCalledExactlyOnceWith(1, "baza-ps", "SZYFR+base64==", "thumb-1");
+    });
+    it("błąd odświeżenia listy po wysyłce nie chowa jej wyników", async () => {
+        rows = [keyedRow(1)];
+        const dialog = await openCommon();
+        vi.spyOn(sbManageApi, "giveSbSecret").mockResolvedValue({ ok: true, data: { name: "baza-ps", given: true } });
+        vi.spyOn(sbManageApi, "fetchSbEntries").mockResolvedValue({ ok: false, status: 0, message: "" });
+        fill(dialog); fireEvent.click(send(dialog));
+        await screen.findByText("Brak połączenia z serwerem PS. Spróbuj ponownie.");
+        expect(person(dialog, 1)).toBeVisible();
+        expect(within(dialog).getByText("Udostępniono")).toBeVisible();
+        expect(within(dialog).getByLabelText("Hasło")).toHaveValue("");
+        expect(within(dialog).getByLabelText("Powtórz hasło")).toHaveValue("");
+        expect(within(dialog).getByRole("button", { name: "Zamknij" })).toBeEnabled();
+    });
+    it.each([
+        { ok: true, error: undefined, expected: "działają na komputerze" },
+        { ok: false, error: "baza PS: hasło z PS odrzucone przez serwer, zostało poprzednie", expected: "baza PS: hasło z PS odrzucone przez serwer, zostało poprzednie" },
+        { ok: false, error: undefined, expected: "Nie udało się pobrać lub sprawdzić haseł z PS na komputerze." },
+    ])("pokazuje stan haseł i datę już pobranego raportu: $expected", async ({ ok, error, expected }) => {
+        rows = [keyedRow(1, { health: {
+            reportedAt: new Date().toISOString(), state: ok ? "ok" : "fail", stale: false, refreshRequested: false,
+            sbVersion: "1", installerVersion: "1", tools: [{ name: "hasla-z-ps", ok, error }], events: [],
+        } })];
+        renderPage(); await pick();
+        const section = screen.getByRole("region", { name: "Hasła" });
+        expect(within(section).getByRole("status")).toHaveTextContent(expected);
+        expect(within(section).getByRole("status")).toHaveTextContent(/\(raport dziś \d\d:\d\d\)/);
+        expect(within(screen.getByRole("region", { name: "Komputer" })).getByText("Hasła z PS na komputerze")).toBeVisible();
+        expect(fetchMock.mock.calls).toHaveLength(5);
+    });
+    it("bez hasla-z-ps nie wymyśla stanu działania haseł", async () => {
+        rows = [keyedRow(1)]; renderPage(); await pick();
+        expect(within(screen.getByRole("region", { name: "Hasła" })).queryByRole("status")).toBeNull();
     });
 });

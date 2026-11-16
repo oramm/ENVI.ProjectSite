@@ -94,6 +94,12 @@ export function groupKey(entry: SbEntry): (typeof entryGroups)[number]["key"] {
 // Hasła (SBD-2). Które hasła należą się osobie, rozstrzyga PS (secretsExpected); tu tylko podpis i stan.
 export const secretLabel = (name: string) =>
     name === "poczta-sb-agent" ? "konto techniczne poczty (agent)" : name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
+export const sharedSecretNames = (entries: SbEntry[]) => [...new Set(entries.flatMap(entry => entry.secretsExpected ?? []))];
+export const secretRecipients = (entries: SbEntry[], name: string) => entries.filter(entry => entry.secretsExpected?.includes(name));
+export const canReceiveSecret = (entry: SbEntry) => !!entry.publicKeyJwk && !!entry.keyThumbprint;
+export const defaultSecretRecipients = (entries: SbEntry[], name: string, changedAtSource = false) =>
+    secretRecipients(entries, name).filter(entry => canReceiveSecret(entry) && (changedAtSource || !entry.secretsGiven?.includes(name))).map(entry => entry.personId);
+export const secretCharacterCount = (value: string) => `Liczba znaków: ${Array.from(value).length}`;
 export function secretsState(entry: SbEntry): { text: string; tone: "ok" | "warn" | "off" } {
     const expected = entry.secretsExpected ?? [], given = (entry.secretsGiven ?? []).filter(name => expected.includes(name));
     if (!expected.length) return { text: "—", tone: "off" };
@@ -105,6 +111,8 @@ export function secretInputError(value: string): string | null {
     if (!value) return "Wpisz hasło.";
     return new TextEncoder().encode(value).length > SECRET_MAX_BYTES ? `Hasło jest za długie (najwyżej ${SECRET_MAX_BYTES} bajtów).` : null;
 }
+export const secretConfirmationError = (value: string, repeated: string) =>
+    secretInputError(value) ?? (value !== repeated ? "Hasła różnią się. Wpisz to samo hasło w obu polach." : null);
 export function takeSecretConfirmation(entry: SbEntry, name: string) {
     return {
         title: `Odebrać hasło: ${secretLabel(name)}?`,
@@ -135,7 +143,13 @@ export function healthColumn(entry: SbEntry, now: Date = new Date()): { text: st
     if (health.stale) return { text: "brak raportu", tone: "off", date };
     return health.state === "ok" ? { text: "działa", tone: "ok", date } : { text: "błąd", tone: "bad", date };
 }
-export const healthToolLabel = secretLabel;
+export const healthToolLabel = (name: string) => name === "hasla-z-ps" ? "Hasła z PS na komputerze" : secretLabel(name);
+export function secretHealthState(health: SbHealth | null | undefined, now: Date = new Date()): { text: string; tone: HealthTone } | null {
+    const tool = health?.tools.find(tool => tool.name === "hasla-z-ps");
+    if (!health || !tool) return null;
+    const text = tool.ok ? "działają na komputerze" : tool.error || "Nie udało się pobrać lub sprawdzić haseł z PS na komputerze.";
+    return { text: `${text} (raport ${formatHealthDate(health.reportedAt, now)})`, tone: health.stale ? "off" : tool.ok ? "ok" : "bad" };
+}
 export const healthVersions = (health: SbHealth, now: Date = new Date()) =>
     `SB ${health.sbVersion ?? "?"} · instalator ${health.installerVersion ?? "?"} · raport ${formatHealthDate(health.reportedAt, now)}`;
 export const canRequestHealth = (entry: SbEntry) => entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE";

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SbEntry, SbHealth } from "../sbManageApi";
+import { canReceiveSecret, defaultSecretRecipients, secretCharacterCount, secretConfirmationError, secretHealthState, secretRecipients, sharedSecretNames } from "../sbManageView";
 import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, mailboxChoices, statusViews, healthColumn, formatHealthDate, healthVersions, healthToolLabel, canRequestHealth } from "../sbManageView";
 
 const entry = (over: Partial<SbEntry> = {}): SbEntry => ({
@@ -134,3 +135,44 @@ describe("Komputer - kolumna i panel", () => {
     expect(secretLabel("poczta-sb-agent")).toBe("konto techniczne poczty (agent)");
     expect(healthToolLabel("poczta-sb-agent")).toBe("konto techniczne poczty (agent)");
  });
+
+describe("Hasła wspólne i ich stan na komputerze", () => {
+    it("nazwy i osoby pochodzą z secretsExpected, domyślnie czekający z pełnym kluczem", () => {
+        const keyed = { publicKeyJwk: { kty: "RSA", n: "n", e: "AQAB" } as const, keyThumbprint: "thumb" };
+        const rows = [entry({ personId: 1, ...keyed, secretsExpected: ["baza-ps", "poczta-faktury"] }),
+            entry({ personId: 2, ...keyed, secretsExpected: ["baza-ps"], secretsGiven: ["baza-ps"] }),
+            entry({ personId: 3, secretsExpected: ["baza-ps"] }),
+            entry({ personId: 4, publicKeyJwk: keyed.publicKeyJwk, secretsExpected: ["baza-ps"] }),
+            entry({ personId: 5, keyThumbprint: "thumb", secretsExpected: ["baza-ps"] }),
+            entry({ personId: 6, ...keyed, secretsGiven: ["poczta-stara"] })];
+        expect(sharedSecretNames(rows)).toEqual(["baza-ps", "poczta-faktury"]);
+        expect(secretRecipients(rows, "baza-ps").map(entry => entry.personId)).toEqual([1, 2, 3, 4, 5]);
+        expect(defaultSecretRecipients(rows, "baza-ps")).toEqual([1]);
+        expect(defaultSecretRecipients(rows, "baza-ps", true)).toEqual([1, 2]);
+        expect(secretRecipients(rows, "nieznane")).toEqual([]);
+        expect(canReceiveSecret(rows[3])).toBe(false);
+        expect(sharedSecretNames([])).toEqual([]);
+    });
+    it("potwierdzenie porównuje dokładną treść, zachowuje limit bajtów, licznik liczy znaki", () => {
+        expect(secretConfirmationError("", "")).toBe("Wpisz hasło.");
+        expect(secretConfirmationError("abc", "abcd")).toMatch(/Hasła różnią się/);
+        expect(secretConfirmationError("abc ", "abc")).toMatch(/Hasła różnią się/);
+        expect(secretConfirmationError("ż".repeat(96), "ż".repeat(96))).toMatch(/za długie/);
+        expect(secretConfirmationError(" abc ", " abc ")).toBeNull();
+        expect(secretCharacterCount("a".repeat(14))).toBe("Liczba znaków: 14");
+        expect(secretCharacterCount("ż🔑")).toBe("Liczba znaków: 2");
+        expect(secretCharacterCount("")).toBe("Liczba znaków: 0");
+    });
+    it("hasła na komputerze: etykieta, brak narzędzia, data, odrzucenie i stary raport", () => {
+        expect(healthToolLabel("hasla-z-ps")).toBe("Hasła z PS na komputerze");
+        expect(secretHealthState(undefined, NOW)).toBeNull();
+        expect(secretHealthState(health(), NOW)).toBeNull();
+        expect(secretHealthState(health({ tools: [{ name: "hasla-z-ps", ok: true }] }), NOW))
+            .toEqual({ text: "działają na komputerze (raport dziś 08:12)", tone: "ok" });
+        const failed = health({ tools: [{ name: "hasla-z-ps", ok: false, error: "baza PS: hasło z PS odrzucone przez serwer, zostało poprzednie" }] });
+        expect(secretHealthState(failed, NOW)?.text).toContain("odrzucone przez serwer, zostało poprzednie (raport dziś 08:12)");
+        expect(secretHealthState(failed, NOW)?.tone).toBe("bad");
+        expect(secretHealthState({ ...failed, stale: true }, NOW)?.tone).toBe("off");
+        expect(secretHealthState(health({ tools: [{ name: "hasla-z-ps", ok: false }] }), NOW)?.text).toContain("Nie udało się pobrać lub sprawdzić haseł");
+    });
+});

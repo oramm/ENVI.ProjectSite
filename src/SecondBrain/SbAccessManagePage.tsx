@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
 import ConfirmModal from "../View/Modals/ConfirmModal";
 import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
 import { fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
     setSbLevels, takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbUnlinkedMember } from "./sbManageApi";
-import { assignableEntries, availableActions, canRequestHealth, confirmationContent, describeDrive, describeFailure,
+import { assignableEntries, availableActions, canReceiveSecret, canRequestHealth, confirmationContent, defaultSecretRecipients, describeDrive, describeFailure,
     describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
     healthToolLabel, healthVersions, mailboxChoices, manualExplanation, noLevels,
-    psDbOptions, repoOptions, roleLabel, secretInputError, secretLabel, secretsState, statusViews, takeSecretConfirmation,
+    psDbOptions, repoOptions, roleLabel, secretCharacterCount, secretConfirmationError, secretHealthState, secretInputError, secretLabel, secretRecipients, secretsState, sharedSecretNames, statusViews, takeSecretConfirmation,
     toggleMailbox } from "./sbManageView";
 import { encryptSecretForKey } from "./sbSecretCrypto";
 
@@ -40,10 +40,15 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const [mailboxes, setMailboxes] = useState<SbFetchResult<SbMailbox[]> | null>(null);
     const [events, setEvents] = useState<SbFetchResult<SbEvent[]> | null>(null);
     // Hasła (SBD-2): jawne hasło żyje tylko w polu dialogu i znika po wysyłce albo zamknięciu.
-    const [sharing, setSharing] = useState<SbEntry | null>(null);
+    const [sharing, setSharing] = useState<"all" | number | null>(null);
+    const [shareEntries, setShareEntries] = useState<SbEntry[]>([]);
     const [shareName, setShareName] = useState("");
     const [sharePassword, setSharePassword] = useState("");
-    const [shareError, setShareError] = useState<string | null>(null);
+    const [shareRepeated, setShareRepeated] = useState("");
+    const [shareSelected, setShareSelected] = useState<number[]>([]);
+    const [shareChanged, setShareChanged] = useState(false);
+    const [shareResults, setShareResults] = useState<Record<number, { ok: boolean; message: string }>>({});
+    const shareResultsRef = useRef<HTMLFieldSetElement>(null);
     const [taking, setTaking] = useState<{ entry: SbEntry; name: string } | null>(null);
     const [healthError, setHealthError] = useState<string | null>(null);
 
@@ -102,34 +107,47 @@ export default function SbAccessManagePage({ title }: { title: string }) {
         setBusy(null);
     }
 
-    function openShare(entry: SbEntry) {
-        const expected = entry.secretsExpected ?? [], given = entry.secretsGiven ?? [];
-        setShareName(expected.find(name => !given.includes(name)) ?? expected[0] ?? "");
-        setSharePassword(""); setShareError(null); setSharing(entry);
+    function openShare(entry?: SbEntry) {
+        const scope = entry ? [entry] : entries?.ok ? entries.data : [];
+        const names = sharedSecretNames(scope);
+        const name = names.find(name => defaultSecretRecipients(scope, name).length) ?? names[0] ?? "";
+        setSharing(entry ? entry.personId : "all");
+        setShareEntries(scope);
+        changeShareName(name, scope, entry?.personId);
     }
-    function closeShare() { if (busy) return; setSharePassword(""); setShareError(null); setSharing(null); }
+    function changeShareName(name: string, scope: SbEntry[], personId?: number) {
+        setShareName(name); setShareChanged(false); setShareResults({});
+        setSharePassword(""); setShareRepeated("");
+        setShareSelected(personId != null ? secretRecipients(scope, name).filter(canReceiveSecret).map(entry => entry.personId) : defaultSecretRecipients(scope, name));
+    }
+    function closeShare() { if (busy) return; setSharePassword(""); setShareRepeated(""); setShareResults({}); setShareEntries([]); setSharing(null); }
     async function shareSecret() {
-        const entry = sharing;
-        if (!entry || busy) return;
-        const inputError = secretInputError(sharePassword);
-        if (inputError) { setShareError(inputError); return; }
-        if (!entry.publicKeyJwk || !entry.keyThumbprint) { setShareError("Brak klucza komputera pracownika."); return; }
-        setBusy(`${entry.personId}/secret`); setShareError(null);
-        let result: SbFetchResult<unknown>;
+        if (sharing === null || busy || secretConfirmationError(sharePassword, shareRepeated)) return;
+        const recipients = secretRecipients(shareScope, shareName).filter(entry => canReceiveSecret(entry) && shareSelected.includes(entry.personId));
+        if (!recipients.length) return;
+        setBusy("shareSecret"); setShareResults({});
+        let succeeded = 0, failed = 0;
         try {
-            const ciphertext = await encryptSecretForKey(entry.publicKeyJwk, sharePassword);
-            result = await giveSbSecret(entry.personId, shareName, ciphertext, entry.keyThumbprint);
-        } catch {
-            result = { ok: false, status: -1, message: "" };
+            for (const entry of recipients) {
+                if (!entry.publicKeyJwk || !entry.keyThumbprint) continue;
+                let outcome: { ok: boolean; message: string };
+                try {
+                    const ciphertext = await encryptSecretForKey(entry.publicKeyJwk, sharePassword);
+                    const result = await giveSbSecret(entry.personId, shareName, ciphertext, entry.keyThumbprint);
+                    outcome = result.ok ? { ok: true, message: "Udostępniono" } : { ok: false, message: describeFailure(result.status, result.message) };
+                } catch {
+                    outcome = { ok: false, message: "Nie udało się zaszyfrować lub wysłać hasła w tej przeglądarce. Spróbuj ponownie." };
+                }
+                if (outcome.ok) succeeded++; else failed++;
+                setShareResults(results => ({ ...results, [entry.personId]: outcome }));
+            }
+            setMessage({ variant: failed ? (succeeded ? "warning" : "danger") : "success",
+                message: succeeded ? `Udostępniono hasło (${secretLabel(shareName)}) - liczba osób: ${succeeded}. Błędy: ${failed}.`
+                    : `Nie udostępniono hasła (${secretLabel(shareName)}) nikomu. Błędy: ${failed}.` });
         } finally {
-            setSharePassword("");
+            setSharePassword(""); setShareRepeated("");
+            try { await refresh(); } finally { setBusy(null); shareResultsRef.current?.focus(); }
         }
-        if (result.ok) {
-            setSharing(null);
-            setMessage({ variant: "success", message: `Udostępniono hasło (${secretLabel(shareName)}): ${personLabel(entry)}. PS zapisał tylko szyfr.` });
-            await refresh();
-        } else setShareError(result.status === -1 ? "Nie udało się zaszyfrować hasła w tej przeglądarce. Nic nie wysłano." : describeFailure(result.status, result.message));
-        setBusy(null);
     }
     async function takeSecret(entry: SbEntry, name: string) {
         if (busy) return;
@@ -174,12 +192,21 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const selectedStatus = selected && statusViews[selected.statusCode];
     const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk", "Hasła", "Komputer"];
     const takeContent = taking && takeSecretConfirmation(taking.entry, taking.name);
+    // Błąd odświeżenia listy nie może schować wyników właśnie zakończonej wysyłki.
+    const shareScope = !entries?.ok ? shareEntries : sharing === "all" ? rows : rows.filter(entry => entry.personId === sharing);
+    const shareNames = sharedSecretNames(shareScope);
+    const recipients = secretRecipients(shareScope, shareName);
+    const shareInputError = secretConfirmationError(sharePassword, shareRepeated);
+    const sharePasswordError = sharePassword ? secretInputError(sharePassword) : null;
+    const shareRepeatedError = shareRepeated && !sharePasswordError ? shareInputError : null;
+    const secretHealth = selected && secretHealthState(selected.health);
 
     return <Container fluid className="px-3" style={{ overflowWrap: "anywhere" }}>
         <h4>Dostęp do Second Brain</h4>
         <p className="text-muted">Tutaj zapraszasz, blokujesz, odblokowujesz i odbierasz dostęp, ustawiasz poziomy uprawnień oraz sprawdzasz historię każdej osoby; blokada i odebranie zatrzymują dalsze pobieranie wiedzy, a kopia już pobrana zostaje.</p>
         {message && <Alert variant={message.variant} dismissible onClose={() => setMessage(null)}>{message.message}</Alert>}
         <Button className="mb-3" onClick={() => { setCandidateId(""); setInviting(true); }} disabled={!!busy}>Zaproś osobę</Button>
+        <Button className="mb-3 ms-2" variant="outline-primary" onClick={() => openShare()} disabled={!!busy || !sharedSecretNames(rows).length}>Hasła wspólne</Button>
 
         <div id="sb-access-admin">
         <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_340px]">
@@ -256,7 +283,8 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                     </section>
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3" aria-label="Hasła">
                         <h3 className="text-sm font-semibold">Hasła</h3>
-                        {!selected.keyFingerprint ? <p className="mb-0 text-xs text-[#5d6878]"><Pill tone="off">brak klucza</Pill>{" "}
+                        {secretHealth && <p role="status" className={`mb-0 text-xs ${secretHealth.tone === "bad" ? "text-[#a32020]" : "text-[#5d6878]"}`}>{secretHealth.text}</p>}
+                        {!canReceiveSecret(selected) ? <p className="mb-0 text-xs text-[#5d6878]"><Pill tone="off">brak klucza</Pill>{" "}
                             Hasło da się udostępnić dopiero po uruchomieniu instalatora u pracownika.</p> : <>
                             <p className="mb-0 text-xs text-[#5d6878]">Klucz komputera <span className={chip}>{selected.keyFingerprint}</span>. Porównaj z ekranem instalatora u pracownika.</p>
                             <p className="mb-0 text-xs text-[#5d6878]">Hasło wpisane tutaj zostaje zaszyfrowane w Twojej przeglądarce. PS zapisuje tylko szyfr.</p>
@@ -269,7 +297,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                                     {given && <Button size="sm" variant="outline-danger" disabled={!!busy} onClick={() => setTaking({ entry: selected, name })}>Odbierz</Button>}
                                 </li>;
                             })}</ul>}
-                        <div><Button size="sm" disabled={!!busy || !selected.keyFingerprint || !(selected.secretsExpected ?? []).length}
+                        <div><Button size="sm" disabled={!!busy || !canReceiveSecret(selected) || !(selected.secretsExpected ?? []).length}
                             onClick={() => openShare(selected)}>Udostępnij hasło…</Button></div>
                     </section>
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3" aria-label="Komputer">
@@ -354,24 +382,53 @@ export default function SbAccessManagePage({ title }: { title: string }) {
             onClose={() => { if (!busy) setConfirmation(null); }}
             onConfirm={() => operate(confirmation.action, confirmation.entry, undefined, true)} />}
 
-        <Modal show={!!sharing} onHide={closeShare}>
-            <Modal.Header closeButton><Modal.Title>Udostępnij hasło</Modal.Title></Modal.Header>
-            {sharing && <Form onSubmit={event => { event.preventDefault(); void shareSecret(); }}>
+        <Modal size="lg" scrollable style={{ overflowWrap: "anywhere" }} show={sharing !== null} onHide={closeShare}>
+            <Modal.Header closeButton><Modal.Title>{sharing === "all" ? "Hasła wspólne" : "Udostępnij hasło"}</Modal.Title></Modal.Header>
+            {sharing !== null && <Form className="d-flex flex-column overflow-hidden" onSubmit={event => { event.preventDefault(); void shareSecret(); }}>
                 <Modal.Body>
-                    <p>Osoba: {personLabel(sharing)}. Klucz komputera: <code>{sharing.keyFingerprint}</code>.</p>
                     <Form.Label htmlFor="sbSecretName">Hasło do</Form.Label>
-                    <Form.Select id="sbSecretName" className="mb-3" value={shareName} disabled={!!busy} onChange={event => setShareName(event.target.value)}>
-                        {(sharing.secretsExpected ?? []).map(name => <option key={name} value={name}>
-                            {secretLabel(name)}{(sharing.secretsGiven ?? []).includes(name) ? " (podmiana udostępnionego)" : ""}</option>)}
+                    <Form.Select id="sbSecretName" className="mb-3" value={shareName} disabled={!!busy}
+                        onChange={event => changeShareName(event.target.value, shareScope, typeof sharing === "number" ? sharing : undefined)}>
+                        {shareNames.map(name => <option key={name} value={name}>{secretLabel(name)}</option>)}
                     </Form.Select>
+                    <Form.Check id="sbSecretChanged" type="switch" className="mb-3" label="Hasło zmieniło się u źródła — wyślij wszystkim"
+                        checked={shareChanged} disabled={!!busy} onChange={event => {
+                            setShareChanged(event.target.checked); setShareResults({});
+                            setShareSelected(defaultSecretRecipients(shareScope, shareName, event.target.checked));
+                        }} />
+                    {!shareChanged && recipients.some(canReceiveSecret) && recipients.filter(canReceiveSecret).every(entry => entry.secretsGiven?.includes(shareName)) &&
+                        <p>Nikt nie czeka na to hasło - włącz 'Hasło zmieniło się u źródła', żeby wysłać je ponownie.
+                            {recipients.some(entry => !canReceiveSecret(entry)) && " Osoby bez klucza komputera dostaną je dopiero po uruchomieniu instalatora."}</p>}
+                    <fieldset className="mb-3" ref={shareResultsRef} tabIndex={-1} aria-live="polite">
+                        <legend className="fs-6">Osoby</legend>
+                        {recipients.map(entry => <div key={entry.personId} className="mb-2">
+                            <Form.Check id={`sbSecretPerson${entry.personId}`} label={personLabel(entry)} checked={shareSelected.includes(entry.personId)}
+                                disabled={!!busy || !canReceiveSecret(entry)} onChange={event => setShareSelected(ids =>
+                                    event.target.checked ? [...ids, entry.personId] : ids.filter(id => id !== entry.personId))} />
+                            {shareResults[entry.personId] ? <div className={`small ms-4 ${shareResults[entry.personId].ok ? "text-success" : "text-danger"}`}>
+                                {shareResults[entry.personId].ok ? "Udostępniono" : `Błąd: ${shareResults[entry.personId].message}`}
+                            </div> : <div className={`small ms-4 ${canReceiveSecret(entry) ? "" : "text-muted"}`}>
+                                {!canReceiveSecret(entry) ? "Hasło da się wysłać po uruchomieniu instalatora u tej osoby."
+                                    : entry.secretsGiven?.includes(shareName) ? "Już udostępnione" : "Czeka na udostępnienie"}
+                            </div>}
+                        </div>)}
+                    </fieldset>
                     <Form.Label htmlFor="sbSecretValue">Hasło</Form.Label>
                     <Form.Control id="sbSecretValue" type="password" autoComplete="off" value={sharePassword} disabled={!!busy}
+                        aria-invalid={!!sharePasswordError} aria-describedby={sharePasswordError ? "sbSecretCount sbSecretValueError" : "sbSecretCount"}
                         onChange={event => setSharePassword(event.target.value)} />
-                    <Form.Text muted>Hasło zostanie zaszyfrowane w tej przeglądarce kluczem komputera pracownika. PS zapisuje tylko szyfr, a pole czyści się po wysłaniu.</Form.Text>
-                    {shareError && <Alert className="mt-3 mb-0" variant="danger">{shareError}</Alert>}
+                    <Form.Text id="sbSecretCount" muted>{secretCharacterCount(sharePassword)}</Form.Text>
+                    {sharePasswordError && <Form.Text id="sbSecretValueError" role="alert" className="d-block text-danger">{sharePasswordError}</Form.Text>}
+                    <Form.Label className="d-block mt-3" htmlFor="sbSecretRepeated">Powtórz hasło</Form.Label>
+                    <Form.Control id="sbSecretRepeated" type="password" autoComplete="off" value={shareRepeated} disabled={!!busy}
+                        aria-invalid={!!shareRepeatedError} aria-describedby={shareRepeatedError ? "sbSecretRepeatedError" : undefined}
+                        onChange={event => setShareRepeated(event.target.value)} />
+                    {shareRepeatedError && <Form.Text id="sbSecretRepeatedError" role="alert" className="d-block text-danger">{shareRepeatedError}</Form.Text>}
+                    <Form.Text muted>Hasło zostanie zaszyfrowane w tej przeglądarce osobno dla każdej zaznaczonej osoby. PS zapisuje tylko szyfr. Oba pola czyszczą się po wysyłce i po zamknięciu okna.</Form.Text>
                 </Modal.Body>
-                <Modal.Footer><Button variant="secondary" disabled={!!busy} onClick={closeShare}>Anuluj</Button>
-                    <Button type="submit" disabled={!!busy || !shareName || !sharePassword}>{busy === `${sharing.personId}/secret` && loading} Zaszyfruj i udostępnij</Button></Modal.Footer>
+                <Modal.Footer><Button variant="secondary" disabled={!!busy} onClick={closeShare}>Zamknij</Button>
+                    <Button type="submit" disabled={!!busy || !shareName || !!shareInputError || !recipients.some(entry => canReceiveSecret(entry) && shareSelected.includes(entry.personId))}>
+                        {busy === "shareSecret" && loading} Zaszyfruj i udostępnij</Button></Modal.Footer>
             </Form>}
         </Modal>
 
