@@ -18,6 +18,8 @@ export function LettersFilterBody() {
     const _contract = watch("_contract");
     const _case = watch("_case");
     const allValues = watch();
+    // Użytkownik zewnętrzny: serwer zamyka /projects, /contracts, /entities, /cases (403 = raport błędu).
+    const readOnly = MainSetup.isRoleAllowed(MainSetup.LETTERS_READ_ONLY_ROLES);
     useEffect(() => {
         setValue("_contract", undefined);
         setValue("_case", undefined);
@@ -52,19 +54,23 @@ export function LettersFilterBody() {
                 <Form.Group as={Col} xs={12} sm={6} md={4}>
                     <LetterStatusMultipleSelector />
                 </Form.Group>
-                <Form.Group as={Col} xs={12} sm={6} md={4} lg={3} xl={2}>
-                    <ProjectSelector showValidationInfo={false} />
-                </Form.Group>
+                {!readOnly && (
+                    <Form.Group as={Col} xs={12} sm={6} md={4} lg={3} xl={2}>
+                        <ProjectSelector showValidationInfo={false} />
+                    </Form.Group>
+                )}
             </Row>
             <Row>
-                <Form.Group as={Col} md={6}>
-                    <Form.Label>Odbiorca (DO / DW)</Form.Label>
-                    <EntitySelector
-                        name="_entities"
-                        multiple={true}
-                        showValidationInfo={false}
-                    />
-                </Form.Group>
+                {!readOnly && (
+                    <Form.Group as={Col} md={6}>
+                        <Form.Label>Odbiorca (DO / DW)</Form.Label>
+                        <EntitySelector
+                            name="_entities"
+                            multiple={true}
+                            showValidationInfo={false}
+                        />
+                    </Form.Group>
+                )}
                 <Form.Group as={Col} md={6}>
                     <Form.Label>Dokumentacja zatwierdzona</Form.Label>
                     <Form.Select {...register("approvedDocumentationFilter")}>
@@ -75,16 +81,18 @@ export function LettersFilterBody() {
                 </Form.Group>
             </Row>
             <Row>
-                <Form.Group as={Col} md={6}>
-                    <Form.Label>Kontrakt</Form.Label>
-                    <ContractSelector
-                        name="_contract"
-                        typesToInclude="all"
-                        showValidationInfo={false}
-                        _project={_project}
-                    />
-                </Form.Group>
-            {_contract && (
+                {!readOnly && (
+                    <Form.Group as={Col} md={6}>
+                        <Form.Label>Kontrakt</Form.Label>
+                        <ContractSelector
+                            name="_contract"
+                            typesToInclude="all"
+                            showValidationInfo={false}
+                            _project={_project}
+                        />
+                    </Form.Group>
+                )}
+            {!readOnly && _contract && (
                 <Form.Group as={Col} md={6}>
                     <Form.Label>Sprawa</Form.Label>
                     <CaseSelectMenuElement

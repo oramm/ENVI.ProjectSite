@@ -15,7 +15,7 @@ vi.mock("../../../React/MainSetupReact", () => ({
 }));
 
 import { makeUserValidationSchema } from "./UserValidationSchema";
-import { FIDMAN_EMAIL_MESSAGE } from "../../../Persons/accountFieldsValidation";
+import { FIDMAN_EMAIL_MESSAGE, FIN_EMAIL_MESSAGE } from "../../../Persons/accountFieldsValidation";
 
 const base = {
     _entity: { id: 1 },
@@ -68,5 +68,26 @@ describe("UserValidationSchema - rola przy zakładaniu", () => {
     it("pusty wybór roli daje czytelny komunikat, nie błąd typu", async () => {
         const errors = await errorsFor({ ...base, systemRoleId: "", systemEmail: "", fidmanEnabled: false });
         expect(errors.map((e) => e.message)).toContain("Wybierz rolę systemową");
+    });
+});
+
+describe("FIN - wspólna walidacja konta", () => {
+    it.each(["", "   "])("wymaga e-maila przy obu polach: %j", async (systemEmail) => {
+        const errors = await errorsFor({ ...base, systemEmail, finEnabled: true });
+        expect(errors.filter((e) => e.message === FIN_EMAIL_MESSAGE).map((e) => e.path))
+            .toEqual(expect.arrayContaining(["systemEmail", "finEnabled"]));
+    });
+
+    it.each([
+        { systemEmail: "anna@envi.com.pl", finEnabled: true },
+        { systemEmail: "", finEnabled: false },
+    ])("dopuszcza poprawne konto FIN: %j", async (values) => {
+        expect(await errorsFor({ ...base, ...values })).toEqual([]);
+    });
+
+    it("obie flagi wymagają e-maila niezależnie", async () => {
+        const errors = await errorsFor({ ...base, systemEmail: "", fidmanEnabled: true, finEnabled: true });
+        expect(errors.filter((e) => e.path === "systemEmail").map((e) => e.message))
+            .toEqual(expect.arrayContaining([FIDMAN_EMAIL_MESSAGE, FIN_EMAIL_MESSAGE]));
     });
 });

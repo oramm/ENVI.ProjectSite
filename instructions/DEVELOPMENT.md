@@ -78,6 +78,10 @@ yarn start
 yarn dev
 ```
 
+### Type checking
+
+Run `yarn typecheck` separately before handing off changes. Use `yarn typecheck:watch` for continuous feedback when memory permits. Development bundling does not replace this check; `yarn build` retains its TypeScript check.
+
 ### Build
 
 ```bash

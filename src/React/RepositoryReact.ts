@@ -1,8 +1,10 @@
+import {warnRetiredRead} from '../TasksGlobal/ConsolidationHistory';
 import { ErrorServerResponse, RepositoryDataItem } from "../../Typings/bussinesTypes";
 import { SessionTask } from "../../Typings/sessionTypes";
 import MainSetup from "./MainSetupReact";
 import ToolsDate from "./Tools/ToolsDate";
 import ToolsFetch from "./Tools/ToolsFetch";
+import { assertNewWorkAllowed } from "../TasksGlobal/ConsolidationWorkGuard";
 
 export default class RepositoryReact<DataItemType extends RepositoryDataItem = RepositoryDataItem> {
     actionRoutes: ActionRoutes;
@@ -60,6 +62,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * - jeżeli nie ma obiektów w sessionstorage, to ładuje je z serwera
      */
     async loadItemFromRouter(id: number) {
+        await warnRetiredRead(this.actionRoutes.getRoute,[{id}],MainSetup.serverUrl);
         if (!id) throw new Error("Nie podano id obiektu do załadowania");
 
         if (this.items.length === 0) this.loadFromSessionStorage();
@@ -95,6 +98,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     async loadItemsFromServerPOST(orConditions: any[] = [], specialActionRoute?: string, options: {skipCache?: boolean} = { skipCache: false }) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
+        await warnRetiredRead(actionRoute,orConditions,MainSetup.serverUrl);
         const requestKey = JSON.stringify({ url: url.toString(), body: orConditions });
 
         if (this.pendingRequests.has(requestKey)) {
@@ -185,6 +189,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     ) {
         // 1. Budujemy ścieżkę do endpointu
         const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        // Fresh read for every creation attempt, including letter FormData and copies; no cached negative decision.
+        await assertNewWorkAllowed(actionRoute, newItem, MainSetup.serverUrl);
         const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
 
         // 2. Przygotowanie opcji fetch
@@ -229,7 +235,9 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
             // 8. Obsługa błędu z backendu
             if (statusResponse.status === "error") {
-                throw new Error("Błąd backendu: " + statusResponse.error);
+                const error = statusResponse.error || "Nieznany błąd";
+                throw new Error("Błąd backendu: " +
+                    (actionRoute === "contractReact" ? ToolsFetch.contractSharingErrorMessage(error) : error));
             }
 
             // 9. Gotowy przetworzony obiekt z backendu

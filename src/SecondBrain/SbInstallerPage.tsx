@@ -1,8 +1,14 @@
-import React, { useEffect } from "react";
-import { Alert, Button, Card, Container, ListGroup } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Alert, Badge, Button, Card, Container, ListGroup, Spinner, Tab, Tabs } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import MainSetup from "../React/MainSetupReact";
+import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import SbHowItWorks from "./SbHowItWorks";
+import SbInstallerComic from "./SbInstallerComic";
+import { linkOwnGithubAccount, useSbAccess } from "./sbAccessApi";
+import { describeLinkFailure, linkPanelMode, parseGithubLoginParam } from "./sbAccessView";
 
 /**
  * Punkt wydawania instalatora firmowego Second Brain (decyzja D-7 packa SB).
@@ -13,18 +19,150 @@ import MainSetup from "../React/MainSetupReact";
  *
  * Pobranie to **zwykły odnośnik**, a nie fetch z obsługą błędu: trasa serwera odpowiada
  * `Content-Disposition: attachment`, więc przeglądarka zapisuje plik sama, a osoba bez sesji
- * dostaje z serwera odmowę zamiast pliku. Własnej autoryzacji tu nie ma i nie ma jej mieć.
+ * dostaje z serwera odmowę zamiast pliku. O dostępie decyduje rejestr SB w PS.
  */
 const PACKAGE_URL = `${MainSetup.serverUrl}sbInstaller/paczka`;
 
+/** Wersja paczki zapisana w PS. Brak wartości albo błąd sieci = nic nie pokazujemy, bez komunikatu. */
+async function fetchPackageVersion(): Promise<string | null> {
+    try {
+        const response = await fetch(`${MainSetup.serverUrl}sbInstaller/info`, { credentials: "include" });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return typeof data?.version === "string" ? data.version : null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Kotwica sekcji "Po instalacji". Router jest hashowy (`#/sbInstaller`), więc drugi `#` w adresie
+ * nie zadziała - instalator otwiera `/#/sbInstaller?sekcja=po-instalacji`, a strona sama przewija.
+ */
+const POST_INSTALL_ID = "po-instalacji";
+/** `?widok=jak-to-dziala` otwiera od razu drugą zakładkę (np. link wysłany pracownikowi). */
+const HOW_IT_WORKS = "jak-to-dziala";
+
+/** Link zewnętrzny w nowej karcie - osoba ma wrócić na tę stronę, a nie jej szukać. */
+function Link({ href, children }: { href: string; children: React.ReactNode }) {
+    return (
+        <a href={href} target="_blank" rel="noopener noreferrer">
+            {children}
+        </a>
+    );
+}
+
+/**
+ * Pułapki z pierwszej instalacji u pracownika (pack SB.RDZEN.01, N4): stary ZIP w Pobranych, drugie
+ * pobranie unieważniające pierwsze (nowy token), blokada Windows i antywirus inny niż Avast,
+ * który nic nie zapisał w dziennikach Avasta ani Defendera.
+ */
+function BeforeDownload({ packageVersion }: { packageVersion: string | null }) {
+    return (
+        <Card as="section" aria-label="Zanim pobierzesz" className="mb-4 border-warning">
+            <Card.Body>
+                <Card.Title>Zanim pobierzesz</Card.Title>
+                <ol className="mb-0 ps-3">
+                    <li className="mb-2">
+                        <strong>Usuń stare pliki.</strong> W folderze <em>Pobrane</em> skasuj wszystko, co zaczyna się
+                        od <em>ENVI-SB-instalator</em> - pliki ZIP i foldery z wcześniejszych prób. Inaczej łatwo
+                        uruchomić starą wersję.
+                        {packageVersion && <> Nowy plik będzie się nazywał <strong>{`ENVI-SB-instalator-${packageVersion}.zip`}</strong>.</>}
+                    </li>
+                    <li className="mb-2">
+                        <strong>Pobierz tylko raz.</strong> Każde pobranie unieważnia plik pobrany wcześniej - stary
+                        instalator przestaje wtedy działać. Nie pobieraj na zapas.
+                    </li>
+                    <li className="mb-2">
+                        <strong>Odblokuj, potem rozpakuj.</strong> Prawy przycisk na pobranym pliku ZIP →{" "}
+                        <em>Właściwości</em> → na dole zaznacz <em>Odblokuj</em> → <em>OK</em>. Jeśli pola{" "}
+                        <em>Odblokuj</em> nie ma, Windows niczego nie zablokował. Potem prawy przycisk →{" "}
+                        <em>Wyodrębnij wszystkie</em> i uruchamiaj instalator tylko z rozpakowanego folderu.
+                    </li>
+                    <li>
+                        <strong>Plik zniknął albo folderu nie da się usunąć</strong> (na przykład błąd 0x800700E1)?
+                        To antywirus uznał instalator za zagrożenie - nie walcz z folderem. Otwórz każdy antywirus,
+                        który masz na komputerze, nie tylko Avast: także na przykład Reason, HP Wolf Security albo
+                        Zabezpieczenia Windows. W historii albo kwarantannie znajdź wpis instalatora i wybierz
+                        zaufanie do pliku (<em>Ufam</em>, <em>Zezwól</em> albo <em>Przywróć i dodaj wyjątek</em>).
+                        Jeśli nigdzie go nie ma, daj znać przełożonemu, zanim pobierzesz plik jeszcze raz.
+                    </li>
+                </ol>
+            </Card.Body>
+        </Card>
+    );
+}
+
 export default function SbInstallerPage() {
+    const sb = useSbAccess();
+    const [searchParams] = useSearchParams();
+    const login = parseGithubLoginParam(searchParams.get("githubLogin"));
+    const [linking, setLinking] = useState(false);
+    const [linkResult, setLinkResult] = useState<{
+        login: string; success: boolean; message: string; note: string;
+    } | null>(null);
+    const systemEmail = MainSetup.currentUserOrNull?.systemEmail?.trim();
+    const loginAddress = systemEmail ? <strong>{systemEmail}</strong> : "adres, którym logujesz się do PS";
+
+    const [tab, setTab] = useState(searchParams.get("widok") === HOW_IT_WORKS ? HOW_IT_WORKS : "instalator");
+    const [scrollTarget, setScrollTarget] = useState(searchParams.get("sekcja"));
+    const [packageVersion, setPackageVersion] = useState<string | null>(null);
+
     useEffect(() => {
         document.title = "SB.ENVI - instalator";
     }, []);
-    
+
+    // Wersję pytamy tylko osób z dostępem - bez dostępu strona pokazuje samą odmowę.
+    useEffect(() => {
+        if (sb.state !== "granted") return;
+        let active = true;
+        fetchPackageVersion().then(version => { if (active) setPackageVersion(version); });
+        return () => { active = false; };
+    }, [sb.state]);
+
+    // Sekcja pojawia się dopiero po sprawdzeniu dostępu, dlatego przewijamy po zmianie stanu.
+    // Zakładka montuje treść dopiero po wybraniu, więc przewijamy także po przełączeniu zakładki.
+    useEffect(() => {
+        if (sb.state !== "granted" || tab !== "instalator" || scrollTarget !== POST_INSTALL_ID) return;
+        document.getElementById(POST_INSTALL_ID)?.scrollIntoView?.();
+        setScrollTarget(null);
+    }, [sb.state, tab, scrollTarget]);
+
+    function showPostInstall() {
+        setTab("instalator");
+        setScrollTarget(POST_INSTALL_ID);
+    }
+
+    async function linkAccount() {
+        if (!login || linking) return;
+        setLinking(true);
+        setLinkResult(null);
+        const result = await linkOwnGithubAccount(login);
+        setLinking(false);
+        if (result.ok) {
+            setLinkResult({ login, success: true, message: `Gotowe - konto GitHub ${login} jest powiązane z Twoim dostępem.`, note: result.result === "PARTIAL" ? result.note : "" });
+            sb.reload();
+        } else {
+            setLinkResult({ login, success: false, message: describeLinkFailure(result.status, result.message), note: "" });
+        }
+    }
+
+    if (sb.state === "loading") return <SpinnerBootstrap />;
+    if (sb.state === "error") return <Container className="py-4"><Alert variant="danger">Nie udało się sprawdzić dostępu do Second Brain. Odśwież stronę.</Alert></Container>;
+    if (sb.state === "denied" || !sb.access?.sb) return (
+        <Container className="py-4" style={{ maxWidth: 760 }}>
+            <h4>Second Brain ENVI</h4>
+            <Alert variant="info">Nie masz jeszcze dostępu do Second Brain - poproś przełożonego o zaproszenie do SB w PS.</Alert>
+        </Container>
+    );
+
+    const access = sb.access.sb;
+    const panelMode = linkPanelMode(access, login);
+    const result = linkResult?.login === login ? linkResult : null;
+
     return (
         <Container className="py-4" style={{ maxWidth: 760 }}>
-            <h4>Second Brain ENVI - instalator</h4>
+            <h4>Second Brain ENVI</h4>
             <p className="text-muted">
                 Second Brain to wspólna baza wiedzy firmy. Na Twoim komputerze widać ją jako zwykły folder
                 z notatkami, który sam odświeża się w tle. Instalacja to około 15 minut i jeden plik -
@@ -32,14 +170,60 @@ export default function SbInstallerPage() {
             </p>
 
             <Card className="mb-4">
+                <Card.Body><Card.Title>Twój dostęp</Card.Title></Card.Body>
+                <ListGroup variant="flush">
+                    <ListGroup.Item>
+                        <strong className="me-2">GitHub</strong>
+                        {access.isGrantedManually ? <Badge bg="success">Aktywny (nadany ręcznie)</Badge> : (
+                            access.githubState === "PENDING" ? <>
+                                <Badge bg="warning" text="dark">Zaproszenie czeka na przyjęcie</Badge>
+                                <div className="text-muted mt-1">Sprawdź pocztę (adres logowania do PS) i kliknij Join, potem Continue with Google.</div>
+                            </> : access.githubState === "LINKED" ? <>
+                                <Badge bg="success">Aktywny</Badge>
+                                <div className="text-muted mt-1">Konto: {access.githubLogin}</div>
+                            </> : <>
+                                <Badge bg="secondary">Aktywny, konto niepowiązane</Badge>
+                                <div className="text-muted mt-1">Konto GitHub powiąże się po pierwszym uruchomieniu instalatora.</div>
+                            </>
+                        )}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                        <strong className="me-2">Dysk Google</strong>
+                        {access.driveState === "READY" ? <Badge bg="success">Gotowy</Badge> : <>
+                            <Badge bg="danger">Brak dostępu do Dysku</Badge>
+                            <div className="text-muted mt-1">Poproś przełożonego o sprawdzenie dostępu do SB w PS.</div>
+                        </>}
+                    </ListGroup.Item>
+                </ListGroup>
+            </Card>
+
+            {result && <Alert variant={result.success ? "success" : "danger"}>{result.message}</Alert>}
+            {result?.note && <Alert variant="warning">{result.note}</Alert>}
+            {panelMode === "ask" && !result?.success && <Alert variant="light" className="border">
+                <p>Instalator wykrył na tym komputerze konto GitHub: <strong>{login}</strong>. Czy to Twoje konto?</p>
+                <Button variant="primary" disabled={linking} onClick={linkAccount}>
+                    {linking && <Spinner animation="border" size="sm" className="me-2" aria-label="Trwa powiązanie konta" />}
+                    To moje konto
+                </Button>
+            </Alert>}
+            {panelMode === "already" && !result?.success && <Alert variant="success">
+                Konto GitHub {login} jest już powiązane z Twoim dostępem.
+            </Alert>}
+            {panelMode === "other" && <Alert variant="warning">
+                Masz już powiązane konto GitHub {access.githubLogin}, a instalator wykrył {login}. Zmianę konta zleć przełożonemu.
+            </Alert>}
+
+            <Tabs activeKey={tab} onSelect={key => setTab(key ?? "instalator")} mountOnEnter unmountOnExit className="mb-4">
+            <Tab eventKey="instalator" title="Instalator">
+            <BeforeDownload packageVersion={packageVersion} />
+            <Card className="mb-4">
                 <Card.Body className="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>
-                        <Card.Title className="mb-1">Paczka instalacyjna</Card.Title>
+                        <Card.Title className="mb-1">Instalator</Card.Title>
                         <Card.Text className="text-muted mb-0">
-                            Rozpakuj ją w dowolnym miejscu (na przykład na Pulpicie) i uruchom dwuklikiem
-                            plik <code>bootstrap.cmd</code>. W środku jest też pełna instrukcja krok po kroku
-                            (<code>README-onboarding.md</code>).
+                            Pobierzesz plik ZIP. Co z nim zrobić, pokazują rysunki niżej.
                         </Card.Text>
+                        {packageVersion && <div className="small text-muted mt-1">Wersja dostępna w PS: {packageVersion}</div>}
                     </div>
                     <Button href={PACKAGE_URL} variant="primary" size="lg">
                         <FontAwesomeIcon icon={faDownload} className="me-2" />
@@ -48,31 +232,80 @@ export default function SbInstallerPage() {
                 </Card.Body>
             </Card>
 
-            <h5>Zanim uruchomisz instalator</h5>
-            <ListGroup numbered className="mb-4">
-                <ListGroup.Item>
-                    <strong>Konto GitHub.</strong> Jeśli go nie masz - załóż zwykłe, prywatne konto.
-                    Następnie wyślij swoją nazwę użytkownika do biura ENVI i przyjmij zaproszenie do
-                    zespołu <code>envi-konsulting</code>, które przyjdzie do Ciebie mailem od GitHuba.
-                    Bez tego instalator nie pobierze wiedzy firmowej.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Dysk Google.</strong> Zaloguj się na komputerze firmowym kontem ENVI. Instalator
-                    bierze stamtąd narzędzia dla agenta.
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Trenowanie AI na koncie GitHub.</strong> W ustawieniach swojego konta (Copilot)
-                    wyłącz zgodę na wykorzystywanie Twojej aktywności do trenowania modeli. Treści firmowe
-                    nie mają trafiać do zewnętrznych dostawców.
-                </ListGroup.Item>
-            </ListGroup>
+            <h5>Instalacja krok po kroku</h5>
+            <SbInstallerComic loginAddress={loginAddress} />
+
+            <Alert variant="light" className="border">
+                Konto GitHub zakładasz przez <em>Continue with Google</em>. Jeśli na stronie logowania nie ma
+                przycisku Google, wejdź przez{" "}
+                <Link href="https://github.com/signup">github.com/signup</Link> i tam wybierz{" "}
+                <em>Continue with Google</em>. Komunikat <em>Too many requests</em> mija sam po kilku minutach -
+                poczekaj i spróbuj ponownie.
+            </Alert>
 
             <Alert variant="light" className="border">
                 Instalator można uruchamiać wielokrotnie - jeśli przerwiesz go w połowie albo któryś krok
                 wyżej zrobisz później, po prostu odpal go jeszcze raz. Nic nie nadpisze i nic nie zepsuje.
-                Gdyby coś wyglądało na zawieszone, zwykle brakuje jednego z dwóch kroków powyżej:
-                zaproszenia na GitHubie albo zalogowania do Dysku Google.
+                Gdyby coś wyglądało na zawieszone, zwykle brakuje przyjętego zaproszenia na GitHubie
+                (sprawdź pocztę na adres logowania do PS) albo jesteś zalogowany do Dysku Google innym
+                kontem niż to z PS.
             </Alert>
+
+            <Alert variant="light" className="border">
+                Jeśli poprosimy Cię o zapis przebiegu instalacji: to plik <code>bootstrap.log</code> w
+                folderze <code>%USERPROFILE%\.envi\instalator</code> (wklej tę ścieżkę w pasek adresu
+                Eksploratora). Instalator podaje pełną ścieżkę na końcu każdego przebiegu.
+            </Alert>
+
+            <h5 id={POST_INSTALL_ID} className="mt-4">Po instalacji - co dalej</h5>
+            <p>
+                Jak płynie wiedza i z czego korzysta agent, pokazuje zakładka{" "}
+                <Button variant="link" className="p-0 align-baseline" onClick={() => setTab(HOW_IT_WORKS)}>Jak to działa</Button>.
+            </p>
+            <ListGroup numbered className="mb-4">
+                <ListGroup.Item>
+                    <strong>Ikony na pulpicie.</strong> Instalator umieszcza na pulpicie ikony <em>Claude</em>,{" "}
+                    <em>Codex (ChatGPT)</em> i <em>Aktualizuj Second Brain</em>. Chcesz je mieć na pasku zadań?
+                    Kliknij ikonę prawym przyciskiem i wybierz <em>Przypnij do paska zadań</em> (jeśli jej nie
+                    widać, najpierw <em>Pokaż więcej opcji</em>) - Windows 11 nie pozwala programom robić tego samodzielnie.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Claude.</strong> Instalator stawia aplikację Claude sam. Uruchom ją ikoną na pulpicie albo z menu Start,
+                    przejdź do zakładki <em>Code</em> i wskaż folder <code>ENVI-Kanon</code> (w Twoim folderze
+                    użytkownika). Kto woli terminal: w tym folderze wpisz <code>claude</code>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Codex.</strong> Instalator stawia też aplikację Codex (w menu Start nazywa się
+                    ChatGPT). Uruchom ją i wskaż ten sam folder <code>ENVI-Kanon</code>. W terminalu:{" "}
+                    <code>codex</code>.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Pierwsze logowanie.</strong> Obie aplikacje poproszą o zalogowanie. Claude i Codex
+                    wymagają płatnego konta; z którego konta korzystać, wskaże przełożony.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Umiejętności (skille).</strong> Są już na miejscu, nic nie instalujesz.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Dysk i Dokumenty Google.</strong> Działają po jednorazowym logowaniu do Google,
+                    które instalator prowadzi w trakcie przebiegu.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Aktualizacje.</strong> Gdy przy zegarze pojawi się dymek „Second Brain: jest nowa
+                    wersja", kliknij go albo ikonę <em>Aktualizuj Second Brain</em> na pulpicie (jest też w menu Start). ZIP-a nie
+                    pobierasz drugi raz. Aktualizacja odświeża też Pythona, Node.js, Git oraz Claude i Codex w
+                    terminalu, a aplikacje Claude i Codex aktualizują się same. Nic nie nadpisze i nic nie zepsuje.
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Gdy coś się nie udało.</strong> Wyślij plik <code>bootstrap.log</code> z folderu{" "}
+                    <code>%USERPROFILE%\.envi\instalator</code> (wklej tę ścieżkę w pasek adresu Eksploratora).
+                </ListGroup.Item>
+            </ListGroup>
+            </Tab>
+            <Tab eventKey={HOW_IT_WORKS} title="Jak to działa">
+                <SbHowItWorks onShowPostInstall={showPostInstall} />
+            </Tab>
+            </Tabs>
         </Container>
     );
 }

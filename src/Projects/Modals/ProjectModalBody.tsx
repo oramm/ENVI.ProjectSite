@@ -7,6 +7,9 @@ import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { ErrorMessage, ValueInPLNInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import { ProjectStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
+import { MailboxSelection } from "../../Mailboxes/MailboxSelection";
+import { MailboxesSection } from "../../Mailboxes/MailboxStatus";
+
 export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<ProjectData>) {
     const {
         register,
@@ -21,6 +24,8 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
             name: initialData?.name,
             alias: initialData?.alias,
             comment: initialData?.comment,
+            fundingAgreementNumber: initialData?.fundingAgreementNumber,
+            program: initialData?.program,
             startDate: initialData?.startDate || new Date().toISOString().slice(0, 10),
             endDate: initialData?.endDate || new Date().toISOString().slice(0, 10),
             status: initialData?.status || MainSetup.ProjectStatuses.IN_PROGRESS,
@@ -30,6 +35,7 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
             ourId: initialData?.ourId,
             _employers: initialData?._employers,
             _engineers: initialData?._engineers,
+            ...(!isEditing ? { _mailboxSelection: { mode: "project" } } : {}),
         };
         reset(resetData);
         trigger();
@@ -72,6 +78,30 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
                     {...register("alias")}
                 />
                 <ErrorMessage errors={errors} name="alias" />
+            </Form.Group>
+
+            <Form.Group controlId="fundingAgreementNumber">
+                <Form.Label>Numer umowy o dofinansowanie</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Podaj numer umowy"
+                    isValid={!errors?.fundingAgreementNumber}
+                    isInvalid={!!errors?.fundingAgreementNumber}
+                    {...register("fundingAgreementNumber")}
+                />
+                <ErrorMessage errors={errors} name="fundingAgreementNumber" />
+            </Form.Group>
+
+            <Form.Group controlId="program">
+                <Form.Label>Program</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Podaj program"
+                    isValid={!errors?.program}
+                    isInvalid={!!errors?.program}
+                    {...register("program")}
+                />
+                <ErrorMessage errors={errors} name="program" />
             </Form.Group>
 
             <Form.Group controlId="comment">
@@ -131,6 +161,7 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
                 </Form.Group>
             </Row>
             <ProjectStatusSelector />
+            {isEditing ? <MailboxesSection projectId={initialData?.id} /> : <MailboxSelection />}
         </>
     );
 }

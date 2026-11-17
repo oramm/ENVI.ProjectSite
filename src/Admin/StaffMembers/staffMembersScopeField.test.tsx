@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { FormProvider } from "../../View/Modals/FormContext";
@@ -37,6 +37,14 @@ describe("normalizeStaffMembersScope - to samo rozstrzygnięcie co serwer", () =
 });
 
 describe("pole Zakres pokazuje faktycznie użyty zakres", () => {
+    it("rola ma polską nazwę i nadal zapisuje numer do filtra", () => {
+        render(<Harness scope="all" />);
+        const option = screen.getByRole("option", { name: "Pracownik ENVI" });
+        expect(option).toHaveValue("3");
+        fireEvent.change(option.closest("select")!, { target: { value: "3" } });
+        expect(form.getValues("systemRoleId")).toBe("3");
+        expect(screen.queryByRole("option", { name: "ENVI_EMPLOYEE" })).not.toBeInTheDocument();
+    });
     it("wartość dawnego checkboxa z pamięci przeglądarki (false) staje się „Z uprawnieniami”", async () => {
         const { container } = render(<Harness scope={false} />);
         const select = container.querySelector("#staffScope") as HTMLSelectElement;

@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Button, Form, Spinner } from "react-bootstrap";
+import { Alert, Button, Form, Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronRight, faFolder } from "@fortawesome/free-solid-svg-icons";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { UniquenessIcon } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { fetchContractTemplatesTree } from "./contractTemplatesTreeService";
+import { ContractSharedCandidate, fetchContractSharedCandidates } from "./contractSharedCandidatesService";
 import {
     ContractTemplatesTree,
     ContractType,
     MilestoneSelectionItem,
+    OwnMilestoneSelectionItem,
     MilestoneTypeTreeNode,
     OptionalContractFolderKey,
 } from "../../../../Typings/bussinesTypes";
@@ -99,6 +101,11 @@ function TypeLabel({
     );
 }
 
+function sourceContractLabel(candidate: ContractSharedCandidate): string {
+    return [...new Set([candidate.sourceContractOurId, candidate.sourceContractAlias, candidate.sourceContractName]
+        .filter(Boolean))].join(" · ") || "Kontrakt " + candidate.sourceContractId;
+}
+
 export function ContractStructureTree() {
     const {
         setValue,
@@ -108,12 +115,19 @@ export function ContractStructureTree() {
 
     const contractTypeId = (watch("_type") as ContractType | undefined)?.id;
     const selection = (watch("_milestonesSelection") as MilestoneSelectionItem[] | undefined) ?? [];
+    const projectOurId = watch("_project")?.ourId as string | undefined;
     const selectedFolders = (watch("_contractFoldersSelection") as OptionalContractFolderKey[] | undefined) ?? [];
 
     const [tree, setTree] = useState<ContractTemplatesTree | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [expanded, setExpanded] = useState<Set<number>>(new Set());
     const [reloadToken, setReloadToken] = useState(0);
+    const [candidates, setCandidates] = useState<ContractSharedCandidate[]>([]);
+    const [candidatesLoading, setCandidatesLoading] = useState(false);
+    const [candidatesError, setCandidatesError] = useState<string | null>(null);
+    const [reloadCandidates, setReloadCandidates] = useState(0);
+    const [pickerOpen, setPickerOpen] = useState(false);
+    const [pickedMilestoneId, setPickedMilestoneId] = useState<number | null>(null);
 
     // Pamięć spraw odznaczonych razem z kamieniem: ponowne zaznaczenie kamienia
     // przywraca to, co użytkownik miał, a nie zestaw domyślny. Ref, nie state —
@@ -185,6 +199,39 @@ export function ContractStructureTree() {
         };
     }, [contractTypeId, reloadToken, setValue]);
 
+    const hasTenderType = tree?.milestoneTypes.some((node) => node.milestoneTypeId === 5) ?? false;
+    useEffect(() => {
+        setCandidates([]);
+        setPickedMilestoneId(null);
+        setCandidatesError(null);
+        setCandidatesLoading(false);
+        // A candidate and its revision belong to one project/type snapshot.
+        const current = (watch("_milestonesSelection") as MilestoneSelectionItem[] | undefined) ?? [];
+        if (current.some((item) => item.mode === "shared")) {
+            writeSelection(current.filter((item) => item.mode !== "shared"));
+            setValue("_creationRequestId", undefined);
+        }
+        if (!projectOurId || !contractTypeId || !hasTenderType) return;
+
+        let cancelled = false;
+        setCandidatesLoading(true);
+        fetchContractSharedCandidates(projectOurId, contractTypeId)
+            .then((items) => { if (!cancelled) setCandidates(items); })
+            .catch((error: unknown) => {
+                if (!cancelled) setCandidatesError(error instanceof Error ? error.message : "Nieznany błąd");
+            })
+            .finally(() => { if (!cancelled) setCandidatesLoading(false); });
+        return () => { cancelled = true; };
+    }, [projectOurId, contractTypeId, hasTenderType, reloadCandidates, setValue]);
+
+    useEffect(() => { setPickerOpen(false); }, [projectOurId, contractTypeId, hasTenderType]);
+
+    function openPicker() {
+        const current = selection.find(item => item.milestoneTypeId === 5);
+        setPickedMilestoneId(current?.mode === "shared" ? current.milestoneId : null);
+        setPickerOpen(true);
+    }
+
     function toggleExpanded(milestoneTypeId: number) {
         setExpanded((prev) => {
             const next = new Set(prev);
@@ -195,6 +242,10 @@ export function ContractStructureTree() {
     }
 
     function toggleMilestone(node: MilestoneTypeTreeNode, checked: boolean) {
+        if (node.milestoneTypeId === 5) {
+            setValue("_creationRequestId", undefined);
+            setPickerOpen(false);
+        }
         if (checked) {
             const remembered = rememberedCasesRef.current.get(node.milestoneTypeId);
             const caseTypeIds =
@@ -207,12 +258,36 @@ export function ContractStructureTree() {
         }
 
         const current = selection.find((item) => item.milestoneTypeId === node.milestoneTypeId);
-        if (current) rememberedCasesRef.current.set(node.milestoneTypeId, current.caseTypeIds);
+        if (current && current.mode !== "shared") rememberedCasesRef.current.set(node.milestoneTypeId, current.caseTypeIds);
         writeSelection(selection.filter((item) => item.milestoneTypeId !== node.milestoneTypeId));
     }
 
+    function selectTender(node: MilestoneTypeTreeNode, choice: string) {
+        const current = selection.find((item) => item.milestoneTypeId === 5);
+        if (current && current.mode !== "shared") rememberedCasesRef.current.set(5, current.caseTypeIds);
+        const other = selection.filter((item) => item.milestoneTypeId !== 5);
+        if (choice === "own") {
+            const caseTypeIds = rememberedCasesRef.current.get(5) ??
+                node.caseTypes.filter((item) => item.isCheckedByDefault).map((item) => item.caseTypeId);
+            writeSelection([...other, { milestoneTypeId: 5, caseTypeIds }]);
+            setExpanded((previous) => new Set(previous).add(5));
+        } else if (choice.startsWith("shared:")) {
+            const candidate = candidates.find((item) => item.milestoneId === Number(choice.slice(7)));
+            if (!candidate) return;
+            writeSelection([...other, {
+                mode: "shared", milestoneTypeId: 5, milestoneId: candidate.milestoneId,
+                expectedRevision: candidate.expectedRevision,
+            }]);
+            setValue("_creationRequestId", crypto.randomUUID());
+        } else {
+            writeSelection(other);
+        }
+        if (!choice.startsWith("shared:")) setValue("_creationRequestId", undefined);
+    }
+
     function toggleCase(node: MilestoneTypeTreeNode, caseTypeId: number, checked: boolean) {
-        const current = selection.find((item) => item.milestoneTypeId === node.milestoneTypeId);
+        const current = selection.find((item): item is OwnMilestoneSelectionItem =>
+            item.milestoneTypeId === node.milestoneTypeId && item.mode !== "shared");
 
         if (!current) {
             // Sprawa w niezaznaczonym kamieniu zaznacza też kamień, ale bierze
@@ -227,7 +302,7 @@ export function ContractStructureTree() {
             : current.caseTypeIds.filter((id) => id !== caseTypeId);
 
         writeSelection(
-            selection.map((item) => (item.milestoneTypeId === node.milestoneTypeId ? { ...item, caseTypeIds } : item)),
+            selection.map((item) => (item === current ? { ...item, caseTypeIds } : item)),
         );
     }
 
@@ -243,6 +318,7 @@ export function ContractStructureTree() {
         setValue("_contractStructureTreeUnavailable", true);
         setValue("_milestonesSelection", undefined, { shouldValidate: true });
         setValue("_contractFoldersSelection", undefined);
+        setValue("_creationRequestId", undefined);
     }
 
     if (!contractTypeId)
@@ -275,23 +351,25 @@ export function ContractStructureTree() {
             </div>
         );
 
+    const tenderNode = tree.milestoneTypes.find(node => node.milestoneTypeId === 5);
+
     return (
         <>
             <Form.Group className="mt-3" controlId="_milestonesSelection">
-                <Form.Label>Kamienie milowe i sprawy do utworzenia</Form.Label>
+                <Form.Label>Kamienie milowe i sprawy umowy</Form.Label>
                 {/* MilestonesController.createFolders tworzy podfoldery przez
                     CaseTypeRepository.findByMilestoneType, które nie filtruje ani
                     po IsDefault, ani po IsSubCaseOnly - folder powstaje dla
                     KAŻDEGO typu spraw kamienia. */}
                 <div className="text-muted small mb-2" data-testid="structure-tree-folders-note">
-                    Zaznaczenie kamienia zakłada na Dysku podfoldery wszystkich jego typów spraw, także
-                    tych niezaznaczonych. Odznaczenie sprawy pomija samą sprawę - folder i tak będzie czekał pusty.
+                    Przy tworzeniu własnego kamienia powstaną na Dysku podfoldery wszystkich jego typów spraw,
+                    także tych niezaznaczonych. Odznaczenie sprawy pomija samą sprawę; folder pozostaje pusty.
                 </div>
                 <div data-testid="structure-tree">
                     {tree.milestoneTypes.map((node) => {
                         const current = selection.find((item) => item.milestoneTypeId === node.milestoneTypeId);
-                        const selectedCaseIds = current?.caseTypeIds ?? [];
-                        const isExpanded = expanded.has(node.milestoneTypeId);
+                        const selectedCaseIds = current && current.mode !== "shared" ? current.caseTypeIds : [];
+                        const isExpanded = expanded.has(node.milestoneTypeId) && current?.mode !== "shared";
 
                         return (
                             <div key={node.milestoneTypeId}>
@@ -302,7 +380,7 @@ export function ContractStructureTree() {
                                         className="p-0 me-1 text-muted"
                                         style={{
                                             width: "1.2rem",
-                                            visibility: node.caseTypes.length ? "visible" : "hidden",
+                                            visibility: node.caseTypes.length && current?.mode !== "shared" ? "visible" : "hidden",
                                         }}
                                         onClick={() => toggleExpanded(node.milestoneTypeId)}
                                         aria-label={isExpanded ? "Zwiń" : "Rozwiń"}
@@ -326,7 +404,27 @@ export function ContractStructureTree() {
                                             templateName={node.templateName}
                                         />
                                     </CheckRow>
+                                    {node.milestoneTypeId === 5 && current && current.mode !== "shared" && (
+                                        <Button size="sm" variant="outline-secondary" className="ms-2 flex-shrink-0"
+                                            disabled={!projectOurId} onClick={openPicker}>
+                                            Wybierz wspólny…
+                                        </Button>
+                                    )}
                                 </div>
+                                {node.milestoneTypeId === 5 && current?.mode === "shared" && (
+                                    <div className="ms-4 ps-3 mt-1 mb-2" data-testid="shared-tender-result">
+                                        <div>Wspólny z kontraktem: <strong>{(() => {
+                                            const candidate = candidates.find(item => item.milestoneId === current.milestoneId);
+                                            return candidate ? sourceContractLabel(candidate) : "Kamień " + current.milestoneId;
+                                        })()}</strong></div>
+                                        <div className="small text-muted">Ta umowa będzie korzystać z istniejącego kamienia i jego spraw.
+                                            Serwer przygotuje i sprawdzi skrót do wspólnego folderu. Uprawnienia użytkowników Google są odrębne.</div>
+                                        <div className="d-flex flex-wrap gap-2 mt-1">
+                                            <Button size="sm" variant="outline-secondary" onClick={openPicker}>Zmień</Button>
+                                            <Button size="sm" variant="link" onClick={() => selectTender(node, "own")}>Utwórz własny zamiast wspólnego</Button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {isExpanded && (
                                     <div className="ms-4 ps-3">
@@ -379,6 +477,39 @@ export function ContractStructureTree() {
                     ))}
                 </div>
             </Form.Group>
+            {tenderNode && <Modal show={pickerOpen} onHide={() => setPickerOpen(false)} size="lg"
+                aria-labelledby="shared-tender-picker-title">
+                <Modal.Header closeButton><Modal.Title id="shared-tender-picker-title">Wybierz wspólny kamień</Modal.Title></Modal.Header>
+                <Modal.Body>
+                    <p>Wybierz istniejący kamień „Przetarg – obsługa” z tego projektu.
+                        Nowa umowa będzie korzystać z jego spraw i zadań. Przypięcie zostanie zapisane razem z umową.</p>
+                    {candidatesLoading && <div role="status"><Spinner animation="border" size="sm" className="me-2" />Szukam wspólnych kamieni w tym projekcie…</div>}
+                    {candidatesError && <Alert variant="warning">Nie udało się wczytać wspólnych kamieni: {candidatesError}</Alert>}
+                    {!candidatesLoading && !candidatesError && !candidates.length &&
+                        <p className="text-muted">Brak dostępnego wspólnego kamienia dla tego projektu i typu umowy.</p>}
+                    {!candidatesLoading && !candidatesError && candidates.length > 0 && <fieldset>
+                        <legend className="fs-6">Dostępne kamienie</legend>
+                        {candidates.map(candidate => <div className="border rounded p-2 mb-2" key={candidate.milestoneId}>
+                            <Form.Check type="radio" name="shared-tender-candidate" id={"shared-tender-" + candidate.milestoneId}
+                                checked={pickedMilestoneId === candidate.milestoneId}
+                                onChange={() => setPickedMilestoneId(candidate.milestoneId)}
+                                label={<><strong>{sourceContractLabel(candidate)}</strong>
+                                    <div className="small text-muted">{candidate.milestoneName || "Przetarg – obsługa"} · Kamień #{candidate.milestoneId}</div></>} />
+                        </div>)}
+                    </fieldset>}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" className="me-auto" disabled={candidatesLoading}
+                        onClick={() => setReloadCandidates(value => value + 1)}>Odśwież wspólne kamienie</Button>
+                    <Button variant="secondary" onClick={() => setPickerOpen(false)}>Anuluj</Button>
+                    <Button variant="primary" disabled={candidatesLoading || !!candidatesError || !candidates.some(item => item.milestoneId === pickedMilestoneId)}
+                        onClick={() => {
+                            if (pickedMilestoneId === null) return;
+                            selectTender(tenderNode, "shared:" + pickedMilestoneId);
+                            setPickerOpen(false);
+                        }}>Użyj wybranego kamienia</Button>
+                </Modal.Footer>
+            </Modal>}
         </>
     );
 }

@@ -17,6 +17,10 @@ export type SystemRole = {
 };
 
 export interface User {
+    /** Stable Person identity from authenticated backend session; never an SSO-provider namespace. */
+    id?: number;
+    enviId?: number;
+    microsoftId?: string;
     googleId: string;
     picture: string;
     systemEmail: string;
@@ -55,6 +59,10 @@ export interface ProjectData extends RepositoryDataItem {
     totalValue?: string | number;
     qualifiedValue?: string | number;
     dotationValue?: string | number;
+    /** numer umowy o dofinansowanie (opcjonalny) */
+    fundingAgreementNumber?: string | null;
+    /** program (opcjonalny) */
+    program?: string | null;
     gdFolderId: string | undefined;
     _lastUpdated?: string;
     _engineers?: EntityData[];
@@ -77,6 +85,8 @@ export interface Contract extends RepositoryDataItem {
     defectsNotificationEndDate?: string | null;
     _project: ProjectData;
     projectOurId?: string;
+    /** Pokój Google Chat kontraktu ENVI (`ChatSpaces.Id`). Brak/null = kontrakt bez pokoju. */
+    chatSpaceId?: number | null;
     status: string;
     gdFolderId?: string;
     meetingProtocolsGdFolderId?: string;
@@ -371,10 +381,20 @@ export interface ContractTemplatesTree {
 }
 
 /** Wybór wysyłany w POST /contractReact jako _milestonesSelection */
-export interface MilestoneSelectionItem {
+export interface OwnMilestoneSelectionItem {
+    mode?: "own";
     milestoneTypeId: number;
     caseTypeIds: number[];
 }
+
+export interface SharedMilestoneSelectionItem {
+    mode: "shared";
+    milestoneTypeId: 5;
+    milestoneId: number;
+    expectedRevision: string;
+}
+
+export type MilestoneSelectionItem = OwnMilestoneSelectionItem | SharedMilestoneSelectionItem;
 
 export interface MilestoneType extends RepositoryDataItem {
     name: string;
@@ -528,6 +548,7 @@ export interface EntityData extends RepositoryDataItem {
 }
 
 export interface PersonData extends RepositoryDataItem {
+    systemRoleId?: number;
     name: string;
     surname: string;
     email: string;
@@ -556,6 +577,7 @@ export interface SystemUserData extends RepositoryDataItem {
     systemEmail: string;
     /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
     fidmanEnabled?: boolean;
+    finEnabled?: boolean;
 }
 
 export interface PersonAccountV2Payload {
@@ -569,6 +591,7 @@ export interface PersonAccountV2Payload {
     isActive?: boolean;
     /** GLO-P1: osoba loguje się do FIDmana tym samym kontem Google co do PS. */
     fidmanEnabled?: boolean;
+    finEnabled?: boolean;
     /**
      * Tylko w odpowiedzi PUT konta (D-PER-10): zapis dotyczył WŁASNEJ roli wołającego, serwer
      * skasował jego sesję - kolejne żądania dostaną 401, klient ma przejść do logowania.
@@ -887,6 +910,8 @@ export interface StaffMemberData extends RepositoryDataItem {
     hasCostInvoiceAccess: boolean;
     hasBankAccess: boolean;
     canLogSiteVisits: boolean;
+    canManageSbAccess: boolean;
+    /** Aktywność KONTA logowania (U2): odczyt z wiersza, zapis trasą konta v2, nie flagami panelu. */
     isActive: boolean;
     _personName?: string;
     _personSurname?: string;
@@ -900,6 +925,7 @@ export interface StaffMemberData extends RepositoryDataItem {
      */
     _systemEmail?: string | null;
     _fidmanEnabled?: boolean;
+    _finEnabled?: boolean;
     _hasStaffRow?: boolean;
     /** Ostatnia wysyłka konta do FIDmana; null = nigdy nie wysyłano. Tylko do odczytu. */
     _fidmanSync?: FidmanUserSyncStatus | null;

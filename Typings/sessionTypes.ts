@@ -24,7 +24,8 @@ export type SessionTask = {
     initData?: any;
     result?: any;
     error?: string;
-    progressMesage?: string;
+    progressMessage?: string;
+    progressMesage?: string; // Older responses.
     percent?: number;
     timeout?: NodeJS.Timeout;
 };

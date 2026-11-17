@@ -5,7 +5,7 @@ import { EntityData, OtherContract, OurContract, ProjectData } from "../../../..
 import MainSetup from "../../../React/MainSetupReact";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import { FormProvider } from "../../../View/Modals/FormContext";
-import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
+import { PartialEditTrigger as ModalEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { ContractStatusBadge, FidmanSyncBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
 import {
     FidmanSyncStatus,
@@ -25,6 +25,15 @@ import {
 } from "../Modals/ContractValidationSchema";
 import { ContractDocumentBadge } from "../ContractRowContent";
 import { useContractDetails } from "./ContractDetailsContext";
+import { MailboxesSection } from "../../../Mailboxes/MailboxStatus";
+import { ContractChatSpaceSection } from "./ContractChatSpaceSection";
+
+/**
+ * Pola nagłówka edytuje PUT /contract/:id, który serwer zamyka rolom ograniczonym do przypisań
+ * (projectScopedPolicy) - klik dałby 403 i raport błędu. Dla tych ról pole jest tylko do odczytu.
+ */
+export const PartialEditTrigger: typeof ModalEditTrigger = (props) =>
+    MainSetup.isRoleAllowed(MainSetup.PROJECT_SCOPED_ROLES) ? <span>{props.children}</span> : <ModalEditTrigger {...props} />;
 
 export function ContractMainHeader() {
     const { contract, setContract, contractsRepository } = useContractDetails();
@@ -105,10 +114,14 @@ export function ContractMainHeader() {
                 </Col>
                 <Col sm={1}>{contract._gdFolderUrl && <GDFolderIconLink folderUrl={contract._gdFolderUrl} />}</Col>
                 <Col sm={12} md={6} className="d-flex align-items-center">
-                    <MoveContractButton />
+                    {!MainSetup.isRoleAllowed(MainSetup.PROJECT_SCOPED_ROLES) && <MoveContractButton />}
                 </Col>
-                <Col sm={12} md={6} className="d-flex align-items-center gap-2">
-                    <FidmanSyncSection />
+                <Col sm={12} md={6} className="d-flex flex-wrap align-items-center gap-2">
+                    {/* Pokój Chat i FIDman: serwer daje je tylko pracownikom ENVI, skrzynkę - wszystkim
+                        poza NO_PROJECT_MAIL_ROLES. Bez warunku role zakresowe wołałyby zamknięte trasy. */}
+                    {MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES) && <ContractChatSpaceSection />}
+                    {!MainSetup.isRoleAllowed(MainSetup.NO_PROJECT_MAIL_ROLES) && <MailboxesSection contractId={contract.id} />}
+                    {MainSetup.isRoleAllowed(MainSetup.STAFF_ROLES) && <FidmanSyncSection />}
                     <ContractDocumentSection />
                 </Col>
                 <Col sm={12} md={6}>

@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Container, Nav } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
-import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
+import FilterableTable, { TableTitle } from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { StaffMemberData } from "../../../Typings/bussinesTypes";
 import { StaffMemberEditModalButton } from "./Modals/StaffMemberModalButtons";
 import { UserAddNewModalButton } from "./Modals/UserModalButtons";
@@ -10,14 +11,13 @@ import { StaffMembersFilterBody } from "./StaffMemberFilterBody";
 import { BoolCell, Centered, TextCell } from "../adminTableCells";
 import MainSetup from "../../React/MainSetupReact";
 import { FidmanUserSyncBadge } from "./FidmanUserSyncBadge";
+import { AccessOverview } from "./access/AccessOverview";
 
 /** Nazwa roli systemowej po numerze - rola przychodzi z JOIN-a jako identyfikator. */
 function roleNameById(systemRoleId: number | null | undefined): string {
     if (systemRoleId === null || systemRoleId === undefined) return "-";
-    const entry = Object.entries(MainSetup.SystemRoles).find(
-        ([, role]: [string, any]) => role.id === Number(systemRoleId),
-    );
-    return entry ? entry[0] : String(systemRoleId);
+    const role = Object.values(MainSetup.SystemRoles).find((role) => role.id === Number(systemRoleId));
+    return role ? MainSetup.ROLE_LABELS[role.systemName] : String(systemRoleId);
 }
 
 /** Klucz, pod którym FilterableTable pamięta kryteria tego okna (patrz FilterPanel). */
@@ -113,11 +113,22 @@ export default function StaffMembersSearch({ title }: { title: string }) {
         if (frazaParam !== null) setSearchParams({}, { replace: true });
     }, [frazaParam, setSearchParams]);
 
+    // Wariant A makiety DOSTEP-6: nadawanie i przegląd „kto ma do czego dostęp” w jednym oknie.
+    const [tab, setTab] = useState("grant");
+
     return (
         <>
+            {/* Tytuł i zakładki w kolumnie strony; tabela ma własny kontener, więc idzie pod nimi bez tytułu. */}
+            <Container>
+                <TableTitle title={title} />
+                <Nav variant="tabs" activeKey={tab} onSelect={(k) => setTab(k ?? "grant")} className="mb-3">
+                    <Nav.Item><Nav.Link eventKey="grant">Nadawanie uprawnień</Nav.Link></Nav.Item>
+                    <Nav.Item><Nav.Link eventKey="overview">Kto ma do czego dostęp</Nav.Link></Nav.Item>
+                </Nav>
+            </Container>
+            {tab === "grant" ? (
             <FilterableTable<StaffMemberData>
                 id="staffMembers"
-                title={title}
                 FilterBodyComponent={StaffMembersFilterBody}
                 tableStructure={[
                     {
@@ -135,6 +146,11 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                                     <FidmanUserSyncBadge
                                         enabled={!!person._fidmanEnabled}
                                         sync={person._fidmanSync}
+                                        className="ms-2 align-middle"
+                                    />
+                                    <FidmanUserSyncBadge
+                                        system="FIN"
+                                        enabled={!!person._finEnabled}
                                         className="ms-2 align-middle"
                                     />
                                 </div>
@@ -171,7 +187,7 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                         colMd: 1,
                     },
                     {
-                        header: "Bank",
+                        header: "Finanse firmy",
                         renderTdBody: (person: StaffMemberData) => <BoolCell value={person.hasBankAccess} />,
                         colMd: 1,
                     },
@@ -190,8 +206,14 @@ export default function StaffMembersSearch({ title }: { title: string }) {
                 EditButtonComponent={StaffMemberEditModalButton}
                 isDeletable={false}
                 repository={staffMembersRepository}
+                initialObjects={staffMembersRepository.items}
                 searchOnMount={true}
             />
+            ) : (
+                <Container>
+                    <AccessOverview />
+                </Container>
+            )}
         </>
     );
 }

@@ -10,6 +10,7 @@ import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails
 import InvoicePdfPreview from "../../Erp/InvoicesList/InvoiceDetails/InvoicePdfPreview";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
+import EnviPodpisPage from "../../Signing/EnviPodpisPage";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import GoogleButton from "../GoogleLoginButton";
 import MainController from "../MainControllerReact";
@@ -54,6 +55,7 @@ import MileagePage from "../../Mileage/MileagePage";
 import SiteVisitsPage from "../../SiteVisits/SiteVisitsPage";
 import PettyCashEntryPage from "../../Erp/PettyCash/PettyCashEntryPage";
 import Dashboard from "./Content/Dashboard/Dashboard";
+import SbAccessManagePage from "../../SecondBrain/SbAccessManagePage";
 import SbInstallerPage from "../../SecondBrain/SbInstallerPage";
 import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
@@ -209,7 +211,7 @@ function AppRoutes() {
             <MainMenu />
             {/* Dobre rady zasłaniają za dużo ekranu na telefonie/w aplikacji - tylko desktop */}
             {!isMobileOrAppView() && <GoodTipToast />}
-            <div className="mt-3 mb-3">
+            <div className="mt-3 mb-3 app-pomoc-margin">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/privacy" element={<PrivacyAcknowledgement load={systemPrivacy} acknowledge={systemPrivacy} />} />
@@ -247,6 +249,7 @@ function AppRoutes() {
                     {/* Panel administracyjny - węższy niż STAFF_ROLES, bo ten obejmuje
                         też ENVI_EMPLOYEE. Musi odpowiadać bramce /admin w backendzie. */}
                     <Route element={<ProtectedRoute allowedRoles={MainSetup.ADMIN_PANEL_ROLES} />}>
+                        <Route path="/admin/sbAccess" element={<SbAccessManagePage title="Dostęp do Second Brain" />} />
                         <Route path="/admin/cars" element={<CarsSearch title="Samochody" />} />
                         <Route path="/admin/softwareLicenses" element={<SoftwareLicensesSearch title="Licencje" />} />
                         <Route
@@ -280,6 +283,7 @@ function AppRoutes() {
                         <Route path="/vacations" element={<VacationsPage title="Urlopy" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/sbInstaller" element={<SbInstallerPage />} />
+                        <Route path="/enviPodpis" element={<EnviPodpisPage />} />
                         <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
                         <Route

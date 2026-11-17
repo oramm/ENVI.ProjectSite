@@ -15,6 +15,7 @@ const flagFields = {
     hasCostInvoiceAccess: Yup.boolean().required(),
     hasBankAccess: Yup.boolean().required(),
     canLogSiteVisits: Yup.boolean().required(),
+    canManageSbAccess: Yup.boolean().required(),
     isActive: Yup.boolean().required(),
 };
 

@@ -27,6 +27,7 @@ import ToolsDate from "../../React/Tools/ToolsDate";
 import MainSetup from "../../React/MainSetupReact";
 import { SendAnotherOfferModalButton, SendOfferModalButton } from "./Modals/SendOffer/SendOfferModalButtons";
 import { OfferTenderLink } from "./OfferCommonComponents";
+import { SignOfferFilesButton, UploadSignedOfferFileButton } from "../Signing/OfferSigningRowActions";
 
 export default function OffersSearch({ title }: { title?: string }) {
     function renderEntityData(offer: OurOffer | ExternalOffer) {
@@ -231,6 +232,7 @@ export default function OffersSearch({ title }: { title?: string }) {
             tableStructure={[{ header: undefined, renderTdBody: renderRowContent }]}
             AddNewButtonComponents={[OurOfferAddNewModalButton, ExternalOfferAddNewModalButton]}
             EditButtonComponent={OfferEditModalButton}
+            RowActionMenuComponents={[SignOfferFilesButton, UploadSignedOfferFileButton]}
             isDeletable={true}
             repository={offersRepository}
             selectedObjectRoute={"/offer/"}

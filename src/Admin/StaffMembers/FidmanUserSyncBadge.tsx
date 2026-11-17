@@ -111,15 +111,31 @@ export function FidmanUserSyncBadge({
     enabled,
     sync,
     className,
+    system = "FIDman",
 }: {
     enabled: boolean;
-    sync: FidmanUserSyncStatus | null | undefined;
+    sync?: FidmanUserSyncStatus | null;
     className?: string;
+    system?: "FIDman" | "FIN";
 }) {
-    const view = describeFidmanUserSync(enabled, sync ?? null);
+    const view: FidmanUserSyncView | null =
+        system === "FIN"
+            ? {
+                  variant: enabled ? "success" : "secondary",
+                  text: "light",
+                  label: `FIN: ${enabled ? "włączony" : "wyłączony"}`,
+                  title: "Dostęp do FIN",
+              }
+            : describeFidmanUserSync(enabled, sync ?? null);
     if (!view) return null;
     return (
-        <Badge bg={view.variant} text={view.text} className={className} title={view.title} data-testid="fidman-sync-badge">
+        <Badge
+            bg={view.variant}
+            text={view.text}
+            className={className}
+            title={view.title}
+            data-testid={system === "FIN" ? "fin-access-badge" : "fidman-sync-badge"}
+        >
             {view.label}
         </Badge>
     );

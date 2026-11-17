@@ -8,6 +8,7 @@ interface Props {
     task: Task;
     /** Wiersz zaznaczony w tabeli — pokazuje pełną nazwę (zawijaną) i uwagi zadania. */
     isActive?: boolean;
+    onChanged?: () => void;
 }
 
 const toYmd = (d: Task["deadline"]) => (d ? String(d).slice(0, 10) : "");
@@ -18,7 +19,7 @@ const toYmd = (d: Task["deadline"]) => (d ? String(d).slice(0, 10) : "");
  * Mutuje obiekt task (współdzielony z drzewem) + lokalny stan, by zmiana była widoczna od razu.
  * Po zaznaczeniu wiersza (isActive) nazwa przestaje być ucinana, a pod nią pojawiają się uwagi.
  */
-export default function ScrumTaskRow({ task, isActive = false }: Props) {
+export default function ScrumTaskRow({ task, isActive = false, onChanged }: Props) {
     const [, forceRender] = useState(0);
 
     useEffect(() => {
@@ -28,6 +29,7 @@ export default function ScrumTaskRow({ task, isActive = false }: Props) {
     function applyChange(patch: Partial<Task>) {
         Object.assign(task, patch);
         forceRender((n) => n + 1);
+        onChanged?.();
     }
 
     return (

@@ -38,6 +38,7 @@ export function ErrorMessage({ errors, name }: ErrorMessageProps) {
 }
 
 type MyAsyncTypeaheadProps = {
+    filterBy?: (option: any) => boolean;
     name: string;
     repository: RepositoryReact;
     labelKey: string;
@@ -63,6 +64,7 @@ type MyAsyncTypeaheadProps = {
  * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
  */
 export function MyAsyncTypeahead({
+    filterBy = () => true,
     name,
     repository,
     labelKey,
@@ -130,10 +132,6 @@ export function MyAsyncTypeahead({
             // Opcjonalnie można pokazać toast lub alert użytkownikowi
         }
     }
-
-    // Bypass client-side filtering by returning `true`. Results are already
-    // filtered by the search endpoint, so no need to do it again.
-    const filterBy = () => true;
 
     // Zmiana kryteriów kontekstowych (np. filtr statusów przełączony w nagłówku menu)
     // ponawia ostatnie zapytanie - inaczej lista zostałaby z wynikami dla starych kryteriów.

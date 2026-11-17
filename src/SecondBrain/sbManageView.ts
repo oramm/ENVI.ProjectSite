@@ -1,0 +1,155 @@
+import type { SbAction, SbEntry, SbHealth, SbLevels } from "./sbManageApi";
+
+export const statusViews = {
+    INVITED: { label: "Zaproszony", variant: "warning" },
+    ACTIVE: { label: "Aktywny", variant: "success" },
+    BLOCKED: { label: "Zablokowany", variant: "secondary" },
+    REVOKED: { label: "Odebrany", variant: "dark" },
+};
+export const manualExplanation = "Nadane ręcznie przed uruchomieniem modułu. Moduł nie zdejmuje takiego dostępu - zmień go ręcznie na GitHubie i na Dysku.";
+export const localCopyExplanation = "To, co już pobrała na swój komputer (kopia wiedzy, skille), zostaje - zdalnego kasowania nie ma.";
+const actionLabels: Record<SbAction, string> = { invite: "Zaproszenie", block: "Blokada", unblock: "Odblokowanie", revoke: "Odebranie", assign: "Przypisanie konta GitHub" };
+export function availableActions(entry: SbEntry): { action: SbAction; label: string; confirm?: boolean }[] {
+    if (entry.isGrantedManually) return [];
+    const block = { action: "block" as const, label: "Zablokuj", confirm: true };
+    const revoke = { action: "revoke" as const, label: "Odbierz", confirm: true };
+    const remaining = entry.githubInvitationId != null || !!entry.drivePermissionId;
+    switch (entry.statusCode) {
+        case "INVITED": return [{ action: "invite", label: "Ponów zaproszenie" }, block, revoke];
+        case "ACTIVE": return [block, revoke];
+        case "BLOCKED": return [{ action: "unblock", label: "Odblokuj" }, revoke, ...(remaining ? [{ action: "block" as const, label: "Ponów blokadę" }] : [])];
+        case "REVOKED": return remaining ? [{ action: "revoke", label: "Ponów odebranie" }] : [];
+    }
+}
+// Nazwa roli z PS jest kodem systemowym; na ekranie kierownika pokazujemy polską nazwę.
+export const roleLabel = (systemRoleName: string | null) =>
+    systemRoleName === "ENVI_MANAGER" ? "kierownik" : systemRoleName === "ENVI_EMPLOYEE" ? "pracownik" : systemRoleName || "brak roli";
+export function describeGithub(entry: SbEntry): string {
+    return entry.githubLogin || (entry.statusCode === "INVITED" && entry.githubInvitationId != null ? "zaproszenie czeka" : "niepowiązane");
+}
+export function describeDrive(entry: SbEntry): string {
+    if (entry.drivePermissionId) return "jest";
+    if (entry.isGrantedManually) return "nadane ręcznie";
+    // Brak numeru w stanach nadania oznacza brak zapisu, w stanach odebrania - zdjęty dostęp.
+    return entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE" ? "brak zapisu" : "zdjęty";
+}
+export function describeFailure(status: number, message: string): string {
+    switch (status) {
+        case 503: return "Funkcja nieskonfigurowana - serwer PS nie ma tokenu GitHub do zapraszania. Nic nie zostało zmienione.";
+        case 502: return `${message} Nic nie zostało zmienione.`.trim();
+        case 409: case 422: case 400: return message || `Nie udało się wykonać operacji (kod ${status}).`;
+        case 401: case 403: return "Nie masz uprawnienia do zarządzania dostępem do Second Brain.";
+        case 0: return "Brak połączenia z serwerem PS. Spróbuj ponownie.";
+        default: return `Nie udało się wykonać operacji (kod ${status}).`;
+    }
+}
+export function describeOutcome(action: SbAction, personLabel: string, result: "OK" | "PARTIAL", note: string) {
+    return result === "PARTIAL"
+        ? { variant: "warning" as const, message: `Wykonano tylko częściowo: ${actionLabels[action]} - ${personLabel}. ${note} Powtórz operację, a jeśli dostęp nadal pozostaje, zdejmij go ręcznie na GitHubie i na Dysku.` }
+        : { variant: "success" as const, message: `Wykonano: ${actionLabels[action]} - ${personLabel}.${note ? ` ${note}` : ""}` };
+}
+export function confirmationContent(action: "block" | "revoke", entry: SbEntry) {
+    return {
+        title: action === "block" ? "Zablokować dostęp do Second Brain?" : "Odebrać dostęp do Second Brain na stałe?",
+        paragraphs: [
+            `Osoba: ${entry.name} ${entry.surname} - ${entry.systemEmail || "brak adresu"}.`,
+            "Osoba zostanie usunięta z organizacji GitHub (albo anulowane zostanie jej oczekujące zaproszenie) i straci dostęp do dysku SB.ENVI, więc nie pobierze już nowej wiedzy.",
+            action === "block" ? 'Blokadę można cofnąć przyciskiem "Odblokuj". Osoba dostanie wtedy nowe zaproszenie na GitHubie i musi je przyjąć.' : "Odebranie kończy dostęp na stałe; ponowne dopuszczenie to nowe zaproszenie.",
+            localCopyExplanation,
+        ],
+    };
+}
+export const assignableEntries = (entries: SbEntry[]) => entries.filter(entry =>
+    (entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE") && entry.githubLogin === null && !entry.isGrantedManually);
+export const noLevels: SbLevels = { repos: "none", psDb: "none", drive: "none", mail: [] };
+export const repoOptions = [["none", "brak"], ["read", "odczyt"], ["write", "zapis"]] as const;
+export const psDbOptions = [["none", "brak"], ["ro", "odczyt"], ["rw", "zapis"]] as const;
+export const driveOptions = [["none", "brak"], ["connector", "konektor"]] as const;
+const optionLabel = (options: readonly (readonly [string, string])[], value: string) => options.find(([key]) => key === value)?.[1] ?? value;
+export function describeLevels(entry: SbEntry) {
+    const levels = entry.levels ?? noLevels;
+    return {
+        repos: optionLabel(repoOptions, levels.repos), psDb: optionLabel(psDbOptions, levels.psDb),
+        drive: optionLabel(driveOptions, levels.drive), mail: levels.mail.length ? levels.mail.join(", ") : "brak",
+    };
+}
+// Skrzynki znane z konfiguracji poczty firmowej; inne kody z bazy też zostają widoczne w panelu.
+/** Skrzynki ze spisu PS plus zaznaczone spoza spisu (żeby dało się je odznaczyć). */
+export const mailboxChoices = (known: string[], selected: string[]) => [...known, ...selected.filter(code => !known.includes(code))];
+export const toggleMailbox = (mail: string[], code: string, on: boolean) =>
+    on ? (mail.includes(code) ? mail : [...mail, code]) : mail.filter(item => item !== code);
+// Grupy tabeli: administratorzy SB (znacznik CanManageSbAccess) przed pracownikami i zaproszonymi;
+// zablokowani i odebrani mają własną grupę, żeby nie znikali z ekranu.
+export const entryGroups = [
+    { key: "admin", label: "Administratorzy SB", hint: "nadają dostępy" },
+    { key: "staff", label: "Pracownicy", hint: "" },
+    { key: "invited", label: "Zaproszeni", hint: "jeszcze nie przyjęli zaproszenia" },
+    { key: "closed", label: "Zablokowani i odebrani", hint: "" },
+] as const;
+export function groupKey(entry: SbEntry): (typeof entryGroups)[number]["key"] {
+    if (entry.statusCode === "INVITED") return "invited";
+    if (entry.statusCode !== "ACTIVE") return "closed";
+    return entry.canManageSb ? "admin" : "staff";
+}
+// Hasła (SBD-2). Które hasła należą się osobie, rozstrzyga PS (secretsExpected); tu tylko podpis i stan.
+export const secretLabel = (name: string) =>
+    name === "poczta-sb-agent" ? "konto techniczne poczty (agent)" : name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
+export const sharedSecretNames = (entries: SbEntry[]) => [...new Set(entries.flatMap(entry => entry.secretsExpected ?? []))];
+export const secretRecipients = (entries: SbEntry[], name: string) => entries.filter(entry => entry.secretsExpected?.includes(name));
+export const canReceiveSecret = (entry: SbEntry) => !!entry.publicKeyJwk && !!entry.keyThumbprint;
+export const defaultSecretRecipients = (entries: SbEntry[], name: string, changedAtSource = false) =>
+    secretRecipients(entries, name).filter(entry => canReceiveSecret(entry) && (changedAtSource || !entry.secretsGiven?.includes(name))).map(entry => entry.personId);
+export const secretCharacterCount = (value: string) => `Liczba znaków: ${Array.from(value).length}`;
+export function secretsState(entry: SbEntry): { text: string; tone: "ok" | "warn" | "off" } {
+    const expected = entry.secretsExpected ?? [], given = (entry.secretsGiven ?? []).filter(name => expected.includes(name));
+    if (!expected.length) return { text: "—", tone: "off" };
+    return { text: `${given.length} z ${expected.length}`, tone: given.length === expected.length ? "ok" : "warn" };
+}
+/** RSA-OAEP SHA-256 z kluczem 2048 bit mieści najwyżej 190 bajtów tekstu (UTF-8). */
+export const SECRET_MAX_BYTES = 190;
+export function secretInputError(value: string): string | null {
+    if (!value) return "Wpisz hasło.";
+    return new TextEncoder().encode(value).length > SECRET_MAX_BYTES ? `Hasło jest za długie (najwyżej ${SECRET_MAX_BYTES} bajtów).` : null;
+}
+export const secretConfirmationError = (value: string, repeated: string) =>
+    secretInputError(value) ?? (value !== repeated ? "Hasła różnią się. Wpisz to samo hasło w obu polach." : null);
+export function takeSecretConfirmation(entry: SbEntry, name: string) {
+    return {
+        title: `Odebrać hasło: ${secretLabel(name)}?`,
+        paragraphs: [
+            `Osoba: ${entry.name} ${entry.surname} - ${entry.systemEmail || "brak adresu"}.`,
+            "Szyfr zostanie usunięty z PS, więc komputer pracownika nie pobierze go ponownie.",
+            "Jeśli komputer już go pobrał, nie da się tego cofnąć - zmień hasło u źródła (w poczcie albo w bazie).",
+        ],
+    };
+}
+// Komputer (SBD-4): ostatni raport instalatora. Czy raport jest "starszy niż 7 dni", rozstrzyga PS (health.stale);
+// ekran tylko to pokazuje, więc reguła ma jedno miejsce.
+export type HealthTone = "ok" | "bad" | "off";
+export const healthRetentionNote = "Komputer to ostatni raport instalatora SB u pracownika, wysyłany raz dziennie. Raport starszy niż 7 dni jest szary.";
+export const healthContentNote = "Raport zawiera tylko wersje, stan narzędzi i krótkie opisy błędów. Bez haseł i bez treści poczty.";
+const two = (value: number) => String(value).padStart(2, "0");
+/** "dziś 08:12" dla bieżącego dnia, inaczej "18.10 17:40". */
+export function formatHealthDate(iso: string, now: Date = new Date()): string {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "";
+    const time = `${two(date.getHours())}:${two(date.getMinutes())}`;
+    return date.toDateString() === now.toDateString() ? `dziś ${time}` : `${two(date.getDate())}.${two(date.getMonth() + 1)} ${time}`;
+}
+export function healthColumn(entry: SbEntry, now: Date = new Date()): { text: string; tone: HealthTone; date: string | null } {
+    const health = entry.health;
+    if (!health) return { text: "nie zainstalowano", tone: "off", date: null };
+    const date = formatHealthDate(health.reportedAt, now);
+    if (health.stale) return { text: "brak raportu", tone: "off", date };
+    return health.state === "ok" ? { text: "działa", tone: "ok", date } : { text: "błąd", tone: "bad", date };
+}
+export const healthToolLabel = (name: string) => name === "hasla-z-ps" ? "Hasła z PS na komputerze" : secretLabel(name);
+export function secretHealthState(health: SbHealth | null | undefined, now: Date = new Date()): { text: string; tone: HealthTone } | null {
+    const tool = health?.tools.find(tool => tool.name === "hasla-z-ps");
+    if (!health || !tool) return null;
+    const text = tool.ok ? "działają na komputerze" : tool.error || "Nie udało się pobrać lub sprawdzić haseł z PS na komputerze.";
+    return { text: `${text} (raport ${formatHealthDate(health.reportedAt, now)})`, tone: health.stale ? "off" : tool.ok ? "ok" : "bad" };
+}
+export const healthVersions = (health: SbHealth, now: Date = new Date()) =>
+    `SB ${health.sbVersion ?? "?"} · instalator ${health.installerVersion ?? "?"} · raport ${formatHealthDate(health.reportedAt, now)}`;
+export const canRequestHealth = (entry: SbEntry) => entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE";

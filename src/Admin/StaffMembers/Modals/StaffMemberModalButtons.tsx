@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { Alert } from "react-bootstrap";
+import ConfirmModal from "../../../View/Modals/ConfirmModal";
 import { PersonAccountV2Payload, StaffMemberData } from "../../../../Typings/bussinesTypes";
 import { GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
-import { ModalSaveCallback, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
+import { GeneralEditModalButtonProps, ModalSaveCallback, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import {
     AccountFormValues,
     buildAccountPayload,
@@ -16,6 +18,10 @@ import { makeStaffMemberValidationSchema } from "./StaffMemberValidationSchema";
 
 /** Wartości formularza uprawnień, które NIE są flagami - idą osobnymi żądaniami po zapisie flag. */
 export type StaffMemberAccountFormValues = AccountFormValues & { _projectAssignments?: unknown };
+
+export function shouldConfirmStaffMemberDeparture(initialActive: boolean | undefined, active: unknown): boolean {
+    return initialActive === true && active === false;
+}
 
 export type StaffMemberAccountSaveResult = {
     account: PersonAccountV2Payload | null;
@@ -100,6 +106,8 @@ export function mergeAccountIntoRow(row: StaffMemberData, account: PersonAccount
         _systemRoleId: account.systemRoleId ?? null,
         _systemEmail: account.systemEmail ?? null,
         _fidmanEnabled: !!account.fidmanEnabled,
+        _finEnabled: !!account.finEnabled,
+        isActive: account.isActive ?? row.isActive,
     };
 }
 
@@ -159,20 +167,66 @@ export function makeStaffMemberEditHandler(onEdit: ModalSaveCallback<StaffMember
  */
 export function StaffMemberEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<StaffMemberData>) {
+    show,
+    onClose,
+}: SpecificEditModalButtonProps<StaffMemberData> & Pick<GeneralEditModalButtonProps<StaffMemberData>, "show" | "onClose">) {
+    const [confirmation, setConfirmation] = useState<{ resolve: (confirmed: boolean) => void } | null>(null);
+
+    function closeConfirmation() {
+        confirmation?.resolve(false);
+        setConfirmation(null);
+    }
+
     return (
-        <GeneralEditModalButton<StaffMemberData>
-            modalProps={{
-                onEdit: makeStaffMemberEditHandler(onEdit),
-                ModalBodyComponent: StaffMemberModalBody,
-                modalTitle: "Uprawnienia osoby",
-                repository: staffMembersRepository,
-                initialData: initialData,
-                makeValidationSchema: makeStaffMemberValidationSchema,
-            }}
-            buttonProps={{
-                buttonVariant: "outline-success",
-            }}
-        />
+        <>
+            <GeneralEditModalButton<StaffMemberData>
+                show={show}
+                onClose={() => {
+                    closeConfirmation();
+                    onClose?.();
+                }}
+                modalProps={{
+                    beforeSubmit: (data) => {
+                        if (!shouldConfirmStaffMemberDeparture(initialData.isActive, data.isActive)) return true;
+                        return new Promise<boolean>((resolve) => setConfirmation({ resolve }));
+                    },
+                    onEdit: makeStaffMemberEditHandler(onEdit),
+                    ModalBodyComponent: StaffMemberModalBody,
+                    modalTitle: "Uprawnienia osoby",
+                    repository: staffMembersRepository,
+                    initialData: initialData,
+                    makeValidationSchema: makeStaffMemberValidationSchema,
+                }}
+                buttonProps={{
+                    buttonVariant: "outline-success",
+                }}
+            />
+            {confirmation && (
+                <ConfirmModal
+                    show
+                    title={`${initialData._personName} ${initialData._personSurname} odchodzi z firmy?`}
+                    prompt={
+                        <>
+                            <p>Po zapisie osoba od razu traci:</p>
+                            <ul>
+                                <li>logowanie do PS, także okna, które ma teraz otwarte;</li>
+                                <li>konto w FIDmanie i w FIN;</li>
+                                <li>dostęp do Second Brain;</li>
+                                <li>pokoje Google Chat projektów.</li>
+                            </ul>
+                            <p>Historia zadań, urlopów i przejazdów zostaje.</p>
+                            <Alert variant="warning" className="mb-0">
+                                Hasła skrzynek, które osoba znała, trzeba zmienić osobno. Listę rzeczy do zdjęcia ręcznie ma procedura odejścia osoby.
+                            </Alert>
+                        </>
+                    }
+                    cancelLabel="Wróć"
+                    confirmLabel="Wyłącz konto i zapisz"
+                    confirmVariant="danger"
+                    onClose={closeConfirmation}
+                    onConfirm={async () => confirmation.resolve(true)}
+                />
+            )}
+        </>
     );
 }

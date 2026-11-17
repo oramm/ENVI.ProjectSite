@@ -1,10 +1,12 @@
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import Pomoc from "../../Pomoc/Pomoc";
 import { Badge, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import MainController from "../MainControllerReact";
 import MainSetup from "../MainSetupReact";
+import { useSbAccess } from "../../SecondBrain/sbAccessApi";
 
 /**
  * O dostępie do modułów flagowych decyduje backend (flagi w StaffMembers), nie rola -
@@ -38,29 +40,67 @@ export function useModuleAccess(path: string, enabled = true) {
     return hasAccess;
 }
 
+/** Adresy, pod którymi podświetla się rozwijane menu „Biuro” (w tym pozycje panelu administracyjnego). */
+const OFFICE_PATHS = [
+    "/mileage",
+    "/pettyCash",
+    "/vacations",
+    "/scrumboard",
+    "/admin/cities",
+    "/admin/contractRanges",
+    "/admin/skills",
+    "/admin/typesTree",
+    "/admin/absenceTypes",
+    "/admin/cars",
+    "/admin/staffMembers",
+    "/admin/sbAccess",
+    "/admin/softwareLicenses",
+];
+
+/** Adresy menu „Kontakty”: podmioty, osoby i lista podmiotów z GUS. */
+const CONTACTS_PATHS = ["/entities", "/persons", "/person/", "/admin/gusEntities"];
+
 export default function MainMenu() {
     const location = useLocation();
     const currentUser = MainSetup.currentUserOrNull;
+    const menuRef = React.useRef<HTMLElement>(null);
+
+    React.useLayoutEffect(() => {
+        const menu = menuRef.current;
+        if (!menu) return;
+        const update = () => document.body.style.setProperty("--envi-pomoc-top", `${menu.offsetHeight}px`);
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(menu);
+        return () => { observer.disconnect(); document.body.style.removeProperty("--envi-pomoc-top"); };
+    }, [currentUser?.systemEmail]);
 
     // Wizyty na budowie - rola 1/2 albo flaga StaffMembers.CanLogSiteVisits.
-    const visitsAccess = useModuleAccess("site-visits/access");
+    // Użytkownik zewnętrzny ma od serwera tylko pisma - o moduły flagowe nie pytamy (403).
+    const asksModules = !!currentUser && !MainSetup.LETTERS_READ_ONLY_ROLES.includes(currentUser.systemRoleName);
+    const visitsAccess = useModuleAccess("site-visits/access", asksModules);
     // Kilometrówka - flaga StaffMembers.IsDriver. Pracownicy ENVI mają ją domyślnie,
     // pracownik kontraktowy nie.
-    const mileageAccess = useModuleAccess("mileage/access");
+    const mileageAccess = useModuleAccess("mileage/access", asksModules);
     // Faktury kosztowe i wyciągi bankowe - osobne flagi StaffMembers
     // (HasCostInvoiceAccess, HasBankAccess), więc i osobne pozycje w menu.
     // Oba moduły są firmowe, więc pytamy tylko dla pracowników ENVI.
     const isStaff = !!currentUser && MainSetup.STAFF_ROLES.includes(currentUser.systemRoleName);
     const costInvoicesAccess = useModuleAccess("cost-invoices/access", isStaff);
     const bankAccess = useModuleAccess("bank-transfers/access", isStaff);
+    const sbAccess = useSbAccess(isStaff);
 
     function isActive(path: string) {
         return location.pathname === path ? "active" : "";
     }
 
+    function isActiveIn(paths: string[]) {
+        return paths.some(path => location.pathname.startsWith(path)) ? "active" : "";
+    }
+
     if (!currentUser) {
         return (
-            <Navbar sticky="top" bg="light" expand="md">
+            <Navbar ref={menuRef} sticky="top" bg="light" expand="md">
                 <Container>
                     <Navbar.Brand as={Link} to={"/"}>
                         Witryna Projektów
@@ -74,10 +114,17 @@ export default function MainMenu() {
     }
 
     const { systemRoleName, userName } = currentUser;
+    const isAdminPanel = MainSetup.ADMIN_PANEL_ROLES.includes(systemRoleName);
+    const canSeeEntities = MainSetup.CONTRACT_SCOPED_ROLES.includes(systemRoleName);
+    const sbGranted = sbAccess.state === "granted";
+    // ENVI Podpis tylko dla pracowników ENVI (STAFF_ROLES): backend zamyka trasy programu
+    // (/signing/program/info, /signing/program/download) przed rolami zakresowymi - allowlista
+    // projectScopedPolicy daje im 403. Pozycja menu ma być węższa, nie szersza od serwera.
+    const showEnviPodpis = isStaff;
 
     return (
         <>
-            <Navbar sticky="top" bg="light" expand="md">
+            <Navbar ref={menuRef} sticky="top" bg="light" expand="md">
                 <Container>
                     <Navbar.Brand as={Link} to={"/"}>
                         Witryna Projektów
@@ -121,6 +168,16 @@ export default function MainMenu() {
                             <Nav.Link as={Link} to="/letters" className={isActive("/letters")}>
                                 Pisma
                             </Nav.Link>
+                            {isStaff && (
+                                <NavDropdown title="Oferty" id="basic-nav-dropdown" className={isActive("/offers")}>
+                                    <NavDropdown.Item as={Link} to="/offers/list">
+                                        Oferty
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/offers/letters">
+                                        Pisma do ofert
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            )}
                             {(() => {
                                 const canViewInvoices = MainSetup.STAFF_ROLES.includes(systemRoleName);
 
@@ -174,26 +231,66 @@ export default function MainMenu() {
                                     </Nav.Link>
                                 );
                             })()}
-                            {MainSetup.CONTRACT_SCOPED_ROLES.includes(systemRoleName) && (
-                                <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
-                                    Podmioty
-                                </Nav.Link>
+                            {canSeeEntities && (
+                                // Osoba zakresowa (pracownik kontraktowy, klient) widzi tylko podmioty -
+                                // wtedy zwykły link, bez pustego rozwijania.
+                                isStaff || isAdminPanel ? (
+                                    <NavDropdown
+                                        title="Kontakty"
+                                        id="contacts-nav-dropdown"
+                                        className={isActiveIn(CONTACTS_PATHS)}
+                                    >
+                                        <NavDropdown.Item as={Link} to="/entities" className={isActive("/entities")}>
+                                            Podmioty
+                                        </NavDropdown.Item>
+                                        {isStaff && (
+                                            <NavDropdown.Item as={Link} to="/persons" className={isActive("/persons")}>
+                                                Osoby
+                                            </NavDropdown.Item>
+                                        )}
+                                        {isAdminPanel && (
+                                            <>
+                                                <NavDropdown.Divider />
+                                                <NavDropdown.Item as={Link} to="/admin/gusEntities" className={isActive("/admin/gusEntities")}>
+                                                    Podmioty w GUS
+                                                </NavDropdown.Item>
+                                            </>
+                                        )}
+                                    </NavDropdown>
+                                ) : (
+                                    <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
+                                        Podmioty
+                                    </Nav.Link>
+                                )
                             )}
-                            {/* Sprawy biurowe: organizacja pracy (urlopy, scrumboard) i koszty
-                                (kilometrówka, zaliczki). Każda pozycja ma własną bramkę, więc menu
-                                pokazuje się tylko wtedy, gdy jest w nim cokolwiek. */}
+                            {isStaff && (
+                                <NavDropdown
+                                    title="Dotacje"
+                                    id="basic-nav-dropdown"
+                                    className={isActive("/financialAidProgrammes")}
+                                >
+                                    <NavDropdown.Item as={Link} to="/financialAidProgrammes">
+                                        Programy
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/financialAidProgrammes/focusAreas">
+                                        Działania
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/financialAidProgrammes/applicationCalls">
+                                        Nabory
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/financialAidProgrammes/needs">
+                                        Potrzeby klientów
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            )}
+                            {/* Biuro: organizacja pracy (scrumboard, urlopy), koszty (kilometrówka, zaliczki),
+                                słowniki i administracja. Każda pozycja ma własną bramkę; administratorzy
+                                są w STAFF_ROLES, więc warunek otwarcia menu nie musi się zmieniać. */}
                             {(mileageAccess || isStaff) && (
                                 <NavDropdown
                                     title="Biuro"
                                     id="office-nav-dropdown"
-                                    className={
-                                        location.pathname.startsWith("/mileage") ||
-                                        location.pathname.startsWith("/pettyCash") ||
-                                        location.pathname.startsWith("/vacations") ||
-                                        location.pathname.startsWith("/scrumboard")
-                                            ? "active"
-                                            : ""
-                                    }
+                                    className={isActiveIn(OFFICE_PATHS)}
                                 >
                                     {isStaff && (
                                         <NavDropdown.Item
@@ -231,72 +328,59 @@ export default function MainMenu() {
                                             Zaliczki
                                         </NavDropdown.Item>
                                     )}
-                                    {/* Hierarchia typów - podgląd dla każdego pracownika ENVI.
-                                        Pozycja w panelu administracyjnym zostaje: tam wchodzi
-                                        się PO TO, żeby edytować. */}
                                     {isStaff && (
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="/admin/typesTree"
-                                            className={isActive("/admin/typesTree")}
-                                        >
-                                            Hierarchia typów
-                                        </NavDropdown.Item>
+                                        <>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Header>Słowniki</NavDropdown.Header>
+                                            <NavDropdown.Item as={Link} to="/admin/cities" className={isActive("/admin/cities")}>
+                                                Miasta
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Item as={Link} to="/admin/contractRanges" className={isActive("/admin/contractRanges")}>
+                                                Zakresy kontraktów
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Item as={Link} to="/admin/skills" className={isActive("/admin/skills")}>
+                                                Specjalizacje
+                                            </NavDropdown.Item>
+                                            {/* Hierarchia typów - jedna pozycja dla wszystkich pracowników ENVI.
+                                                Dawny duplikat w panelu administracyjnym usunięto. */}
+                                            <NavDropdown.Item as={Link} to="/admin/typesTree" className={isActive("/admin/typesTree")}>
+                                                Hierarchia typów
+                                            </NavDropdown.Item>
+                                            {isAdminPanel && (
+                                                <>
+                                                    <NavDropdown.Item as={Link} to="/admin/absenceTypes" className={isActive("/admin/absenceTypes")}>
+                                                        Typy nieobecności
+                                                    </NavDropdown.Item>
+                                                    <NavDropdown.Item as={Link} to="/admin/cars" className={isActive("/admin/cars")}>
+                                                        Samochody
+                                                    </NavDropdown.Item>
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                    {isAdminPanel && (
+                                        <>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Header>Administracja</NavDropdown.Header>
+                                            <NavDropdown.Item as={Link} to="/admin/staffMembers" className={isActive("/admin/staffMembers")}>
+                                                Personel i uprawnienia
+                                            </NavDropdown.Item>
+                                            {/* Serwer i tak odmówi bez uprawnienia; pozycja menu to tylko wygoda. */}
+                                            {sbAccess.access?.canManage === true && (
+                                                <NavDropdown.Item as={Link} to="/admin/sbAccess" className={isActive("/admin/sbAccess")}>
+                                                    Dostęp do Second Brain
+                                                </NavDropdown.Item>
+                                            )}
+                                            <NavDropdown.Item as={Link} to="/admin/softwareLicenses" className={isActive("/admin/softwareLicenses")}>
+                                                Licencje
+                                            </NavDropdown.Item>
+                                        </>
                                     )}
                                 </NavDropdown>
                             )}
-                            {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
-                                <>
-                                    <Nav.Link as={Link} to="/persons" className={isActive("/persons")}>
-                                        Osoby
-                                    </Nav.Link>
-                                    <NavDropdown title="Oferty" id="basic-nav-dropdown" className={isActive("/offers")}>
-                                        <NavDropdown.Item as={Link} to="/offers/list">
-                                            Oferty
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/offers/letters">
-                                            Pisma do ofert
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-
-                                    <NavDropdown
-                                        title="Dotacje"
-                                        id="basic-nav-dropdown"
-                                        className={isActive("/financialAidProgrammes")}
-                                    >
-                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes">
-                                            Programy
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes/focusAreas">
-                                            Działania
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes/applicationCalls">
-                                            Nabory
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes/needs">
-                                            Potrzeby klientów
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-                                    <Nav.Item className="nav-separator">|</Nav.Item>
-                                    <NavDropdown
-                                        title="Słowniki"
-                                        id="parametry-nav-dropdown"
-                                        className={isActive("/admin")}
-                                    >
-                                        <NavDropdown.Item as={Link} to="/admin/cities">
-                                            Miasta
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/admin/contractRanges">
-                                            Zakresy kontraktów{" "}
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/admin/skills">
-                                            Specjalizacje
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-                                </>
-                            )}
                         </Nav>
-                        <Nav className="ms-auto">
+                        <Nav className="ms-auto flex-row align-items-center justify-content-end gap-2">
+                            <Pomoc key={currentUser.systemEmail} />
                             <NavDropdown
                                 title={
                                     <>
@@ -306,6 +390,20 @@ export default function MainMenu() {
                                 }
                                 id="user-nav-dropdown"
                             >
+                                {(showEnviPodpis || sbGranted) && <NavDropdown.Header>Narzędzia</NavDropdown.Header>}
+                                {showEnviPodpis && (
+                                    <NavDropdown.Item as={Link} to="/enviPodpis">
+                                        ENVI Podpis
+                                    </NavDropdown.Item>
+                                )}
+                                {/* Rejestr SB w PS decyduje o dostępie. Serwer odmówi też pobrania
+                                    paczki osobom bez dostępu; pozycja menu to tylko wygoda. */}
+                                {sbGranted && (
+                                    <NavDropdown.Item as={Link} to="/sbInstaller">
+                                        Second Brain
+                                    </NavDropdown.Item>
+                                )}
+                                {(showEnviPodpis || sbGranted) && <NavDropdown.Divider />}
                                 <NavDropdown.Item
                                     onClick={async () => {
                                         await MainController.logout();
@@ -315,44 +413,9 @@ export default function MainMenu() {
                                     Wyloguj się
                                 </NavDropdown.Item>
                                 {/* „Dodaj użytkownika" zniknęło stąd w PER-3: konta zakłada się
-                                    w oknie „Personel i uprawnienia" (panel administracyjny niżej),
+                                    w oknie „Personel i uprawnienia” (menu Biuro › Administracja),
                                     a nie z menu użytkownika. Osobę bez konta dalej dodaje się
                                     w oknie „Osoby". */}
-                                {/* Instalator Second Brain - sprawa osobista pracownika, a nie moduł
-                                    domenowy, więc siedzi w menu użytkownika, nie w nawigacji. Trasa
-                                    serwera wymaga tylko sesji; tutaj zawężamy do pracowników ENVI,
-                                    bo to im wydajemy firmową bazę wiedzy. */}
-                                {MainSetup.STAFF_ROLES.includes(systemRoleName) && (
-                                    <NavDropdown.Item as={Link} to="/sbInstaller">
-                                        Second Brain - instalator
-                                    </NavDropdown.Item>
-                                )}
-                                {/* Panel administracyjny - węższe grono niż STAFF_ROLES.
-                                    Musi odpowiadać bramce /admin w backendzie. */}
-                                {MainSetup.ADMIN_PANEL_ROLES.includes(systemRoleName) && (
-                                    <>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Header>Panel administracyjny</NavDropdown.Header>
-                                        <NavDropdown.Item as={Link} to="/admin/staffMembers">
-                                            Personel i uprawnienia
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/admin/softwareLicenses">Licencje</NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/admin/cars">
-                                            Samochody
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/admin/absenceTypes">
-                                            Typy nieobecności
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item as={Link} to="/admin/typesTree">
-                                            Hierarchia typów
-                                        </NavDropdown.Item>
-                                        {/* GUS-4b: nazwa zatwierdzona przez właściciela 2026-09-09 -
-                                            „Podmioty w GUS", nie „Podmioty a GUS" z brzmienia planu. */}
-                                        <NavDropdown.Item as={Link} to="/admin/gusEntities">
-                                            Podmioty w GUS
-                                        </NavDropdown.Item>
-                                    </>
-                                )}
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>

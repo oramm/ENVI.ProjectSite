@@ -7,6 +7,7 @@ import { ProjectSelectorModalBody } from "./ContractModalBody";
 import { otherContractValidationSchema, ourContractValidationSchema } from "./ContractValidationSchema";
 import { OtherContractModalBody } from "./OtherContractModalBody";
 import { OurContractModalBody } from "./OurContractModalBody";
+import { useMailboxConfirmation } from "../../../Mailboxes/MailboxStatus";
 import RepositoryReact from "../../../React/RepositoryReact";
 
 /** przycisk i modal edycji OurCOntract lub OtherContract */
@@ -76,10 +77,12 @@ export function OurContractAddNewModalButtonGeneric({
 }: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     if (!repository) throw new Error("repository is required");
 
-    return (
+    const { onSaved, confirmation } = useMailboxConfirmation(onAddNew);
+    return (<>
+        {confirmation}
         <GeneralAddNewModalButton<OurContract | OtherContract>
             modalProps={{
-                onAddNew: onAddNew,
+                onAddNew: onSaved,
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
                 modalTitle: "Nowa umowa ENVI",
@@ -89,12 +92,13 @@ export function OurContractAddNewModalButtonGeneric({
                 enforceFocus: false,
             }}
             buttonProps={{
+                "data-pomoc": "contract-add",
                 buttonCaption: "Rejestruj umowę ENVI",
                 buttonVariant: "outline-success",
                 ...buttonProps,
             }}
         />
-    );
+    </>);
 }
 
 export function OurContractAddNewModalButton({
@@ -116,10 +120,12 @@ export function OtherContractAddNewModalButtonGeneric({
     modalProps: { onAddNew, repository },
 }: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     if (!repository) throw new Error("repository is required");
-    return (
+    const { onSaved, confirmation } = useMailboxConfirmation(onAddNew);
+    return (<>
+        {confirmation}
         <GeneralAddNewModalButton<OurContract | OtherContract>
             modalProps={{
-                onAddNew: onAddNew,
+                onAddNew: onSaved,
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody }, // additional props for ProjectSelectorModalBody
                 modalTitle: "Nowa umowa zewnętrzna",
@@ -132,7 +138,7 @@ export function OtherContractAddNewModalButtonGeneric({
                 buttonCaption: "Rejestruj umowę zewnętrzną",
             }}
         />
-    );
+    </>);
 }
 
 export function OtherContractAddNewModalButton({

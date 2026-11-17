@@ -30,6 +30,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>;
     /** dodatkowe akcje w menu akcji sekcji (ikony) — np. "Spis spraw" przy kontrakcie */
     rowActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<RepositoryDataItem>>[];
+    submenuActionMenuComponents?: React.ComponentType<RowActionMenuItemProps<RepositoryDataItem>>[];
     leaves?: LeafDataItemType[];
     isInAccordion?: boolean;
     /** Kontroluje stan akordeonu przy montowaniu — domyślnie true (rozwinięty) */
@@ -257,6 +258,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         isDeletable={!!sectionNode.isDeletable}
                         EditButtonComponent={sectionNode.EditButtonComponent}
                         rowActionMenuComponents={sectionNode.rowActionMenuComponents}
+                        submenuActionMenuComponents={sectionNode.submenuActionMenuComponents}
                         handleEditObject={handleEditSection}
                         handleDeleteObject={handleDeleteSection}
                         shouldRetrieveDataBeforeEdit={sectionNode.shouldRetrieveDataBeforeEdit}

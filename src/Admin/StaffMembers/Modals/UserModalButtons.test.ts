@@ -47,12 +47,14 @@ const ROW_FROM_SERVER = {
     hasCostInvoiceAccess: false,
     hasBankAccess: false,
     canLogSiteVisits: false,
+    canManageSbAccess: false,
     isActive: true,
     _personName: "Anna",
     _personSurname: "Nowak",
     _systemEmail: "anna@envi.com.pl",
     _systemRoleId: 3,
     _fidmanEnabled: true,
+    _finEnabled: true,
     _hasStaffRow: true,
 };
 
@@ -63,6 +65,7 @@ const NEW_USER = {
     systemRoleId: "3",
     systemEmail: "anna@envi.com.pl",
     fidmanEnabled: true,
+    finEnabled: true,
 };
 
 beforeEach(() => {
@@ -82,7 +85,7 @@ describe("saveNewUserAccountData - domknięcie zapisu nowego użytkownika", () =
         expect(errors).toEqual([]);
         expect(saveV2).toHaveBeenCalledWith(
             NEW_PERSON_ID,
-            { systemRoleId: 3, systemEmail: "anna@envi.com.pl", fidmanEnabled: true },
+            { systemRoleId: 3, systemEmail: "anna@envi.com.pl", fidmanEnabled: true, finEnabled: true },
             {},
             "StaffMembers"
         );

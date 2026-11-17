@@ -160,12 +160,30 @@ const milestonesSelectionRule = (isEditing: boolean) =>
               },
           );
 
+/** Wybór pokoju Google Chat: nazwa max 128 znaków, a przy "istniejący" musi być wskazany pokój. */
+const chatSpaceSelectionRule = Yup.mixed()
+    .notRequired()
+    .test("chat-space-selection", "Wybierz pokój z listy", (value) => {
+        const v = value as { mode?: string; chatSpaceId?: number } | undefined;
+        return !v || v.mode !== "existing" || (Number.isInteger(v.chatSpaceId) && (v.chatSpaceId as number) > 0);
+    })
+    .test("chat-space-name-length", "Nazwa pokoju może mieć najwyżej 128 znaków", (value) => {
+        const v = value as { mode?: string; displayName?: string } | undefined;
+        return !v || v.mode !== "new" || (v.displayName ?? "").length <= 128;
+    })
+    .test("chat-space-members-limit", "Wybierz maksymalnie 50 osób do pokoju", (value) => {
+        const v = value as { mode?: string; personIds?: number[] } | undefined;
+        return !v || v.mode !== "new" || !v.personIds || v.personIds.length <= 50;
+    });
+
 export function ourContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         _milestonesSelection: milestonesSelectionRule(isEditing),
+        _creationRequestId: Yup.string().uuid().notRequired(),
         _contractFoldersSelection: Yup.array().notRequired(),
         _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
+        _chatSpaceSelection: chatSpaceSelectionRule,
         _city: Yup.object().required("Wybierz miasto"),
         _admin: Yup.object().required("Wybierz administratora"),
         _manager: Yup.object().required("Wybierz koordynatora"),
@@ -182,6 +200,7 @@ export function otherContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         _milestonesSelection: milestonesSelectionRule(isEditing),
+        _creationRequestId: Yup.string().uuid().notRequired(),
         _contractFoldersSelection: Yup.array().notRequired(),
         _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
         _contractors: Yup.array(),

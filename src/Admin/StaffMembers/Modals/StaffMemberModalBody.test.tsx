@@ -7,7 +7,7 @@
  * każde otwarcie okna pokazywałoby FIDmana odznaczonego, a zapis by go gasił.
  */
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useForm, UseFormReturn, FieldValues } from "react-hook-form";
 import { FormProvider } from "../../../View/Modals/FormContext";
@@ -25,7 +25,7 @@ vi.mock("../../../Persons/personsV2Helpers", () => ({
 }));
 vi.mock("../StaffPrivacyStatus", () => ({ default: () => null }));
 vi.mock("../../../React/MainSetupReact", () => ({
-    default: { isProjectScopedRoleId: () => false },
+    default: { isProjectScopedRoleId: () => false, hasProjectAssignmentsRoleId: () => false, SystemRoles: { EXTERNAL_USER: { id: 5 } } },
 }));
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     ProjectSelector: () => null,
@@ -34,11 +34,12 @@ vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () 
 
 let form: UseFormReturn<FieldValues>;
 
-function Harness({ initialData }: { initialData: any }) {
+function Harness({ initialData, onSave }: { initialData: any; onSave?: (values: FieldValues) => void }) {
     form = useForm({ defaultValues: {} });
     return (
         <FormProvider value={form}>
             <StaffMemberModalBody isEditing initialData={initialData} {...({} as any)} />
+            {onSave && <button onClick={form.handleSubmit(onSave)}>Zapisz</button>}
         </FormProvider>
     );
 }
@@ -48,6 +49,31 @@ const CHECKBOX_LABEL = "Użytkownik FIDmana (loguje się tym samym kontem Google
 describe("StaffMemberModalBody - konto przy edycji bierze się z wiersza listy", () => {
     beforeEach(() => {
         hoisted.fetchPersonProjectAssignments.mockReset().mockResolvedValue([]);
+    });
+
+    it.each([true, false])("Finanse firmy zachowuje pole hasBankAccess (%s) przy zapisie", async hasBankAccess => {
+        const save = vi.fn();
+        render(<Harness initialData={{ personId: 42, hasBankAccess }} onSave={save} />);
+        const checkbox = await screen.findByLabelText("Finanse firmy");
+        expect(checkbox).toHaveProperty("checked", hasBankAccess);
+        expect(screen.getByText("Wyciągi bankowe i raporty finansowe firmy")).toBeInTheDocument();
+        await waitFor(() => expect(form.getValues("_projectAssignments")).toEqual([]));
+        fireEvent.click(checkbox);
+        fireEvent.click(screen.getByRole("button", { name: "Zapisz" }));
+        await waitFor(() => expect(save).toHaveBeenCalledWith(expect.objectContaining({ hasBankAccess: !hasBankAccess }), expect.anything()));
+    });
+
+    it.each([true, false])("znacznik zarządzania SB z wiersza (%s) trafia do zapisu", async canManageSbAccess => {
+        const save = vi.fn();
+        render(<Harness initialData={{ personId: 42, canManageSbAccess }} onSave={save} />);
+        const checkbox = await screen.findByLabelText("Zarządza dostępem do Second Brain");
+        expect(checkbox).toHaveProperty("checked", canManageSbAccess);
+        await waitFor(() => expect(form.getValues("_projectAssignments")).toEqual([]));
+        fireEvent.click(screen.getByRole("button", { name: "Zapisz" }));
+        await waitFor(() => expect(save).toHaveBeenCalledWith(expect.objectContaining({ canManageSbAccess }), expect.anything()));
+        fireEvent.click(checkbox);
+        fireEvent.click(screen.getByRole("button", { name: "Zapisz" }));
+        await waitFor(() => expect(save).toHaveBeenLastCalledWith(expect.objectContaining({ canManageSbAccess: !canManageSbAccess }), expect.anything()));
     });
 
     it("zaznaczony FIDman i e-mail systemowy z wiersza trafiają do formularza", async () => {
@@ -83,5 +109,22 @@ describe("StaffMemberModalBody - konto przy edycji bierze się z wiersza listy",
             expect(form.getValues("_projectAssignments")).toEqual([{ id: 7 }]);
         });
         expect(form.getValues("fidmanEnabled")).toBe(true);
+    });
+});
+
+describe("StaffMemberModalBody - FIN", () => {
+    it.each([true, false, undefined])("odczytuje FIN z wiersza (%s), zmiana trafia do zapisu", async (enabled) => {
+        hoisted.fetchPersonProjectAssignments.mockResolvedValue([]);
+        const save = vi.fn();
+        render(<Harness initialData={{ personId: 42, _finEnabled: enabled }} onSave={save} />);
+        const checkbox = await screen.findByLabelText("Użytkownik FIN (loguje się tym samym kontem Google)");
+        expect(checkbox).toHaveProperty("checked", !!enabled);
+        await waitFor(() => expect(form.getValues("_projectAssignments")).toEqual([]));
+        expect(form.getValues("finEnabled")).toBe(!!enabled);
+        fireEvent.click(checkbox);
+        fireEvent.click(screen.getByRole("button", { name: "Zapisz" }));
+        await waitFor(() =>
+            expect(save).toHaveBeenCalledWith(expect.objectContaining({ finEnabled: !enabled }), expect.anything()),
+        );
     });
 });

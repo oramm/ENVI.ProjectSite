@@ -105,6 +105,7 @@ export default function ContractOurDetails() {
         const contractTyped = contract as OurContract;
         return (
             <>
+                {MainSetup.canViewInvoices() && (
                 <InvoiceAddNewModalButton
                     modalProps={{
                         onAddNew: async () => {
@@ -121,6 +122,7 @@ export default function ContractOurDetails() {
                     }}
                     buttonProps={{ buttonCaption: "Dodaj fakturę" }}
                 />
+                )}
                 {/* Bez folderu na Dysku nie ma gdzie zapisać arkusza - backend i tak by odmówił. */}
                 {MainSetup.canViewInvoices() && contractTyped.gdFolderId && (
                     <Button

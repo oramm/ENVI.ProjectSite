@@ -29,8 +29,11 @@ import { DeleteIconButton, EditIconButton, CopyIconButton } from "../Resultsets/
  */
 export function GeneralEditModalButton<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     buttonProps,
+    show,
+    onClose,
     modalProps: {
         onEdit,
+        beforeSubmit,
         specialActionRoute,
         specialRetrieveActionRoute,
         ModalBodyComponent,
@@ -55,20 +58,22 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
     }
     function handleClose() {
         setShowForm(false);
+        onClose?.();
     }
 
     return (
         <>
-            <GeneraEditButton {...buttonProps} onClick={handleOpen} />
+            {show === undefined && <GeneraEditButton {...buttonProps} onClick={handleOpen} />}
             <GeneralModal<DataItemType>
                 onClose={handleClose}
-                show={showForm}
+                show={show ?? showForm}
                 isEditing={true}
                 title={modalTitle}
                 subtitle={modalSubtitle}
                 headerBadge={headerBadge}
                 repository={repository}
                 onEdit={onEdit}
+                beforeSubmit={beforeSubmit}
                 specialActionRoute={specialActionRoute}
                 specialRetrieveActionRoute={specialRetrieveActionRoute}
                 ModalBodyComponent={ModalBodyComponent}
@@ -146,6 +151,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         buttonSize = "sm",
         buttonIsActive = false,
         buttonIsDisabled = false,
+        "data-pomoc": pomocMarker,
     },
 }: GeneralAddNewModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
@@ -159,6 +165,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
     return (
         <>
             <Button
+                data-pomoc={pomocMarker}
                 key={buttonCaption}
                 variant={buttonVariant}
                 size={buttonSize}
@@ -269,6 +276,7 @@ export function GeneralCopyModalButton<DataItemType extends RepositoryDataItem>(
 export function PartialEditTrigger<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     modalProps: {
         onEdit,
+        beforeSubmit,
         specialActionRoute,
         ModalBodyComponent,
         additionalModalBodyProps,
@@ -305,6 +313,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
                 subtitle={modalSubtitle}
                 repository={repository}
                 onEdit={onEdit}
+                beforeSubmit={beforeSubmit}
                 specialActionRoute={specialActionRoute}
                 ModalBodyComponent={ModalBodyComponent}
                 makeValidationSchema={makeValidationSchema}

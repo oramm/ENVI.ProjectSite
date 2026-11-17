@@ -1375,6 +1375,7 @@ export function OurLetterTemplateSelector({
 }
 
 export type PersonSelectorProps = {
+    filterBy?: (person: PersonData) => boolean;
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
@@ -1385,6 +1386,7 @@ export type PersonSelectorProps = {
 };
 
 export function PersonSelector({
+    filterBy,
     name = "_person",
     showValidationInfo = true,
     multiple = false,
@@ -1428,6 +1430,7 @@ export function PersonSelector({
             labelKey="_nameSurnameEmail"
             searchKey="searchText"
             repository={localRepository}
+            filterBy={filterBy}
             renderMenuItemChildren={renderOption}
             multiple={multiple}
             allowNew={allowNew}
@@ -2060,7 +2063,10 @@ export function SystemRoleSelector({ name = "systemRoleId", showValidationInfo =
         formState: { errors },
     } = useFormContext();
 
-    const systemRolesOptions = Object.values(MainSetup.SystemRoles);
+    const systemRolesOptions = Object.values(MainSetup.SystemRoles).map((role) => ({
+        ...role,
+        label: MainSetup.ROLE_LABELS[role.systemName],
+    }));
 
     return (
         <Form.Group controlId={name}>
@@ -2073,7 +2079,7 @@ export function SystemRoleSelector({ name = "systemRoleId", showValidationInfo =
                     return (
                         <Typeahead
                             id={`${name}-typeahead`}
-                            labelKey="systemName"
+                            labelKey="label"
                             options={systemRolesOptions}
                             selected={selected}
                             onChange={(items) => {
@@ -2087,7 +2093,7 @@ export function SystemRoleSelector({ name = "systemRoleId", showValidationInfo =
                                 const role = option as (typeof systemRolesOptions)[0];
                                 return (
                                     <div>
-                                        <span>{role.systemName}</span>
+                                        <span>{role.label}</span>
                                         <div className="text-muted small text-wrap">{role.description}</div>
                                     </div>
                                 );

@@ -1,5 +1,6 @@
+import { AccountAccessFields } from "./AccountAccessFields";
 import { FidmanUserSyncLine } from "../FidmanUserSyncBadge";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
@@ -13,6 +14,8 @@ import {
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import StaffPrivacyStatus from "../StaffPrivacyStatus";
 import { AccountEventsList } from "../AccountEventsList";
+import { AccessPreview } from "../access/AccessPreview";
+import { assignmentsHint } from "./assignmentsHint";
 
 export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<StaffMemberData>) {
     const {
@@ -24,9 +27,11 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
         formState: { errors },
     } = useFormContext();
 
-    // Ta sama reguła co na ekranie użytkowników: role ograniczone do przypisanych
-    // projektów muszą te projekty dostać, inaczej osoba zostaje bez dostępu.
-    const isProjectScopedRole = MainSetup.isProjectScopedRoleId(watch("systemRoleId"));
+    // Przypisania do projektów ma każda rola poza użytkownikiem zewnętrznym (DOSTEP-7).
+    const hasAssignments = MainSetup.hasProjectAssignmentsRoleId(watch("systemRoleId"));
+    const isExternalUser = Number(watch("systemRoleId")) === MainSetup.SystemRoles.EXTERNAL_USER.id;
+    const assigned: { ourId: string }[] | null | undefined = watch("_projectAssignments");
+    const [assignmentsFailed, setAssignmentsFailed] = useState(false);
 
     useEffect(() => {
         const resetData: any = {
@@ -38,11 +43,13 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             // żądania jak na ekranie użytkowników. Zapis idzie osobno trasą konta v2.
             systemEmail: initialData?._systemEmail ?? "",
             fidmanEnabled: !!initialData?._fidmanEnabled,
+            finEnabled: !!initialData?._finEnabled,
             isDriver: !!initialData?.isDriver,
             isInScrum: !!initialData?.isInScrum,
             hasCostInvoiceAccess: !!initialData?.hasCostInvoiceAccess,
             hasBankAccess: !!initialData?.hasBankAccess,
             canLogSiteVisits: !!initialData?.canLogSiteVisits,
+            canManageSbAccess: !!initialData?.canManageSbAccess,
             isActive: initialData?.isActive ?? true,
         };
         reset(resetData);
@@ -57,10 +64,13 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
         if (!personId) return;
         let cancelled = false;
 
+        // Nieudany odczyt NIE wstawia pustej listy: zapis skasowałby wtedy przypisania (brak pola = nie ruszaj).
         fetchPersonProjectAssignments(personId)
-            .catch(() => [])
+            .catch(() => null)
             .then((assignments) => {
                 if (cancelled) return;
+                setAssignmentsFailed(!assignments);
+                if (!assignments) return;
                 reset({ ...getValues(), _projectAssignments: assignments });
                 trigger();
             });
@@ -122,27 +132,32 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
 
             {isEditing && initialData?.personId && <StaffPrivacyStatus key={initialData.personId} personId={initialData.personId} />}
 
-            <Form.Group controlId="fidmanEnabled" className="mt-2">
-                <Form.Check
-                    type="checkbox"
-                    label="Użytkownik FIDmana (loguje się tym samym kontem Google)"
-                    isInvalid={!!errors?.fidmanEnabled}
-                    {...register("fidmanEnabled")}
-                />
-                <Form.Text className="text-muted">
-                    Konto w FIDmanie zakłada się z e-maila systemowego. Odznaczenie wyłącza je, nie kasuje.
-                </Form.Text>
-                {/* Stan z kolejki wysyłek, nie z checkboxa (D-PER-8) - to samo, co plakietka
-                    w wierszu listy, pełnym zdaniem. */}
+            <AccountAccessFields>
                 <FidmanUserSyncLine enabled={!!initialData?._fidmanEnabled} sync={initialData?._fidmanSync} />
-                <ErrorMessage name="fidmanEnabled" errors={errors} />
-            </Form.Group>
+            </AccountAccessFields>
 
-            {isProjectScopedRole && (
+            {hasAssignments && (
                 <div className="mt-3">
                     <ProjectSelector name="_projectAssignments" multiple label="Przypisane projekty" />
+                    <Form.Text className="text-muted">{assignmentsHint(watch("systemRoleId"))}</Form.Text>
                 </div>
             )}
+            {isExternalUser && (
+                <Form.Text className="text-muted d-block mt-2">
+                    Ta rola widzi wyłącznie pisma kontraktów, do których jest przypisana. Przypisań do kontraktów to okno nie zmienia.
+                </Form.Text>
+            )}
+
+            {assignmentsFailed && (
+                <Alert variant="warning" className="py-1 small mt-2">
+                    Nie udało się wczytać przypisań tej osoby - zapis ich nie zmieni, a podgląd jest niedostępny.
+                </Alert>
+            )}
+            <AccessPreview
+                personId={initialData?.personId}
+                systemRoleId={watch("systemRoleId")}
+                projectOurIds={!hasAssignments ? [] : assigned === undefined ? null : (assigned ?? []).map((p) => p.ourId)}
+            />
 
             <hr />
 
@@ -164,8 +179,8 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
             </Form.Group>
 
             <Form.Group controlId="hasBankAccess" className="mt-3">
-                <Form.Check type="switch" label="Wyciągi bankowe" {...register("hasBankAccess")} />
-                <Form.Text muted>Otwiera moduł bankowy z danymi rozliczeniowymi. Zmiana działa natychmiast.</Form.Text>
+                <Form.Check type="switch" label="Finanse firmy" {...register("hasBankAccess")} />
+                <Form.Text muted>Wyciągi bankowe i raporty finansowe firmy</Form.Text>
             </Form.Group>
 
             <Form.Group controlId="canLogSiteVisits" className="mt-3">
@@ -173,12 +188,19 @@ export function StaffMemberModalBody({ isEditing, initialData }: ModalBodyProps<
                 <Form.Text muted>Rejestrowanie wizyt w aplikacji mobilnej.</Form.Text>
             </Form.Group>
 
+            <Form.Group controlId="canManageSbAccess" className="mt-3">
+                <Form.Check type="switch" label="Zarządza dostępem do Second Brain" {...register("canManageSbAccess")} />
+                <Form.Text muted>Zaprasza do SB, blokuje, odblokowuje i odbiera dostęp (Biuro → Administracja → Dostęp do Second Brain). Działa tylko dla roli kierownik albo administrator.</Form.Text>
+            </Form.Group>
+
             <hr />
 
             <Form.Group controlId="isActive">
                 <Form.Check type="switch" label="Aktywny" {...register("isActive")} />
                 <Form.Text muted>
-                    Odejście z firmy to wyłączenie tej opcji - historia zadań, urlopów i przejazdów zostaje.
+                    Odejście z firmy to wyłączenie tej opcji. Osoba od razu traci logowanie do PS (także otwarte okna),
+                    konta w FIDmanie i FIN, Second Brain i pokoje Google Chat projektów. Historia zadań, urlopów
+                    i przejazdów zostaje. Hasła skrzynek, które osoba znała, trzeba zmienić osobno.
                 </Form.Text>
             </Form.Group>
 

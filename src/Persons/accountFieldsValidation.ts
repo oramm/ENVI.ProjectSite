@@ -11,26 +11,34 @@ import MainSetup from "../React/MainSetupReact";
 export const FIDMAN_EMAIL_RULE = "fidman-wymaga-emaila-systemowego";
 export const FIDMAN_EMAIL_MESSAGE = "Użytkownik FIDmana musi mieć e-mail systemowy";
 
+export const FIN_EMAIL_MESSAGE = "Użytkownik FIN musi mieć e-mail systemowy";
+
+function accountEmailTest(flag: "fidmanEnabled" | "finEnabled", onEmail: boolean) {
+    return {
+        name: flag === "fidmanEnabled" ? FIDMAN_EMAIL_RULE : "fin-wymaga-emaila-systemowego",
+        message: flag === "fidmanEnabled" ? FIDMAN_EMAIL_MESSAGE : FIN_EMAIL_MESSAGE,
+        test(this: Yup.TestContext, value: unknown) {
+            const enabled = onEmail ? this.parent?.[flag] : value;
+            const email = onEmail ? value : this.parent?.systemEmail;
+            return !enabled || String(email ?? "").trim().length > 0;
+        },
+    };
+}
+
 export const accountFields = {
     systemEmail: Yup.string()
         .default("")
         .max(50, "Email może mieć maksymalnie 50 znaków")
-        // Ta sama reguła co przy fidmanEnabled, celowo w dwóch miejscach: react-hook-form
+        // Ta sama reguła co przy fidmanEnabled i finEnabled, celowo w dwóch miejscach: react-hook-form
         // w trybie onChange pokazuje błąd tylko przy polu, które użytkownik właśnie zmienił.
         // Gdyby reguła wisiała wyłącznie przy checkboksie, wyczyszczenie e-maila blokowałoby
         // zapis bez słowa wyjaśnienia - przycisk "Zatwierdź" po prostu przestałby działać.
-        .test(FIDMAN_EMAIL_RULE, FIDMAN_EMAIL_MESSAGE, function (value) {
-            if (!this.parent?.fidmanEnabled) return true;
-            return String(value ?? "").trim().length > 0;
-        }),
+        .test(accountEmailTest("fidmanEnabled", true))
+        .test(accountEmailTest("finEnabled", true)),
 
-    // Konto w FIDmanie powstaje z e-maila systemowego - to on jest tożsamością logowania
-    // Google. Serwer też odrzuca taki zapis (400 z tym samym komunikatem), ale problem ma
-    // być widoczny tam, gdzie powstaje, czyli przy polu w formularzu.
-    fidmanEnabled: Yup.boolean().test(FIDMAN_EMAIL_RULE, FIDMAN_EMAIL_MESSAGE, function (value) {
-        if (!value) return true;
-        return String(this.parent?.systemEmail ?? "").trim().length > 0;
-    }),
+    // Konto powstaje z e-maila systemowego; błąd także przy zmienianym checkboxie.
+    fidmanEnabled: Yup.boolean().test(accountEmailTest("fidmanEnabled", false)),
+    finEnabled: Yup.boolean().test(accountEmailTest("finEnabled", false)),
 
     // Rola zakresowa bez przypisanego projektu nie zobaczy niczego (backend traktuje
     // pustą listę jako brak dostępu), więc konto bez projektów jest bezużyteczne.

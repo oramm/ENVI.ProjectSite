@@ -16,6 +16,7 @@ export type RowActionMenuItemProps<DataItemType extends RepositoryDataItem = Rep
 export type SectionsFilterHandlers<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     onSubmitSections: (criteria: FieldValues) => Promise<SectionNode<DataItemType>[]>;
     onResetSections: () => SectionNode<DataItemType>[];
+    onRefreshSections?: (criteria: FieldValues) => Promise<SectionNode<DataItemType>[]>;
 };
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
@@ -54,6 +55,8 @@ export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = Re
     storedObjects?: DataItemType[];
     /** Ostatnio kliknięty wiersz - po powrocie ze szczegółów widać, gdzie się było. */
     activeRowId?: number;
+    /** Kontekst wystąpienia wiersza w drzewie sekcji. */
+    activeRowSectionId?: string;
 };
 
 export type FilterPanelProps = {

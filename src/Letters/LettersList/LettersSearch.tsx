@@ -15,11 +15,14 @@ import {
     OurLetterAddNewModalButton,
     RespondToLetterButton,
 } from "./Modals/LetterModalButtons";
+import { SignOurLetterPdfButton, UploadSignedLetterButton } from "../Signing/SigningRowActions";
+import MainSetup from "../../React/MainSetupReact";
 
 export default function LettersSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
+    const readOnly = MainSetup.isRoleAllowed(MainSetup.LETTERS_READ_ONLY_ROLES);
 
     function buildLabelFromEntities(entities: EntityData[] | undefined): string {
         if (!entities || entities.length === 0) return "";
@@ -53,6 +56,7 @@ export default function LettersSearch({ title }: { title: string }) {
 
     function renderStatus(letter: OurLetterContract | IncomingLetterContract) {
         const { handleEditObject } = useFilterableTableContext<OurLetterContract | IncomingLetterContract>();
+        if (readOnly) return <LetterStatusBadge status={letter.status || ""} />;
         return (
             <PartialEditTrigger
                 modalProps={{
@@ -96,10 +100,16 @@ export default function LettersSearch({ title }: { title: string }) {
                 { header: "Pismo", renderTdBody: renderRowContent, colLg: 7 },
                 { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
             ]}
-            AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
-            EditButtonComponent={LetterEditModalButton}
-            RowActionMenuComponents={[RespondToLetterButton, ExportOurLetterContractToPDFButton]}
-            isDeletable={true}
+            // Użytkownik zewnętrzny ma od serwera tylko odczyt pism (projectScopedPolicy).
+            AddNewButtonComponents={readOnly ? [] : [OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
+            EditButtonComponent={readOnly ? undefined : LetterEditModalButton}
+            RowActionMenuComponents={readOnly ? [] : [
+                RespondToLetterButton,
+                ExportOurLetterContractToPDFButton,
+                SignOurLetterPdfButton,
+                UploadSignedLetterButton,
+            ]}
+            isDeletable={!readOnly}
             repository={lettersRepository}
             selectedObjectRoute={"/letter/"}
         />

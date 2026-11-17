@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { Case } from "../../Typings/bussinesTypes";
 import MainSetup from "../React/MainSetupReact";
 import { CaseStatusBadge } from "../View/Resultsets/CommonComponents";
 import { casesRepository } from "./TasksGlobalController";
+import { useFilterableTableContext } from "../View/Resultsets/FilterableTable/FilterableTableContext";
 
 interface Props {
     caseItem: Case;
@@ -11,13 +12,16 @@ interface Props {
 
 /**
  * Szybka zmiana statusu sprawy (dropdown) — analogicznie do kamienia milowego.
- * Aktualizuje tylko pole `status` (fieldsToUpdate), więc backend pomija operacje GD/Scrum.
+ * Wysyła zmianę pola `status`; backend może wcześniej uruchomić autoryzację Google.
  * Mutuje obiekt caseItem (współdzielony z drzewem) + lokalny stan, by zmiana była widoczna od razu.
  */
 export default function CaseInlineStatusDropdown({ caseItem }: Props) {
+    const { refreshSectionsAfterMutation } = useFilterableTableContext();
     const [status, setStatus] = useState(caseItem.status);
     const [saving, setSaving] = useState(false);
     const statuses = Object.values(MainSetup.CaseStatus);
+
+    useEffect(() => setStatus(caseItem.status), [caseItem.status]);
 
     async function changeStatus(newStatus: string) {
         if (newStatus === status) return;
@@ -26,6 +30,7 @@ export default function CaseInlineStatusDropdown({ caseItem }: Props) {
             await casesRepository.editItem({ ...caseItem, status: newStatus }, undefined, ["status"]);
             caseItem.status = newStatus;
             setStatus(newStatus);
+            await refreshSectionsAfterMutation();
         } catch (err) {
             console.error("Błąd zmiany statusu sprawy:", err);
         } finally {

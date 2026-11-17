@@ -15,12 +15,14 @@ const FIELD_LABELS: Record<string, string> = {
     "ACCOUNT.systemEmail": "E-mail logowania",
     "ACCOUNT.isActive": "Konto aktywne",
     "ACCOUNT.fidmanEnabled": "Użytkownik FIDmana",
+    "ACCOUNT.finEnabled": "Użytkownik FIN",
     "PROJECT_ASSIGNMENTS.projectOurIds": "Zakres projektów",
     "STAFF_FLAGS.isDriver": "Kierowca",
     "STAFF_FLAGS.isInScrum": "W scrumie",
     "STAFF_FLAGS.hasCostInvoiceAccess": "Faktury kosztowe",
-    "STAFF_FLAGS.hasBankAccess": "Wyciągi bankowe",
+    "STAFF_FLAGS.hasBankAccess": "Finanse firmy",
     "STAFF_FLAGS.canLogSiteVisits": "Wizyty na budowie",
+    "STAFF_FLAGS.canManageSbAccess": "Zarządza dostępem do SB",
     "STAFF_FLAGS.isActive": "Aktywny (panel)",
 };
 

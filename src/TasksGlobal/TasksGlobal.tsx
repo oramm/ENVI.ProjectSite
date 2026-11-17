@@ -1,8 +1,12 @@
+import {readOnlyHistory,historyMessage} from './ConsolidationHistory';
+import MainSetup from '../React/MainSetupReact';
+import MilestoneConsolidationAction from "./MilestoneConsolidationAction";
 import { faCalendarAlt, faFolderOpen, faSitemap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Alert, Col, Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
+import { ToastContainer } from "react-toastify";
 import {
     Case,
     CaseType,
@@ -23,6 +27,7 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { ContractStatusBadge, SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
+import { useFilterableTableContext } from "../View/Resultsets/FilterableTable/FilterableTableContext";
 import { UniquenessIcon } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { DEFAULT_CASE_STATUS_FILTER } from "../View/Modals/CommonFormComponents/CaseStatusFilter";
 import {
@@ -39,8 +44,10 @@ import { ProjectCaseListSheetButton, ProjectTaskOwnersContext } from "./Modals/P
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
 import CaseInlineStatusDropdown from "./CaseInlineStatusDropdown";
 import MilestoneInlineStatusDropdown from "./MilestoneInlineStatusDropdown";
+import MilestoneSharingAction, { MilestoneSharingContractsContext } from "./MilestoneSharingAction";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
 import "./TasksGlobal.css";
+import { MailboxesSection } from "../Mailboxes/MailboxStatus";
 import {
     casesRepository,
     contractsRepository,
@@ -55,6 +62,7 @@ import { ContractsWithChildren } from "./TasksGlobalTypes";
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = useState([] as ContractsWithChildren[]);
+    const [historyNotice,setHistoryNotice]=useState('');
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [dataLoaded, setDataLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<ProjectData | undefined>(undefined);
@@ -135,6 +143,8 @@ export default function TasksGlobal() {
         if (!selectedProject) return buildTree(contractsWithChildren, undefined, undefined, { caseStatuses: DEFAULT_CASE_STATUS_FILTER });
 
         const targetCaseId = (criteria._case as Case | undefined)?.id;
+        setHistoryNotice('');
+        if(targetCaseId){const history=await readOnlyHistory('case',targetCaseId,MainSetup.serverUrl);if(history.retired)setHistoryNotice(historyMessage(history));}
         // _case, caseStatuses i taskStatuses są obsługiwane wyłącznie frontendowo
         // (collapse/scroll, filtr drzewa) — nie trafiają do backendu
         const { _case: _unused, caseStatuses: caseStatusesRaw, taskStatuses: taskStatusesRaw, ...backendCriteria } =
@@ -159,18 +169,49 @@ export default function TasksGlobal() {
         ]);
 
         let version: number | undefined;
-        if (targetCaseId) {
-            version = ++filterVersionRef.current;
-            pendingScrollIdRef.current = `case${targetCaseId}_v${version}`;
-            setScrollTrigger((t) => t + 1);
-        }
+        if (targetCaseId) version = ++filterVersionRef.current;
 
-        return buildTree(filteredContractsWithChildren as ContractsWithChildren[], targetCaseId, version, {
+        const tree = buildTree(filteredContractsWithChildren as ContractsWithChildren[], targetCaseId, version, {
             caseStatuses,
             taskStatuses,
             // Lista osób w oknie "Spis spraw" musi pochodzić z pełnego drzewa projektu:
             // po filtrze "osoba = X" przefiltrowane drzewo zna już tylko tę jedną osobę.
             taskOwnersSource: contractsWithChildren,
+        });
+        if (targetCaseId) {
+            const matchingCase = tree.flatMap((contract) => contract.children)
+                .flatMap((milestone) => milestone.children)
+                .flatMap((node) => node.type === "casetype" ? node.children : [node])
+                .find((node) => node.dataItem.id === targetCaseId || node.children.some((child) => child.dataItem.id === targetCaseId));
+            const matchingSubcase = matchingCase?.children.find((node) => node.dataItem.id === targetCaseId);
+            pendingScrollIdRef.current = matchingSubcase?.id ?? matchingCase?.id ?? null;
+            if (pendingScrollIdRef.current) setScrollTrigger((t) => t + 1);
+        }
+        return tree;
+    }
+
+    async function handleRefreshTasksSections(criteria: FieldValues): Promise<SectionNode<Task>[]> {
+        if (!selectedProject) return [];
+        const fullTree = await contractsWithChildrenRepository.loadItemsFromServerPOST([{
+            _project: selectedProject,
+            statusType: "active",
+        }]);
+        setContractsWithCildren(fullTree);
+
+        const targetCaseId = (criteria._case as Case | undefined)?.id;
+        setHistoryNotice('');
+        if(targetCaseId){const history=await readOnlyHistory('case',targetCaseId,MainSetup.serverUrl);if(history.retired)setHistoryNotice(historyMessage(history));}
+        const { _case: _unused, caseStatuses, taskStatuses, ...backendCriteria } = criteria;
+        const filteredTree = await contractsWithChildrenRepository.loadItemsFromServerPOST([{
+            ...backendCriteria,
+            _project: selectedProject,
+            statusType: backendCriteria.statuses?.length ? undefined : "active",
+        }]);
+        return buildTree(filteredTree, targetCaseId, targetCaseId ? filterVersionRef.current : undefined, {
+            caseStatuses: (caseStatuses as string[] | undefined)?.length
+                ? caseStatuses as string[] : DEFAULT_CASE_STATUS_FILTER,
+            taskStatuses: (taskStatuses as string[] | undefined)?.length ? taskStatuses as string[] : undefined,
+            taskOwnersSource: fullTree,
         });
     }
 
@@ -180,7 +221,9 @@ export default function TasksGlobal() {
 
     return (
         <ContractProvider project={selectedProject}>
+            <ToastContainer position="top-right" theme="colored" autoClose={false} closeOnClick={false} role="status" />
             <Container fluid>
+                {historyNotice&&<Alert variant="info" role="status">{historyNotice}</Alert>}
                 <Row>
                     <Col md="3">
                         <ProjectTaskOwnersContext.Provider value={projectTaskOwners}>
@@ -206,6 +249,8 @@ export default function TasksGlobal() {
                         </ProjectTaskOwnersContext.Provider>
                     </Col>
                     <Col md="9">
+                        {selectedProject && <MailboxesSection projectId={selectedProject.id} />}
+                        <MilestoneSharingContractsContext.Provider value={contractsWithChildren}>
                         {!selectedProject ? (
                             <NoProjectSelectedMessage />
                         ) : !dataLoaded ? (
@@ -225,12 +270,13 @@ export default function TasksGlobal() {
                                 sectionsFilterHandlers={{
                                     onSubmitSections: handleSubmitTasksSections,
                                     onResetSections: handleResetTasksSections,
+                                    onRefreshSections: handleRefreshTasksSections,
                                 }}
                                 tableStructure={[
                                     {
                                         header: "Zadania",
                                         renderTdBody: (task: Task, isActive?: boolean) => (
-                                            <ScrumTaskRow task={task} isActive={isActive} />
+                                            <TasksGlobalTaskRow task={task} isActive={isActive} />
                                         ),
                                         colLg: 11,
                                     },
@@ -238,11 +284,17 @@ export default function TasksGlobal() {
                                 externalUpdate={externalUpdate}
                             />
                         )}
+                        </MilestoneSharingContractsContext.Provider>
                     </Col>
                 </Row>
             </Container>
         </ContractProvider>
     );
+}
+
+function TasksGlobalTaskRow({ task, isActive }: { task: Task; isActive?: boolean }) {
+    const { refreshSectionsAfterMutation } = useFilterableTableContext<Task>();
+    return <ScrumTaskRow task={task} isActive={isActive} onChanged={() => void refreshSectionsAfterMutation()} />;
 }
 
 function NoProjectSelectedMessage() {
@@ -589,6 +641,7 @@ export function buildTree(
         contractNodes.push(contractNode);
 
         for (const { milestone, casesWithTasks } of milestonesWithCases || []) {
+            const occurrenceSuffix = `_contract${contract.id}${sfx}`;
             const milestoneContainsTarget =
                 !targetCaseId ||
                 (casesWithTasks || []).some(
@@ -598,7 +651,7 @@ export function buildTree(
                 );
 
             const milestoneNode = {
-                id: "milestone" + milestone.id + sfx,
+                id: "milestone" + milestone.id + occurrenceSuffix,
                 isInAccordion: true,
                 initialExpanded: milestoneContainsTarget,
                 level: 2,
@@ -614,6 +667,7 @@ export function buildTree(
                 EditButtonComponent: MilestoneEditModalButton as unknown as ComponentType<
                     SpecificEditModalButtonProps<RepositoryDataItem>
                 >,
+                submenuActionMenuComponents: [MilestoneSharingAction, MilestoneConsolidationAction],
                 editHandler: milestoneNodeEditHandler,
                 isDeletable: true,
             };
@@ -632,7 +686,7 @@ export function buildTree(
                 const canHaveSubCases = Boolean(caseItem._type._allowsSubCases);
                 const caseTasks = (tasks ?? []).filter((t) => taskMatchesStatusFilter(t, taskStatuses));
                 const caseNode = {
-                    id: "case" + caseItem.id + sfx,
+                    id: "case" + caseItem.id + occurrenceSuffix,
                     level,
                     type: "case",
                     repository: casesRepository,
@@ -662,7 +716,7 @@ export function buildTree(
                         const subCaseTasks = (subTasks ?? []).filter((t) => taskMatchesStatusFilter(t, taskStatuses));
                         const subCaseWithParent = { ...subCase, _parentCase: caseItem };
                         const subCaseNode = {
-                            id: "subcase" + subCase.id + sfx,
+                            id: "subcase" + subCase.id + occurrenceSuffix,
                             level: level + 1,
                             type: "subcase",
                             repository: casesRepository,
@@ -710,7 +764,7 @@ export function buildTree(
                 let caseTypeNode = caseTypeFolderNodes.get(typeId);
                 if (!caseTypeNode) {
                     caseTypeNode = {
-                        id: `casetype${milestone.id}_${typeId}${sfx}`,
+                        id: `casetype${milestone.id}_${typeId}${occurrenceSuffix}`,
                         isInAccordion: true,
                         initialExpanded: true,
                         level: 3,
@@ -733,7 +787,7 @@ export function buildTree(
             }
         }
     }
-    (options?.leavesRepository ?? tasksGlobalRepository).items = allTasks;
+    (options?.leavesRepository ?? tasksGlobalRepository).items = [...new Map(allTasks.map(task => [task.id, task])).values()];
     if (options?.collapseEmpty) contractNodes.forEach(collapseEmptyBranches);
     return contractNodes;
 }

@@ -362,6 +362,9 @@ export type AccountFormValues = {
     systemRoleId?: number | string | null;
     systemEmail?: string | null;
     fidmanEnabled?: boolean | null;
+    finEnabled?: boolean | null;
+    /** Aktywność konta logowania - tylko okno personelu; brak pola = nie ruszaj (U2). */
+    isActive?: boolean | null;
 };
 
 /**
@@ -379,16 +382,18 @@ export type AccountFormValues = {
  * z `@deprecated` w backendzie: legacy przestaje pisać konto (zawężenie `fieldsToUpdate`
  * w modalu edycji), a v2 przejmuje całość. NIE odwrotnie.
  *
- * `fidmanEnabled` zawsze jawnie, także przy false: brak pola serwer czyta jako
- * "nie ruszaj flagi", więc odznaczenie bez tej linii nigdy by nie doszło. Tę flagę
- * backend przyjmuje wyłącznie tą trasą (`ACCOUNT_FIELDS_WRITABLE_ONLY_VIA_ACCOUNT_ROUTE`),
- * bo tylko tu kolejkuje się push `user.upsert` do FIDmana.
+ * `fidmanEnabled` i `finEnabled` zawsze jawnie, także przy false: brak pola serwer czyta jako
+ * "nie ruszaj flagi", więc odznaczenie bez jawnego false nigdy by nie doszło.
+ * Flagi konta zapisuje wyłącznie ta trasa v2.
  */
 export function buildAccountPayload(values: AccountFormValues): Partial<PersonAccountV2Payload> {
     return {
         systemRoleId: values.systemRoleId ? Number(values.systemRoleId) : undefined,
         systemEmail: values.systemEmail || undefined,
         fidmanEnabled: Boolean(values.fidmanEnabled),
+        finEnabled: Boolean(values.finEnabled),
+        // Okno użytkowników nie ma przełącznika „Aktywny” - wtedy pole nie jedzie i konto zostaje, jakie było.
+        ...(typeof values.isActive === "boolean" ? { isActive: values.isActive } : {}),
     };
 }
 
@@ -400,19 +405,20 @@ export type ProjectAssignmentsFormValues = {
 };
 
 /**
- * Zapisuje przypisania projektów po zapisaniu konta. Dla ról spoza zakresowych
- * (pracownik kontraktowy, klient) wysyła pustą listę - dzięki temu zmiana roli na inną
- * odbiera dostęp do projektów, zamiast zostawiać go po cichu w bazie.
+ * Zapisuje przypisania projektów po zapisaniu konta. Przypisania ma każda rola poza
+ * użytkownikiem zewnętrznym (DOSTEP-7) - jemu wysyła pustą listę, żeby zmiana roli na nią
+ * odbierała przypisania, zamiast zostawiać je po cichu w bazie.
  */
 export async function saveProjectAssignments(person: ProjectAssignmentsFormValues): Promise<void> {
     if (!person?.id) return;
 
-    if (!MainSetup.isProjectScopedRoleId(person.systemRoleId ?? undefined)) {
+    if (!MainSetup.hasProjectAssignmentsRoleId(person.systemRoleId)) {
         await savePersonProjectAssignments(person.id, []);
         return;
     }
 
-    const selected = person._projectAssignments;
+    // Wybór projektów po zdjęciu ostatniej pozycji daje null - to świadome wyczyszczenie, nie brak pola.
+    const selected = person._projectAssignments === null ? [] : person._projectAssignments;
     // Brak pola to NIE to samo co pusty wybór. Gdyby formularz go nie dowiózł,
     // pusta lista skasowałaby istniejące przypisania - a zapis, który po cichu
     // kasuje dane, jest gorszy niż zapis, który ich nie ruszy.

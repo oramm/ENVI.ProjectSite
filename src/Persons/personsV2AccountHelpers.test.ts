@@ -16,7 +16,8 @@ vi.mock("../React/Tools/ToolsFetch", () => ({
 vi.mock("../React/MainSetupReact", () => ({
     default: {
         serverUrl: "http://localhost:3000/",
-        isProjectScopedRoleId: (id: unknown) => Number(id) === 6 || Number(id) === 7,
+        SystemRoles: { ENVI_COOPERATOR: { id: 4 } },
+        hasProjectAssignmentsRoleId: (id: unknown) => [1, 2, 3, 4, 6, 7].includes(Number(id)),
     },
 }));
 
@@ -63,6 +64,12 @@ describe("buildAccountPayload - flaga uzytkownika FIDmana (GLO-P1)", () => {
         const payload = buildAccountPayload({ systemRoleId: "2" });
 
         expect(payload.fidmanEnabled).toBe(false);
+    });
+
+    it("„Aktywny” z okna personelu jedzie jawnie (false = odejście); formularz bez pola go nie wysyła (U2)", () => {
+        expect(buildAccountPayload({ systemRoleId: "2", isActive: false }).isActive).toBe(false);
+        expect(buildAccountPayload({ systemRoleId: "2", isActive: true }).isActive).toBe(true);
+        expect("isActive" in buildAccountPayload({ systemRoleId: "2" })).toBe(false);
     });
 
     it("rola z Typeahead (liczba) i z legacy (string) daje tę samą liczbę", () => {
@@ -137,10 +144,18 @@ describe("saveProjectAssignments", () => {
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([["AQM"]]);
     });
 
-    it("zmiana roli na inną odbiera przypisania", async () => {
-        await saveProjectAssignments({ id: 7, systemRoleId: 3, _projectAssignments: [{ ourId: "AQM" }] });
+    it("zmiana roli na użytkownika zewnętrznego odbiera przypisania do projektów", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 5, _projectAssignments: [{ ourId: "AQM" }] });
 
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([[]]);
+    });
+
+    it("pracownik ENVI i współpracownik mają przypisania z okna uprawnień (DOSTEP-7)", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 3, _projectAssignments: [{ ourId: "AQM" }] });
+        await saveProjectAssignments({ id: 7, systemRoleId: 4, _projectAssignments: [{ ourId: "B" }] });
+        await saveProjectAssignments({ id: 7, systemRoleId: "4" });
+
+        expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([["AQM"], ["B"]]);
     });
 
     it("rola jako string z legacy też jest rozpoznawana jako zakresowa", async () => {
@@ -149,9 +164,23 @@ describe("saveProjectAssignments", () => {
         expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([["AQM"]]);
     });
 
+    it("null z pola wyboru (zdjęty ostatni projekt) czyści przypisania", async () => {
+        await saveProjectAssignments({ id: 7, systemRoleId: 4, _projectAssignments: null });
+
+        expect(sentAssignments().map((call) => call.projectOurIds)).toEqual([[]]);
+    });
+
     it("bez id nie robi nic", async () => {
         await saveProjectAssignments({ systemRoleId: CONTRACT_WORKER });
 
         expect(hoisted.fetchJsonWithSafeError).not.toHaveBeenCalled();
+    });
+});
+
+describe("buildAccountPayload - FIN", () => {
+    it.each([true, false, undefined, null])("zawsze wysyła jawną flagę FIN (%s)", (finEnabled) => {
+        const payload = buildAccountPayload({ finEnabled, fidmanEnabled: true });
+        expect(payload).toHaveProperty("finEnabled", !!finEnabled);
+        expect(payload.fidmanEnabled).toBe(true);
     });
 });

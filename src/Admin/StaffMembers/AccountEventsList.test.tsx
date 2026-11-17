@@ -40,6 +40,19 @@ const event = (over: Partial<PersonAccountEventData>): PersonAccountEventData =>
 });
 
 describe("describeAccountEvent - reguła „co pokazać”", () => {
+    it("opisuje hasBankAccess jako Finanse firmy", () => {
+        const view = describeAccountEvent(event({ eventType: "STAFF_FLAGS", field: "hasBankAccess", valueBefore: "false", valueAfter: "true" }));
+        expect(view.what).toBe("Finanse firmy");
+        expect(view.before).toBe("nie");
+        expect(view.after).toBe("tak");
+    });
+
+    it("opisuje znacznik zarządzania SB", () => {
+        const view = describeAccountEvent(event({ eventType: "STAFF_FLAGS", field: "canManageSbAccess", valueBefore: "false", valueAfter: "true" }));
+        expect(view.what).toBe("Zarządza dostępem do SB");
+        expect(view.before).toBe("nie");
+        expect(view.after).toBe("tak");
+    });
     it("rola: numer zamieniony na nazwę ze słownika, autor imieniem i nazwiskiem", () => {
         const view = describeAccountEvent(event({}));
         expect(view.what).toBe("Rola");
@@ -122,4 +135,11 @@ describe("AccountEventsList - stany listy", () => {
         render(<AccountEventsList personId={613} />);
         await waitFor(() => expect(screen.getByText("Nie udało się pobrać historii zmian.")).toBeTruthy());
     });
+});
+
+it("historia FIN ma polską etykietę i wartości tak/nie", () => {
+    const view = describeAccountEvent(event({ field: "finEnabled", valueBefore: "true", valueAfter: "false" }));
+    expect(view.what).toBe("Użytkownik FIN");
+    expect(view.before).toBe("tak");
+    expect(view.after).toBe("nie");
 });

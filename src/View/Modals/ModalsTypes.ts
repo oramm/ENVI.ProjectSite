@@ -6,6 +6,7 @@
  */
 
 import type { ReactNode } from "react";
+import type { FieldValues } from "react-hook-form";
 import RepositoryReact from "../../React/RepositoryReact";
 import * as yup from "yup";
 import { ButtonProps } from "react-bootstrap";
@@ -37,6 +38,9 @@ export type ModalSaveCallback<DataItemType extends RepositoryDataItem = Reposito
     submitted?: DataItemType
 ) => void | Promise<void>;
 
+/** false wstrzymuje cały zapis, także zapis rekordu bazowego. */
+export type ModalBeforeSubmit = (data: FieldValues) => boolean | Promise<boolean>;
+
 type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     additionalModalBodyProps?: any;
@@ -56,6 +60,7 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
 };
 
 export type GeneralModalButtonButtonProps = {
+    "data-pomoc"?: string;
     buttonCaption?: string;
     buttonVariant?: ButtonVariant;
     buttonSize?: ButtonProps["size"];
@@ -87,6 +92,7 @@ export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataIte
 type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
     GeneralModalButtonModalProps<DataItemType> & {
         onEdit: ModalSaveCallback<DataItemType>;
+        beforeSubmit?: ModalBeforeSubmit;
         specialActionRoute?: string;
         specialRetrieveActionRoute?: string;
         initialData: DataItemType;
@@ -97,6 +103,9 @@ type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;
     buttonProps?: GeneralEditModalButtonButtonProps;
+    /** Sterowanie z zewnątrz zastępuje przycisk otwierający. */
+    show?: boolean;
+    onClose?: () => void;
 };
 
 export type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {

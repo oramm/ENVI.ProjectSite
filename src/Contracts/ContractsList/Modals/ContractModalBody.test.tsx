@@ -11,14 +11,30 @@
  */
 import React from "react";
 import { render, waitFor, act, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useForm, UseFormReturn, FieldValues } from "react-hook-form";
 import { FormProvider } from "../../../View/Modals/FormContext";
 import { ContractModalBody } from "./ContractModalBody";
 
+const mailboxMocks = vi.hoisted(() => ({ selectedPersons: vi.fn(), fetch: vi.fn() }));
+vi.mock("../../../React/Tools/ToolsFetch", () => ({ default: {
+    fetchJsonWithSafeError: mailboxMocks.fetch,
+} }));
+beforeEach(() => {
+    mailboxMocks.selectedPersons.mockReset().mockResolvedValue([{ id: 7, name: "Anna" }, { id: 9, name: "Jan" }]);
+    mailboxMocks.fetch.mockReset().mockImplementation((url: string) => url.endsWith("/selectedPersons")
+        ? mailboxMocks.selectedPersons(url) : Promise.resolve({ mailboxes: [] }));
+});
+
 vi.mock("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors", () => ({
     ContractRangeSelector: () => null,
     ProjectSelector: () => null,
+    PersonSelector: ({ filterBy }: any) => <div data-testid="person-candidates">{
+        [{ id: 1, systemRoleId: 3, name: "Pracownik ENVI" },
+         { id: 2, systemRoleId: 6, name: "Pracownik wykonawcy" },
+         { id: 3, systemRoleId: 7, name: "Klient" }]
+            .filter(filterBy ?? (() => true)).map(person => person.name).join(", ")
+    }</div>,
 }));
 vi.mock("../../../View/Modals/CommonFormComponents/GenericComponents", () => ({
     ErrorMessage: () => null,
@@ -46,11 +62,11 @@ const NOT_SYNCED_TYPE = { id: 1, name: "IK" };
 
 let form: UseFormReturn<FieldValues>;
 
-function Harness({ initialData }: { initialData: any }) {
+function Harness({ initialData, isEditing = true }: { initialData: any; isEditing?: boolean }) {
     form = useForm({ defaultValues: {} });
     return (
         <FormProvider value={form}>
-            <ContractModalBody initialData={initialData} isEditing={true} {...({} as any)} />
+            <ContractModalBody initialData={initialData} isEditing={isEditing} {...({} as any)} />
         </FormProvider>
     );
 }
@@ -64,8 +80,8 @@ const contract = (over: any = {}) => ({
     ...over,
 });
 
-function renderForm(initialData: any) {
-    const utils = render(<Harness initialData={initialData} />);
+function renderForm(initialData: any, isEditing = true) {
+    const utils = render(<Harness initialData={initialData} isEditing={isEditing} />);
     const checkbox = utils.container.querySelector<HTMLInputElement>("#fidmanSyncEnabled");
     return { ...utils, checkbox };
 }
@@ -97,6 +113,15 @@ describe("ContractModalBody — pole „Objęta synchronizacją”", () => {
         expect(checkbox!.checked).toBe(false);
     });
 
+    // Właściciel 2026-10-05 (uchyla Q-WYK-1): nowa umowa rodzi się objęta synchronizacją; edycja nigdy
+    // nie włącza kratki sama (test niżej), bo przywróciłaby wydmuszki wykluczone w sierpniu.
+    it("NOWA umowa otwiera formularz z kratką zaznaczoną", async () => {
+        const { checkbox } = renderForm(undefined, false);
+
+        await waitFor(() => expect(form.getValues("fidmanSyncEnabled")).toBe(true));
+        expect(checkbox!.checked).toBe(true);
+    });
+
     it("umowa bez znacznika w danych (serwer nie podał pola) otwiera formularz z kratką odznaczoną", async () => {
         const { checkbox } = renderForm(contract());
 
@@ -118,4 +143,49 @@ describe("ContractModalBody — pole „Objęta synchronizacją”", () => {
         });
         await waitFor(() => expect(form.getValues("fidmanSyncEnabled")).toBe(false));
     });
+});
+
+describe("ContractModalBody — dodatkowe osoby przy edycji", () => {
+    it("wczytuje bieżące osoby i wysyła zmienioną listę bez zaproszenia do Chatu", async () => {
+        const { getByText } = renderForm(contract());
+        expect(getByText("Dodatkowe osoby przy kontrakcie")).toBeInTheDocument();
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([7, 9]));
+        expect(mailboxMocks.selectedPersons).toHaveBeenCalledWith(expect.stringContaining("contract/4242/selectedPersons"));
+        expect(form.getValues("_chatSpacePersons")).toEqual([{ id: 7, name: "Anna" }, { id: 9, name: "Jan" }]);
+        act(() => form.setValue("_chatSpacePersons", [{ id: 9 }, { id: 11 }]));
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([9, 11]));
+        const submit = vi.fn();
+        await act(async () => { await form.handleSubmit(submit)(); });
+        expect(submit.mock.calls[0][0]._selectedPersonIds).toEqual([9, 11]);
+        expect(submit.mock.calls[0][0]._chatSpaceSelection).toBeUndefined();
+        expect(mailboxMocks.fetch.mock.calls.every(([url]) => !String(url).includes("chatSpace"))).toBe(true);
+    });
+
+    it("pusta lista czyści osoby przy kontrakcie", async () => {
+        renderForm(contract());
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([7, 9]));
+        act(() => form.setValue("_chatSpacePersons", []));
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([]));
+    });
+
+    it("błąd odczytu nie wysyła pustej listy i nie odbiera przypisań", async () => {
+        mailboxMocks.selectedPersons.mockRejectedValue(new Error("offline"));
+        const { getByRole } = renderForm(contract());
+        await waitFor(() => expect(getByRole("alert")).toHaveTextContent("Nie udało się wczytać dodatkowych osób"));
+        expect(form.getValues("_selectedPersonIds")).toBeUndefined();
+    });
+
+    it("zmiana kontraktu nie zachowuje starej listy, gdy nowej nie udało się odczytać", async () => {
+        const { rerender, getByRole } = renderForm(contract());
+        await waitFor(() => expect(form.getValues("_selectedPersonIds")).toEqual([7, 9]));
+        mailboxMocks.selectedPersons.mockRejectedValue(new Error("offline"));
+        rerender(<Harness initialData={contract({ id: 888 })} />);
+        await waitFor(() => expect(getByRole("alert")).toHaveTextContent("Nie udało się wczytać"));
+        expect(form.getValues("_selectedPersonIds")).toBeUndefined();
+    });
+});
+
+it("dodatkowe osoby przy kontrakcie nie proponują klienta ani pracownika wykonawcy", async () => {
+    const view = render(<Harness initialData={{ id: 4242, _type: NOT_SYNCED_TYPE }} />);
+    await waitFor(() => expect(view.getByTestId("person-candidates").textContent).toBe("Pracownik ENVI"));
 });

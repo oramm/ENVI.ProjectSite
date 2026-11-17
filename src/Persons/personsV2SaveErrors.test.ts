@@ -99,9 +99,9 @@ describe("savePersonV2AccountAndProfile", () => {
         expect(calledUrls().some((url) => url.endsWith("/profile"))).toBe(true);
     });
 
-    it("payload z samym `fidmanEnabled: false` to nadal dane do zapisania", async () => {
+    it.each(["fidmanEnabled", "finEnabled"])("payload z samym %s: false to nadal dane do zapisania", async (field) => {
         // Odznaczenie checkboxa jest zmianą - nie wolno go potraktować jak pustego payloadu.
-        await savePersonV2AccountAndProfile(PERSON_ID, { fidmanEnabled: false }, {}, "StaffMembers");
+        await savePersonV2AccountAndProfile(PERSON_ID, { [field]: false }, {}, "StaffMembers");
 
         expect(calledUrls().some((url) => url.endsWith("/account"))).toBe(true);
     });
