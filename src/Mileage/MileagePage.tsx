@@ -1,3 +1,4 @@
+import { warsawDate as today } from "../React/Tools/warsawDate";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
@@ -20,9 +21,6 @@ import { OurContract, PersonData } from "../../Typings/bussinesTypes";
 const PURPOSE_OPTIONS = ["spotkanie", "rada budowy", "tankowanie", "kontrola budowy", "zakupy"];
 const GENERAL_CODE = "OGÓLNE";
 
-function today() {
-    return new Date().toISOString().slice(0, 10);
-}
 
 // Rozpoznawanie mowy (Web Speech API) - kierowca dyktuje cyfry. Mapujemy słowa-cyfry
 // na cyfry i wyrzucamy resztę; obsługuje też przypadek gdy Chrome zwróci już cyfry.
@@ -127,7 +125,7 @@ export default function MileagePage() {
         : null;
 
     if (vehicleId) {
-        if (selectedVehicle) return <MileageForm vehicle={selectedVehicle} />;
+        if (selectedVehicle) return <MileageForm key={selectedVehicle.id} vehicle={selectedVehicle} />;
         return (
             <Container className="py-3" style={{ maxWidth: 640 }}>
                 {loadingVehicles ? (
@@ -300,6 +298,30 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const recognitionRef = useRef<any>(null);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
+    const [datedVehicle, setDatedVehicle] = useState<Vehicle | null>(null);
+    const [loadedDate, setLoadedDate] = useState("");
+    const [readingError, setReadingError] = useState("");
+    const requestId = useRef<string>();
+    const submittingRef = useRef(false);
+    const readingReady = loadedDate === date && datedVehicle !== null;
+    const datedSheetUrl = readingReady ? datedVehicle?.sheetUrl : null;
+    useEffect(() => {
+        let active = true;
+        setLoadedDate("");
+        setDatedVehicle(null);
+        setStartReading("");
+        setReadingError("");
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { setReadingError("Podaj prawidłową datę wyjazdu."); return () => { active = false; }; }
+        fetchVehicles(date).then(cars => {
+            if (!active) return;
+            const current = cars.find(car => car.id === String(vehicle.id));
+            if (!current) throw new Error("Nie znaleziono pojazdu dla wybranej daty.");
+            setDatedVehicle(current);
+            setStartReading(current.currentReading === null ? "" : String(current.currentReading));
+            setLoadedDate(date);
+        }).catch(err => { if (active) setReadingError(err instanceof Error ? err.message : String(err)); });
+        return () => { active = false; };
+    }, [vehicle.id, date]);
 
     const selectedContracts = (watch("_contracts") as OurContract[] | undefined) ?? [];
     const driverPerson = watch("_driver") as PersonData | undefined;
@@ -440,19 +462,23 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     }
 
     async function handleSubmit() {
+        if (submittingRef.current || !readingReady) return;
         const validationError = validate();
         if (validationError) {
             setError(validationError);
             return;
         }
         setError("");
+        submittingRef.current = true;
         setSubmitting(true);
+        requestId.current ??= crypto.randomUUID();
         try {
             const res = await fetch(`${MainSetup.serverUrl}mileage/trip`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    requestId: requestId.current,
                     vehicleId: vehicle.id,
                     date,
                     driver,
@@ -472,7 +498,10 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     fuelingReading: isFueling && fuelingReading ? Number(fuelingReading) : "",
                 }),
             });
-            if (!res.ok) throw new Error("Nie udało się zapisać wpisu.");
+            if (!res.ok) {
+                const failure = await res.json().catch(() => ({}));
+                throw new Error(failure.message || "Nie udało się zapisać wpisu.");
+            }
             const trip = await res.json();
 
             const via = routeMid.trim();
@@ -496,7 +525,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                 navigate("/mileage", {
                     state: {
                         savedMsg,
-                        sheetUrl: vehicle.sheetUrl,
+                        sheetUrl: trip.sheetUrl,
                         driveCar: !!startVT,
                         fuelOffer,
                     },
@@ -509,6 +538,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
+            submittingRef.current = false;
             setSubmitting(false);
         }
     }
@@ -525,9 +555,9 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         <Container className="py-3" style={{ maxWidth: 640 }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4 className="mb-0 text-truncate" style={{ maxWidth: "70%" }}>
-                    {vehicle.sheetUrl ? (
+                    {datedSheetUrl ? (
                         <a
-                            href={vehicle.sheetUrl}
+                            href={datedSheetUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             title="Otwórz arkusz kilometrówki"
@@ -671,12 +701,13 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     </Form.Group>
 
                     <Row className="g-2 mb-3">
-                        {!simplified && (
+                        {(!simplified || datedVehicle?.currentReading === null) && (
                             <Col xs={6}>
                                 <Form.Label>Stan licznika początkowy</Form.Label>
                                 <Form.Control
                                     inputMode="numeric"
                                     value={startReading}
+                                    disabled={!readingReady || submitting}
                                     onChange={(e) => setStartReading(e.target.value)}
                                 />
                             </Col>
@@ -706,7 +737,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         <Row className="g-2 mb-3">
                             <Col xs={6}>
                                 <Form.Label>Data wyjazdu</Form.Label>
-                                <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                                <Form.Control type="date" value={date} disabled={submitting} onChange={(e) => setDate(e.target.value)} />
                             </Col>
                             <Col xs={6}>
                                 <Form.Label>Ilość km</Form.Label>
@@ -753,9 +784,11 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         </div>
                     )}
 
+                    {readingError && <Alert variant="danger">{readingError}</Alert>}
+                    {!readingReady && !readingError && <div role="status">Pobieranie stanu licznika dla wybranej daty…</div>}
                     {error && <Alert variant="danger">{error}</Alert>}
 
-                    <Button className="w-100" onClick={handleSubmit} disabled={submitting}>
+                    <Button className="w-100" onClick={handleSubmit} disabled={submitting || !readingReady}>
                         {submitting ? <Spinner size="sm" /> : "Zapisz wpis"}
                     </Button>
                 </Form>

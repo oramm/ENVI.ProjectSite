@@ -54,12 +54,14 @@ export function wroteAnything(result: CommitResult): boolean {
     return result.cash.action === "write" || result.register?.action === "write";
 }
 
+export type AnnualSheetErrorCode = "ANNUAL_SHEET_MISSING" | "ANNUAL_SHEET_INCOMPLETE";
+
 export class PettyCashApiError extends Error {
     /** Lista błędów walidacji z backendu; pusta, gdy błąd nie był walidacyjny. */
     readonly errors: string[];
     readonly status: number;
 
-    constructor(message: string, status: number, errors: string[] = []) {
+    constructor(message: string, status: number, errors: string[] = [], readonly code?: AnnualSheetErrorCode) {
         super(message);
         this.name = "PettyCashApiError";
         this.status = status;
@@ -75,9 +77,11 @@ async function parseError(response: Response, fallback: string): Promise<never> 
         payload = undefined;
     }
     throw new PettyCashApiError(
-        payload?.error || `${fallback} (${response.status})`,
+        (typeof payload?.error === "string" && payload.error) ||
+            (typeof payload?.errorMessage === "string" && payload.errorMessage) || `${fallback} (${response.status})`,
         response.status,
-        Array.isArray(payload?.errors) ? payload.errors : []
+        Array.isArray(payload?.errors) ? payload.errors.filter((error: unknown) => typeof error === "string") : [],
+        payload?.code === "ANNUAL_SHEET_MISSING" || payload?.code === "ANNUAL_SHEET_INCOMPLETE" ? payload.code : undefined
     );
 }
 

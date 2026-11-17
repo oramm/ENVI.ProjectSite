@@ -1,3 +1,4 @@
+import { warsawDate as today } from "../../React/Tools/warsawDate";
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Container, Form, Spinner } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -73,7 +74,6 @@ function SheetButton({ url, label }: { url: string | null | undefined; label: st
         </Button>
     );
 }
-const today = () => new Date().toISOString().slice(0, 10);
 
 type FormValues = {
     entryKind: EntryKind;

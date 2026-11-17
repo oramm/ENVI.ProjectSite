@@ -13,14 +13,18 @@ export type Vehicle = {
     model: string;
     plate: string;
     currentReading: number | null;
-    sheetUrl?: string;
+    sheetUrl?: string | null;
+    year?: number;
 };
 
-export async function fetchVehicles(): Promise<Vehicle[]> {
-    const response = await fetch(`${MainSetup.serverUrl}mileage/vehicles`, {
+export async function fetchVehicles(date?: string): Promise<Vehicle[]> {
+    const response = await fetch(`${MainSetup.serverUrl}mileage/vehicles${date ? `?date=${encodeURIComponent(date)}` : ""}`, {
         credentials: "include",
     });
-    if (!response.ok) throw new Error("Nie udało się pobrać listy pojazdów.");
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || "Nie udało się pobrać listy pojazdów.");
+    }
     const vehicles: Vehicle[] = await response.json();
     // Baza oddaje identyfikator jako liczbę, a lista wyboru i adres trasy operują napisem.
     // Wyrównujemy go tutaj, żeby porównania w formularzach nie milkły po cichu.
