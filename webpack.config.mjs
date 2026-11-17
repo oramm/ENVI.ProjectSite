@@ -9,8 +9,13 @@ if (os.platform() === 'win32') {
     __dirname = __dirname.slice(1);
 }
 
-export default {
+export default (env = {}) => ({
     entry: './src/React/MainWindow/index.tsx',
+    cache: {
+        type: 'filesystem',
+        name: env.WEBPACK_SERVE ? 'dev-server' : 'build',
+        buildDependencies: { config: [path.resolve(__dirname, 'webpack.config.mjs')] },
+    },
     output: {
         path: path.resolve(__dirname, 'docs'),
         filename: 'bundle.js',
@@ -24,7 +29,10 @@ export default {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: 'ts-loader',
+                use: {
+                    loader: 'ts-loader',
+                    options: { transpileOnly: true, onlyCompileBundledFiles: true },
+                },
                 exclude: /node_modules/,
             },
             {
@@ -67,9 +75,9 @@ export default {
             publicPath: '/docs/',
         },
     },
-    devtool: 'source-map',
+    devtool: env.WEBPACK_SERVE ? 'eval-cheap-module-source-map' : 'source-map',
     mode: 'development',
     experiments: {
         topLevelAwait: true
     },
-};
+});
