@@ -180,6 +180,7 @@ export function ourContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         _milestonesSelection: milestonesSelectionRule(isEditing),
+        _creationRequestId: Yup.string().uuid().notRequired(),
         _contractFoldersSelection: Yup.array().notRequired(),
         _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
         _chatSpaceSelection: chatSpaceSelectionRule,
@@ -199,6 +200,7 @@ export function otherContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         _milestonesSelection: milestonesSelectionRule(isEditing),
+        _creationRequestId: Yup.string().uuid().notRequired(),
         _contractFoldersSelection: Yup.array().notRequired(),
         _contractStructureTreeUnavailable: Yup.boolean().notRequired(),
         _contractors: Yup.array(),

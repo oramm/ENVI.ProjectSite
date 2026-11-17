@@ -5,6 +5,24 @@ import MainSetup from "../MainSetupReact";
 type HttpError = Error & { status?: number };
 
 export default class ToolsFetch {
+    static contractSharingErrorMessage(code: string): string {
+        const messages: Record<string, string> = {
+            SHORTCUT_NOT_READY: "Umowa jest zapisana, ale skrót do wspólnych dokumentów nie został potwierdzony. Ponów zapis bez zmiany danych, aby dokończyć tę samą umowę.",
+            STALE_REVISION: "Wspólny kamień zmienił się od wyboru. Odśwież listę i wybierz go ponownie.",
+            TYPE_UNAVAILABLE: "Ten kamień nie jest dostępny dla wybranego typu umowy.",
+            CROSS_PROJECT: "Wspólny kamień musi należeć do tego samego projektu.",
+            ROLE_DENIED: "Nie masz uprawnienia do przypięcia wspólnego kamienia.",
+            SCOPE_DENIED: "Nie masz dostępu do całej wspólnej pracy.",
+            OPERATION_IN_PROGRESS: "Trwa zmiana przypięć tego kamienia. Spróbuj później.",
+            TYPE_MISMATCH: "Wybrany kamień nie kwalifikuje się do przypięcia.",
+            IDEMPOTENCY_CONFLICT: "Dane różnią się od poprzedniej próby zapisu. Przywróć poprzednie dane i ponów; jeśli to niemożliwe, skontaktuj się z administratorem.",
+            DEPENDENCY_CONFLICT: "Nie można teraz utworzyć tej umowy. Sprawdź jej dane i stan projektu.",
+            OBJECT_NOT_FOUND: "Wybrany kamień lub projekt nie jest już dostępny.",
+            INVALID_REQUEST: "Wybór wspólnego kamienia jest niekompletny. Wybierz go ponownie.",
+        };
+        return messages[code] ?? code;
+    }
+
     private static getClientErrorSecret(): string | null {
         const runtimeSecret = (window as any).__BUG_CLIENT_ERROR_SECRET__;
         if (typeof runtimeSecret === "string" && runtimeSecret.trim().length > 0) {
@@ -59,8 +77,11 @@ export default class ToolsFetch {
             if (!response.ok) {
                 httpStatus = response.status;
                 if (httpStatus === 401) this.handleSessionExpired();
-                const errorDetails: ErrorServerResponse = await response.json();
-                throw new Error(errorDetails.errorMessage);
+                const errorDetails: ErrorServerResponse & { error?: { code?: string; message?: string } } = await response.json();
+                const code = errorDetails.error?.code;
+                const isContractSharing = url.includes('/contractReact') || url.includes('/milestones/sharing/');
+                throw new Error(code && isContractSharing ? this.contractSharingErrorMessage(code) :
+                    errorDetails.errorMessage || errorDetails.error?.message || `Błąd serwera (${httpStatus})`);
             }
 
             return await response.json();

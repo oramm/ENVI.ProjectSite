@@ -14,6 +14,7 @@ import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
 import { SessionTask } from "../../../Typings/sessionTypes";
 import merge from "lodash.merge";
 import ToolsFetch from "../../React/Tools/ToolsFetch";
+import { useConsolidationWorkGuard } from "../../TasksGlobal/useConsolidationWorkGuard";
 
 type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
@@ -152,6 +153,8 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
      */
     const createdItemRef = useRef<DataItemType | null>(null);
 
+    const [creationCompleted, setCreationCompleted] = useState("");
+    const completedTaskMessage = useRef("");
     const [errorMessage, setErrorMessage] = useState("");
     const [requestPending, setRequestPending] = useState(false);
     const [progressData, setProgressData] = useState<{ text: string; percent?: number }>({
@@ -164,6 +167,8 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
         mode: "onChange",
         resolver: validationSchema ? yupResolver(validationSchema(isEditing)) : undefined,
     });
+    const newWork = useConsolidationWorkGuard(specialActionRoute || repository?.actionRoutes.addNewRoute || '',
+        formMethods.watch(),show && !isEditing && !createdItemRef.current && !creationCompleted);
     useEffect(() => {
         setErrorMessage("");
         setProgressData({ text: "" });
@@ -247,6 +252,7 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
         }
     }
     async function handleSubmitRepository(data: FieldValues) {
+        if (creationCompleted) return;
         try {
             if (!repository) {
                 throw new Error("Repository nie został przekazany do modala");
@@ -278,7 +284,10 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
             } else {
                 await handleAdd(requestData);
             }
-            onClose();
+            if (!isEditing && repository.actionRoutes.addNewRoute === "contractReact" &&
+                Array.isArray(data._milestonesSelection) && data._milestonesSelection.some(item => item.mode === "shared"))
+                setCreationCompleted(completedTaskMessage.current || "Umowa zapisana. Gotowość dokumentów sprawdź w widoku Przypięcia.");
+            else onClose();
             setRequestPending(false);
         } catch (error) {
             if (error instanceof Error) setErrorMessage(error.message);
@@ -425,17 +434,19 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
     }
 
     function handleProgress(sessionTask: SessionTask) {
+        if (sessionTask.status === "done") completedTaskMessage.current = sessionTask.progressMessage || sessionTask.progressMesage || "";
         makeProgressMessage(sessionTask);
     }
 
     function makeProgressMessage(sessionTask: SessionTask) {
-        if (!sessionTask.progressMesage) return "";
+        const progressMessage = sessionTask.progressMessage || sessionTask.progressMesage;
+        if (!progressMessage) return "";
         if (sessionTask.status === "error") {
             setProgressData({ text: sessionTask.error || "" });
             return "";
         }
         const percent = sessionTask.percent !== undefined ? sessionTask.percent : "";
-        const message = `Postęp: ${percent}% ${sessionTask.progressMesage}`;
+        const message = `Postęp: ${percent}% ${progressMessage}`;
         setProgressData({ text: message, percent: sessionTask.percent });
     }
 
@@ -460,21 +471,23 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
     return (
         <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>
             <Modal.Header closeButton={true}>{renderHeader()}</Modal.Header>
-            <Modal.Body>{renderFormBody()}</Modal.Body>
+            <Modal.Body>{newWork.message && <Alert variant="warning" role="status">{newWork.message}
+                {newWork.canRetry && <Button type="button" size="sm" variant="outline-secondary" className="ms-2" onClick={newWork.retry}>Spróbuj ponownie</Button>}
+            </Alert>}{creationCompleted ? <Alert variant="success" role="status">{creationCompleted}</Alert> : renderFormBody()}</Modal.Body>
             <Modal.Footer>
                 <Row className="w-100 align-items-center text-end">
                     <Col xs="12" sm="8" className="W-100">
-                        {renderProgressBar()}
+                        {!creationCompleted && renderProgressBar()}
                     </Col>
                     <Col className="text-end">
                         <Button variant="secondary" className="me-2 mb-2" onClick={onClose}>
-                            Anuluj
+                            {creationCompleted ? "Zamknij" : "Anuluj"}
                         </Button>
-                        <Button
+                        {!creationCompleted && <Button
                             type="submit"
                             variant="primary"
                             className="mb-2"
-                            disabled={!formMethods.formState.isValid || requestPending || isLoadingData}
+                            disabled={!formMethods.formState.isValid || requestPending || isLoadingData || newWork.blocked}
                         >
                             <span className="d-inline-flex align-items-center">
                                 Zatwierdź
@@ -489,7 +502,7 @@ function GeneralModalContent<DataItemType extends RepositoryDataItem = Repositor
                                     />
                                 )}
                             </span>
-                        </Button>
+                        </Button>}
                     </Col>
                 </Row>
             </Modal.Footer>

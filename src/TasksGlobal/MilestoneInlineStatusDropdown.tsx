@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { MilestoneData } from "../../Typings/bussinesTypes";
 import MainSetup from "../React/MainSetupReact";
 import { MilestoneStatusBadge } from "../View/Resultsets/CommonComponents";
 import { milestonesRepository } from "./TasksGlobalController";
+import { useFilterableTableContext } from "../View/Resultsets/FilterableTable/FilterableTableContext";
 
 interface Props {
     milestone: MilestoneData;
@@ -11,13 +12,16 @@ interface Props {
 
 /**
  * Szybka zmiana statusu kamienia milowego (dropdown) — analogicznie do zadania.
- * Aktualizuje tylko pole `status` (fieldsToUpdate), więc backend pomija operacje GD/Scrum.
+ * Wysyła zmianę pola `status`; backend może wcześniej uruchomić autoryzację Google.
  * Mutuje obiekt milestone (współdzielony z drzewem) + lokalny stan, by zmiana była widoczna od razu.
  */
 export default function MilestoneInlineStatusDropdown({ milestone }: Props) {
+    const { refreshSectionsAfterMutation } = useFilterableTableContext();
     const [status, setStatus] = useState(milestone.status);
     const [saving, setSaving] = useState(false);
     const statuses = Object.values(MainSetup.MilestoneStatus);
+
+    useEffect(() => setStatus(milestone.status), [milestone.status]);
 
     async function changeStatus(newStatus: string) {
         if (newStatus === status) return;
@@ -26,6 +30,7 @@ export default function MilestoneInlineStatusDropdown({ milestone }: Props) {
             await milestonesRepository.editItem({ ...milestone, status: newStatus }, undefined, ["status"]);
             milestone.status = newStatus;
             setStatus(newStatus);
+            await refreshSectionsAfterMutation();
         } catch (err) {
             console.error("Błąd zmiany statusu kamienia:", err);
         } finally {

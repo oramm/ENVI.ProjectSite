@@ -334,6 +334,18 @@ describe("walidacja wyboru kamieni milowych z drzewa struktury", () => {
         expect(msgs).toHaveLength(0);
     });
 
+    it("zachowuje instrukcję wspólnego kamienia i requestId w danych do zapisu", async () => {
+        const shared = { mode: "shared", milestoneTypeId: 5, milestoneId: 4889,
+            expectedRevision: "a".repeat(64) };
+        const requestId = "b9975a79-706a-4cf4-a71a-7319f77f0c05";
+        const output = await ourContractValidationSchema(false).validate({
+            ...base, _milestonesSelection: [{ milestoneTypeId: 1, caseTypeIds: [45] }, shared],
+            _creationRequestId: requestId,
+        });
+        expect(output._milestonesSelection).toEqual([{ milestoneTypeId: 1, caseTypeIds: [45] }, shared]);
+        expect(output._creationRequestId).toBe(requestId);
+    });
+
     it("nie obowiązuje przy edycji - drzewa tam nie ma", async () => {
         const msgs = await fieldErrors(
             { ...base, _milestonesSelection: [] },

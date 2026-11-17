@@ -175,7 +175,7 @@ export function buildContractHeaderBadge(contract?: OurContract | OtherContract)
     );
 }
 
-function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
+export function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
     if (!contract || typeof contract !== "object") {
         if (contract) console.warn("buildContractFirstLineLabel: oczekiwano obiektu kontraktu, otrzymano:", contract);
         return "";
@@ -192,7 +192,7 @@ function buildContractFirstLineLabel(contract?: OurContract | OtherContract) {
 
     // OtherContract — pomiń "Brak powiązania" gdy _ourContract niedostępny
     const ourRelatedId = (contract as OtherContract)._ourContract?.ourId ?? "";
-    const contractId = [`${contract._type?.name ?? ""} ${contract.number}`.trim(), ourRelatedId ? `➔ ${ourRelatedId}` : ""]
+    const contractId = [contract.number ? `${contract._type?.name ?? ""} ${contract.number}`.trim() : "", ourRelatedId ? `➔ ${ourRelatedId}` : ""]
         .filter(Boolean)
         .join(" ");
     return [contractId, aliasPart].filter(Boolean).join(" | ").trim();

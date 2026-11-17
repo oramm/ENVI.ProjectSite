@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FilterableTableProvider, useFilterableTableContext } from "./FilterableTableContext";
@@ -52,10 +52,19 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     // ją z serwera, a loadItemsFromServerPOST czyści currentItems.
     const [activeRowId, setActiveRowId] = useState(getActiveRowIdFromStorage);
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
-    const [activeSectionId, setActiveSectionId] = useState("");
+    const [activeSectionId, setActiveSectionId] = useState(() => getActiveRowSectionIdFromStorage());
     const [editingSectionId, setEditingSectionId] = useState("");
     const [objects, setObjects] = useState(initObjects());
     const [globalExpandTrigger, setGlobalExpandTrigger] = useState<ExpandTrigger>(null);
+    const pendingScrollRef = useRef<{ id: string; top: number; scrollY: number } | null>(null);
+
+    useLayoutEffect(() => {
+        const pending = pendingScrollRef.current;
+        if (!pending) return;
+        pendingScrollRef.current = null;
+        const nextTop = document.getElementById(pending.id)?.getBoundingClientRect().top;
+        window.scrollTo(0, pending.scrollY + (nextTop === undefined ? 0 : nextTop - pending.top));
+    }, [sections]);
 
     /** Rekurencyjnie znajduje ścieżkę od korzenia do węzła o podanym ID */
     function findPathToNode(
@@ -110,13 +119,20 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         return activeRowId ?? 0;
     }
 
+    function getActiveRowSectionIdFromStorage() {
+        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        if (!storedSnapshot) return "";
+        const { activeRowSectionId } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<LeafDataItemType>;
+        return activeRowSectionId ?? "";
+    }
+
     /** 0 = nic nie zaznaczone (kliknięcie w nagłówek sekcji odznacza wiersz). */
-    function storeActiveRowId(id: number) {
+    function storeActiveRowId(id: number, sectionId = "") {
         setActiveRowId(id);
         try {
             const storedSnapshot = sessionStorage.getItem(snapshotName);
             const parsedSnapshot = storedSnapshot ? JSON.parse(storedSnapshot) : { criteria: {} };
-            sessionStorage.setItem(snapshotName, JSON.stringify({ ...parsedSnapshot, activeRowId: id }));
+            sessionStorage.setItem(snapshotName, JSON.stringify({ ...parsedSnapshot, activeRowId: id, activeRowSectionId: sectionId }));
         } catch (error) {
             console.warn(`Nie udało się zapamiętać zaznaczonego wiersza tabeli ${snapshotName}.`, error);
         }
@@ -153,7 +169,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }, [externalUpdate]);
 
     useEffect(() => {
-        if (sections.length === 0 && initialSections.length > 0) {
+        if (!sectionsFilterHandlers && sections.length === 0 && initialSections.length > 0) {
             setSections(initialSections as SectionNode<LeafDataItemType>[]);
         }
     }, [initialSections]);
@@ -164,6 +180,10 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function handleEditObject(object: LeafDataItemType) {
+        if (sectionsFilterHandlers?.onRefreshSections) {
+            void refreshSectionsFromHandlers();
+            return;
+        }
         if (!sections.length) {
             setObjects([...repository.items]);
             updateSnapshot();
@@ -175,13 +195,18 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function handleDeleteObject(objectId: number) {
+        if (sectionsFilterHandlers?.onRefreshSections) {
+            void refreshSectionsFromHandlers();
+            return;
+        }
         if (!sections.length) setObjects([...repository.items]);
         else setSections(removeLeafFromSections(sections, objectId));
         updateSnapshot();
     }
 
     async function refreshSectionsFromHandlers(): Promise<boolean> {
-        if (!sectionsFilterHandlers?.onSubmitSections) {
+        const refresh = sectionsFilterHandlers?.onRefreshSections;
+        if (!refresh) {
             return false;
         }
 
@@ -191,17 +216,36 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             : undefined;
         const criteria = parsedSnapshot?.criteria || {};
 
-        setIsReady(false);
         try {
-            const refreshedSections = await sectionsFilterHandlers.onSubmitSections(criteria);
+            const refreshedSections = await refresh(criteria);
+            const anchor = document.getElementById(activeSectionId);
+            pendingScrollRef.current = {
+                id: activeSectionId,
+                top: anchor?.getBoundingClientRect().top ?? 0,
+                scrollY: window.scrollY,
+            };
+            if (activeSectionId && !findPathToNode(refreshedSections, activeSectionId)) {
+                const oldPath = findPathToNode(sections, activeSectionId) ?? [];
+                const nearestAncestor = oldPath.reverse().find((id) => findPathToNode(refreshedSections, id)) ?? "";
+                setActiveSectionId(nearestAncestor);
+                setEditingSectionId(nearestAncestor);
+            }
+            const activeRowSection = activeSectionId ? findNodeById(refreshedSections, activeSectionId) : undefined;
+            if (activeRowId && (activeSectionId
+                ? !activeRowSection?.leaves?.some((leaf) => leaf.id === activeRowId)
+                : !refreshedSections.some((node) => containsLeaf(node, activeRowId)))) {
+                storeActiveRowId(0);
+            }
             setSections(refreshedSections);
             return true;
         } catch (error) {
             console.error("Nie udało się odświeżyć sekcji po zmianie", error);
             return false;
-        } finally {
-            setIsReady(true);
         }
+    }
+
+    function containsLeaf(node: SectionNode<LeafDataItemType>, id: number): boolean {
+        return Boolean(node.leaves?.some((leaf) => leaf.id === id) || node.children.some((child) => containsLeaf(child, id)));
     }
 
     function removeLeafFromSections(
@@ -217,9 +261,10 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
         void (async () => {
-            const wasRefreshed = await refreshSectionsFromHandlers();
-            if (wasRefreshed) return;
-
+            if (sectionsFilterHandlers?.onRefreshSections) {
+                await refreshSectionsFromHandlers();
+                return;
+            }
             // Gdy dodajemy LIŚĆ (np. zadanie pod sprawą — sekcja ma tablicę leaves),
             // musimy dołożyć go też do repository.items. Inaczej klik w nowy wiersz rzuca
             // "Nie znaleziono elementu" w addToCurrentItems (bez sectionsFilterHandlers
@@ -237,18 +282,20 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     function handleEditSection(sectionDataObject: RepositoryDataItem) {
         void (async () => {
-            const wasRefreshed = await refreshSectionsFromHandlers();
-            if (wasRefreshed) return;
-
+            if (sectionsFilterHandlers?.onRefreshSections) {
+                await refreshSectionsFromHandlers();
+                return;
+            }
             setSections(editNode(sections, activeSectionId, sectionDataObject));
         })();
     }
 
     function handleDeleteSection(sectionDataObject: number) {
         void (async () => {
-            const wasRefreshed = await refreshSectionsFromHandlers();
-            if (wasRefreshed) return;
-
+            if (sectionsFilterHandlers?.onRefreshSections) {
+                await refreshSectionsFromHandlers();
+                return;
+            }
             setSections(deleteNode(sections, activeSectionId));
         })();
     }
@@ -275,7 +322,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     const handleRowClick = (id: number, parentSectionId?: string) => {
-        storeActiveRowId(id);
+        storeActiveRowId(id, parentSectionId);
         // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
         setEditingSectionId("");
         // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
@@ -313,6 +360,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             handleAddSection={handleAddSection}
             handleEditSection={handleEditSection}
             handleDeleteSection={handleDeleteSection}
+            refreshSectionsAfterMutation={refreshSectionsFromHandlers}
             selectedObjectRoute={selectedObjectRoute}
             EditButtonComponent={EditButtonComponent}
             RowActionMenuComponents={RowActionMenuComponents}

@@ -22,7 +22,7 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
     isStriped = true,
     parentSectionId,
 }: ResultSetTableProps<DataItemType>) {
-    const { objects, activeRowId, tableStructure } = useFilterableTableContext<DataItemType>();
+    const { objects, activeRowId, activeSectionId, tableStructure } = useFilterableTableContext<DataItemType>();
     const [objectsToShow, setObjectsToShow] = useState<DataItemType[]>([]);
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
                 )}
                 <div className="d-flex flex-column gap-2">
                     {objectsToShow.map((dataObject, index) => {
-                        const isActive = dataObject.id === activeRowId;
+                        const isActive = dataObject.id === activeRowId && (!parentSectionId || parentSectionId === activeSectionId);
                         const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
 
                         return (

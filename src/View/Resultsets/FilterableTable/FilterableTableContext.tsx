@@ -20,6 +20,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     handleAddSection: (sectionObject: RepositoryDataItem) => void;
     handleEditSection: (sectionObject: RepositoryDataItem) => void;
     handleDeleteSection: (sectionObjectId: number) => void;
+    refreshSectionsAfterMutation: () => Promise<boolean>;
     setSections: React.Dispatch<React.SetStateAction<SectionNode<DataItemType>[]>>;
     selectedObjectRoute: string;
     activeRowId: number;
@@ -55,6 +56,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     handleAddSection: () => {},
     handleEditSection: () => {},
     handleDeleteSection: () => {},
+    refreshSectionsAfterMutation: async () => false,
     setSections: () => {},
     selectedObjectRoute: "",
     activeRowId: 0,
@@ -88,6 +90,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     handleEditSection,
     handleCopyObject,
     handleDeleteSection,
+    refreshSectionsAfterMutation,
     tableStructure,
     selectedObjectRoute,
     activeRowId,
@@ -122,6 +125,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 handleAddSection,
                 handleEditSection,
                 handleDeleteSection,
+                refreshSectionsAfterMutation,
                 tableStructure,
                 handleAddObject,
                 handleEditObject,

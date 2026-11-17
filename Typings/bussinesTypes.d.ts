@@ -17,6 +17,10 @@ export type SystemRole = {
 };
 
 export interface User {
+    /** Stable Person identity from authenticated backend session; never an SSO-provider namespace. */
+    id?: number;
+    enviId?: number;
+    microsoftId?: string;
     googleId: string;
     picture: string;
     systemEmail: string;
@@ -377,10 +381,20 @@ export interface ContractTemplatesTree {
 }
 
 /** Wybór wysyłany w POST /contractReact jako _milestonesSelection */
-export interface MilestoneSelectionItem {
+export interface OwnMilestoneSelectionItem {
+    mode?: "own";
     milestoneTypeId: number;
     caseTypeIds: number[];
 }
+
+export interface SharedMilestoneSelectionItem {
+    mode: "shared";
+    milestoneTypeId: 5;
+    milestoneId: number;
+    expectedRevision: string;
+}
+
+export type MilestoneSelectionItem = OwnMilestoneSelectionItem | SharedMilestoneSelectionItem;
 
 export interface MilestoneType extends RepositoryDataItem {
     name: string;
