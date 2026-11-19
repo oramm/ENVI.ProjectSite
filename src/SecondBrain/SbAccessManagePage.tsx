@@ -325,7 +325,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                         </div>
                         <p className="mb-0 text-xs text-[#5d6878]">{healthContentNote}</p>
                     </section>
-                    <AgentAccessSection key={selected.personId} personId={selected.personId} />
+                    <AgentAccessSection key={`${selected.personId}-${selected.statusCode}-${JSON.stringify(selected.levels)}`} personId={selected.personId} />
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3">
                         <h3 className="text-sm font-semibold">Dostęp do Second Brain</h3>
                         {selected.isGrantedManually && <p className="mb-0 text-xs text-[#5d6878]">{manualExplanation}</p>}
