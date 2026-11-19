@@ -6,7 +6,7 @@ import { fetchSbAccess } from "./sbAccessApi";
 import { fetchSbAgentAccess, fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
     setSbLevels, takeSbSecret, SbAction, SbAgentAccess, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbUnlinkedMember } from "./sbManageApi";
 import { agentStateTone, assignableEntries, availableActions, canReceiveSecret, canRequestHealth, confirmationContent, defaultSecretRecipients, describeDrive, describeFailure,
-    describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
+    describeGithub, describeLevels, describeOutcome, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
     healthToolLabel, healthVersions, mailboxChoices, manualExplanation, noLevels,
     psDbOptions, repoOptions, roleLabel, secretCharacterCount, secretConfirmationError, secretHealthState, secretInputError, secretLabel, secretRecipients, secretsState, sharedSecretNames, statusViews, takeSecretConfirmation,
     routeAccessLabel, toggleMailbox } from "./sbManageView";
@@ -94,7 +94,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     }
 
     function selectEntry(entry: SbEntry) {
-        setSelectedId(entry.personId); setLevelsDraft(entry.levels ?? noLevels); setLevelsError(null); setHealthError(null);
+        setSelectedId(entry.personId); setLevelsDraft(entry.levels ? { repos: entry.levels.repos, psDb: entry.levels.psDb, mail: entry.levels.mail } : noLevels); setLevelsError(null); setHealthError(null);
     }
     async function saveLevels(entry: SbEntry) {
         if (busy) return;
@@ -190,7 +190,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const content = confirmation && confirmationContent(confirmation.action, confirmation.entry);
     const selected = rows.find(entry => entry.personId === selectedId);
     const selectedStatus = selected && statusViews[selected.statusCode];
-    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Dysk", "Hasła", "Komputer"];
+    const columns = ["Osoba", "Repozytoria", "Poczta", "Baza PS", "Hasła", "Komputer"];
     const takeContent = taking && takeSecretConfirmation(taking.entry, taking.name);
     // Błąd odświeżenia listy nie może schować wyników właśnie zakończonej wysyłki.
     const shareScope = !entries?.ok ? shareEntries : sharing === "all" ? rows : rows.filter(entry => entry.personId === sharing);
@@ -236,7 +236,6 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                                             <td className="p-2">{levels.mail.length ? <span className="flex flex-wrap gap-1">{levels.mail.map(code =>
                                                 <span key={code} className={chip}>{code}</span>)}</span> : <Pill tone="off">brak</Pill>}</td>
                                             <td className="p-2">{levelPill(text.psDb, levels.psDb === "rw")}</td>
-                                            <td className="p-2">{levels.drive === "none" ? <Pill tone="off">brak</Pill> : <Pill tone="ok">{text.drive}</Pill>}</td>
                                             <td className="p-2">{(state => state.text === "—" ? <span className="text-[#5d6878]">—</span>
                                                 : <Pill tone={state.tone}>{state.text}</Pill>)(secretsState(entry))}</td>
                                             <td className="p-2">{(state => <><Pill tone={state.tone}>{state.text}</Pill>
@@ -259,7 +258,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                     <section className="flex flex-col gap-2">
                         <h3 className="text-sm font-semibold">Uprawnienia</h3>
                         <div className="grid grid-cols-[100px_1fr] items-center gap-2 text-sm">
-                            {([["Repozytoria", "sbLevelRepos", "repos", repoOptions], ["Baza PS", "sbLevelPsDb", "psDb", psDbOptions], ["Dysk", "sbLevelDrive", "drive", driveOptions]] as const).map(([label, id, key, options]) =>
+                            {([["Repozytoria", "sbLevelRepos", "repos", repoOptions], ["Baza PS", "sbLevelPsDb", "psDb", psDbOptions]] as const).map(([label, id, key, options]) =>
                                 <React.Fragment key={id}>
                                     <label htmlFor={id} className="mb-0 text-[#5d6878]">{label}</label>
                                     <select id={id} className="rounded-md border border-[#dfe3ea] bg-white px-1.5 py-1 text-[13px]" value={levelsDraft[key]} disabled={!!busy}
@@ -461,6 +460,7 @@ function AgentAccessSection({ personId }: { personId: number }) {
     return <details className="border-t border-[#dfe3ea] pt-3" onToggle={event => event.currentTarget.open && load()}>
         <summary className="cursor-pointer text-sm font-semibold">Co może agent</summary>
         <div className="mt-2 flex flex-col gap-2">
+            <p className="mb-0 text-xs text-[#5d6878]">Pod każdym systemem: zdanie, które agent powie tej osobie.</p>
             {!data ? loading : !data.ok ? <Alert className="mb-0" variant="danger">{describeFailure(data.status, data.message)}</Alert> : <>
                 <ul className="mb-0 flex list-none flex-col gap-1.5 p-0 text-sm">{data.data.systems.map(system => <li key={system.system}>
                     <span className="flex items-center justify-between gap-2"><span>{system.label}</span><Pill tone={agentStateTone(system.state)}>{system.state}</Pill></span>

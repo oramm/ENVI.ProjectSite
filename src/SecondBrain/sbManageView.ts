@@ -61,16 +61,15 @@ export function confirmationContent(action: "block" | "revoke", entry: SbEntry) 
 }
 export const assignableEntries = (entries: SbEntry[]) => entries.filter(entry =>
     (entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE") && entry.githubLogin === null && !entry.isGrantedManually);
-export const noLevels: SbLevels = { repos: "none", psDb: "none", drive: "none", mail: [] };
+export const noLevels: SbLevels = { repos: "none", psDb: "none", mail: [] };
 export const repoOptions = [["none", "brak"], ["read", "odczyt"], ["write", "zapis"]] as const;
 export const psDbOptions = [["none", "brak"], ["ro", "odczyt"], ["rw", "zapis"]] as const;
-export const driveOptions = [["none", "brak"], ["connector", "konektor"]] as const;
 const optionLabel = (options: readonly (readonly [string, string])[], value: string) => options.find(([key]) => key === value)?.[1] ?? value;
 export function describeLevels(entry: SbEntry) {
     const levels = entry.levels ?? noLevels;
     return {
         repos: optionLabel(repoOptions, levels.repos), psDb: optionLabel(psDbOptions, levels.psDb),
-        drive: optionLabel(driveOptions, levels.drive), mail: levels.mail.length ? levels.mail.join(", ") : "brak",
+        mail: levels.mail.length ? levels.mail.join(", ") : "brak",
     };
 }
 // Skrzynki znane z konfiguracji poczty firmowej; inne kody z bazy też zostają widoczne w panelu.

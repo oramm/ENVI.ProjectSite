@@ -70,9 +70,9 @@ describe("Widok zarządzania SB", () => {
 });
 describe("Poziomy dostępu w widoku", () => {
     it("brak poziomów to same 'brak'; podane poziomy mają polskie nazwy", () => {
-        expect(describeLevels(entry())).toEqual({ repos: "brak", psDb: "brak", drive: "brak", mail: "brak" });
-        expect(describeLevels(entry({ levels: { repos: "write", psDb: "ro", drive: "connector", mail: ["faktury", "marek"] } })))
-            .toEqual({ repos: "zapis", psDb: "odczyt", drive: "konektor", mail: "faktury, marek" });
+        expect(describeLevels(entry())).toEqual({ repos: "brak", psDb: "brak", mail: "brak" });
+        expect(describeLevels(entry({ levels: { repos: "write", psDb: "ro", mail: ["faktury", "marek"] } })))
+            .toEqual({ repos: "zapis", psDb: "odczyt", mail: "faktury, marek" });
     });
     it("skrzynki: dodanie bez powtórzeń i zdjęcie jednej", () => {
         expect(toggleMailbox(["faktury"], "marek", true)).toEqual(["faktury", "marek"]);

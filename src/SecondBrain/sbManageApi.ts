@@ -3,7 +3,6 @@ import MainSetup from "../React/MainSetupReact";
 export interface SbLevels {
     repos: "none" | "read" | "write";
     psDb: "none" | "ro" | "rw";
-    drive: "none" | "connector";
     mail: string[];
 }
 export interface SbEntry {

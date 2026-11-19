@@ -103,9 +103,9 @@ describe("Panel SB", () => {
         }]);
     });
     it("tabela grupuje wg roli i pokazuje poziomy, a panel wysyła PUT z poziomami i skrzynkami", async () => {
-        rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } }), row(2)]; renderPage();
+        rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } as never }), row(2)]; renderPage();
         await screen.findByText(/Administratorzy SB · 1/); expect(screen.getByText(/Pracownicy · 1/)).toBeVisible();
-        expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.getByText("konektor")).toBeVisible();
+        expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.queryByText("konektor")).toBeNull(); expect(screen.queryByRole("columnheader", { name: "Dysk" })).toBeNull();
         expect(screen.getByText("Hasła")).toBeVisible(); expect(screen.getByRole("columnheader", { name: "Komputer" })).toBeVisible();
         await pick();
         const panel = screen.getByLabelText("Panel osoby");
@@ -117,7 +117,7 @@ describe("Panel SB", () => {
         await screen.findByText(/Zapisano uprawnienia/);
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/levels", {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
-            body: '{"repos":"write","psDb":"ro","drive":"connector","mail":["chocianow-ik"]}',
+            body: '{"repos":"write","psDb":"ro","mail":["chocianow-ik"]}',
         }]);
     });
     it("kolumna Hasła: X z Y wg uprawnień, kreska gdy nic się nie należy; bez klucza panel blokuje udostępnienie", async () => {
