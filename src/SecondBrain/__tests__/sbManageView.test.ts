@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SbEntry, SbHealth } from "../sbManageApi";
-import { canReceiveSecret, defaultSecretRecipients, secretCharacterCount, secretConfirmationError, secretHealthState, secretRecipients, sharedSecretNames } from "../sbManageView";
+import { agentStateTone, routeAccessLabel, canReceiveSecret, defaultSecretRecipients, secretCharacterCount, secretConfirmationError, secretHealthState, secretRecipients, sharedSecretNames } from "../sbManageView";
 import { assignableEntries, availableActions, confirmationContent, describeDrive, describeFailure, describeGithub, describeLevels, describeOutcome, groupKey, roleLabel, secretInputError, secretLabel, secretsState, toggleMailbox, mailboxChoices, statusViews, healthColumn, formatHealthDate, healthVersions, healthToolLabel, canRequestHealth } from "../sbManageView";
 
 const entry = (over: Partial<SbEntry> = {}): SbEntry => ({
@@ -174,5 +174,10 @@ describe("Hasła wspólne i ich stan na komputerze", () => {
         expect(secretHealthState(failed, NOW)?.tone).toBe("bad");
         expect(secretHealthState({ ...failed, stale: true }, NOW)?.tone).toBe("off");
         expect(secretHealthState(health({ tools: [{ name: "hasla-z-ps", ok: false }] }), NOW)?.text).toContain("Nie udało się pobrać lub sprawdzić haseł");
+    });
+    it("mapa agenta: kolor stanu i polska nazwa klasy trasy", () => {
+        expect(["ma", "nie ma", "agent tego nie robi"].map(state => agentStateTone(state as never))).toEqual(["ok", "off", "warn"]);
+        expect(routeAccessLabel("zamkniete")).toBe("zamknięte");
+        expect(routeAccessLabel("odczyt")).toBe("odczyt");
     });
 });

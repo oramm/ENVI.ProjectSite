@@ -116,6 +116,16 @@ export function giveSbSecret(personId: number, name: string, ciphertext: string,
 }
 export const takeSbSecret = (personId: number, name: string) =>
     request<{ name: string; given: false }>(`${personId}/secrets/${encodeURIComponent(name)}`, { method: "DELETE" });
+export type SbAgentState = "ma" | "nie ma" | "agent tego nie robi";
+export interface SbAgentSystem { system: string; label: string; state: SbAgentState; sentence: string; askWhom: string[] }
+export interface SbAgentRoute { method: string; path: string; access: "odczyt" | "zapis" | "zamkniete"; reason: string; allowed: boolean }
+/** Mapa dostępów agenta osoby - ta sama, którą PS daje agentowi; liczby i zdania liczy PS. */
+export interface SbAgentAccess {
+    personId: number;
+    systems: SbAgentSystem[];
+    psRoutes: { counts: { odczyt: number; zapis: number; zamkniete: number }; allowed: number; routes: SbAgentRoute[] };
+}
+export const fetchSbAgentAccess = (personId: number) => request<SbAgentAccess>(`${personId}/agentAccess`);
 /** Prośba o świeży raport z komputera pracownika; instalator dośle go przy najbliższym sprawdzeniu. */
 export const requestSbHealth = (personId: number) =>
     request<{ requested: true; alreadyPending: boolean }>(`${personId}/healthRequest`, { method: "POST" });

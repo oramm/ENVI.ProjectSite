@@ -1,4 +1,4 @@
-import type { SbAction, SbEntry, SbHealth, SbLevels } from "./sbManageApi";
+import type { SbAction, SbAgentRoute, SbAgentState, SbEntry, SbHealth, SbLevels } from "./sbManageApi";
 
 export const statusViews = {
     INVITED: { label: "Zaproszony", variant: "warning" },
@@ -153,3 +153,6 @@ export function secretHealthState(health: SbHealth | null | undefined, now: Date
 export const healthVersions = (health: SbHealth, now: Date = new Date()) =>
     `SB ${health.sbVersion ?? "?"} · instalator ${health.installerVersion ?? "?"} · raport ${formatHealthDate(health.reportedAt, now)}`;
 export const canRequestHealth = (entry: SbEntry) => entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE";
+// Stan i klasa trasy przychodzą z PS jako kody; na ekranie mają polską nazwę i spokojny kolor.
+export const agentStateTone = (state: SbAgentState): "ok" | "off" | "warn" => state === "ma" ? "ok" : state === "nie ma" ? "off" : "warn";
+export const routeAccessLabel = (access: SbAgentRoute["access"]) => access === "zamkniete" ? "zamknięte" : access;

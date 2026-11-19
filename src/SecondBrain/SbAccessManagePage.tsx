@@ -3,13 +3,13 @@ import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from 
 import ConfirmModal from "../View/Modals/ConfirmModal";
 import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
-import { fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
-    setSbLevels, takeSbSecret, SbAction, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbUnlinkedMember } from "./sbManageApi";
-import { assignableEntries, availableActions, canReceiveSecret, canRequestHealth, confirmationContent, defaultSecretRecipients, describeDrive, describeFailure,
+import { fetchSbAgentAccess, fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
+    setSbLevels, takeSbSecret, SbAction, SbAgentAccess, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbUnlinkedMember } from "./sbManageApi";
+import { agentStateTone, assignableEntries, availableActions, canReceiveSecret, canRequestHealth, confirmationContent, defaultSecretRecipients, describeDrive, describeFailure,
     describeGithub, describeLevels, describeOutcome, driveOptions, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
     healthToolLabel, healthVersions, mailboxChoices, manualExplanation, noLevels,
     psDbOptions, repoOptions, roleLabel, secretCharacterCount, secretConfirmationError, secretHealthState, secretInputError, secretLabel, secretRecipients, secretsState, sharedSecretNames, statusViews, takeSecretConfirmation,
-    toggleMailbox } from "./sbManageView";
+    routeAccessLabel, toggleMailbox } from "./sbManageView";
 import { encryptSecretForKey } from "./sbSecretCrypto";
 
 const personLabel = (person: { name: string; surname: string; systemEmail: string | null }) =>
@@ -325,6 +325,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                         </div>
                         <p className="mb-0 text-xs text-[#5d6878]">{healthContentNote}</p>
                     </section>
+                    <AgentAccessSection key={selected.personId} personId={selected.personId} />
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3">
                         <h3 className="text-sm font-semibold">Dostęp do Second Brain</h3>
                         {selected.isGrantedManually && <p className="mb-0 text-xs text-[#5d6878]">{manualExplanation}</p>}
@@ -449,4 +450,30 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                 </div>)}</Modal.Body>
         </Modal>
     </Container>;
+}
+
+// Mapa jest pobierana dopiero po rozwinięciu, żeby lista osób nie wołała PS dla każdego wiersza.
+function AgentAccessSection({ personId }: { personId: number }) {
+    const [data, setData] = useState<SbFetchResult<SbAgentAccess> | null>(null);
+    const [showRoutes, setShowRoutes] = useState(false);
+    const load = () => { if (!data) void fetchSbAgentAccess(personId).then(setData); };
+    const routes = data?.ok ? data.data.psRoutes : null;
+    return <details className="border-t border-[#dfe3ea] pt-3" onToggle={event => event.currentTarget.open && load()}>
+        <summary className="cursor-pointer text-sm font-semibold">Co może agent</summary>
+        <div className="mt-2 flex flex-col gap-2">
+            {!data ? loading : !data.ok ? <Alert className="mb-0" variant="danger">{describeFailure(data.status, data.message)}</Alert> : <>
+                <ul className="mb-0 flex list-none flex-col gap-1.5 p-0 text-sm">{data.data.systems.map(system => <li key={system.system}>
+                    <span className="flex items-center justify-between gap-2"><span>{system.label}</span><Pill tone={agentStateTone(system.state)}>{system.state}</Pill></span>
+                    <span className="block text-xs text-[#5d6878]">{system.sentence}</span>
+                </li>)}</ul>
+                {routes && <div className="text-xs text-[#5d6878]">
+                    <p className="mb-1">Trasy PS: odczyt {routes.counts.odczyt}, zapis {routes.counts.zapis}, zamknięte {routes.counts.zamkniete}. Agent może użyć {routes.allowed} z nich.</p>
+                    <Button size="sm" variant="outline-secondary" onClick={() => setShowRoutes(!showRoutes)}>{showRoutes ? "Ukryj trasy" : "Pokaż trasy"}</Button>
+                    {showRoutes && <ul className="mb-0 mt-2 flex max-h-64 list-none flex-col gap-1 overflow-auto rounded border border-[#dfe3ea] p-2">{routes.routes.map(route =>
+                        <li key={route.method + route.path}><span className={chip.replace("whitespace-nowrap", "break-all")}>{route.method} {route.path}</span>
+                            <span className="block">{routeAccessLabel(route.access)}, {route.allowed ? "dozwolona" : "niedozwolona"} - {route.reason}</span></li>)}</ul>}
+                </div>}
+            </>}
+        </div>
+    </details>;
 }
