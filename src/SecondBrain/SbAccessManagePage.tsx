@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { Alert, Badge, Button, Col, Container, Form, Modal, Row, Spinner, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import ConfirmModal from "../View/Modals/ConfirmModal";
 import "./sbTailwind.css";
 import { fetchSbAccess } from "./sbAccessApi";
-import { fetchSbAgentAccess, fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
-    setSbLevels, takeSbSecret, SbAction, SbAgentAccess, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbUnlinkedMember } from "./sbManageApi";
+import { addSbGeneralMailbox, fetchSbAgentAccess, fetchSbCandidates, fetchSbEntries, fetchSbMailboxes, fetchSbEvents, fetchSbHealthReport, fetchSbUnlinkedMembers, giveSbSecret, performSbAction, requestSbHealth,
+    rotateSbMailboxPasswords, setSbLevels, setSbMailboxAllEmployees, takeOverSbMailbox, takeSbSecret, SbAction, SbAgentAccess, SbCandidate, SbEntry, SbEvent, SbFetchResult, SbLevels, SbMailbox, SbRotationBatch, SbUnlinkedMember } from "./sbManageApi";
+import { mailboxAction } from "../Mailboxes/mailboxesService";
 import { agentStateTone, assignableEntries, availableActions, canReceiveSecret, canRequestHealth, confirmationContent, defaultSecretRecipients, describeDrive, describeFailure,
     describeGithub, describeLevels, describeOutcome, entryGroups, groupKey, healthColumn, healthContentNote, healthRetentionNote,
-    healthToolLabel, healthVersions, mailboxChoices, manualExplanation, noLevels,
+    generalMailboxes, healthToolLabel, healthVersions, mailboxChoices, mailboxPeople, managedSecretNames, manualExplanation, manualPasswordWarning, noLevels, personSecrets,
     psDbOptions, repoOptions, roleLabel, secretCharacterCount, secretConfirmationError, secretHealthState, secretInputError, secretLabel, secretRecipients, secretsState, sharedSecretNames, statusViews, takeSecretConfirmation,
     routeAccessLabel, toggleMailbox } from "./sbManageView";
 import { encryptSecretForKey } from "./sbSecretCrypto";
@@ -21,6 +22,9 @@ const Pill = ({ tone, children }: { tone: keyof typeof pillTone; children: React
     <span className={`inline-block whitespace-nowrap rounded-full px-2 py-px text-xs ${pillTone[tone]}`}>{children}</span>;
 const levelPill = (label: string, high: boolean) => label === "brak" ? <Pill tone="off">brak</Pill> : <Pill tone={high ? "warn" : "ok"}>{label}</Pill>;
 const chip = "whitespace-nowrap rounded bg-[#eef1f5] px-1.5 font-mono text-xs";
+const issuedPill = (given: boolean) => given ? <Pill tone="ok">wydane</Pill> : <Pill tone="warn">czeka na komputer</Pill>;
+/** "Zmień hasła wszystkich skrzynek": postęp partii z PS; `total` znany po pierwszej odpowiedzi. */
+type Rotation = { total: number | null; rotated: number; afterId: number; failed: SbRotationBatch["failed"]; running: boolean; error: string | null };
 
 export default function SbAccessManagePage({ title }: { title: string }) {
     const [access, setAccess] = useState<"loading" | "error" | "denied" | "granted">("loading");
@@ -51,6 +55,15 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const shareResultsRef = useRef<HTMLFieldSetElement>(null);
     const [taking, setTaking] = useState<{ entry: SbEntry; name: string } | null>(null);
     const [healthError, setHealthError] = useState<string | null>(null);
+    // Skrzynki firmy (SKO): dopisanie, przejęcie hasła przez PS, zmiana haseł wszystkich skrzynek.
+    const [addingMailbox, setAddingMailbox] = useState(false);
+    const [newAddress, setNewAddress] = useState("");
+    const [addError, setAddError] = useState<string | null>(null);
+    const [takingOver, setTakingOver] = useState<SbMailbox | null>(null);
+    const [confirmRotation, setConfirmRotation] = useState(false);
+    const [rotation, setRotation] = useState<Rotation | null>(null);
+    const mailboxList = mailboxes?.ok ? mailboxes.data : [];
+    const managed = managedSecretNames(mailboxList);
 
     async function refresh() {
         // Każda lista ma własny wynik; awaria GitHuba nie zasłania rejestru ani kandydatów.
@@ -109,7 +122,7 @@ export default function SbAccessManagePage({ title }: { title: string }) {
 
     function openShare(entry?: SbEntry) {
         const scope = entry ? [entry] : entries?.ok ? entries.data : [];
-        const names = sharedSecretNames(scope);
+        const names = sharedSecretNames(scope, managed);
         const name = names.find(name => defaultSecretRecipients(scope, name).length) ?? names[0] ?? "";
         setSharing(entry ? entry.personId : "all");
         setShareEntries(scope);
@@ -159,6 +172,63 @@ export default function SbAccessManagePage({ title }: { title: string }) {
         setMessage({ variant: "warning", message: `Odebrano hasło (${secretLabel(name)}): ${personLabel(entry)}. Zmień je u źródła - komputer pracownika mógł je już pobrać.` });
     }
 
+    async function addMailbox() {
+        if (busy) return;
+        setBusy("addMailbox"); setAddError(null);
+        const result = await addSbGeneralMailbox(newAddress.trim());
+        if (result.ok) {
+            setAddingMailbox(false); setNewAddress("");
+            setMessage({ variant: "success", message: `Dopisano skrzynkę ${result.data.address}.` });
+            await refresh();
+        } else setAddError(describeFailure(result.status, result.message));
+        setBusy(null);
+    }
+    async function setMailboxScope(mailbox: SbMailbox, allEmployees: boolean) {
+        if (busy || mailbox.allEmployees === allEmployees) return;
+        setBusy(`mailbox/${mailbox.id}`);
+        const result = await setSbMailboxAllEmployees(mailbox.id, allEmployees);
+        if (result.ok) await refresh(); else setMessage({ variant: "danger", message: describeFailure(result.status, result.message) });
+        setBusy(null);
+    }
+    async function takeOver(mailbox: SbMailbox) {
+        const result = await takeOverSbMailbox(mailbox.id);
+        if (!result.ok) throw new Error(describeFailure(result.status, result.message));
+        setMessage({ variant: "success", message: `Od teraz PS wydaje hasło do ${mailbox.address}.` });
+        await refresh();
+    }
+    // PS zmienia hasła partiami (limit czasu żądania), więc pętla po `afterId`, aż nic nie zostanie.
+    async function rotateAll(from: Rotation) {
+        if (busy) return;
+        setBusy("rotation");
+        let state: Rotation = { ...from, running: true, error: null };
+        setRotation(state);
+        for (;;) {
+            const result = await rotateSbMailboxPasswords(state.afterId);
+            if (!result.ok) { state = { ...state, running: false, error: describeFailure(result.status, result.message) }; break; }
+            const batch = result.data;
+            state = { ...state, total: state.total ?? batch.rotated.length + batch.failed.length + batch.remaining,
+                rotated: state.rotated + batch.rotated.length, failed: [...state.failed, ...batch.failed], afterId: batch.afterId };
+            if (!batch.remaining) { state = { ...state, running: false }; break; }
+            // Partia bez żadnej skrzynki nie posuwa pętli - przerwij zamiast pytać PS w kółko.
+            if (!batch.rotated.length && !batch.failed.length) { state = { ...state, running: false, error: "PS nie zmienił żadnej skrzynki w ostatniej partii." }; break; }
+            setRotation(state);
+        }
+        setRotation(state);
+        try { await refresh(); } finally { setBusy(null); }
+    }
+    async function retryRotation(mailbox: SbMailbox) {
+        if (busy || mailbox.passwordVersion == null) return;
+        setBusy(`retry/${mailbox.id}`);
+        try {
+            await mailboxAction<SbMailbox>(mailbox.id, "password");
+            setRotation(current => current && { ...current, rotated: current.rotated + 1, failed: current.failed.filter(item => item.address !== mailbox.address) });
+        } catch (error) {
+            const text = error instanceof Error ? error.message : "Nie udało się zmienić hasła.";
+            setRotation(current => current && { ...current, failed: current.failed.map(item => item.address === mailbox.address ? { ...item, error: text } : item) });
+        }
+        try { await refresh(); } finally { setBusy(null); }
+    }
+
     async function requestHealth(entry: SbEntry) {
         if (busy) return;
         setBusy(`${entry.personId}/healthRequest`); setHealthError(null);
@@ -194,22 +264,26 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const takeContent = taking && takeSecretConfirmation(taking.entry, taking.name);
     // Błąd odświeżenia listy nie może schować wyników właśnie zakończonej wysyłki.
     const shareScope = !entries?.ok ? shareEntries : sharing === "all" ? rows : rows.filter(entry => entry.personId === sharing);
-    const shareNames = sharedSecretNames(shareScope);
+    const shareNames = sharedSecretNames(shareScope, managed);
     const recipients = secretRecipients(shareScope, shareName);
     const shareInputError = secretConfirmationError(sharePassword, shareRepeated);
     const sharePasswordError = sharePassword ? secretInputError(sharePassword) : null;
     const shareRepeatedError = shareRepeated && !sharePasswordError ? shareInputError : null;
     const secretHealth = selected && secretHealthState(selected.health);
+    const secrets = selected && personSecrets(selected, mailboxList);
+    const general = generalMailboxes(mailboxList);
+    const manualWarning = manualPasswordWarning(mailboxList);
 
     return <Container fluid className="px-3" style={{ overflowWrap: "anywhere" }}>
         <h4>Dostęp do Second Brain</h4>
         <p className="text-muted">Tutaj zapraszasz, blokujesz, odblokowujesz i odbierasz dostęp, ustawiasz poziomy uprawnień oraz sprawdzasz historię każdej osoby; blokada i odebranie zatrzymują dalsze pobieranie wiedzy, a kopia już pobrana zostaje.</p>
         {message && <Alert variant={message.variant} dismissible onClose={() => setMessage(null)}>{message.message}</Alert>}
         <Button className="mb-3" onClick={() => { setCandidateId(""); setInviting(true); }} disabled={!!busy}>Zaproś osobę</Button>
-        <Button className="mb-3 ms-2" variant="outline-primary" onClick={() => openShare()} disabled={!!busy || !sharedSecretNames(rows).length}>Hasła wspólne</Button>
+        <Button className="mb-3 ms-2" variant="outline-primary" onClick={() => openShare()} disabled={!!busy || !sharedSecretNames(rows, managed).length}>Hasła wspólne</Button>
 
         <div id="sb-access-admin">
-        <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_340px]">
+        <div className="mb-4 grid items-start gap-4 lg:grid-cols-[1fr_340px]">
+            <div className="flex min-w-0 flex-col gap-4">
             <div className="min-w-0 overflow-x-auto rounded-md border border-[#dfe3ea] bg-white">
                 {!entries ? <div className="p-3">{loading}</div> : !entries.ok ? <Alert className="m-3" variant="danger">{describeFailure(entries.status, entries.message)}</Alert>
                     : !rows.length ? <p className="p-3">Nikt nie ma jeszcze wpisu w rejestrze.</p> :
@@ -247,6 +321,43 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                         </tbody>
                     </table>}
                 {rows.length > 0 && <p className="mb-0 border-t border-[#dfe3ea] p-2 text-xs text-[#5d6878]">{healthRetentionNote}</p>}
+            </div>
+            <section className="flex flex-col gap-2" aria-label="Skrzynki pocztowe firmy">
+                <div className="flex flex-wrap items-center gap-2">
+                    <h5 className="mb-0 mr-auto">Skrzynki pocztowe firmy</h5>
+                    <Button size="sm" variant="outline-primary" disabled={!!busy || !mailboxes?.ok}
+                        onClick={() => { setNewAddress(""); setAddError(null); setAddingMailbox(true); }}>Dopisz skrzynkę</Button>
+                    <Button size="sm" variant="outline-danger" disabled={!!busy || !mailboxes?.ok} onClick={() => setConfirmRotation(true)}>Zmień hasła wszystkich skrzynek</Button>
+                </div>
+                <p className="mb-0 text-[13px] text-[#5d6878]">Skrzynek projektów tu nie ma: każdy pracownik i kierownik ma je wszystkie z roli, współpracownik tylko swoich projektów. Przycisk „Zmień hasła wszystkich skrzynek” jest na czas, gdy ktoś odchodzi z firmy.</p>
+                <div className="min-w-0 overflow-x-auto rounded-md border border-[#dfe3ea] bg-white">
+                    {!mailboxes ? <div className="p-3">{loading}</div> : !mailboxes.ok ? <Alert className="m-3" variant="danger">Nie udało się pobrać spisu skrzynek z PS.</Alert>
+                        : !general.length ? <p className="mb-0 p-3 text-sm">Nie dopisano jeszcze żadnej skrzynki firmy.</p> :
+                        <table className="mb-0 w-full min-w-[640px] text-sm">
+                            <thead className="border-b border-[#dfe3ea] text-left text-xs uppercase tracking-wide text-[#5d6878]">
+                                <tr><th className="p-2">Adres</th><th className="p-2">Kto ma dostęp</th><th className="p-2">Hasło</th><th className="p-2"><span className="sr-only">Działania</span></th></tr>
+                            </thead>
+                            <tbody>{general.map(mailbox => {
+                                const people = mailboxPeople(rows, mailbox.code), fromPs = mailbox.passwordVersion != null;
+                                return <tr key={mailbox.id} className="border-b border-[#dfe3ea] last:border-b-0">
+                                    <td className="p-2 font-medium">{mailbox.address}</td>
+                                    <td className="p-2">
+                                        <ToggleButtonGroup type="radio" size="sm" name={`sbMailboxScope${mailbox.id}`} aria-label={`Kto ma dostęp do ${mailbox.address}`}
+                                            value={mailbox.allEmployees ? "all" : "people"} onChange={(value: string) => void setMailboxScope(mailbox, value === "all")}>
+                                            <ToggleButton id={`sbMailboxAll${mailbox.id}`} value="all" variant="outline-secondary" disabled={!!busy}>Wszyscy pracownicy</ToggleButton>
+                                            <ToggleButton id={`sbMailboxPeople${mailbox.id}`} value="people" variant="outline-secondary" disabled={!!busy}>Wskazane osoby</ToggleButton>
+                                        </ToggleButtonGroup>
+                                        {!mailbox.allEmployees && <div className="mt-1 text-[13px] text-[#5d6878]">{people.length ? people.join(", ") : "Nikt nie ma tej skrzynki w uprawnieniach."}</div>}
+                                    </td>
+                                    <td className="p-2">{fromPs ? "Wydaje PS" : "Ręczne"}</td>
+                                    <td className="p-2 text-right">{fromPs ? null : mailbox.allEmployees
+                                        ? <Button size="sm" variant="outline-primary" disabled={!!busy} onClick={() => setTakingOver(mailbox)}>Niech PS wydaje hasło</Button>
+                                        : <span className="text-[#5d6878]">Zostaje ręczna</span>}</td>
+                                </tr>;
+                            })}</tbody>
+                        </table>}
+                </div>
+            </section>
             </div>
             <aside className="flex min-w-0 flex-col gap-3 rounded-md border border-[#dfe3ea] bg-white p-3" aria-label="Panel osoby">
                 {!selected || !selectedStatus ? <p className="mb-0 text-sm text-[#5d6878]">Kliknij osobę w tabeli, żeby zobaczyć i zmienić jej uprawnienia.</p> : <>
@@ -288,15 +399,24 @@ export default function SbAccessManagePage({ title }: { title: string }) {
                             <p className="mb-0 text-xs text-[#5d6878]">Klucz komputera <span className={chip}>{selected.keyFingerprint}</span>. Porównaj z ekranem instalatora u pracownika.</p>
                             <p className="mb-0 text-xs text-[#5d6878]">Hasło wpisane tutaj zostaje zaszyfrowane w Twojej przeglądarce. PS zapisuje tylko szyfr.</p>
                         </>}
-                        {!(selected.secretsExpected ?? []).length ? <p className="mb-0 text-xs text-[#5d6878]">Uprawnienia tej osoby nie obejmują żadnego hasła (skrzynki poczty, baza PS).</p>
-                            : <ul className="mb-0 flex list-none flex-col gap-1 p-0 text-sm">{(selected.secretsExpected ?? []).map(name => {
-                                const given = (selected.secretsGiven ?? []).includes(name);
-                                return <li key={name} className="flex items-center justify-between gap-2">
-                                    <span>{secretLabel(name)} {given ? <Pill tone="ok">udostępnione</Pill> : <Pill tone="warn">czeka</Pill>}</span>
-                                    {given && <Button size="sm" variant="outline-danger" disabled={!!busy} onClick={() => setTaking({ entry: selected, name })}>Odbierz</Button>}
-                                </li>;
-                            })}</ul>}
-                        <div><Button size="sm" disabled={!!busy || !canReceiveSecret(selected) || !(selected.secretsExpected ?? []).length}
+                        {!secrets || !(selected.secretsExpected ?? []).length ? <p className="mb-0 text-xs text-[#5d6878]">Uprawnienia tej osoby nie obejmują żadnego hasła (skrzynki poczty, baza PS).</p> : <>
+                            <ul className="mb-0 flex list-none flex-col gap-1 p-0 text-sm">
+                                {secrets.projects && <li className="flex items-center justify-between gap-2">
+                                    <span>{secrets.projects.label} {issuedPill(secrets.projects.given)}</span><span className="whitespace-nowrap text-xs text-[#5d6878]">Wydaje PS</span></li>}
+                                {secrets.general.map(({ name, given }) => <li key={name} className="flex items-center justify-between gap-2">
+                                    <span>{secretLabel(name)} {issuedPill(given)}</span><span className="whitespace-nowrap text-xs text-[#5d6878]">Wydaje PS</span></li>)}
+                                {secrets.manual.map(name => {
+                                    const given = (selected.secretsGiven ?? []).includes(name);
+                                    return <li key={name} className="flex items-center justify-between gap-2">
+                                        <span>{secretLabel(name)} {given ? <Pill tone="ok">udostępnione</Pill> : <Pill tone="warn">czeka</Pill>}</span>
+                                        {given && <Button size="sm" variant="outline-danger" disabled={!!busy} onClick={() => setTaking({ entry: selected, name })}>Odbierz</Button>}
+                                    </li>;
+                                })}
+                            </ul>
+                            {(secrets.projects?.given === false || secrets.general.some(item => !item.given)) &&
+                                <p className="mb-0 text-xs text-[#5d6878]">„Czeka na komputer”: PS da hasło, gdy komputer tej osoby połączy się następnym razem. Nic nie trzeba robić.</p>}
+                        </>}
+                        <div><Button size="sm" disabled={!!busy || !canReceiveSecret(selected) || !secrets?.manual.length}
                             onClick={() => openShare(selected)}>Udostępnij hasło…</Button></div>
                     </section>
                     <section className="flex flex-col gap-2 border-t border-[#dfe3ea] pt-3" aria-label="Komputer">
@@ -436,6 +556,58 @@ export default function SbAccessManagePage({ title }: { title: string }) {
             confirmLabel="Odbierz hasło" confirmVariant="danger"
             onClose={() => { if (!busy) setTaking(null); }}
             onConfirm={() => takeSecret(taking.entry, taking.name)} />}
+
+        <Modal show={addingMailbox} onHide={() => { if (!busy) setAddingMailbox(false); }}>
+            <Modal.Header closeButton><Modal.Title>Dopisz skrzynkę</Modal.Title></Modal.Header>
+            <Form onSubmit={event => { event.preventDefault(); void addMailbox(); }}>
+                <Modal.Body>
+                    <Form.Label htmlFor="sbMailboxAddress">Adres skrzynki</Form.Label>
+                    <Form.Control id="sbMailboxAddress" type="email" placeholder="nazwa@envi.com.pl" value={newAddress} disabled={!!busy}
+                        onChange={event => setNewAddress(event.target.value)} />
+                    <Form.Text muted>PS sprawdzi, czy taka skrzynka istnieje na serwerze poczty. Niczego nie zakłada.</Form.Text>
+                    {addError && <Alert className="mt-3 mb-0" variant="danger">{addError}</Alert>}
+                </Modal.Body>
+                <Modal.Footer><Button variant="secondary" disabled={!!busy} onClick={() => setAddingMailbox(false)}>Anuluj</Button>
+                    <Button type="submit" disabled={!!busy || !newAddress.trim()}>{busy === "addMailbox" && loading} Dopisz</Button></Modal.Footer>
+            </Form>
+        </Modal>
+
+        {takingOver && <ConfirmModal show title={`PS ma wydawać hasło do ${takingOver.address}?`} confirmLabel="PS wydaje hasło"
+            prompt={<><p>PS zmieni hasło tej skrzynki na serwerze poczty i sam da nowe hasło komputerom osób z dostępem (teraz: wszyscy pracownicy). Dotychczasowe hasło przestanie działać.</p>
+                <p className="mb-0 rounded bg-light p-2 small">Kto loguje się do tej skrzynki ręcznie, na przykład w poczcie w przeglądarce, weźmie nowe hasło od swojego agenta. Agent wkłada je do schowka.</p></>}
+            onClose={() => setTakingOver(null)} onConfirm={() => takeOver(takingOver)} />}
+
+        {confirmRotation && <ConfirmModal show title="Zmienić hasła wszystkich skrzynek?" confirmLabel="Zmień hasła" confirmVariant="danger"
+            prompt={<><p>Używaj, gdy ktoś odchodzi z firmy. PS zmieni hasła wszystkich skrzynek, które sam wydaje: skrzynek projektów i skrzynek firmy z hasłem od PS. Nowe hasła sam da komputerom osób, które dalej mają dostęp.</p>
+                <p>Kto loguje się ręcznie, weźmie nowe hasło od swojego agenta.</p>
+                {manualWarning && <Alert className="mb-0" variant="warning">{manualWarning}</Alert>}</>}
+            onClose={() => setConfirmRotation(false)}
+            onConfirm={async () => { void rotateAll({ total: null, rotated: 0, afterId: 0, failed: [], running: true, error: null }); }} />}
+
+        <Modal show={!!rotation} onHide={() => { if (!rotation?.running) setRotation(null); }} backdrop={rotation?.running ? "static" : true}>
+            <Modal.Header closeButton={!rotation?.running}><Modal.Title>Zmiana haseł skrzynek</Modal.Title></Modal.Header>
+            {rotation && <Modal.Body>
+                <label htmlFor="sbRotationProgress" className="small">{rotation.total === null ? "Zmieniam hasła…"
+                    : `Zmieniono ${rotation.rotated} z ${rotation.total} ${rotation.total === 1 ? "skrzynki" : "skrzynek"}`}</label>
+                <progress id="sbRotationProgress" className="w-100" max={rotation.total || 1} value={rotation.total === null ? undefined : rotation.rotated}>{rotation.rotated}</progress>
+                {rotation.total === 0 && <p className="small mb-0 mt-2">PS nie wydaje jeszcze hasła żadnej skrzynki, więc nie było czego zmieniać.</p>}
+                {rotation.error && <Alert className="mt-3" variant="danger">{rotation.error}{" "}
+                    <Button size="sm" variant="outline-danger" disabled={!!busy} onClick={() => void rotateAll(rotation)}>Kontynuuj</Button></Alert>}
+                {rotation.failed.length > 0 && <>
+                    <p className="fw-semibold small mt-3 mb-2">Nie udało się na {rotation.failed.length} {rotation.failed.length === 1 ? "skrzynce" : "skrzynkach"}:</p>
+                    <ul className="list-unstyled small mb-2">{rotation.failed.map(item => {
+                        const mailbox = mailboxList.find(candidate => candidate.address === item.address);
+                        return <li key={item.address} className="d-flex align-items-center justify-content-between gap-2 border-bottom py-1">
+                            <span>{item.address}<span className="text-muted"> · {item.error}</span></span>
+                            {mailbox?.passwordVersion != null && <Button size="sm" variant="outline-primary" disabled={!!busy || rotation.running}
+                                onClick={() => void retryRotation(mailbox)}>{busy === `retry/${mailbox.id}` && loading} Ponów</Button>}
+                        </li>;
+                    })}</ul>
+                    <p className="small text-muted mb-0">Na tych skrzynkach dalej działa stare hasło. Na pozostałych działa już nowe.</p>
+                </>}
+            </Modal.Body>}
+            <Modal.Footer><Button variant="secondary" disabled={!!rotation?.running} onClick={() => setRotation(null)}>Zamknij</Button></Modal.Footer>
+        </Modal>
 
         <Modal show={!!historyPerson} onHide={() => setHistoryPerson(null)}>
             <Modal.Header closeButton><Modal.Title>Historia - {historyPerson && personLabel(historyPerson)}</Modal.Title></Modal.Header>

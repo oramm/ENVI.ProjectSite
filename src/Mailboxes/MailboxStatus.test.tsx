@@ -1,5 +1,5 @@
 import React, { StrictMode } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MailboxStatus, useMailboxConfirmation } from "./MailboxStatus";
 import { MailboxRecord } from "./mailboxesService";
@@ -104,5 +104,31 @@ describe("stan skrzynki i jednorazowe hasło", () => {
         await waitFor(() => expect(screen.queryByLabelText("Nowe hasło skrzynki")).toBeNull());
         expect(mocks.action).toHaveBeenCalledTimes(1);
         expect(JSON.stringify(mocks.onSaved.mock.calls)).not.toContain("TylkoRaz12345678");
+    });
+    it("hasło od PS: 'Zmień hasło' dopiero po potwierdzeniu, bez hasła na ekranie i bez wiersza kopii", async () => {
+        const managed: MailboxRecord = { ...ACTIVE, agentCopyStatus: "NONE", passwordVersion: 2 };
+        mocks.action.mockResolvedValue({ ...managed, passwordVersion: 3 });
+        render(<MailboxStatus initialMailbox={managed} showInitialPassword />);
+        expect(screen.getByText("Założona · hasło wydaje PS")).toBeInTheDocument();
+        expect(screen.queryByText(/Kopia dla agenta/)).toBeNull();
+        expect(screen.queryByText("Ponów kopię")).toBeNull();
+        expect(mocks.action).not.toHaveBeenCalled();
+        fireEvent.click(screen.getByText("Zmień hasło"));
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByText("Zmienić hasło chc.01@envi.com.pl?")).toBeInTheDocument();
+        expect(within(dialog).getByText("PS zmieni hasło na serwerze poczty i sam rozda nowe komputerom osób z dostępem.")).toBeInTheDocument();
+        expect(mocks.action).not.toHaveBeenCalled();
+        fireEvent.click(within(dialog).getByRole("button", { name: "Zmień hasło" }));
+        await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+        expect(mocks.action.mock.calls).toEqual([[3, "password"]]);
+        expect(screen.queryByLabelText("Nowe hasło skrzynki")).toBeNull();
+    });
+    it("założenie skrzynki z hasłem od PS nie zmienia hasła zaraz po założeniu", async () => {
+        mocks.action.mockResolvedValue({ ...ACTIVE, agentCopyStatus: "NONE", passwordVersion: 1 });
+        render(<MailboxStatus initialMailbox={{ ...ACTIVE, statusCode: "PENDING" }} showInitialPassword />);
+        fireEvent.click(screen.getByText("Ponów"));
+        await waitFor(() => expect(screen.getByText("Założona · hasło wydaje PS")).toBeInTheDocument());
+        expect(mocks.action.mock.calls).toEqual([[3, "provision"]]);
+        expect(screen.queryByLabelText("Nowe hasło skrzynki")).toBeNull();
     });
 });

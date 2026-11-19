@@ -9,8 +9,12 @@ export interface MailboxRecord {
     contractId: number | null;
     statusCode: string;
     lastError: string | null;
-    agentCopyStatus: "PENDING" | "SET";
+    agentCopyStatus: "PENDING" | "SET" | "NONE";
     agentCopyLastError: string | null;
+    /** Różny od null = hasło wydaje PS sam komputerom osób z dostępem (SKO); PS go nie pokazuje. */
+    passwordVersion?: number | null;
+    /** Skrzynka firmy dla wszystkich pracowników (SKO); skrzynki projektów mają to z reguły. */
+    allEmployees?: boolean;
 }
 
 export interface MailboxCreationResult {

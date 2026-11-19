@@ -1,4 +1,5 @@
 import MainSetup from "../React/MainSetupReact";
+import type { MailboxRecord } from "../Mailboxes/mailboxesService";
 
 export interface SbLevels {
     repos: "none" | "read" | "write";
@@ -68,10 +69,10 @@ export type SbFailure = { ok: false; status: number; message: string };
 export type SbFetchResult<T> = { ok: true; data: T } | SbFailure;
 export type SbOperationResult = { ok: true; result: "OK" | "PARTIAL"; note: string } | SbFailure;
 
-async function request<T>(route: string, init: RequestInit = {}): Promise<SbFetchResult<T>> {
+async function request<T>(route: string, init: RequestInit = {}, prefix = "sbAccess/"): Promise<SbFetchResult<T>> {
     let response: Response;
     try {
-        response = await fetch(`${MainSetup.serverUrl}sbAccess/${route}`, { ...init, credentials: "include" });
+        response = await fetch(`${MainSetup.serverUrl}${prefix}${route}`, { ...init, credentials: "include" });
     } catch { return { ok: false, status: 0, message: "" }; }
     try {
         const body = await response.json();
@@ -85,9 +86,17 @@ async function request<T>(route: string, init: RequestInit = {}): Promise<SbFetc
 }
 export const fetchSbEntries = () => request<SbEntry[]>("entries");
 export const fetchSbCandidates = () => request<SbCandidate[]>("candidates");
-/** Spis skrzynek poczty z bazy PS (plan MBX); bez haseł. */
-export interface SbMailbox { code: string; address: string }
+/** Spis skrzynek poczty z bazy PS (plan MBX); bez haseł. `passwordVersion` różny od null = hasło wydaje PS (SKO). */
+export type SbMailbox = MailboxRecord;
 export const fetchSbMailboxes = () => request<SbMailbox[]>("mailboxes");
+const json = (body: unknown): RequestInit => ({ method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+/** Skrzynki firmy (SKO): trasy /mailboxes, ta sama obsługa błędów co Dostępy SB. */
+export const addSbGeneralMailbox = (address: string) => request<SbMailbox>("general", json({ address }), "mailboxes/");
+export const setSbMailboxAllEmployees = (id: number, allEmployees: boolean) =>
+    request<SbMailbox>(`${id}/allEmployees`, { ...json({ allEmployees }), method: "PUT" }, "mailboxes/");
+export const takeOverSbMailbox = (id: number) => request<SbMailbox>(`${id}/takeOver`, { method: "POST" }, "mailboxes/");
+export interface SbRotationBatch { rotated: string[]; failed: { address: string; error: string }[]; afterId: number; remaining: number }
+export const rotateSbMailboxPasswords = (afterId: number) => request<SbRotationBatch>("passwords/rotateAll", json({ afterId }), "mailboxes/");
 export const fetchSbUnlinkedMembers = () => request<SbUnlinkedMember[]>("githubMembers/unlinked");
 export const fetchSbEvents = (personId: number) => request<SbEvent[]>(`${personId}/events`);
 export async function performSbAction(personId: number, action: SbAction, githubLogin?: string): Promise<SbOperationResult> {

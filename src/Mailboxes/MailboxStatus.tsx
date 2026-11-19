@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { RepositoryDataItem } from "../../Typings/bussinesTypes";
+import ConfirmModal from "../View/Modals/ConfirmModal";
 import { ModalSaveCallback } from "../View/Modals/ModalsTypes";
 import { fetchMailboxes, mailboxAction, MailboxCreationResult, MailboxRecord } from "./mailboxesService";
 
@@ -12,26 +13,30 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
     const [password, setPassword] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
+    const [confirming, setConfirming] = useState(false);
     const initialPasswordRequested = useRef(false);
+    // Hasło wydaje PS (SKO): zmiana tylko po potwierdzeniu i bez hasła na ekranie.
+    const managed = mailbox.passwordVersion != null;
 
     async function changePassword() {
         setBusy(true);
         setError("");
         setPassword(null);
         try {
-            const result = await mailboxAction<{ password: string }>(mailbox.id, "password");
-            setPassword(result.password);
+            const result = await mailboxAction<{ password: string } | MailboxRecord>(mailbox.id, "password");
+            // Skrzynkę mógł w międzyczasie przejąć PS - wtedy odpowiedź to sama skrzynka, bez hasła.
+            if ("password" in result) setPassword(result.password); else setMailbox(result);
         } catch (error) {
             setError(error instanceof Error ? error.message : "Nie udało się zmienić hasła.");
         } finally { setBusy(false); }
     }
 
     useEffect(() => {
-        if (showInitialPassword && mailbox.statusCode === "ACTIVE" && !initialPasswordRequested.current) {
+        if (showInitialPassword && mailbox.statusCode === "ACTIVE" && !managed && !initialPasswordRequested.current) {
             initialPasswordRequested.current = true;
             void changePassword();
         }
-    }, [showInitialPassword, mailbox.id, mailbox.statusCode]);
+    }, [showInitialPassword, mailbox.id, mailbox.statusCode, managed]);
 
     async function act(action: "provision" | "project" | "agentCopy") {
         setBusy(true);
@@ -41,7 +46,7 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
             const updated = await mailboxAction<MailboxRecord>(mailbox.id, action);
             if (action === "provision" && updated.statusCode === "ACTIVE") initialPasswordRequested.current = true;
             setMailbox(updated);
-            if (action === "provision" && updated.statusCode === "ACTIVE") await changePassword();
+            if (action === "provision" && updated.statusCode === "ACTIVE" && updated.passwordVersion == null) await changePassword();
         } catch (error) {
             setError(error instanceof Error ? error.message : "Nie udało się zapisać zmiany skrzynki.");
         } finally { setBusy(false); }
@@ -51,8 +56,8 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
         <div className="my-2">
             <div><strong>{mailbox.address}</strong></div>
             <div>{mailbox.statusCode === "ACTIVE" ? "Założona" : mailbox.statusCode === "PENDING"
-                ? `Do założenia${mailbox.lastError ? `: ${mailbox.lastError}` : ""}` : "Nieaktywna"}</div>
-            {mailbox.statusCode === "ACTIVE" && <div>
+                ? `Do założenia${mailbox.lastError ? `: ${mailbox.lastError}` : ""}` : "Nieaktywna"}{managed && " · hasło wydaje PS"}</div>
+            {mailbox.statusCode === "ACTIVE" && mailbox.agentCopyStatus !== "NONE" && <div>
                 {mailbox.agentCopyStatus === "SET" ? "Kopia dla agenta: ustawiona"
                     : `Kopia dla agenta nie ustawiona: ${mailbox.agentCopyLastError || "oczekuje na ustawienie"}`}
                 {mailbox.agentCopyStatus !== "SET" && <> <Button size="sm" variant="outline-primary" disabled={busy}
@@ -62,7 +67,7 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
                 {mailbox.statusCode === "PENDING" && <Button size="sm" variant="outline-primary" disabled={busy}
                     onClick={() => void act("provision")}>Ponów</Button>}
                 {mailbox.statusCode === "ACTIVE" && <Button size="sm" variant="outline-primary" disabled={busy}
-                    onClick={() => void changePassword()}>Zmień hasło</Button>}
+                    onClick={() => managed ? setConfirming(true) : void changePassword()}>Zmień hasło</Button>}
                 {mailbox.contractId && <Button size="sm" variant="outline-secondary" disabled={busy}
                     onClick={() => void act("project")}>Przenieś skrzynkę do projektu</Button>}
             </div>
@@ -73,6 +78,11 @@ export function MailboxStatus({ initialMailbox, showInitialPassword = false }: {
                 <Form.Control className="my-2" aria-label="Nowe hasło skrzynki" value={password} readOnly autoComplete="off" />
                 <Button size="sm" variant="outline-secondary" onClick={() => setPassword(null)}>Ukryj hasło</Button>
             </Alert>}
+            {confirming && <ConfirmModal show title={`Zmienić hasło ${mailbox.address}?`} confirmLabel="Zmień hasło"
+                prompt={<><p>PS zmieni hasło na serwerze poczty i sam rozda nowe komputerom osób z dostępem.</p>
+                    <p className="mb-0">Do ręcznego logowania weź nowe hasło od swojego agenta. Agent wkłada je do schowka.</p></>}
+                onClose={() => setConfirming(false)}
+                onConfirm={async () => setMailbox(await mailboxAction<MailboxRecord>(mailbox.id, "password"))} />}
         </div>
     );
 }
