@@ -120,8 +120,26 @@ describe("Panel SB", () => {
         await screen.findByText(/Zapisano uprawnienia/);
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/levels", {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
-            body: '{"repos":"write","psDb":"ro","mail":["chocianow-ik"]}',
+            body: '{"repos":"write","psDb":"ro","mail":["chocianow-ik"],"expected":{"repos":"read","psDb":"none","drive":"connector","mail":["faktury"]}}',
         }]);
+    });
+    it("zapis wysyła stan z chwili wyboru osoby, nie z odświeżonej w tle listy; 409 pokazuje komunikat i odświeża", async () => {
+        rows = [row(1, { levels: { repos: "write", psDb: "rw", mail: [] } })]; renderPage();
+        await pick();
+        rows = [row(1, { levels: { repos: "none", psDb: "rw", mail: [] } })];
+        operationStatus = 409; operationBody = { errorMessage: "Ktoś zmienił te uprawnienia, gdy ekran był otwarty (teraz: repozytoria: brak; baza PS: zapis; poczta: brak). Nic nie zapisano." };
+        const panel = screen.getByLabelText("Panel osoby");
+        fireEvent.change(within(panel).getByLabelText("Baza PS"), { target: { value: "ro" } });
+        const entriesCalls = () => fetchMock.mock.calls.filter(call => call[0].endsWith("/entries")).length;
+        const before = entriesCalls();
+        fireEvent.click(within(panel).getByRole("button", { name: "Zapisz uprawnienia" }));
+        expect(await screen.findByText(/Ktoś zmienił te uprawnienia/)).toBeVisible();
+        expect(JSON.parse(mutations()[0][1].body).expected).toEqual({ repos: "write", psDb: "rw", mail: [] });
+        await waitFor(() => expect(entriesCalls()).toBe(before + 1));
+        // po odświeżeniu kolejny zapis bez ponownego wyboru osoby dalej niesie stary stan (PS znów odmówi)
+        fireEvent.click(within(screen.getByLabelText("Panel osoby")).getByRole("button", { name: "Zapisz uprawnienia" }));
+        await waitFor(() => expect(mutations()).toHaveLength(2));
+        expect(JSON.parse(mutations()[1][1].body).expected).toEqual({ repos: "write", psDb: "rw", mail: [] });
     });
     it("kolumna Hasła: X z Y wg uprawnień, kreska gdy nic się nie należy; bez klucza panel blokuje udostępnienie", async () => {
         rows = [row(1, { secretsExpected: ["poczta-faktury", "baza-ps"], secretsGiven: ["baza-ps"], keyFingerprint: null }), row(2, { secretsExpected: [] })];

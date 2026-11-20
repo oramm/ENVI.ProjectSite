@@ -111,9 +111,10 @@ export async function performSbAction(personId: number, action: SbAction, github
         return { ok: false, status: 200, message: "Nieprawidłowa odpowiedź serwera PS." };
     return { ok: true, result: response.data.result, note: response.data.note };
 }
-export async function setSbLevels(personId: number, levels: SbLevels): Promise<SbFetchResult<SbEntry>> {
+/** `expected` = poziomy, które ekran widział przy wyborze osoby; PS odmawia (409), gdy ktoś je w międzyczasie zmienił. */
+export async function setSbLevels(personId: number, levels: SbLevels, expected?: SbLevels): Promise<SbFetchResult<SbEntry>> {
     return request<SbEntry>(`${personId}/levels`, {
-        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(levels),
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...levels, expected }),
     });
 }
 /** Wysyła wyłącznie szyfrogram i odcisk klucza, którym szyfrowano; jawne hasło nie opuszcza przeglądarki. */

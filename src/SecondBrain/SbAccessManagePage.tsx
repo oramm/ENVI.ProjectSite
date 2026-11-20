@@ -40,6 +40,8 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     const [historyPerson, setHistoryPerson] = useState<SbEntry | null>(null);
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [levelsDraft, setLevelsDraft] = useState<SbLevels>(noLevels);
+    // Stan z chwili wyboru osoby: odświeżenie listy w tle nie może go podmienić, bo zgubiłoby cudzą zmianę.
+    const [levelsBase, setLevelsBase] = useState<SbLevels | undefined>();
     const [levelsError, setLevelsError] = useState<string | null>(null);
     const [mailboxes, setMailboxes] = useState<SbFetchResult<SbMailbox[]> | null>(null);
     const [events, setEvents] = useState<SbFetchResult<SbEvent[]> | null>(null);
@@ -107,16 +109,20 @@ export default function SbAccessManagePage({ title }: { title: string }) {
     }
 
     function selectEntry(entry: SbEntry) {
-        setSelectedId(entry.personId); setLevelsDraft(entry.levels ? { repos: entry.levels.repos, psDb: entry.levels.psDb, mail: entry.levels.mail } : noLevels); setLevelsError(null); setHealthError(null);
+        setSelectedId(entry.personId); setLevelsDraft(entry.levels ? { repos: entry.levels.repos, psDb: entry.levels.psDb, mail: entry.levels.mail } : noLevels); setLevelsBase(entry.levels); setLevelsError(null); setHealthError(null);
     }
     async function saveLevels(entry: SbEntry) {
         if (busy) return;
         setBusy(`${entry.personId}/levels`); setLevelsError(null);
-        const result = await setSbLevels(entry.personId, levelsDraft);
+        const result = await setSbLevels(entry.personId, levelsDraft, levelsBase);
         if (result.ok) {
+            setLevelsBase(result.data.levels);
             setMessage({ variant: "success", message: `Zapisano uprawnienia: ${personLabel(entry)}.` });
             await refresh();
-        } else setLevelsError(describeFailure(result.status, result.message));
+        } else {
+            setLevelsError(describeFailure(result.status, result.message));
+            if (result.status === 409) await refresh();
+        }
         setBusy(null);
     }
 
