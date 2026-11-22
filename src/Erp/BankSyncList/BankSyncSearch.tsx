@@ -8,7 +8,7 @@ import BankStatementsTab from './BankStatementsTab';
 import DecisionQueue from './DecisionQueue';
 import { BankTransferFilterBody } from './BankTransferFilterBody';
 import {
-    bankTransfersRepository, createAllocation, dismissTransfer, fetchDuplicates, fetchPendingTransfers,
+    bankTransfersRepository, createAllocation, dismissTransfer, fetchBankStatementImport, fetchDuplicates, fetchPendingTransfers,
     fetchStatements, fetchWadiumMatches, restoreTransfer, StatementCoverage, UploadPreview, uploadBankStatement,
 } from './BankSyncController';
 import { BankTransferDescription, fmt, fmtDate, fmtPeriod, StatementGapAlert } from './BankSyncViews';
@@ -196,6 +196,8 @@ function WadiumTab() {
 }
 
 
+const IMPORT_POLL_TIMEOUT_MS = 5 * 60 * 1000;
+
 function UploadModal({ onHide, onUploaded, onShowPending }: {
     onHide: () => void;
     onUploaded: () => void;
@@ -203,20 +205,57 @@ function UploadModal({ onHide, onUploaded, onShowPending }: {
 }) {
     const [file, setFile] = useState<File>();
     const [uploading, setUploading] = useState(false);
+    const [pollingTimedOut, setPollingTimedOut] = useState(false);
     const [preview, setPreview] = useState<UploadPreview>();
     const [error, setError] = useState('');
+    const pendingUpload = useRef<AbortController>();
+
+    useEffect(() => () => pendingUpload.current?.abort(), []);
 
     async function upload() {
-        if (!file || uploading) return;
+        if (!file || pendingUpload.current || pollingTimedOut) return;
+        const request = new AbortController();
+        const { signal } = request;
+        pendingUpload.current = request;
+        let timeout: ReturnType<typeof setTimeout> | undefined;
         setUploading(true);
         setError('');
         try {
-            setPreview(await uploadBankStatement(file));
-            onUploaded();
+            const { jobId } = await uploadBankStatement(file);
+            if (signal.aborted) return;
+            timeout = setTimeout(() => {
+                request.abort();
+                setPollingTimedOut(true);
+                setUploading(false);
+            }, IMPORT_POLL_TIMEOUT_MS);
+            signal.addEventListener('abort', () => clearTimeout(timeout), { once: true });
+
+            let networkFailures = 0;
+            while (!signal.aborted) {
+                let job;
+                try {
+                    job = await fetchBankStatementImport(jobId, signal);
+                    networkFailures = 0;
+                } catch (error) {
+                    if (signal.aborted) return;
+                    if ((error instanceof Error && 'status' in error) || ++networkFailures >= 3) throw error;
+                }
+
+                if (signal.aborted) return;
+                if (job?.status === 'done') {
+                    setPreview(job.result);
+                    onUploaded();
+                    return;
+                }
+                if (job?.status === 'failed') throw new Error(job.error);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         } catch (e) {
-            setError(e instanceof Error ? e.message : 'Nie udało się wgrać wyciągu');
+            if (!signal.aborted) setError(e instanceof Error ? e.message : 'Nie udało się wgrać wyciągu.');
         } finally {
-            setUploading(false);
+            clearTimeout(timeout);
+            pendingUpload.current = undefined;
+            if (!signal.aborted) setUploading(false);
         }
     }
 
@@ -238,6 +277,8 @@ function UploadModal({ onHide, onUploaded, onShowPending }: {
         </Modal.Header>
         <Modal.Body>
             {error && <Alert variant="danger">{error}</Alert>}
+            {pollingTimedOut && <Alert variant="warning">Wgrywanie trwa dłużej niż zwykle. Sprawdź za chwilę zakładkę Wyciągi.</Alert>}
+            {uploading && <p role="status">Wgrywam wyciąg...</p>}
             {preview ? <>
                 <p className="text-muted small">{file?.name} · okres {fmtPeriod(preview)}</p>
                 <Table size="sm">
@@ -247,15 +288,15 @@ function UploadModal({ onHide, onUploaded, onShowPending }: {
                     </tr>)}</tbody>
                 </Table>
                 <StatementGapAlert gaps={preview.gaps} afterUpload />
-            </> : <Form.Group controlId="bank-statement-file">
+            </> : !pollingTimedOut && <Form.Group controlId="bank-statement-file">
                 <Form.Label>Plik XML z PKO BP</Form.Label>
                 <Form.Control type="file" accept=".xml" disabled={uploading}
                     onChange={event => setFile((event.target as HTMLInputElement).files?.[0])} />
             </Form.Group>}
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={onHide} disabled={uploading}>{preview ? 'Zamknij' : 'Anuluj'}</Button>
-            {!preview && <Button onClick={upload} disabled={!file || uploading}>{uploading ? 'Wgrywam…' : 'Wgraj wyciąg'}</Button>}
+            <Button variant="secondary" onClick={onHide} disabled={uploading}>{preview || pollingTimedOut ? 'Zamknij' : 'Anuluj'}</Button>
+            {!preview && !pollingTimedOut && <Button onClick={upload} disabled={!file || uploading}>Wgraj wyciąg</Button>}
             {!!preview?.incomePending && <Button onClick={() => onShowPending(preview.statementId)}>
                 Przejdź do decyzji ({preview.incomePending})
             </Button>}
@@ -367,7 +408,10 @@ export default function BankSyncSearch({ title }: { title: string }) {
                 await dismissTransfer(dismissal.id, dismissal.remainingAmount);
                 setNotice({ text: 'Wpływ został usunięty z kolejki decyzji.' });
             })} />}
-        <Tabs activeKey={activeTab} onSelect={key => key && setActiveTab(key)} className="mb-3" mountOnEnter>
+        <Tabs activeKey={activeTab} onSelect={key => {
+            if (key === 'statements') refresh();
+            if (key) setActiveTab(key);
+        }} className="mb-3" mountOnEnter>
             <Tab eventKey="pending" title={transfers ? `Do decyzji (${transfers.length})` : 'Do decyzji'}>
                 {queueError ? <Alert variant="danger">{queueError}</Alert> : !transfers ? <Spinner animation="border" /> :
                     <DecisionQueue key={queueKey} transfers={transfers} statements={coverage?.flatMap(account => account.statements) ?? []}

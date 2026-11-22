@@ -21,13 +21,14 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         this.items = [];
     }
 
-    static async request<T>(route: string, method = "GET", body?: object | FormData): Promise<T> {
+    static async request<T>(route: string, method = "GET", body?: object | FormData, signal?: AbortSignal): Promise<T> {
         const multipart = body instanceof FormData;
         return ToolsFetch.fetchWithRetry(MainSetup.serverUrl + route, {
             method,
             credentials: "include",
             headers: body && !multipart ? { "Content-Type": "application/json" } : undefined,
             body: multipart ? body : body === undefined ? undefined : JSON.stringify(body),
+            signal,
         }, 1);
     }
 

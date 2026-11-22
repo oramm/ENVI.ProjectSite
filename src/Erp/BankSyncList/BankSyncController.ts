@@ -31,6 +31,10 @@ export interface UploadPreview extends StatementPeriod {
     gaps: StatementPeriod[];
 }
 
+type ImportJob = { status: 'running' }
+    | { status: 'done'; result: UploadPreview }
+    | { status: 'failed'; error: string };
+
 export interface InvoicePayments {
     dueAmount: number;
     paidManually: 0 | 1 | 2;
@@ -70,8 +74,11 @@ export const restoreTransfer = (id: number) => request(`bank-transfers/${id}/res
 export function uploadBankStatement(file: File) {
     const form = new FormData();
     form.append('file', file);
-    return request<UploadPreview>('bank-statements', 'POST', form);
+    return request<{ jobId: string }>('bank-statements', 'POST', form);
 }
+
+export const fetchBankStatementImport = (jobId: string, signal: AbortSignal) =>
+    request<ImportJob>(`bank-statements/imports/${jobId}`, 'GET', undefined, signal);
 
 export const fetchAllocations = (transferId: number) =>
     request<PaymentAllocation[]>(`bank-transfers/${transferId}/allocations`);
