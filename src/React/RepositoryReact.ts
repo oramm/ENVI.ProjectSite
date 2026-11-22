@@ -21,6 +21,16 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         this.items = [];
     }
 
+    static async request<T>(route: string, method = "GET", body?: object | FormData): Promise<T> {
+        const multipart = body instanceof FormData;
+        return ToolsFetch.fetchWithRetry(MainSetup.serverUrl + route, {
+            method,
+            credentials: "include",
+            headers: body && !multipart ? { "Content-Type": "application/json" } : undefined,
+            body: multipart ? body : body === undefined ? undefined : JSON.stringify(body),
+        }, 1);
+    }
+
     /**dodaje element domyślny wg jego Id
      * - jeżeli jest to lista wielokrotnego wyboru, to dodaje do listy
      * - jeżeli jest to lista jednokrotnego wyboru, to zastępuje element

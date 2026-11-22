@@ -12,7 +12,7 @@ export function BankTransferFilterBody() {
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control
                     type="text"
-                    placeholder="Kontrahent, opis, nr konta"
+                    placeholder="Nadawca, odbiorca, tytuł, nr rachunku"
                     {...register('searchText')}
                 />
             </Form.Group>
@@ -20,18 +20,18 @@ export function BankTransferFilterBody() {
                 <Form.Label>Status</Form.Label>
                 <Form.Select {...register('matchingStatus')}>
                     <option value="">Wszystkie</option>
-                    <option value="UNMATCHED">Nierozliczone</option>
-                    <option value="PROPOSED">Proponowane</option>
-                    <option value="CONFIRMED">Potwierdzone</option>
-                    <option value="MANUAL">Ręczne</option>
+                    <option value="UNMATCHED">Bez przypisania</option>
+                    <option value="PROPOSED">Propozycja</option>
+                    <option value="CONFIRMED">Przypisane</option>
+                    <option value="MANUAL">Poza kolejką</option>
                 </Form.Select>
             </Form.Group>
             <Form.Group as={Col} sm={6} md={2}>
                 <Form.Label>Kierunek</Form.Label>
                 <Form.Select {...register('direction')}>
                     <option value="">Oba</option>
-                    <option value="IN">IN (przychodzące)</option>
-                    <option value="OUT">OUT (wychodzące)</option>
+                    <option value="IN">Wpływy</option>
+                    <option value="OUT">Wydatki</option>
                 </Form.Select>
             </Form.Group>
             <DateRangeInput

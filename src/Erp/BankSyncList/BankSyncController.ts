@@ -1,79 +1,87 @@
-import { BankTransfer, DuplicateGroup, PaymentAllocation, WadiumMatchResult } from '../../../Typings/bussinesTypes';
-import MainSetup from '../../React/MainSetupReact';
+import { BankStatement, BankTransfer, DuplicateGroup, PaymentAllocation, PendingBankTransfer, WadiumMatchResult } from '../../../Typings/bussinesTypes';
 import RepositoryReact from '../../React/RepositoryReact';
+import type { Invoice } from '../../../Typings/bussinesTypes';
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(`${MainSetup.serverUrl}${path}`, {
-        credentials: 'include',
-        ...init,
-    });
-    if (!res.ok) {
-        const body = await res.json().catch(() => ({})) as { error?: string; errorMessage?: string };
-        throw new Error(body.error ?? body.errorMessage ?? `HTTP ${res.status}`);
-    }
-    return res.json();
+export interface StatementPeriod {
+    periodFrom: string;
+    periodTo: string;
 }
 
-export interface UploadPreview {
+export interface StatementCoverage {
+    accountNumber: string;
+    statements: BankStatement[];
+    gaps: StatementPeriod[];
+    months: Array<{
+        month: string;
+        status: 'covered' | 'partial' | 'missing';
+        coveredThrough: string | null;
+    }>;
+}
+
+export interface UploadPreview extends StatementPeriod {
     statementId: number;
     total: number;
-    autoMatched: number;
-    proposed: number;
-    unmatched: number;
+    alreadyKnown: number;
     fees: number;
-    foreignCurrency: number;
+    incomeMatched: number;
+    incomePending: number;
+    ownTransfers: number;
+    expenses: number;
+    otherIncoming: number;
+    gaps: StatementPeriod[];
 }
 
+export interface InvoicePayments {
+    dueAmount: number;
+    paidManually: 0 | 1 | 2;
+    payments: Array<{
+        id: number;
+        bankTransferId: number;
+        amount: number;
+        date: string;
+        currency: string;
+        sender: string | null;
+        title: string | null;
+    }>;
+}
+
+interface AllocationResult {
+    allocatedAmount: number;
+    transferRemaining?: number;
+}
+
+const request = RepositoryReact.request;
+
 export const bankTransfersRepository = new RepositoryReact<BankTransfer>({
-    actionRoutes: {
-        getRoute: 'bank-transfers',
-        addNewRoute: 'bank-transfers',
-        editRoute: 'bank-transfers',
-        deleteRoute: 'bank-transfers',
-    },
+    actionRoutes: { getRoute: 'bank-transfers', addNewRoute: '', editRoute: '', deleteRoute: '' },
     name: 'bankTransfers',
 });
 
-export async function fetchPendingTransfers(): Promise<BankTransfer[]> {
-    return apiFetch<BankTransfer[]>('bank-transfers/pending');
-}
+export const fetchPendingTransfers = () => request<PendingBankTransfer[]>('bank-transfers/pending');
+export const fetchDuplicates = () => request<DuplicateGroup[]>('bank-transfers/duplicates');
+export const fetchWadiumMatches = () => request<WadiumMatchResult[]>('bank-transfers/wadium-matches');
+export const fetchStatements = () => request<StatementCoverage[]>('bank-statements');
+export const fetchInvoicePayments = (id: number) => request<InvoicePayments>(`bank-transfers/invoices/${id}/payments`);
+export const undoManualPayment = (id: number) => request<Invoice>(`bank-transfers/invoices/${id}/payments/manual`, 'DELETE');
+export const dismissTransfer = (id: number, expectedRemaining: number) =>
+    request(`bank-transfers/${id}/dismiss`, 'PATCH', { expectedRemaining });
+export const restoreTransfer = (id: number) => request(`bank-transfers/${id}/restore`, 'PATCH');
 
-export async function fetchDuplicates(): Promise<DuplicateGroup[]> {
-    return apiFetch<DuplicateGroup[]>('bank-transfers/duplicates');
-}
-
-export async function fetchWadiumMatches(): Promise<WadiumMatchResult[]> {
-    return apiFetch<WadiumMatchResult[]>('bank-transfers/wadium-matches');
-}
-
-export async function uploadBankStatement(file: File): Promise<UploadPreview> {
+export function uploadBankStatement(file: File) {
     const form = new FormData();
     form.append('file', file);
-    return apiFetch<UploadPreview>('bank-statements', {
-        method: 'POST',
-        body: form,
-    });
+    return request<UploadPreview>('bank-statements', 'POST', form);
 }
 
-export async function commitStatement(statementId: number): Promise<{ committed: number }> {
-    return apiFetch<{ committed: number }>(`bank-statements/${statementId}/commit`, { method: 'POST' });
-}
+export const fetchAllocations = (transferId: number) =>
+    request<PaymentAllocation[]>(`bank-transfers/${transferId}/allocations`);
 
-export async function fetchAllocations(transferId: number): Promise<PaymentAllocation[]> {
-    return apiFetch<PaymentAllocation[]>(`bank-transfers/${transferId}/allocations`);
-}
-
-export async function createAllocation(
+export function createAllocation(
     transferId: number,
-    data: { invoiceId?: number; costInvoiceId?: number; amount: number }
-): Promise<PaymentAllocation> {
-    return apiFetch<PaymentAllocation>(`bank-transfers/${transferId}/allocations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
+    data: { invoiceId?: number; costInvoiceId?: number; amount: number; expectedRemaining?: number },
+) {
+    return request<AllocationResult>(`bank-transfers/${transferId}/allocations`, 'POST', data);
 }
 
-export async function deleteAllocation(transferId: number, allocId: number): Promise<void> {
-    await apiFetch<unknown>(`bank-transfers/${transferId}/allocations/${allocId}`, { method: 'DELETE' });
-}
+export const deleteAllocation = (transferId: number, allocationId: number) =>
+    request(`bank-transfers/${transferId}/allocations/${allocationId}`, 'DELETE');

@@ -12,6 +12,7 @@ import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
 import Tools from "../../../React/Tools/Tools";
 import MainSetup from "../../../React/MainSetupReact";
 import KsefSection from "./KsefSection";
+import InvoicePaymentsSection from "./InvoicePaymentsSection";
 import CorrectionModal from "../Modals/CorrectionModal";
 import { GeneralDeleteModalButton } from "../../../View/Modals/GeneralModalButtons";
 
@@ -28,7 +29,7 @@ const THIRD_PARTY_ROLE_LABELS: Record<number, string> = {
     10: "Członek GV odbiorca",
 };
 
-export default function InvoiceDetails() {
+export default function InvoiceDetails({ bankAccess = false }: { bankAccess?: boolean }) {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
     const [errorMessage, setErrorMessage] = useState("");
@@ -342,6 +343,9 @@ export default function InvoiceDetails() {
                                     ✏️ Utwórz korektę
                                 </Button>
                             </div>
+                        )}
+                        {bankAccess && invoice.id === Number(id) && invoice.paymentStatus !== undefined && (
+                            <InvoicePaymentsSection key={invoice.id} invoice={invoice} onInvoiceChange={setInvoice} />
                         )}
                     </Container>
 
