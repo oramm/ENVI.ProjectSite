@@ -1248,6 +1248,7 @@ export interface BankMatchingCandidate {
 export interface PendingBankTransfer extends BankTransfer {
     remainingAmount: number;
     matchingCandidates: BankMatchingCandidate[];
+    importNeedsReview?: boolean;
 }
 
 export interface BankStatement {

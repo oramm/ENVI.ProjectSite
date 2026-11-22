@@ -287,6 +287,17 @@ function UploadModal({ onHide, onUploaded, onShowPending }: {
                         <td className="text-end">{value}</td>
                     </tr>)}</tbody>
                 </Table>
+                {!!preview.needsReview && <Alert variant="warning">
+                    <details>
+                        <summary>Nowe operacje do sprawdzenia: {preview.needsReview}</summary>
+                        <ul className="mb-1">
+                            {preview.reviewOperations?.map(op => <li key={op.fileOperationNumber}>
+                                Poz. {op.fileOperationNumber} w pliku, {fmtDate(op.execDate)}, {fmt(op.direction === 'OUT' ? -op.amount : op.amount, op.currency)}
+                            </li>)}
+                        </ul>
+                        <p className="mb-0">Mogą to być te same operacje co wcześniej zapisane, z inną datą. System nie przypina ich do faktur automatycznie - sprawdź je w kolejce „Do decyzji”.</p>
+                    </details>
+                </Alert>}
                 <StatementGapAlert gaps={preview.gaps} afterUpload />
             </> : !pollingTimedOut && <Form.Group controlId="bank-statement-file">
                 <Form.Label>Plik XML z PKO BP</Form.Label>
@@ -297,8 +308,8 @@ function UploadModal({ onHide, onUploaded, onShowPending }: {
         <Modal.Footer>
             <Button variant="secondary" onClick={onHide} disabled={uploading}>{preview || pollingTimedOut ? 'Zamknij' : 'Anuluj'}</Button>
             {!preview && !pollingTimedOut && <Button onClick={upload} disabled={!file || uploading}>Wgraj wyciąg</Button>}
-            {!!preview?.incomePending && <Button onClick={() => onShowPending(preview.statementId)}>
-                Przejdź do decyzji ({preview.incomePending})
+            {preview && !!(preview.incomePending || preview.needsReview) && <Button onClick={() => onShowPending(preview.statementId)}>
+                Przejdź do decyzji{!preview.needsReview && ` (${preview.incomePending})`}
             </Button>}
         </Modal.Footer>
     </Modal>;
@@ -398,15 +409,17 @@ export default function BankSyncSearch({ title }: { title: string }) {
         {showUpload && <UploadModal onHide={() => setShowUpload(false)} onUploaded={refresh} onShowPending={showPending} />}
         {managed && <AllocationModal transfer={managed} onHide={() => setManaged(undefined)}
             onChanged={refresh} onAssigned={reportAssignment} />}
-        {dismissal && <ConfirmModal show lockWhileWaiting onClose={() => setDismissal(undefined)} title="Usuń wpływ z kolejki?"
+        {dismissal && <ConfirmModal show lockWhileWaiting onClose={() => setDismissal(undefined)}
+            title={dismissal.importNeedsReview ? 'Zakończyć sprawdzanie operacji?' : 'Usuń wpływ z kolejki?'}
             prompt={<>
-                <BankTransferDescription transfer={dismissal} amount={dismissal.remainingAmount} />
-                <p className="mt-3 mb-0">Wpływ można później przywrócić na zakładce „Wszystkie przelewy”.
-                    Jeśli ma przypisane wpłaty, trzeba je najpierw odpiąć.</p>
+                <BankTransferDescription transfer={dismissal} amount={dismissal.direction === 'OUT' ? -dismissal.remainingAmount : dismissal.remainingAmount} />
+                {!dismissal.importNeedsReview && <p className="mt-3 mb-0">Wpływ można później przywrócić na zakładce „Wszystkie przelewy”.
+                    Jeśli ma przypisane wpłaty, trzeba je najpierw odpiąć.</p>}
             </>}
-            confirmLabel="Usuń z kolejki" onConfirm={() => changeTransfer(dismissal.id, async () => {
-                await dismissTransfer(dismissal.id, dismissal.remainingAmount);
-                setNotice({ text: 'Wpływ został usunięty z kolejki decyzji.' });
+            confirmLabel={dismissal.importNeedsReview ? 'Zakończ sprawdzanie' : 'Usuń z kolejki'}
+            onConfirm={() => changeTransfer(dismissal.id, async () => {
+                await dismissTransfer(dismissal.id, dismissal.remainingAmount, dismissal.importNeedsReview ? dismissal.operationHash : undefined);
+                setNotice({ text: dismissal.importNeedsReview ? 'Sprawdzanie operacji zakończone.' : 'Wpływ został usunięty z kolejki decyzji.' });
             })} />}
         <Tabs activeKey={activeTab} onSelect={key => {
             if (key === 'statements') refresh();

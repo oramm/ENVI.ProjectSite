@@ -41,6 +41,8 @@ it('shows progress while polling, then displays the B5 result and refreshes the 
         .mockResolvedValueOnce({ status: 'running' })
         .mockResolvedValueOnce({ status: 'done', result: {
             statementId: 1, periodFrom: '2026-06-01', periodTo: '2026-06-30', total: 8, alreadyKnown: 2,
+            needsReview: 1,
+            reviewOperations: [{ fileOperationNumber: 7, execDate: '2026-06-29', amount: 15, currency: 'PLN', direction: 'OUT' }],
             fees: 1, incomeMatched: 3, incomePending: 4, ownTransfers: 0, expenses: 0, otherIncoming: 0,
             gaps: [{ periodFrom: '2026-05-01', periodTo: '2026-05-31' }],
         } });
@@ -55,9 +57,40 @@ it('shows progress while polling, then displays the B5 result and refreshes the 
     expect(fetchBankStatementImport).toHaveBeenLastCalledWith('job-1', expect.any(AbortSignal));
     expect(dialog.getByRole('row', { name: 'Nowe operacje 8' })).toBeInTheDocument();
     expect(dialog.getByRole('row', { name: 'Już znane z wcześniejszych wyciągów 2' })).toBeInTheDocument();
+    fireEvent.click(dialog.getByText('Nowe operacje do sprawdzenia: 1'));
+    expect(dialog.getByText('Poz. 7 w pliku, 29.06.2026, -15,00 zł')).toBeVisible();
+    expect(dialog.getByText(/System nie przypina ich do faktur automatycznie/)).toBeVisible();
     expect(dialog.getByText(/01\.05\.2026.*31\.05\.2026/)).toBeInTheDocument();
     expect(fetchPendingTransfers).toHaveBeenCalledTimes(2);
     expect(dialog.queryByRole('status')).not.toBeInTheDocument();
+});
+
+it('opens the decision queue for an ambiguous bank fee and lets the user finish its review', async () => {
+    const transfer: PendingBankTransfer = {
+        id: 7, bankStatementId: 1, execDate: '2026-06-29', amount: 15, remainingAmount: 15, currency: 'PLN',
+        direction: 'OUT', counterpartyName: null, counterpartyAccount: null, description: 'Opłata', title: 'Opłata testowa',
+        matchingStatus: 'MANUAL', matchingCandidates: [], operationHash: 'fixture', importNeedsReview: true,
+    };
+    vi.mocked(fetchBankStatementImport).mockReset().mockResolvedValue({ status: 'done', result: {
+        statementId: 1, periodFrom: '2026-06-01', periodTo: '2026-06-30', total: 1, alreadyKnown: 0,
+        needsReview: 1, reviewOperations: [{ fileOperationNumber: 7, execDate: transfer.execDate, amount: 15, currency: 'PLN', direction: 'OUT' }],
+        fees: 1, incomeMatched: 0, incomePending: 0, ownTransfers: 0, expenses: 0, otherIncoming: 0, gaps: [],
+    } });
+    vi.mocked(dismissTransfer).mockReset().mockResolvedValue(undefined);
+    const upload = await openUpload();
+    vi.mocked(fetchPendingTransfers).mockResolvedValueOnce([transfer]);
+    submitUpload(upload);
+    fireEvent.click(await upload.findByRole('button', { name: 'Przejdź do decyzji' }));
+
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '-15,00 zł' } });
+    const row = within(await screen.findByRole('row', { name: /Do sprawdzenia.*Opłata testowa/ }));
+    expect(row.queryByRole('button', { name: 'Zatwierdź' })).not.toBeInTheDocument();
+    expect(row.queryByRole('button', { name: 'Przypisz ręcznie…' })).not.toBeInTheDocument();
+    fireEvent.click(row.getByRole('button', { name: 'Zakończ sprawdzanie' }));
+    const confirm = within(await screen.findByRole('dialog'));
+    fireEvent.click(confirm.getByRole('button', { name: 'Zakończ sprawdzanie' }));
+    await waitFor(() => expect(dismissTransfer).toHaveBeenCalledExactlyOnceWith(7, 15, transfer.operationHash));
+    expect(await screen.findByText('Sprawdzanie operacji zakończone.')).toBeVisible();
 });
 
 it('shows the import error and enables the file to be submitted again', async () => {
@@ -137,7 +170,7 @@ it('dismisses only after confirmation and restores the transfer from the full li
     vi.mocked(fetchPendingTransfers).mockImplementation(async () => dismissed ? [] : [transfer]);
     vi.mocked(fetchStatements).mockResolvedValue([]);
     let finishDismiss: (() => void) | undefined;
-    vi.mocked(dismissTransfer).mockImplementation(() => new Promise<void>(resolve => {
+    vi.mocked(dismissTransfer).mockClear().mockImplementation(() => new Promise<void>(resolve => {
         finishDismiss = () => {
             dismissed = true;
             resolve();
@@ -165,7 +198,7 @@ it('dismisses only after confirmation and restores the transfer from the full li
         expect(within(confirmation).getByRole('button', { name: 'Anuluj' })).toBeDisabled();
         finishDismiss!();
         await screen.findByRole('tab', { name: 'Do decyzji (0)' });
-        expect(dismissTransfer).toHaveBeenCalledExactlyOnceWith(1, 150);
+        expect(dismissTransfer).toHaveBeenCalledExactlyOnceWith(1, 150, undefined);
 
         fireEvent.click(screen.getByRole('tab', { name: 'Wszystkie przelewy' }));
         fireEvent.click(await screen.findByRole('button', { name: 'Przywróć do kolejki' }));

@@ -22,6 +22,10 @@ export interface UploadPreview extends StatementPeriod {
     statementId: number;
     total: number;
     alreadyKnown: number;
+    needsReview?: number;
+    reviewOperations?: Array<Pick<BankTransfer, 'execDate' | 'amount' | 'currency' | 'direction'> & {
+        fileOperationNumber: number;
+    }>;
     fees: number;
     incomeMatched: number;
     incomePending: number;
@@ -67,8 +71,8 @@ export const fetchWadiumMatches = () => request<WadiumMatchResult[]>('bank-trans
 export const fetchStatements = () => request<StatementCoverage[]>('bank-statements');
 export const fetchInvoicePayments = (id: number) => request<InvoicePayments>(`bank-transfers/invoices/${id}/payments`);
 export const undoManualPayment = (id: number) => request<Invoice>(`bank-transfers/invoices/${id}/payments/manual`, 'DELETE');
-export const dismissTransfer = (id: number, expectedRemaining: number) =>
-    request(`bank-transfers/${id}/dismiss`, 'PATCH', { expectedRemaining });
+export const dismissTransfer = (id: number, expectedRemaining: number, expectedOperationHash?: string) =>
+    request(`bank-transfers/${id}/dismiss`, 'PATCH', { expectedRemaining, expectedOperationHash });
 export const restoreTransfer = (id: number) => request(`bank-transfers/${id}/restore`, 'PATCH');
 
 export function uploadBankStatement(file: File) {

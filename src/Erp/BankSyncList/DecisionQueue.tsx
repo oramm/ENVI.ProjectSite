@@ -4,11 +4,16 @@ import { BankMatchingCandidate, BankStatement, PendingBankTransfer } from '../..
 import { BankTransferDescription, fmt, fmtDate, fmtPeriod } from './BankSyncViews';
 
 function category(transfer: PendingBankTransfer) {
+    if (transfer.importNeedsReview) return 'review';
     if (transfer.matchingStatus !== 'PROPOSED') return 'none';
     return transfer.matchingCandidates.length > 1 ? 'choice' : 'proposal';
 }
 
-const labels = { proposal: 'Propozycja', choice: 'Do wyboru', none: 'Bez propozycji' };
+const labels = { proposal: 'Propozycja', choice: 'Do wyboru', none: 'Bez propozycji', review: 'Do sprawdzenia' };
+
+function signedRemainingAmount(transfer: PendingBankTransfer) {
+    return transfer.direction === 'OUT' ? -transfer.remainingAmount : transfer.remainingAmount;
+}
 
 function CandidateDescription({ candidate }: { candidate: BankMatchingCandidate }) {
     const numberMatch = candidate.flags?.includes('INVOICE_NUMBER');
@@ -61,10 +66,11 @@ export default function DecisionQueue({
             && (kind === 'all' || category(transfer) === kind)
             && (!dateFrom || transfer.execDate >= dateFrom)
             && (!dateTo || transfer.execDate <= dateTo)
-            && (!text || [transfer.counterpartyName, transfer.title, fmt(transfer.remainingAmount), String(transfer.remainingAmount)]
+            && (!text || [transfer.counterpartyName, transfer.title, fmt(signedRemainingAmount(transfer), transfer.currency),
+                String(transfer.remainingAmount), String(signedRemainingAmount(transfer))]
                 .some(value => value?.toLocaleLowerCase('pl-PL').includes(text)));
     });
-    const counts = { proposal: 0, choice: 0, none: 0 };
+    const counts = { proposal: 0, choice: 0, none: 0, review: 0 };
     for (const row of rows) counts[category(row)]++;
 
     return <>
@@ -76,6 +82,7 @@ export default function DecisionQueue({
                     <option value="proposal">Z propozycją</option>
                     <option value="choice">Do wyboru z kilku faktur</option>
                     <option value="none">Bez propozycji</option>
+                    <option value="review">Do sprawdzenia</option>
                 </Form.Select>
             </Form.Group>
             <Form.Group controlId="bank-queue-statement">
@@ -94,14 +101,15 @@ export default function DecisionQueue({
                 <Form.Control size="sm" type="date" value={dateTo} onChange={event => setDateTo(event.target.value)} />
             </Form.Group>
             <Form.Group controlId="bank-queue-search">
-                <Form.Label>Szukaj nadawcy, tytułu lub kwoty</Form.Label>
+                <Form.Label>Szukaj kontrahenta, tytułu lub kwoty</Form.Label>
                 <Form.Control size="sm" type="search" value={search} onChange={event => setSearch(event.target.value)} />
             </Form.Group>
         </div>
-        {rows.length === 0 ? <p className="text-muted">Brak wpływów do decyzji dla wybranych filtrów.</p> : <>
+        {rows.length === 0 ? <p className="text-muted">Brak operacji do decyzji dla wybranych filtrów.</p> : <>
             <p className="small">
                 Do decyzji <strong>{rows.length}</strong> · z propozycją {counts.proposal} · do wyboru {counts.choice} ·
-                {' '}bez propozycji {counts.none}. Najstarszy wpływ z {fmtDate(rows[rows.length - 1].execDate)}.
+                {' '}bez propozycji {counts.none}{counts.review > 0 && ` · do sprawdzenia ${counts.review}`}.
+                {' '}Najstarsza operacja z {fmtDate(rows[rows.length - 1].execDate)}.
             </p>
             <Table responsive hover>
                 <thead><tr>
@@ -127,6 +135,7 @@ function DecisionRow({ transfer, statement, onManage, onApprove, onDismiss, disa
 }) {
     const [selected, setSelected] = useState<number>();
     const kind = category(transfer);
+    const canAssignReview = transfer.matchingStatus !== 'MANUAL' && transfer.currency === 'PLN' && transfer.remainingAmount > 0;
     const [first] = transfer.matchingCandidates;
     const candidate = kind === 'choice'
         ? transfer.matchingCandidates.find(item => item.invoiceId === selected)
@@ -134,7 +143,7 @@ function DecisionRow({ transfer, statement, onManage, onApprove, onDismiss, disa
 
     return <tr>
         <td className="w-25">
-            <BankTransferDescription transfer={transfer} amount={transfer.remainingAmount}>
+            <BankTransferDescription transfer={transfer} amount={signedRemainingAmount(transfer)}>
                 <Badge bg={kind === 'none' ? 'secondary' : 'warning'} text={kind === 'none' ? undefined : 'dark'}>{labels[kind]}</Badge>
             </BankTransferDescription>
             {transfer.remainingAmount < transfer.amount && <div className="text-muted small">
@@ -143,7 +152,7 @@ function DecisionRow({ transfer, statement, onManage, onApprove, onDismiss, disa
             {statement && <div className="text-muted small">Wyciąg {fmtPeriod(statement)}</div>}
         </td>
         <td>
-            {kind === 'choice' ? <fieldset>
+            {kind === 'review' ? <div>Porównaj operację z wcześniejszymi wyciągami.</div> : kind === 'choice' ? <fieldset>
                 <legend className="fs-6">Pasuje kilka faktur. Wybierz, którą zapłacono.</legend>
                 {transfer.matchingCandidates.map(item => <Form.Check
                     key={item.invoiceId} type="radio" name={`bank-candidate-${transfer.id}`}
@@ -159,11 +168,15 @@ function DecisionRow({ transfer, statement, onManage, onApprove, onDismiss, disa
             </>}
         </td>
         <td className="text-end">
-            {kind !== 'none' && <Button size="sm" variant="success" disabled={disabled || !candidate}
+            {(kind === 'proposal' || kind === 'choice') && <Button size="sm" variant="success" disabled={disabled || !candidate}
                 onClick={() => candidate && onApprove(transfer, candidate)}>Zatwierdź</Button>}
             {kind === 'choice' && !candidate && <div className="text-muted small">Najpierw wybierz fakturę</div>}
-            <div><Button size="sm" className="mt-1 text-nowrap" variant="outline-secondary" disabled={disabled}
-                onClick={() => onManage(transfer)}>{kind === 'none' ? 'Przypisz ręcznie…' : 'Inna faktura…'}</Button></div>
+            {(kind !== 'review' || canAssignReview) && <div>
+                <Button size="sm" className="mt-1 text-nowrap" variant="outline-secondary" disabled={disabled}
+                    onClick={() => onManage(transfer)}>{kind === 'none' || kind === 'review' ? 'Przypisz ręcznie…' : 'Inna faktura…'}</Button>
+            </div>}
+            {kind === 'review' && <Button size="sm" variant="link" disabled={disabled}
+                onClick={() => onDismiss(transfer)}>Zakończ sprawdzanie</Button>}
             {kind === 'none' && <Button size="sm" variant="link" disabled={disabled}
                 onClick={() => onDismiss(transfer)}>To nie zapłata faktury</Button>}
         </td>
