@@ -37,3 +37,23 @@ it('a letter into a consolidating case remains blocked with specific guidance',a
     await expect(assertNewWorkAllowed('letterReact',{_cases:[{id:10}]},'/server/',vi.fn(async()=>new Response(JSON.stringify({blocked:true})))))
         .rejects.toThrow('Zarejestruj pismo w sprawie docelowej.');
 });
+
+
+it.each([
+    ['letterReact', {_cases:[{id:10}]}, {milestoneIds:[],caseIds:[10]}],
+    ['task', {_case:{id:10}}, {milestoneIds:[],caseIds:[10]}],
+    ['case', {_parent:{id:20},_parentCase:{id:10}}, {milestoneIds:[20],caseIds:[10]}],
+])('multipart %s checks only its target identities', (route, fields, expected) => {
+    const data = new FormData();
+    for (const [key,value] of Object.entries(fields)) data.append(key,JSON.stringify(value));
+    data.append('_contextData', String(undefined));
+    data.append('_contextData', 'unrelated repeated metadata');
+    data.append('_template', '');
+    data.append('file', new File(['attachment'], 'test.pdf', {type:'application/pdf'}));
+    expect(newWorkTargets(route as string,data)).toEqual(expected);
+});
+
+it.each(['{', 'undefined', '[{"id":"10"}]'])('still rejects invalid multipart case identities: %s', value => {
+    const data = new FormData(); data.append('_cases',value);
+    expect(()=>newWorkTargets('letterReact',data)).toThrow('Nie można ustalić');
+});

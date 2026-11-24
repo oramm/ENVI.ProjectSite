@@ -4,15 +4,25 @@ const id=(n:unknown):n is number=>typeof n==='number'&&Number.isSafeInteger(n)&&
 const invalid=()=>{throw new Error('Nie można ustalić miejsca nowej pracy. Wybierz sprawę lub kamień ponownie.');};
 function unique(values:number[]){return [...new Set(values)];}
 function same(values:unknown[]):number|undefined{const defined=values.filter(v=>v!==undefined&&v!==null);if(defined.some(v=>!id(v))||new Set(defined).size>1)invalid();return defined[0] as number|undefined;}
-function item(data:unknown):any {
-    if(typeof FormData!=='undefined'&&data instanceof FormData){const result:Record<string,unknown>={},seen=new Set<string>();for(const [key,value] of data.entries())if(typeof value==='string'){
-        if(key.startsWith('_')||key==='parentCaseId'||key==='caseId'||key==='milestoneId'){if(seen.has(key))invalid();seen.add(key);try{result[key]=JSON.parse(value);}catch{invalid();}}
-    }return result;}
+function item(route:string,data:unknown):any {
+    if(typeof FormData!=='undefined'&&data instanceof FormData){
+        // Only target identities belong to this guard; unrelated multipart metadata may be plain text.
+        const fields=route==='letterReact'?['_cases']:route==='task'?['caseId','_case','_parent']
+            :['milestoneId','_parent','_parentMilestone','parentCaseId','_parentCase'];
+        const result:Record<string,unknown>={},seen=new Set<string>();
+        for(const [key,value] of data.entries()){
+            if(!fields.includes(key))continue;
+            if(seen.has(key)||typeof value!=='string')invalid();
+            seen.add(key);
+            try{result[key]=JSON.parse(value as string);}catch{invalid();}
+        }
+        return result;
+    }
     if(!data||typeof data!=='object'||Array.isArray(data))invalid();return data;
 }
 export function newWorkTargets(route:string,data:unknown):WorkTargets|null{
     if(!['case','task','letterReact'].includes(route))return null;
-    const b=item(data);
+    const b=item(route,data);
     if(route==='task'){const caseId=same([b.caseId,b._case?.id,b._parent?.id]);if(!caseId)invalid();return {milestoneIds:[],caseIds:[caseId!]};}
     if(route==='case'){
         const milestoneId=same([b.milestoneId,b._parent?.id,b._parentMilestone?.id]);

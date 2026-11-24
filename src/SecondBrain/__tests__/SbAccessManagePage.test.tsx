@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import MainSetup from "../../React/MainSetupReact";
 import SbAccessManagePage from "../SbAccessManagePage";
-import { fetchSbEntries, performSbAction, SbEntry, SbHealth } from "../sbManageApi";
+import { fetchSbEntries, performSbAction, SbEntry, SbHealth, SbMailbox } from "../sbManageApi";
 import * as sbManageApi from "../sbManageApi";
 
 const encryptMock = vi.fn(async (_jwk: unknown, _plain: string) => "SZYFR+base64==");
@@ -15,11 +15,14 @@ const row = (personId = 1, over: Partial<SbEntry> = {}): SbEntry => ({ id: perso
     name: "Anna", surname: `Nowak${personId}`, systemEmail: "anna@example.com", statusCode: "ACTIVE",
     githubLogin: null, githubInvitationId: null, drivePermissionId: null, isGrantedManually: false,
     createdAt: "", updatedAt: "", ...over });
-let rows: SbEntry[], manage: boolean, operationStatus: number, operationBody: unknown, membersStatus: number;
+const mailbox = (id: number, code: string, over: Partial<SbMailbox> = {}): SbMailbox => ({ id, code, address: `${code.replace("-", ".")}@envi.com.pl`,
+    projectId: null, contractId: null, statusCode: "ACTIVE", lastError: null, agentCopyStatus: "NONE", agentCopyLastError: null, passwordVersion: null, allEmployees: false, ...over });
+let rows: SbEntry[], manage: boolean, operationStatus: number, operationBody: unknown, membersStatus: number, mailboxes: SbMailbox[];
 const originalUrl = MainSetup.serverUrl;
 beforeEach(() => {
     encryptMock.mockReset().mockResolvedValue("SZYFR+base64==");
     MainSetup.serverUrl = "http://localhost:3000/";
+    mailboxes = [mailbox(2, "chocianow-ik", { contractId: 1806, agentCopyStatus: "SET" })];
     rows = [row()]; manage = true; operationStatus = 200; operationBody = { result: "OK", note: "" }; membersStatus = 200;
     fetchMock.mockReset().mockImplementation(async (url: string, init?: RequestInit) => {
         if (init?.method) return response(operationBody, operationStatus);
@@ -28,7 +31,7 @@ beforeEach(() => {
         if (url.endsWith("/candidates")) return response([{ personId: 9, name: "Jan", surname: "Lis", systemEmail: "jan@example.com", systemRoleName: "ENVI_EMPLOYEE", statusCode: null }]);
         if (url.endsWith("/unlinked")) return response([{ login: "anna-gh", profileUrl: "https://github.com/anna-gh" }], membersStatus);
         if (url.endsWith("/events")) return response([]);
-        if (url.endsWith("/mailboxes")) return response([{ code: "chocianow-ik", address: "chocianow.ik@envi.com.pl" }]);
+        if (url.endsWith("/mailboxes")) return response(mailboxes);
         if (url.endsWith("/healthReport")) return { ok: true, status: 200, headers: { get: () => 'attachment; filename="raport-sb-nowak1-2026-10-19.json"' }, blob: async () => new Blob(["{}"]) };
         throw new Error(`Nieoczekiwana trasa: ${url}`);
     });
@@ -103,9 +106,9 @@ describe("Panel SB", () => {
         }]);
     });
     it("tabela grupuje wg roli i pokazuje poziomy, a panel wysyła PUT z poziomami i skrzynkami", async () => {
-        rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } }), row(2)]; renderPage();
+        rows = [row(1, { canManageSb: true, levels: { repos: "read", psDb: "none", drive: "connector", mail: ["faktury"] } as never }), row(2)]; renderPage();
         await screen.findByText(/Administratorzy SB · 1/); expect(screen.getByText(/Pracownicy · 1/)).toBeVisible();
-        expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.getByText("konektor")).toBeVisible();
+        expect(screen.getByText("odczyt")).toBeVisible(); expect(screen.getByText("faktury")).toBeVisible(); expect(screen.queryByText("konektor")).toBeNull(); expect(screen.queryByRole("columnheader", { name: "Dysk" })).toBeNull();
         expect(screen.getByText("Hasła")).toBeVisible(); expect(screen.getByRole("columnheader", { name: "Komputer" })).toBeVisible();
         await pick();
         const panel = screen.getByLabelText("Panel osoby");
@@ -117,8 +120,26 @@ describe("Panel SB", () => {
         await screen.findByText(/Zapisano uprawnienia/);
         expect(mutations()[0]).toEqual(["http://localhost:3000/sbAccess/1/levels", {
             method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" },
-            body: '{"repos":"write","psDb":"ro","drive":"connector","mail":["chocianow-ik"]}',
+            body: '{"repos":"write","psDb":"ro","mail":["chocianow-ik"],"expected":{"repos":"read","psDb":"none","drive":"connector","mail":["faktury"]}}',
         }]);
+    });
+    it("zapis wysyła stan z chwili wyboru osoby, nie z odświeżonej w tle listy; 409 pokazuje komunikat i odświeża", async () => {
+        rows = [row(1, { levels: { repos: "write", psDb: "rw", mail: [] } })]; renderPage();
+        await pick();
+        rows = [row(1, { levels: { repos: "none", psDb: "rw", mail: [] } })];
+        operationStatus = 409; operationBody = { errorMessage: "Ktoś zmienił te uprawnienia, gdy ekran był otwarty (teraz: repozytoria: brak; baza PS: zapis; poczta: brak). Nic nie zapisano." };
+        const panel = screen.getByLabelText("Panel osoby");
+        fireEvent.change(within(panel).getByLabelText("Baza PS"), { target: { value: "ro" } });
+        const entriesCalls = () => fetchMock.mock.calls.filter(call => call[0].endsWith("/entries")).length;
+        const before = entriesCalls();
+        fireEvent.click(within(panel).getByRole("button", { name: "Zapisz uprawnienia" }));
+        expect(await screen.findByText(/Ktoś zmienił te uprawnienia/)).toBeVisible();
+        expect(JSON.parse(mutations()[0][1].body).expected).toEqual({ repos: "write", psDb: "rw", mail: [] });
+        await waitFor(() => expect(entriesCalls()).toBe(before + 1));
+        // po odświeżeniu kolejny zapis bez ponownego wyboru osoby dalej niesie stary stan (PS znów odmówi)
+        fireEvent.click(within(screen.getByLabelText("Panel osoby")).getByRole("button", { name: "Zapisz uprawnienia" }));
+        await waitFor(() => expect(mutations()).toHaveLength(2));
+        expect(JSON.parse(mutations()[1][1].body).expected).toEqual({ repos: "write", psDb: "rw", mail: [] });
     });
     it("kolumna Hasła: X z Y wg uprawnień, kreska gdy nic się nie należy; bez klucza panel blokuje udostępnienie", async () => {
         rows = [row(1, { secretsExpected: ["poczta-faktury", "baza-ps"], secretsGiven: ["baza-ps"], keyFingerprint: null }), row(2, { secretsExpected: [] })];
@@ -518,5 +539,118 @@ describe("Panel SB - Hasła wspólne", () => {
     it("bez hasla-z-ps nie wymyśla stanu działania haseł", async () => {
         rows = [keyedRow(1)]; renderPage(); await pick();
         expect(within(screen.getByRole("region", { name: "Hasła" })).queryByRole("status")).toBeNull();
+    });
+});
+
+describe("Skrzynki pocztowe firmy (SKO)", () => {
+    const biuro = () => mailbox(3, "biuro", { allEmployees: true }), faktury = () => mailbox(1, "faktury");
+    const section = async () => screen.findByRole("region", { name: "Skrzynki pocztowe firmy" });
+    const rowOf = (container: HTMLElement, address: string) => within(container).getByText(address).closest("tr") as HTMLElement;
+    it("sekcja pod listą osób: tylko skrzynki firmy, zakres i rodzaj hasła; zmiana zakresu wysyła PUT", async () => {
+        mailboxes = [mailbox(2, "chocianow-ik", { contractId: 1806 }), biuro(), faktury()];
+        rows = [row(1, { levels: { repos: "none", psDb: "none", mail: ["faktury"] } })];
+        renderPage();
+        const region = await section();
+        const people = screen.getAllByRole("table")[0];
+        expect(people.compareDocumentPosition(region) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(within(region).queryByText("chocianow.ik@envi.com.pl")).toBeNull();
+        const biuroRow = rowOf(region, "biuro@envi.com.pl"), fakturyRow = rowOf(region, "faktury@envi.com.pl");
+        expect(within(biuroRow).getByLabelText("Wszyscy pracownicy")).toBeChecked();
+        expect(within(biuroRow).getByText("Ręczne")).toBeVisible();
+        expect(within(biuroRow).getByRole("button", { name: "Niech PS wydaje hasło" })).toBeEnabled();
+        expect(within(fakturyRow).getByLabelText("Wskazane osoby")).toBeChecked();
+        expect(within(fakturyRow).getByText("Anna Nowak1")).toBeVisible();
+        expect(within(fakturyRow).getByText("Zostaje ręczna")).toBeVisible();
+        expect(within(fakturyRow).queryByRole("button", { name: "Niech PS wydaje hasło" })).toBeNull();
+        fireEvent.click(within(biuroRow).getByLabelText("Wskazane osoby"));
+        await waitFor(() => expect(mutations()).toHaveLength(1));
+        expect(mutations()[0]).toEqual(["http://localhost:3000/mailboxes/3/allEmployees",
+            { method: "PUT", headers: { "Content-Type": "application/json" }, body: '{"allEmployees":false}', credentials: "include" }]);
+    });
+    it("skrzynka z hasłem od PS: 'Wydaje PS' bez przycisku", async () => {
+        mailboxes = [mailbox(3, "biuro", { allEmployees: true, passwordVersion: 1 })];
+        renderPage();
+        const biuroRow = rowOf(await section(), "biuro@envi.com.pl");
+        expect(within(biuroRow).getByText("Wydaje PS")).toBeVisible();
+        expect(within(biuroRow).queryByRole("button")).toBeNull();
+    });
+    it("dopisanie: okno z adresem, POST z adresem, błąd z PS zostaje w oknie", async () => {
+        mailboxes = [faktury()]; operationStatus = 409; operationBody = { errorMessage: "Na serwerze poczty nie ma skrzynki x@envi.com.pl." };
+        renderPage();
+        fireEvent.click(within(await section()).getByRole("button", { name: "Dopisz skrzynkę" }));
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByText("PS sprawdzi, czy taka skrzynka istnieje na serwerze poczty. Niczego nie zakłada.")).toBeVisible();
+        fireEvent.change(within(dialog).getByLabelText("Adres skrzynki"), { target: { value: " x@envi.com.pl " } });
+        fireEvent.click(within(dialog).getByRole("button", { name: "Dopisz" }));
+        expect(await within(dialog).findByText("Na serwerze poczty nie ma skrzynki x@envi.com.pl.")).toBeVisible();
+        expect(mutations()).toEqual([["http://localhost:3000/mailboxes/general",
+            { method: "POST", headers: { "Content-Type": "application/json" }, body: '{"address":"x@envi.com.pl"}', credentials: "include" }]]);
+    });
+    it("'Niech PS wydaje hasło' dopiero po potwierdzeniu; odmowa PS zostaje w oknie", async () => {
+        mailboxes = [biuro()]; operationStatus = 409; operationBody = { errorMessage: "Hasła skrzynek nie są skonfigurowane na serwerze PS." };
+        renderPage();
+        fireEvent.click(within(await section()).getByRole("button", { name: "Niech PS wydaje hasło" }));
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByText("PS ma wydawać hasło do biuro@envi.com.pl?")).toBeVisible();
+        expect(within(dialog).getByText(/teraz: wszyscy pracownicy/)).toBeVisible();
+        expect(mutations()).toHaveLength(0);
+        fireEvent.click(within(dialog).getByRole("button", { name: "PS wydaje hasło" }));
+        expect(await within(dialog).findByText("Hasła skrzynek nie są skonfigurowane na serwerze PS.")).toBeVisible();
+        expect(mutations()[0][0]).toBe("http://localhost:3000/mailboxes/3/takeOver");
+    });
+    it("'Zmień hasła wszystkich skrzynek': pętla po afterId, postęp, niepowodzenie z 'Ponów'", async () => {
+        mailboxes = [mailbox(2, "chocianow-ik", { contractId: 1806, passwordVersion: 1 }), mailbox(3, "biuro", { allEmployees: true, passwordVersion: 1 }),
+            mailbox(4, "abc-ik", { projectId: 5, passwordVersion: 2 }), faktury()];
+        const batches = [
+            { rotated: ["chocianow.ik@envi.com.pl"], failed: [{ address: "abc.ik@envi.com.pl", error: "serwer poczty nie odpowiedział" }], afterId: 4, remaining: 1 },
+            { rotated: ["biuro@envi.com.pl"], failed: [], afterId: 5, remaining: 0 },
+        ];
+        const base = fetchMock.getMockImplementation()!;
+        fetchMock.mockImplementation(async (url: string, init?: RequestInit) => {
+            if (url.endsWith("/rotateAll")) return response(batches.shift());
+            if (url.endsWith("/4/password")) return response(mailbox(4, "abc-ik", { projectId: 5, passwordVersion: 3 }));
+            return base(url, init);
+        });
+        renderPage();
+        fireEvent.click(within(await section()).getByRole("button", { name: "Zmień hasła wszystkich skrzynek" }));
+        const confirm = await screen.findByRole("dialog");
+        expect(within(confirm).getByText("faktury@envi.com.pl ma hasło ręczne. Zmień je osobno na serwerze poczty.")).toBeVisible();
+        fireEvent.click(within(confirm).getByRole("button", { name: "Zmień hasła" }));
+        expect(await screen.findByText("Zmieniono 2 z 3 skrzynek")).toBeVisible();
+        const progress = screen.getByText("Zmiana haseł skrzynek").closest(".modal") as HTMLElement;
+        expect(within(progress).getByText("Nie udało się na 1 skrzynce:")).toBeVisible();
+        expect(within(progress).getByText(/serwer poczty nie odpowiedział/)).toBeVisible();
+        expect(within(progress).getByText("Na tych skrzynkach dalej działa stare hasło. Na pozostałych działa już nowe.")).toBeVisible();
+        expect(fetchMock.mock.calls.filter(call => call[0].endsWith("/rotateAll")).map(call => call[1].body)).toEqual(['{"afterId":0}', '{"afterId":4}']);
+        fireEvent.click(within(progress).getByRole("button", { name: "Ponów" }));
+        expect(await within(progress).findByText("Zmieniono 3 z 3 skrzynek")).toBeVisible();
+        expect(within(progress).queryByText(/Nie udało się/)).toBeNull();
+        expect(fetchMock.mock.calls.filter(call => call[0].endsWith("/4/password"))).toHaveLength(1);
+    });
+    it("panel osoby: hasła od PS jako 'Wydaje PS' bez 'Odbierz'; okno udostępniania tylko z hasłami ręcznymi", async () => {
+        mailboxes = [mailbox(2, "chocianow-ik", { contractId: 1806, passwordVersion: 1 }), mailbox(4, "abc-ik", { projectId: 5, passwordVersion: 1 }),
+            mailbox(3, "biuro", { allEmployees: true, passwordVersion: 1 }), faktury()];
+        rows = [row(1, { publicKeyJwk: { kty: "RSA", n: "n", e: "AQAB" }, keyThumbprint: "a".repeat(64), keyFingerprint: "aaaa aaaa",
+            secretsExpected: ["poczta-abc-ik", "poczta-biuro", "poczta-chocianow-ik", "poczta-faktury"], secretsGiven: ["poczta-biuro", "poczta-faktury"] })];
+        renderPage(); await pick();
+        const passwords = screen.getByRole("region", { name: "Hasła" });
+        expect(within(passwords).getByText("Skrzynki projektów: wszystkie")).toBeVisible();
+        expect(within(passwords).getByText("czeka na komputer")).toBeVisible();
+        expect(within(passwords).getByText("wydane")).toBeVisible();
+        expect(within(passwords).getAllByText("Wydaje PS")).toHaveLength(2);
+        expect(within(passwords).getAllByRole("button", { name: "Odbierz" })).toHaveLength(1);
+        expect(within(passwords).getByText(/PS da hasło, gdy komputer tej osoby połączy się następnym razem/)).toBeVisible();
+        fireEvent.click(within(passwords).getByRole("button", { name: "Udostępnij hasło…" }));
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getAllByRole("option").map(option => option.textContent)).toEqual(["poczta: faktury"]);
+    });
+    it("tylko hasła od PS: 'Udostępnij hasło…' i 'Hasła wspólne' wyłączone", async () => {
+        mailboxes = [mailbox(3, "biuro", { allEmployees: true, passwordVersion: 1 })];
+        rows = [row(1, { publicKeyJwk: { kty: "RSA", n: "n", e: "AQAB" }, keyThumbprint: "a".repeat(64), keyFingerprint: "aaaa aaaa",
+            secretsExpected: ["poczta-biuro"], secretsGiven: ["poczta-biuro"] })];
+        renderPage(); await pick();
+        expect(screen.getByRole("button", { name: "Udostępnij hasło…" })).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Hasła wspólne" })).toBeDisabled();
+        expect(screen.queryByText(/PS da hasło, gdy komputer/)).toBeNull();
     });
 });

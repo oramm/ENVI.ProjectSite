@@ -1,4 +1,4 @@
-import type { SbAction, SbEntry, SbHealth, SbLevels } from "./sbManageApi";
+import type { SbAction, SbAgentRoute, SbAgentState, SbEntry, SbHealth, SbLevels, SbMailbox } from "./sbManageApi";
 
 export const statusViews = {
     INVITED: { label: "Zaproszony", variant: "warning" },
@@ -24,14 +24,14 @@ export function availableActions(entry: SbEntry): { action: SbAction; label: str
 // Nazwa roli z PS jest kodem systemowym; na ekranie kierownika pokazujemy polską nazwę.
 export const roleLabel = (systemRoleName: string | null) =>
     systemRoleName === "ENVI_MANAGER" ? "kierownik" : systemRoleName === "ENVI_EMPLOYEE" ? "pracownik" : systemRoleName || "brak roli";
-export function describeGithub(entry: SbEntry): string {
-    return entry.githubLogin || (entry.statusCode === "INVITED" && entry.githubInvitationId != null ? "zaproszenie czeka" : "niepowiązane");
-}
 export function describeDrive(entry: SbEntry): string {
     if (entry.drivePermissionId) return "jest";
     if (entry.isGrantedManually) return "nadane ręcznie";
     // Brak numeru w stanach nadania oznacza brak zapisu, w stanach odebrania - zdjęty dostęp.
     return entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE" ? "brak zapisu" : "zdjęty";
+}
+export function describeGithub(entry: SbEntry): string {
+    return entry.githubLogin || (entry.statusCode === "INVITED" && entry.githubInvitationId != null ? "zaproszenie czeka" : "niepowiązane");
 }
 export function describeFailure(status: number, message: string): string {
     switch (status) {
@@ -61,16 +61,15 @@ export function confirmationContent(action: "block" | "revoke", entry: SbEntry) 
 }
 export const assignableEntries = (entries: SbEntry[]) => entries.filter(entry =>
     (entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE") && entry.githubLogin === null && !entry.isGrantedManually);
-export const noLevels: SbLevels = { repos: "none", psDb: "none", drive: "none", mail: [] };
+export const noLevels: SbLevels = { repos: "none", psDb: "none", mail: [] };
 export const repoOptions = [["none", "brak"], ["read", "odczyt"], ["write", "zapis"]] as const;
 export const psDbOptions = [["none", "brak"], ["ro", "odczyt"], ["rw", "zapis"]] as const;
-export const driveOptions = [["none", "brak"], ["connector", "konektor"]] as const;
 const optionLabel = (options: readonly (readonly [string, string])[], value: string) => options.find(([key]) => key === value)?.[1] ?? value;
 export function describeLevels(entry: SbEntry) {
     const levels = entry.levels ?? noLevels;
     return {
         repos: optionLabel(repoOptions, levels.repos), psDb: optionLabel(psDbOptions, levels.psDb),
-        drive: optionLabel(driveOptions, levels.drive), mail: levels.mail.length ? levels.mail.join(", ") : "brak",
+        mail: levels.mail.length ? levels.mail.join(", ") : "brak",
     };
 }
 // Skrzynki znane z konfiguracji poczty firmowej; inne kody z bazy też zostają widoczne w panelu.
@@ -94,7 +93,42 @@ export function groupKey(entry: SbEntry): (typeof entryGroups)[number]["key"] {
 // Hasła (SBD-2). Które hasła należą się osobie, rozstrzyga PS (secretsExpected); tu tylko podpis i stan.
 export const secretLabel = (name: string) =>
     name === "poczta-sb-agent" ? "konto techniczne poczty (agent)" : name === "baza-ps" ? "baza PS" : name.startsWith("poczta-") ? `poczta: ${name.slice("poczta-".length)}` : name;
-export const sharedSecretNames = (entries: SbEntry[]) => [...new Set(entries.flatMap(entry => entry.secretsExpected ?? []))];
+/** Hasła skrzynek, które PS wydaje sam (SKO): nie wpisuje się ich w oknie udostępniania. */
+export const managedSecretNames = (mailboxes: SbMailbox[]) =>
+    new Set(mailboxes.filter(mailbox => mailbox.passwordVersion != null).map(mailbox => `poczta-${mailbox.code}`));
+export const sharedSecretNames = (entries: SbEntry[], managed: Set<string> = new Set()) =>
+    [...new Set(entries.flatMap(entry => entry.secretsExpected ?? []))].filter(name => !managed.has(name));
+const ownedMailbox = (mailbox: SbMailbox) => mailbox.projectId != null || mailbox.contractId != null;
+/**
+ * Hasła osoby tak jak w panelu: skrzynki projektów z hasłem od PS w jednym wierszu, skrzynki firmy z hasłem od PS
+ * osobno (bez przycisków), pozostałe ręcznie - z "Udostępnij" i "Odbierz". Które hasła się należą, rozstrzyga PS.
+ */
+export function personSecrets(entry: SbEntry, mailboxes: SbMailbox[]) {
+    const expected = entry.secretsExpected ?? [], given = entry.secretsGiven ?? [];
+    const managed = new Map(mailboxes.filter(mailbox => mailbox.passwordVersion != null).map(mailbox => [`poczta-${mailbox.code}`, mailbox]));
+    const projects = expected.filter(name => { const mailbox = managed.get(name); return !!mailbox && ownedMailbox(mailbox); });
+    const projectTotal = [...managed.values()].filter(mailbox => ownedMailbox(mailbox) && mailbox.statusCode === "ACTIVE").length;
+    return {
+        projects: projects.length ? {
+            label: `Skrzynki projektów: ${projects.length >= projectTotal ? "wszystkie" : projects.length}`,
+            given: projects.every(name => given.includes(name)),
+        } : null,
+        general: expected.filter(name => managed.has(name) && !projects.includes(name)).map(name => ({ name, given: given.includes(name) })),
+        manual: expected.filter(name => !managed.has(name)),
+    };
+}
+// Skrzynki firmy (SKO): bez projektu i kontraktu; skrzynek projektów ta sekcja nie pokazuje.
+export const generalMailboxes = (mailboxes: SbMailbox[]) => mailboxes.filter(mailbox => !ownedMailbox(mailbox));
+/** Osoby z daną skrzynką w poziomie Poczta (wskazane ręcznie). */
+export const mailboxPeople = (entries: SbEntry[], code: string) =>
+    entries.filter(entry => entry.levels?.mail.includes(code)).map(entry => `${entry.name} ${entry.surname}`);
+/** Ostrzeżenie w oknie "Zmień hasła wszystkich skrzynek": skrzynek z hasłem ręcznym PS nie zmieni. */
+export function manualPasswordWarning(mailboxes: SbMailbox[]): string | null {
+    const manual = mailboxes.filter(mailbox => mailbox.passwordVersion == null && mailbox.statusCode === "ACTIVE").map(mailbox => mailbox.address);
+    if (!manual.length) return null;
+    return manual.length === 1 ? `${manual[0]} ma hasło ręczne. Zmień je osobno na serwerze poczty.`
+        : `${manual.join(", ")} mają hasła ręczne. Zmień je osobno na serwerze poczty.`;
+}
 export const secretRecipients = (entries: SbEntry[], name: string) => entries.filter(entry => entry.secretsExpected?.includes(name));
 export const canReceiveSecret = (entry: SbEntry) => !!entry.publicKeyJwk && !!entry.keyThumbprint;
 export const defaultSecretRecipients = (entries: SbEntry[], name: string, changedAtSource = false) =>
@@ -153,3 +187,6 @@ export function secretHealthState(health: SbHealth | null | undefined, now: Date
 export const healthVersions = (health: SbHealth, now: Date = new Date()) =>
     `SB ${health.sbVersion ?? "?"} · instalator ${health.installerVersion ?? "?"} · raport ${formatHealthDate(health.reportedAt, now)}`;
 export const canRequestHealth = (entry: SbEntry) => entry.statusCode === "INVITED" || entry.statusCode === "ACTIVE";
+// Stan i klasa trasy przychodzą z PS jako kody; na ekranie mają polską nazwę i spokojny kolor.
+export const agentStateTone = (state: SbAgentState): "ok" | "off" | "warn" => state === "ma" ? "ok" : state === "nie ma" ? "off" : "warn";
+export const routeAccessLabel = (access: SbAgentRoute["access"]) => access === "zamkniete" ? "zamknięte" : access;

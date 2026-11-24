@@ -802,6 +802,9 @@ export interface Invoice extends RepositoryDataItem {
     _documentOpenUrl?: string;
     _totalGrossValue?: number;
     _totalNetValue?: number;
+    paymentStatus?: 'UNPAID' | 'PARTIALLY_PAID' | 'PAID' | 'NOT_APPLICABLE';
+    paidAmount?: number;
+    paymentDate?: string | null;
     // Pola KSeF
     ksefCorrectionType?: 1 | 2 | 3 | null;
     ksefNumber?: string | null;
@@ -1224,18 +1227,40 @@ export interface BankTransfer extends RepositoryDataItem {
     counterpartyName: string | null;
     counterpartyAccount: string | null;
     description: string | null;
+    title: string | null;
     matchingStatus: MatchingStatus;
     operationHash: string;
+    canRestoreToQueue?: boolean;
+}
+
+export interface BankMatchingCandidate {
+    invoiceId: number;
+    invoiceNumber?: string;
+    grossAmount?: number;
+    originalAmount?: number;
+    remainingAmount?: number;
+    entityName?: string | null;
+    paymentDeadline?: string | null;
+    contractNumber?: string | null;
+    flags?: string[];
+}
+
+export interface PendingBankTransfer extends BankTransfer {
+    remainingAmount: number;
+    matchingCandidates: BankMatchingCandidate[];
+    importNeedsReview?: boolean;
 }
 
 export interface BankStatement {
     id: number;
     fileName: string;
-    fileHash: string;
-    uploadedAt: string;
-    periodFrom: string | null;
-    periodTo: string | null;
-    uploadedBy: number | null;
+    accountNumber: string;
+    importedAt: string;
+    periodFrom: string;
+    periodTo: string;
+    importedByName: string | null;
+    newOperations: number;
+    pendingTransfers: number;
 }
 
 export interface PaymentAllocation extends RepositoryDataItem {
@@ -1249,6 +1274,7 @@ export interface PaymentAllocation extends RepositoryDataItem {
     confidence: number | null;
     createdAt: string;
     createdBy: number | null;
+    invoiceNumber?: string | null;
 }
 
 export interface DuplicateGroup {

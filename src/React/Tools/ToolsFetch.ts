@@ -77,11 +77,14 @@ export default class ToolsFetch {
             if (!response.ok) {
                 httpStatus = response.status;
                 if (httpStatus === 401) this.handleSessionExpired();
-                const errorDetails: ErrorServerResponse & { error?: { code?: string; message?: string } } = await response.json();
-                const code = errorDetails.error?.code;
+                const errorDetails: ErrorServerResponse & { error?: string | { code?: string; message?: string } } =
+                    await response.json().catch(() => ({}));
+                const apiError = errorDetails.error;
+                const code = typeof apiError === "object" ? apiError?.code : undefined;
                 const isContractSharing = url.includes('/contractReact') || url.includes('/milestones/sharing/');
                 throw new Error(code && isContractSharing ? this.contractSharingErrorMessage(code) :
-                    errorDetails.errorMessage || errorDetails.error?.message || `Błąd serwera (${httpStatus})`);
+                    errorDetails.errorMessage || (typeof apiError === "string" ? apiError : apiError?.message) ||
+                    `Błąd serwera (${httpStatus})`);
             }
 
             return await response.json();

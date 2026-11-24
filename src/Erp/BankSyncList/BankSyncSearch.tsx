@@ -1,265 +1,74 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-    Alert,
-    Badge,
-    Button,
-    Container,
-    Form,
-    Modal,
-    Spinner,
-    Tab,
-    Table,
-    Tabs,
-} from 'react-bootstrap';
-import { BankTransfer, DuplicateGroup, WadiumMatchResult } from '../../../Typings/bussinesTypes';
-import ToolsDate from '../../React/Tools/ToolsDate';
-import Tools from '../../React/Tools/Tools';
-import {
-    bankTransfersRepository,
-    commitStatement,
-    fetchDuplicates,
-    fetchPendingTransfers,
-    fetchWadiumMatches,
-    UploadPreview,
-    uploadBankStatement,
-} from './BankSyncController';
-import AllocationModal from './AllocationModal';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Badge, Button, Container, Form, Modal, Spinner, Tab, Table, Tabs } from 'react-bootstrap';
+import { BankMatchingCandidate, BankTransfer, DuplicateGroup, PendingBankTransfer, WadiumMatchResult } from '../../../Typings/bussinesTypes';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
+import ConfirmModal from '../../View/Modals/ConfirmModal';
+import AllocationModal from './AllocationModal';
+import BankStatementsTab from './BankStatementsTab';
+import DecisionQueue from './DecisionQueue';
 import { BankTransferFilterBody } from './BankTransferFilterBody';
+import {
+    bankTransfersRepository, createAllocation, dismissTransfer, fetchBankStatementImport, fetchDuplicates, fetchPendingTransfers,
+    fetchStatements, fetchWadiumMatches, restoreTransfer, StatementCoverage, UploadPreview, uploadBankStatement,
+} from './BankSyncController';
+import { BankTransferDescription, fmt, fmtDate, fmtPeriod, StatementGapAlert } from './BankSyncViews';
 import './BankSyncSearch.css';
 
-/* ------------------------------------------------------------------ */
-/* Shared helpers                                                       */
-/* ------------------------------------------------------------------ */
-
-function DirectionBadge({ direction }: { direction: string }) {
-    return direction === 'IN'
-        ? <Badge bg="success">↓ IN</Badge>
-        : <Badge bg="danger">↑ OUT</Badge>;
+function DirectionBadge({ direction }: { direction: BankTransfer['direction'] }) {
+    return direction === 'IN' ? <Badge bg="success">Wpływ</Badge> : <Badge bg="secondary">Wydatek</Badge>;
 }
 
-function StatusBadge({ status }: { status: string }) {
-    const map: Record<string, [string, string]> = {
-        UNMATCHED: ['secondary', 'Nierozliczone'],
-        PROPOSED:  ['warning',   'Proponowane'],
-        CONFIRMED: ['success',   'Potwierdzone'],
-        MANUAL:    ['info',      'Ręczne'],
+function StatusBadge({ status }: { status: BankTransfer['matchingStatus'] }) {
+    const labels = {
+        UNMATCHED: ['secondary', 'Bez przypisania'],
+        PROPOSED: ['warning', 'Propozycja'],
+        CONFIRMED: ['success', 'Przypisany'],
+        MANUAL: ['light', 'Poza kolejką'],
     };
-    const [bg, label] = map[status] ?? ['light', status];
-    return <Badge bg={bg}>{label}</Badge>;
+    const [bg, label] = labels[status];
+    return <Badge bg={bg} text={bg === 'light' || bg === 'warning' ? 'dark' : undefined}>{label}</Badge>;
 }
 
-function fmt(n: number, currency = 'PLN') {
-    return `${Tools.formatNumber(n)} ${currency}`;
+function TransferRow({ transfer }: { transfer: BankTransfer }) {
+    return <tr>
+        <td><BankTransferDescription transfer={transfer} /></td>
+        <td><DirectionBadge direction={transfer.direction} /></td>
+        <td><StatusBadge status={transfer.matchingStatus} /></td>
+    </tr>;
 }
 
-function fmtDate(d: string | null) {
-    return d ? ToolsDate.dateYMDtoDMY(d) : '-';
+function transferTableHeader() {
+    return <thead><tr><th>Przelew</th><th>Kierunek</th><th>Status</th></tr></thead>;
 }
 
-/* ------------------------------------------------------------------ */
-/* TransferRow — reusable row with optional "Alokacje" button          */
-/* ------------------------------------------------------------------ */
-
-interface TransferRowProps {
-    transfer: BankTransfer;
-    onManage?: (t: BankTransfer) => void;
-    showActions?: boolean;
+function TransfersTab({ onManage, onRestore, refreshKey, busy }: {
+    onManage: (transfer: BankTransfer) => void;
+    onRestore: (transfer: BankTransfer) => void;
+    refreshKey: number;
+    busy: boolean;
+}) {
+    return <FilterableTable<BankTransfer>
+        key={refreshKey}
+        id="bankTransfers"
+        title=""
+        repository={bankTransfersRepository}
+        FilterBodyComponent={BankTransferFilterBody}
+        isDeletable={false}
+        isCopyable={false}
+        searchOnMount
+        snapshotMode="criteria-only"
+        tableStructure={[
+            { header: 'Przelew', renderTdBody: transfer => <BankTransferDescription transfer={transfer} />, colMd: 6 },
+            { header: 'Kierunek', renderTdBody: transfer => <DirectionBadge direction={transfer.direction} />, colMd: 2 },
+            { header: 'Status', renderTdBody: transfer => <StatusBadge status={transfer.matchingStatus} />, colMd: 2 },
+            { header: '', renderTdBody: transfer => <div className="d-flex flex-wrap gap-1">
+                <Button size="sm" variant="outline-secondary" onClick={() => onManage(transfer)}>Przypisania</Button>
+                {transfer.canRestoreToQueue && <Button size="sm" variant="outline-primary" disabled={busy}
+                    onClick={() => onRestore(transfer)}>Przywróć do kolejki</Button>}
+            </div>, colMd: 2 },
+        ]}
+    />;
 }
-
-function TransferRow({ transfer, onManage, showActions = false }: TransferRowProps) {
-    return (
-        <tr>
-            <td className="text-nowrap">{fmtDate(transfer.execDate)}</td>
-            <td><DirectionBadge direction={transfer.direction} /></td>
-            <td className="text-end text-nowrap fw-semibold">
-                {fmt(transfer.amount, transfer.currency)}
-            </td>
-            <td style={{ minWidth: 120, maxWidth: 200 }}>
-                {transfer.counterpartyName ?? '-'}
-            </td>
-            <td style={{ minWidth: 160 }}>
-                <small>{transfer.description ?? '-'}</small>
-            </td>
-            <td><StatusBadge status={transfer.matchingStatus} /></td>
-            {showActions && (
-                <td>
-                    <Button
-                        size="sm"
-                        variant="outline-secondary"
-                        onClick={() => onManage?.(transfer)}
-                    >
-                        Alokacje
-                    </Button>
-                </td>
-            )}
-        </tr>
-    );
-}
-
-function transferTableHeader(showActions: boolean) {
-    return (
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Kier.</th>
-                <th className="text-end">Kwota</th>
-                <th>Kontrahent</th>
-                <th>Opis</th>
-                <th>Status</th>
-                {showActions && <th></th>}
-            </tr>
-        </thead>
-    );
-}
-
-/* ------------------------------------------------------------------ */
-/* Transfers tab — standard FilterableTable pattern                    */
-/* ------------------------------------------------------------------ */
-
-function TransfersTab({ onRefresh }: { onRefresh?: () => void }) {
-    const [managed, setManaged] = useState<BankTransfer | null>(null);
-    const [externalUpdate, setExternalUpdate] = useState(0);
-
-    function handleAllocChanged() {
-        setManaged(null);
-        setExternalUpdate(k => k + 1);
-        onRefresh?.();
-    }
-
-    return (
-        <>
-            <FilterableTable<BankTransfer>
-                id="bankTransfers"
-                title=""
-                repository={bankTransfersRepository}
-                FilterBodyComponent={BankTransferFilterBody}
-                isDeletable={false}
-                isCopyable={false}
-                externalUpdate={externalUpdate}
-                tableStructure={[
-                    { header: 'Data', renderTdBody: (t) => <>{fmtDate(t.execDate)}</>, colMd: 1 },
-                    { header: 'Kier.', renderTdBody: (t) => <DirectionBadge direction={t.direction} />, colMd: 1 },
-                    { header: 'Kwota', renderTdBody: (t) => <span className="fw-semibold text-nowrap">{fmt(t.amount, t.currency)}</span>, colMd: 2 },
-                    { header: 'Kontrahent', renderTdBody: (t) => <>{t.counterpartyName ?? '-'}</>, colMd: 2 },
-                    { header: 'Opis', renderTdBody: (t) => <small className="text-muted">{t.description ?? '-'}</small>, colMd: 4 },
-                    { header: 'Status', renderTdBody: (t) => <StatusBadge status={t.matchingStatus} />, colMd: 1 },
-                    {
-                        header: '',
-                        renderTdBody: (t) => (
-                            <Button size="sm" variant="outline-secondary" onClick={() => setManaged(t)}>
-                                Alokacje
-                            </Button>
-                        ),
-                        colMd: 1,
-                    },
-                ]}
-            />
-
-            {managed && (
-                <AllocationModal
-                    transfer={managed}
-                    onHide={() => setManaged(null)}
-                    onChanged={handleAllocChanged}
-                />
-            )}
-        </>
-    );
-}
-
-/* ------------------------------------------------------------------ */
-/* Pending tab — UNMATCHED + PROPOSED transfers needing attention      */
-/* ------------------------------------------------------------------ */
-
-function PendingTab({ onRefresh }: { onRefresh?: () => void }) {
-    const [transfers, setTransfers] = useState<BankTransfer[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [managed, setManaged] = useState<BankTransfer | null>(null);
-
-    const load = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            setTransfers(await fetchPendingTransfers());
-        } catch (e) {
-            setError(e instanceof Error ? e.message : 'Błąd ładowania');
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => { load(); }, [load]);
-
-    function handleAllocChanged() {
-        load();
-        onRefresh?.();
-    }
-
-    const unmatched = transfers.filter(t => t.matchingStatus === 'UNMATCHED');
-    const proposed  = transfers.filter(t => t.matchingStatus === 'PROPOSED');
-
-    if (loading) return <div className="text-center py-4"><Spinner animation="border" /></div>;
-    if (error) return <Alert variant="danger">{error}</Alert>;
-
-    if (transfers.length === 0) {
-        return <Alert variant="success">Brak przelewów oczekujących na obsługę.</Alert>;
-    }
-
-    return (
-        <div>
-            <Alert variant="warning" className="mb-3 d-flex gap-3">
-                <span>Oczekuje na obsługę: <strong>{transfers.length}</strong></span>
-                <span>Nierozliczone: <strong>{unmatched.length}</strong></span>
-                <span>Proponowane: <strong>{proposed.length}</strong></span>
-            </Alert>
-
-            {proposed.length > 0 && (
-                <>
-                    <h6>Proponowane dopasowania — wymagają zatwierdzenia</h6>
-                    <div className="table-responsive mb-4">
-                        <Table striped hover size="sm" className="bank-sync-table">
-                            {transferTableHeader(true)}
-                            <tbody>
-                                {proposed.map(t => (
-                                    <TransferRow key={t.id} transfer={t} showActions onManage={setManaged} />
-                                ))}
-                            </tbody>
-                        </Table>
-                    </div>
-                </>
-            )}
-
-            {unmatched.length > 0 && (
-                <>
-                    <h6>Nierozliczone — wymagają ręcznej alokacji</h6>
-                    <div className="table-responsive">
-                        <Table striped hover size="sm" className="bank-sync-table">
-                            {transferTableHeader(true)}
-                            <tbody>
-                                {unmatched.map(t => (
-                                    <TransferRow key={t.id} transfer={t} showActions onManage={setManaged} />
-                                ))}
-                            </tbody>
-                        </Table>
-                    </div>
-                </>
-            )}
-
-            {managed && (
-                <AllocationModal
-                    transfer={managed}
-                    onHide={() => setManaged(null)}
-                    onChanged={handleAllocChanged}
-                />
-            )}
-        </div>
-    );
-}
-
-/* ------------------------------------------------------------------ */
-/* Duplicates tab                                                       */
-/* ------------------------------------------------------------------ */
 
 function DuplicatesTab() {
     const [groups, setGroups] = useState<DuplicateGroup[]>([]);
@@ -296,7 +105,7 @@ function DuplicatesTab() {
                         <span className="text-muted ms-2">({group.transfers.length} przelewy)</span>
                     </div>
                     <Table size="sm" className="mb-0">
-                        {transferTableHeader(false)}
+                        {transferTableHeader()}
                         <tbody>
                             {group.transfers.map(t => <TransferRow key={t.id} transfer={t} />)}
                         </tbody>
@@ -348,8 +157,8 @@ function WadiumTab() {
                     <div key={bond.id} className={`mb-4 border rounded p-3 ${m.isReturned ? 'border-success' : 'border-warning'}`}>
                         <div className="d-flex justify-content-between align-items-start mb-2">
                             <div>
-                                <strong>{bond.offerAlias ?? `Oferta #${bond.offerId}`}</strong>
-                                <span className="ms-2 text-muted">Wadium #{bond.id}</span>
+                                <strong>{bond.offerAlias ?? 'Oferta'}</strong>
+                                <span className="ms-2 text-muted">Wadium</span>
                             </div>
                             <div className="d-flex gap-2 align-items-center">
                                 <span className="fw-semibold">{fmt(bond.value)}</span>
@@ -372,27 +181,9 @@ function WadiumTab() {
                                     Pasujące przelewy ({m.matchingTransfers.length}):
                                 </small>
                                 <Table size="sm" className="mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Data</th>
-                                            <th className="text-end">Kwota</th>
-                                            <th>Kontrahent</th>
-                                            <th>Opis</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
+                                    {transferTableHeader()}
                                     <tbody>
-                                        {m.matchingTransfers.map(t => (
-                                            <tr key={t.id}>
-                                                <td className="text-nowrap">{fmtDate(t.execDate)}</td>
-                                                <td className="text-end text-nowrap">{fmt(t.amount, t.currency)}</td>
-                                                <td className="text-truncate" style={{ maxWidth: 160 }}>{t.counterpartyName ?? '-'}</td>
-                                                <td className="text-truncate" style={{ maxWidth: 280 }}>
-                                                    <small>{t.description ?? '-'}</small>
-                                                </td>
-                                                <td><StatusBadge status={t.matchingStatus} /></td>
-                                            </tr>
-                                        ))}
+                                        {m.matchingTransfers.map(t => <TransferRow key={t.id} transfer={t} />)}
                                     </tbody>
                                 </Table>
                               </>
@@ -404,146 +195,255 @@ function WadiumTab() {
     );
 }
 
-/* ------------------------------------------------------------------ */
-/* Upload modal                                                         */
-/* ------------------------------------------------------------------ */
 
-function UploadModal({ show, onHide, onCommitted }: { show: boolean; onHide: () => void; onCommitted: () => void }) {
-    const [file, setFile] = useState<File | null>(null);
+const IMPORT_POLL_TIMEOUT_MS = 5 * 60 * 1000;
+
+function UploadModal({ onHide, onUploaded, onShowPending }: {
+    onHide: () => void;
+    onUploaded: () => void;
+    onShowPending: (statementId: number) => void;
+}) {
+    const [file, setFile] = useState<File>();
     const [uploading, setUploading] = useState(false);
-    const [committing, setCommitting] = useState(false);
-    const [preview, setPreview] = useState<UploadPreview | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+    const [pollingTimedOut, setPollingTimedOut] = useState(false);
+    const [preview, setPreview] = useState<UploadPreview>();
+    const [error, setError] = useState('');
+    const pendingUpload = useRef<AbortController>();
 
-    function reset() { setFile(null); setPreview(null); setError(null); setSuccess(null); }
-    function handleClose() { reset(); onHide(); }
+    useEffect(() => () => pendingUpload.current?.abort(), []);
 
-    async function handleUpload() {
-        if (!file) return;
+    async function upload() {
+        if (!file || pendingUpload.current || pollingTimedOut) return;
+        const request = new AbortController();
+        const { signal } = request;
+        pendingUpload.current = request;
+        let timeout: ReturnType<typeof setTimeout> | undefined;
         setUploading(true);
-        setError(null);
+        setError('');
         try {
-            setPreview(await uploadBankStatement(file));
+            const { jobId } = await uploadBankStatement(file);
+            if (signal.aborted) return;
+            timeout = setTimeout(() => {
+                request.abort();
+                setPollingTimedOut(true);
+                setUploading(false);
+            }, IMPORT_POLL_TIMEOUT_MS);
+            signal.addEventListener('abort', () => clearTimeout(timeout), { once: true });
+
+            let networkFailures = 0;
+            while (!signal.aborted) {
+                let job;
+                try {
+                    job = await fetchBankStatementImport(jobId, signal);
+                    networkFailures = 0;
+                } catch (error) {
+                    if (signal.aborted) return;
+                    if ((error instanceof Error && 'status' in error) || ++networkFailures >= 3) throw error;
+                }
+
+                if (signal.aborted) return;
+                if (job?.status === 'done') {
+                    setPreview(job.result);
+                    onUploaded();
+                    return;
+                }
+                if (job?.status === 'failed') throw new Error(job.error);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         } catch (e) {
-            setError(e instanceof Error ? e.message : 'Błąd importu');
+            if (!signal.aborted) setError(e instanceof Error ? e.message : 'Nie udało się wgrać wyciągu.');
         } finally {
-            setUploading(false);
+            clearTimeout(timeout);
+            pendingUpload.current = undefined;
+            if (!signal.aborted) setUploading(false);
         }
     }
 
-    async function handleCommit() {
-        if (!preview) return;
-        setCommitting(true);
-        setError(null);
-        try {
-            const r = await commitStatement(preview.statementId);
-            setSuccess(`Zatwierdzono ${r.committed} alokacji.`);
-            onCommitted();
-        } catch (e) {
-            setError(e instanceof Error ? e.message : 'Błąd zatwierdzania');
-        } finally {
-            setCommitting(false);
-        }
-    }
+    const summary = preview ? [
+        ['Operacje w pliku', preview.total + preview.alreadyKnown],
+        ['Już znane z wcześniejszych wyciągów', preview.alreadyKnown],
+        ['Nowe operacje', preview.total],
+        ['Wpływy przypisane automatycznie', preview.incomeMatched],
+        ['Wpływy czekające na decyzję', preview.incomePending],
+        ['Przelewy własne', preview.ownTransfers],
+        ['Wydatki', preview.expenses],
+        ['Opłaty bankowe', preview.fees],
+        ...(preview.otherIncoming ? [['Pozostałe wpływy poza kolejką', preview.otherIncoming]] : []),
+    ] : [];
 
-    return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Import wyciągu bankowego (XML PKO BP)</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {error   && <Alert variant="danger">{error}</Alert>}
-                {success && <Alert variant="success">{success}</Alert>}
-
-                {!preview && !success && (
-                    <Form.Group>
-                        <Form.Label>Plik XML z PKO BP</Form.Label>
-                        <Form.Control
-                            type="file" accept=".xml"
-                            onChange={e => setFile((e.target as HTMLInputElement).files?.[0] ?? null)}
-                        />
-                    </Form.Group>
-                )}
-
-                {preview && !success && (
-                    <div className="bank-sync-preview">
-                        <p className="mb-1"><strong>Podgląd importu:</strong></p>
-                        <ul className="mb-0">
-                            <li>Łącznie operacji: <strong>{preview.total}</strong></li>
-                            <li>Automatycznie dopasowanych: <strong>{preview.autoMatched}</strong></li>
-                            <li>Proponowanych dopasowań: <strong>{preview.proposed}</strong></li>
-                            <li>Bez dopasowania: <strong>{preview.unmatched}</strong></li>
-                            <li>Opłaty bankowe (pominięte): <strong>{preview.fees}</strong></li>
-                            {preview.foreignCurrency > 0 && (
-                                <li>Waluty obce (pominięte): <strong>{preview.foreignCurrency}</strong></li>
-                            )}
+    return <Modal show onHide={uploading ? undefined : onHide}>
+        <Modal.Header closeButton={!uploading}>
+            <Modal.Title>{preview ? 'Wyciąg wgrany' : 'Wgraj wyciąg bankowy'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            {error && <Alert variant="danger">{error}</Alert>}
+            {pollingTimedOut && <Alert variant="warning">Wgrywanie trwa dłużej niż zwykle. Sprawdź za chwilę zakładkę Wyciągi.</Alert>}
+            {uploading && <p role="status">Wgrywam wyciąg...</p>}
+            {preview ? <>
+                <p className="text-muted small">{file?.name} · okres {fmtPeriod(preview)}</p>
+                <Table size="sm">
+                    <tbody>{summary.map(([label, value], index) => <tr key={label} className={index === 2 || index === 4 ? 'fw-bold' : ''}>
+                        <th className={index === 2 || index === 4 ? 'ps-2' : 'fw-normal'} scope="row">{label}</th>
+                        <td className="text-end">{value}</td>
+                    </tr>)}</tbody>
+                </Table>
+                {!!preview.needsReview && <Alert variant="warning">
+                    <details>
+                        <summary>Nowe operacje do sprawdzenia: {preview.needsReview}</summary>
+                        <ul className="mb-1">
+                            {preview.reviewOperations?.map(op => <li key={op.fileOperationNumber}>
+                                Poz. {op.fileOperationNumber} w pliku, {fmtDate(op.execDate)}, {fmt(op.direction === 'OUT' ? -op.amount : op.amount, op.currency)}
+                            </li>)}
                         </ul>
-                        <Alert variant="info" className="mt-3 mb-0">
-                            Kliknij "Zatwierdź" aby potwierdzić proponowane dopasowania i zaktualizować statusy faktur.
-                        </Alert>
-                    </div>
-                )}
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>{success ? 'Zamknij' : 'Anuluj'}</Button>
-                {!preview && !success && (
-                    <Button variant="primary" onClick={handleUpload} disabled={!file || uploading}>
-                        {uploading ? <><Spinner size="sm" animation="border" className="me-1" />Importuję…</> : 'Importuj'}
-                    </Button>
-                )}
-                {preview && !success && (
-                    <Button variant="success" onClick={handleCommit} disabled={committing}>
-                        {committing ? <><Spinner size="sm" animation="border" className="me-1" />Zatwierdzam…</> : 'Zatwierdź'}
-                    </Button>
-                )}
-            </Modal.Footer>
-        </Modal>
-    );
+                        <p className="mb-0">Mogą to być te same operacje co wcześniej zapisane, z inną datą. System nie przypina ich do faktur automatycznie - sprawdź je w kolejce „Do decyzji”.</p>
+                    </details>
+                </Alert>}
+                <StatementGapAlert gaps={preview.gaps} afterUpload />
+            </> : !pollingTimedOut && <Form.Group controlId="bank-statement-file">
+                <Form.Label>Plik XML z PKO BP</Form.Label>
+                <Form.Control type="file" accept=".xml" disabled={uploading}
+                    onChange={event => setFile((event.target as HTMLInputElement).files?.[0])} />
+            </Form.Group>}
+        </Modal.Body>
+        <Modal.Footer>
+            <Button variant="secondary" onClick={onHide} disabled={uploading}>{preview || pollingTimedOut ? 'Zamknij' : 'Anuluj'}</Button>
+            {!preview && !pollingTimedOut && <Button onClick={upload} disabled={!file || uploading}>Wgraj wyciąg</Button>}
+            {preview && !!(preview.incomePending || preview.needsReview) && <Button onClick={() => onShowPending(preview.statementId)}>
+                Przejdź do decyzji{!preview.needsReview && ` (${preview.incomePending})`}
+            </Button>}
+        </Modal.Footer>
+    </Modal>;
 }
-
-/* ------------------------------------------------------------------ */
-/* Main component                                                       */
-/* ------------------------------------------------------------------ */
 
 export default function BankSyncSearch({ title }: { title: string }) {
     const [showUpload, setShowUpload] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [queueKey, setQueueKey] = useState(0);
+    const [activeTab, setActiveTab] = useState('pending');
+    const [statementId, setStatementId] = useState('');
+    const [coverage, setCoverage] = useState<StatementCoverage[]>();
+    const [transfers, setTransfers] = useState<PendingBankTransfer[]>();
+    const [coverageError, setCoverageError] = useState('');
+    const [queueError, setQueueError] = useState('');
+    const [managed, setManaged] = useState<BankTransfer>();
+    const [dismissal, setDismissal] = useState<PendingBankTransfer>();
+    const [busy, setBusy] = useState<number | null>(null);
+    const [notice, setNotice] = useState<{ error?: boolean; text: string }>();
+    const running = useRef(false);
 
     useEffect(() => { document.title = title; }, [title]);
 
-    function handleCommitted() { setRefreshKey(k => k + 1); }
-    function handleAllocChanged() { setRefreshKey(k => k + 1); }
+    useEffect(() => {
+        let active = true;
+        setCoverageError('');
+        setQueueError('');
+        fetchPendingTransfers().then(items => { if (active) setTransfers(items); }).catch((error: Error) => {
+            if (active) { setTransfers(undefined); setQueueError(error.message); }
+        });
+        fetchStatements().then(items => { if (active) setCoverage(items); }).catch((error: Error) => {
+            if (active) { setCoverage(undefined); setCoverageError(error.message); }
+        });
+        return () => { active = false; };
+    }, [refreshKey]);
 
-    return (
-        <Container className="mt-3">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="mb-0">{title}</h4>
-                <Button variant="outline-primary" onClick={() => setShowUpload(true)}>
-                    Importuj wyciąg XML
-                </Button>
-            </div>
+    function refresh() {
+        setRefreshKey(key => key + 1);
+    }
 
-            <UploadModal
-                show={showUpload}
-                onHide={() => setShowUpload(false)}
-                onCommitted={handleCommitted}
-            />
+    function showPending(id: number) {
+        setShowUpload(false);
+        setStatementId(String(id));
+        setQueueKey(key => key + 1);
+        setActiveTab('pending');
+    }
 
-            <Tabs defaultActiveKey="pending" className="mb-3">
-                <Tab eventKey="pending" title="Oczekujące">
-                    <PendingTab key={refreshKey} onRefresh={handleAllocChanged} />
-                </Tab>
-                <Tab eventKey="transfers" title="Wszystkie przelewy">
-                    <TransfersTab key={refreshKey} onRefresh={handleAllocChanged} />
-                </Tab>
-                <Tab eventKey="duplicates" title="Duplikaty">
-                    <DuplicatesTab key={refreshKey} />
-                </Tab>
-                <Tab eventKey="wadium" title="Wadium">
-                    <WadiumTab key={refreshKey} />
-                </Tab>
-            </Tabs>
-        </Container>
-    );
+    function reportAssignment(amount: number, requested: number, remaining?: number) {
+        const parts = [`Przypisano ${fmt(amount)}.`];
+        if (amount < requested) parts.push('Kwotę ograniczono do pozostałej należności faktury.');
+        if (remaining) parts.push(`Pozostałe ${fmt(remaining)} czeka w kolejce „Do decyzji”.`);
+        setNotice({ text: parts.join(' ') });
+    }
+
+    async function changeTransfer(id: number, action: () => Promise<void>) {
+        if (running.current) return;
+        running.current = true;
+        setBusy(id);
+        setNotice(undefined);
+        try {
+            await action();
+        } finally {
+            // The remounted list must not reuse an in-flight search from before the decision.
+            await Promise.allSettled(bankTransfersRepository.pendingRequests.values());
+            refresh();
+            running.current = false;
+            setBusy(null);
+        }
+    }
+
+    function reportDecisionError(error: unknown) {
+        setNotice({ error: true, text: error instanceof Error ? error.message : 'Nie udało się zapisać decyzji' });
+    }
+
+    function approve(transfer: PendingBankTransfer, candidate: BankMatchingCandidate) {
+        void changeTransfer(transfer.id, async () => {
+            const result = await createAllocation(transfer.id, {
+                invoiceId: candidate.invoiceId, amount: transfer.remainingAmount, expectedRemaining: transfer.remainingAmount,
+            });
+            reportAssignment(result.allocatedAmount, transfer.remainingAmount, result.transferRemaining);
+        }).catch(reportDecisionError);
+    }
+
+    function restore(transfer: BankTransfer) {
+        void changeTransfer(transfer.id, async () => {
+            await restoreTransfer(transfer.id);
+            setNotice({ text: 'Wpływ wrócił do kolejki „Do decyzji”.' });
+        }).catch(reportDecisionError);
+    }
+
+    return <Container className="mt-3">
+        <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+            <h4 className="mb-0">{title}</h4>
+            <Button variant="outline-primary" onClick={() => setShowUpload(true)}>Wgraj wyciąg (plik z PKO BP)</Button>
+        </div>
+        {notice && <Alert variant={notice.error ? 'danger' : 'success'} dismissible onClose={() => setNotice(undefined)}>{notice.text}</Alert>}
+        {showUpload && <UploadModal onHide={() => setShowUpload(false)} onUploaded={refresh} onShowPending={showPending} />}
+        {managed && <AllocationModal transfer={managed} onHide={() => setManaged(undefined)}
+            onChanged={refresh} onAssigned={reportAssignment} />}
+        {dismissal && <ConfirmModal show lockWhileWaiting onClose={() => setDismissal(undefined)}
+            title={dismissal.importNeedsReview ? 'Zakończyć sprawdzanie operacji?' : 'Usuń wpływ z kolejki?'}
+            prompt={<>
+                <BankTransferDescription transfer={dismissal} amount={dismissal.direction === 'OUT' ? -dismissal.remainingAmount : dismissal.remainingAmount} />
+                {!dismissal.importNeedsReview && <p className="mt-3 mb-0">Wpływ można później przywrócić na zakładce „Wszystkie przelewy”.
+                    Jeśli ma przypisane wpłaty, trzeba je najpierw odpiąć.</p>}
+            </>}
+            confirmLabel={dismissal.importNeedsReview ? 'Zakończ sprawdzanie' : 'Usuń z kolejki'}
+            onConfirm={() => changeTransfer(dismissal.id, async () => {
+                await dismissTransfer(dismissal.id, dismissal.remainingAmount, dismissal.importNeedsReview ? dismissal.operationHash : undefined);
+                setNotice({ text: dismissal.importNeedsReview ? 'Sprawdzanie operacji zakończone.' : 'Wpływ został usunięty z kolejki decyzji.' });
+            })} />}
+        <Tabs activeKey={activeTab} onSelect={key => {
+            if (key === 'statements') refresh();
+            if (key) setActiveTab(key);
+        }} className="mb-3" mountOnEnter>
+            <Tab eventKey="pending" title={transfers ? `Do decyzji (${transfers.length})` : 'Do decyzji'}>
+                {queueError ? <Alert variant="danger">{queueError}</Alert> : !transfers ? <Spinner animation="border" /> :
+                    <DecisionQueue key={queueKey} transfers={transfers} statements={coverage?.flatMap(account => account.statements) ?? []}
+                        statementId={statementId} onStatementChange={setStatementId} onManage={setManaged}
+                        onApprove={approve} onDismiss={setDismissal} busy={busy} />}
+            </Tab>
+            <Tab eventKey="transfers" title="Wszystkie przelewy">
+                <TransfersTab onManage={setManaged} onRestore={restore} refreshKey={refreshKey} busy={busy !== null} />
+            </Tab>
+            <Tab eventKey="statements" title="Wyciągi">
+                {coverageError ? <Alert variant="danger">{coverageError}</Alert> : !coverage ? <Spinner animation="border" /> :
+                    !coverage.length ? <p className="text-muted">Brak wgranych wyciągów.</p> : coverage.map(account =>
+                        <section key={account.accountNumber} className="mb-4">
+                            {coverage.length > 1 && <h5>Rachunek …{account.accountNumber.slice(-8)}</h5>}
+                            <BankStatementsTab coverage={account} onShowPending={showPending} />
+                        </section>)}
+            </Tab>
+            <Tab eventKey="duplicates" title="Duplikaty"><DuplicatesTab key={refreshKey} /></Tab>
+            <Tab eventKey="wadium" title="Wadium"><WadiumTab key={refreshKey} /></Tab>
+        </Tabs>
+    </Container>;
 }

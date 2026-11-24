@@ -1,9 +1,9 @@
 import MainSetup from "../React/MainSetupReact";
+import type { MailboxRecord } from "../Mailboxes/mailboxesService";
 
 export interface SbLevels {
     repos: "none" | "read" | "write";
     psDb: "none" | "ro" | "rw";
-    drive: "none" | "connector";
     mail: string[];
 }
 export interface SbEntry {
@@ -69,10 +69,10 @@ export type SbFailure = { ok: false; status: number; message: string };
 export type SbFetchResult<T> = { ok: true; data: T } | SbFailure;
 export type SbOperationResult = { ok: true; result: "OK" | "PARTIAL"; note: string } | SbFailure;
 
-async function request<T>(route: string, init: RequestInit = {}): Promise<SbFetchResult<T>> {
+async function request<T>(route: string, init: RequestInit = {}, prefix = "sbAccess/"): Promise<SbFetchResult<T>> {
     let response: Response;
     try {
-        response = await fetch(`${MainSetup.serverUrl}sbAccess/${route}`, { ...init, credentials: "include" });
+        response = await fetch(`${MainSetup.serverUrl}${prefix}${route}`, { ...init, credentials: "include" });
     } catch { return { ok: false, status: 0, message: "" }; }
     try {
         const body = await response.json();
@@ -86,9 +86,17 @@ async function request<T>(route: string, init: RequestInit = {}): Promise<SbFetc
 }
 export const fetchSbEntries = () => request<SbEntry[]>("entries");
 export const fetchSbCandidates = () => request<SbCandidate[]>("candidates");
-/** Spis skrzynek poczty z bazy PS (plan MBX); bez haseł. */
-export interface SbMailbox { code: string; address: string }
+/** Spis skrzynek poczty z bazy PS (plan MBX); bez haseł. `passwordVersion` różny od null = hasło wydaje PS (SKO). */
+export type SbMailbox = MailboxRecord;
 export const fetchSbMailboxes = () => request<SbMailbox[]>("mailboxes");
+const json = (body: unknown): RequestInit => ({ method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+/** Skrzynki firmy (SKO): trasy /mailboxes, ta sama obsługa błędów co Dostępy SB. */
+export const addSbGeneralMailbox = (address: string) => request<SbMailbox>("general", json({ address }), "mailboxes/");
+export const setSbMailboxAllEmployees = (id: number, allEmployees: boolean) =>
+    request<SbMailbox>(`${id}/allEmployees`, { ...json({ allEmployees }), method: "PUT" }, "mailboxes/");
+export const takeOverSbMailbox = (id: number) => request<SbMailbox>(`${id}/takeOver`, { method: "POST" }, "mailboxes/");
+export interface SbRotationBatch { rotated: string[]; failed: { address: string; error: string }[]; afterId: number; remaining: number }
+export const rotateSbMailboxPasswords = (afterId: number) => request<SbRotationBatch>("passwords/rotateAll", json({ afterId }), "mailboxes/");
 export const fetchSbUnlinkedMembers = () => request<SbUnlinkedMember[]>("githubMembers/unlinked");
 export const fetchSbEvents = (personId: number) => request<SbEvent[]>(`${personId}/events`);
 export async function performSbAction(personId: number, action: SbAction, githubLogin?: string): Promise<SbOperationResult> {
@@ -103,9 +111,10 @@ export async function performSbAction(personId: number, action: SbAction, github
         return { ok: false, status: 200, message: "Nieprawidłowa odpowiedź serwera PS." };
     return { ok: true, result: response.data.result, note: response.data.note };
 }
-export async function setSbLevels(personId: number, levels: SbLevels): Promise<SbFetchResult<SbEntry>> {
+/** `expected` = poziomy, które ekran widział przy wyborze osoby; PS odmawia (409), gdy ktoś je w międzyczasie zmienił. */
+export async function setSbLevels(personId: number, levels: SbLevels, expected?: SbLevels): Promise<SbFetchResult<SbEntry>> {
     return request<SbEntry>(`${personId}/levels`, {
-        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(levels),
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...levels, expected }),
     });
 }
 /** Wysyła wyłącznie szyfrogram i odcisk klucza, którym szyfrowano; jawne hasło nie opuszcza przeglądarki. */
@@ -116,6 +125,16 @@ export function giveSbSecret(personId: number, name: string, ciphertext: string,
 }
 export const takeSbSecret = (personId: number, name: string) =>
     request<{ name: string; given: false }>(`${personId}/secrets/${encodeURIComponent(name)}`, { method: "DELETE" });
+export type SbAgentState = "ma" | "nie ma" | "agent tego nie robi";
+export interface SbAgentSystem { system: string; label: string; state: SbAgentState; sentence: string; askWhom: string[] }
+export interface SbAgentRoute { method: string; path: string; access: "odczyt" | "zapis" | "zamkniete"; reason: string; allowed: boolean }
+/** Mapa dostępów agenta osoby - ta sama, którą PS daje agentowi; liczby i zdania liczy PS. */
+export interface SbAgentAccess {
+    personId: number;
+    systems: SbAgentSystem[];
+    psRoutes: { counts: { odczyt: number; zapis: number; zamkniete: number }; allowed: number; routes: SbAgentRoute[] };
+}
+export const fetchSbAgentAccess = (personId: number) => request<SbAgentAccess>(`${personId}/agentAccess`);
 /** Prośba o świeży raport z komputera pracownika; instalator dośle go przy najbliższym sprawdzeniu. */
 export const requestSbHealth = (personId: number) =>
     request<{ requested: true; alreadyPending: boolean }>(`${personId}/healthRequest`, { method: "POST" });

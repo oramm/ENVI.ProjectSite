@@ -277,7 +277,7 @@ function AppRoutes() {
                             Musi odpowiadać bramce /pettyCash w backendzie. */}
                         <Route path="/pettyCash" element={<PettyCashEntryPage />} />
                         <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
-                        <Route path="/invoice/:id" element={<InvoiceDetails />} />
+                        <Route path="/invoice/:id" element={<InvoiceDetails bankAccess={bankAccess} />} />
                         <Route path="/invoice/:id/ksef/pdf-preview" element={<InvoicePdfPreview />} />
                         <Route path="/scrumboard" element={<ScrumboardMainView />} />
                         <Route path="/vacations" element={<VacationsPage title="Urlopy" />} />
