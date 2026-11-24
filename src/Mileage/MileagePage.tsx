@@ -303,7 +303,9 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     const [readingError, setReadingError] = useState("");
     const requestId = useRef<string>();
     const submittingRef = useRef(false);
-    const readingReady = loadedDate === date && datedVehicle !== null;
+    const latestTripDate = today();
+    const futureTrip = date > latestTripDate;
+    const readingReady = !futureTrip && loadedDate === date && datedVehicle !== null;
     const datedSheetUrl = readingReady ? datedVehicle?.sheetUrl : null;
     useEffect(() => {
         let active = true;
@@ -312,6 +314,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
         setStartReading("");
         setReadingError("");
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { setReadingError("Podaj prawidłową datę wyjazdu."); return () => { active = false; }; }
+        if (futureTrip) return;
         fetchVehicles(date).then(cars => {
             if (!active) return;
             const current = cars.find(car => car.id === String(vehicle.id));
@@ -321,7 +324,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
             setLoadedDate(date);
         }).catch(err => { if (active) setReadingError(err instanceof Error ? err.message : String(err)); });
         return () => { active = false; };
-    }, [vehicle.id, date]);
+    }, [vehicle.id, date, futureTrip]);
 
     const selectedContracts = (watch("_contracts") as OurContract[] | undefined) ?? [];
     const driverPerson = watch("_driver") as PersonData | undefined;
@@ -450,6 +453,7 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
     }
 
     function validate(): string | null {
+        if (date > today()) return "Data wyjazdu nie może być późniejsza niż dzisiaj.";
         if (!routeMid.trim()) return "Podaj miasto na trasie";
         if (!endReading) return "Podaj stan licznika końcowy.";
         if (!startReading) return "Brak stanu początkowego (poprzedni odczyt).";
@@ -737,7 +741,14 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                         <Row className="g-2 mb-3">
                             <Col xs={6}>
                                 <Form.Label>Data wyjazdu</Form.Label>
-                                <Form.Control type="date" value={date} disabled={submitting} onChange={(e) => setDate(e.target.value)} />
+                                <Form.Control
+                                    type="date"
+                                    value={date}
+                                    max={latestTripDate}
+                                    isInvalid={futureTrip}
+                                    disabled={submitting}
+                                    onChange={(e) => setDate(e.target.value)}
+                                />
                             </Col>
                             <Col xs={6}>
                                 <Form.Label>Ilość km</Form.Label>
@@ -785,7 +796,10 @@ function MileageForm({ vehicle }: { vehicle: Vehicle }) {
                     )}
 
                     {readingError && <Alert variant="danger">{readingError}</Alert>}
-                    {!readingReady && !readingError && <div role="status">Pobieranie stanu licznika dla wybranej daty…</div>}
+                    {futureTrip && <Alert variant="danger">Data wyjazdu nie może być późniejsza niż dzisiaj.</Alert>}
+                    {!futureTrip && !readingReady && !readingError && (
+                        <div role="status">Pobieranie stanu licznika dla wybranej daty…</div>
+                    )}
                     {error && <Alert variant="danger">{error}</Alert>}
 
                     <Button className="w-100" onClick={handleSubmit} disabled={submitting || !readingReady}>
